@@ -41,98 +41,10 @@ const styles = {
   },
 };
 
-export class BundleDetail extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      bundleId: false,
-      bundle: {
-        resourceType : 'Bundle',
-        name : [{
-          text : '',
-          prefix: [''],
-          family: [''],
-          given: [''],
-          suffix: [''],
-          resourceType : 'HumanName'
-        }],
-        active : true,
-        gender : "",
-        birthDate : '',
-        photo : [{
-          url: ""
-        }],
-        identifier: [{
-          use: 'usual',
-          type: {
-            coding: [
-              {
-                system: 'http://hl7.org/fhir/v2/0203',
-                code: 'MR'
-              }
-            ]
-          },
-          value: ''
-        }],
-        deceasedBoolean: false,
-        multipleBirthBoolean: false,
-        maritalStatus: {
-          text: ''
-        },
-        contact: [],
-        animal: {
-          species: {
-            text: 'Human'
-          }
-        },
-        communication: [{
-          language: {
-            text: 'English'
-          }
-        }],
-        careProvider: [{
-          display: '',
-          reference: ''
-        }],
-        managingOrganization: {
-          reference: '',
-          display: ''
-        }
-      },
-      form: {
-        prefix: '',
-        family: '',
-        given: '',
-        suffix: '',
-        identifier: '',
-        deceased: false,
-        multipleBirth: false,
-        maritalStatus: '',
-        species: '',
-        language: ''
-      }
-    }
-  }
-  dehydrateFhirResource(bundle) {
-    let formData = Object.assign({}, this.state.form);
-
-    formData.prefix = get(bundle, 'name[0].prefix[0]')
-    formData.family = get(bundle, 'name[0].family[0]')
-    formData.given = get(bundle, 'name[0].given[0]')
-    formData.suffix = get(bundle, 'name[0].suffix[0]')
-    formData.identifier = get(bundle, 'identifier[0].value')
-    formData.deceased = get(bundle, 'deceasedBoolean')
-    formData.gender = get(bundle, 'gender')
-    formData.multipleBirth = get(bundle, 'multipleBirthBoolean')
-    formData.maritalStatus = get(bundle, 'maritalStatus.text')
-    formData.species = get(bundle, 'animal.species.text')
-    formData.language = get(bundle, 'communication[0].language.text')
-    formData.birthDate = moment(bundle.birthDate).format("YYYY-MM-DD")
-
-    return formData;
-  }
+export class BundleDetailOld extends React.Component {
+  // will need to overhaul this
   shouldComponentUpdate(nextProps){
-    process.env.NODE_ENV === "test" && console.log('BundleDetail.shouldComponentUpdate()', nextProps, this.state)
+    process.env.NODE_ENV === "test" && console.log('BundleDetailOld.shouldComponentUpdate()', nextProps, this.state)
     let shouldUpdate = true;
 
     // both false; don't take any more updates
@@ -170,16 +82,16 @@ export class BundleDetail extends React.Component {
 
     data.bundleContent = JSON.stringify(Bundles.findOne(this.props.bundleId), null, 2);
 
-    if(process.env.NODE_ENV === "test") console.log("BundleDetail[data]", data);
+    if(process.env.NODE_ENV === "test") console.log("BundleDetailOld[data]", data);
     return data;
   }
 
   render() {
-    if(process.env.NODE_ENV === "test") console.log('BundleDetail.render()', this.state)
+    if(process.env.NODE_ENV === "test") console.log('BundleDetailOld.render()', this.state)
     let formData = this.state.form;
 
     return (
-      <div id={this.props.id} className="bundleDetail">
+      <div id={this.props.id} className="bundleDetailOld">
         <CardContent>
           <Grid container spacing={3}>
             <Grid item xs={4}>
@@ -210,148 +122,6 @@ export class BundleDetail extends React.Component {
               {this.data.bundleContent}              
             </pre>
           </Grid>       
-
-          {/* 
-          <Row>
-            <Col md={1}>
-              <TextField
-                id='prefixInput'                
-                name='prefix'
-                floatingLabelText='Prefix'
-                value={ get(formData, 'prefix', '')}
-                onChange={ this.changeState.bind(this, 'prefix')}
-                hintText=''
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-            <Col md={5}>
-              <TextField
-                id='givenInput'                
-                name='given'
-                floatingLabelText='Given Name'
-                hintText='Jane'
-                value={ get(formData, 'given', '')}
-                onChange={ this.changeState.bind(this, 'given')}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-            <Col md={3}>
-              <TextField
-                id='familyInput'                
-                name='family'
-                floatingLabelText='Family Name'
-                hintText='Doe'
-                value={ get(formData, 'family', '')}
-                onChange={ this.changeState.bind(this, 'family')}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-
-            </Col>
-            <Col md={3}>
-              <TextField
-                id='suffixInput'                
-                name='suffix'
-                floatingLabelText='Suffix / Maiden'
-                hintText=''
-                value={ get(formData, 'suffix', '')}
-                onChange={ this.changeState.bind(this, 'suffix')}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={3}>
-              <TextField
-                id='maritalStatusInput'                
-                name='maritalStatus'
-                floatingLabelText='Marital Status'
-                hintText='single | maried | other'
-                value={ get(formData, 'maritalStatus', '')}
-                onChange={ this.changeState.bind(this, 'maritalStatus')}
-                floatingLabelFixed={false}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-            <Col md={3}>
-              <TextField
-                id='genderInput'                
-                name='gender'
-                floatingLabelText='Gender'
-                hintText='male | female | unknown'
-                value={ get(formData, 'gender', '')}
-                onChange={ this.changeState.bind(this, 'gender')}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-            <Col md={3}>
-
-              <TextField
-                id='birthDateInput'                
-                name='birthDate'
-                type='date'
-                floatingLabelText='Birthdate'
-                value={ get(formData, 'birthDate', '')}
-                onChange={ this.changeState.bind(this, 'birthDate')}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-            <Col md={3} >
-              <br />
-              <Toggle
-                label="Multiple Birth"
-                defaultToggled={false}
-                labelPosition="right"
-                style={styles.toggle}
-              />              
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <TextField
-                id='photoInput'                
-                name='photo'
-                floatingLabelText='Photo'
-                hintText='http://somewhere.com/image.jpg'
-                value={ get(formData, 'photo', '')}
-                onChange={ this.changeState.bind(this, 'photo')}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-            <Col md={3}>
-              <TextField
-                id='speciesInput'                
-                name='species'
-                floatingLabelText='Species'
-                value={ get(formData, 'species', '')}
-                hintText='Human'
-                onChange={ this.changeState.bind(this, 'species')}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-            <Col md={3}>
-              <TextField
-                id='languageInput'                
-                name='language'
-                floatingLabelText='Language'
-                value={ get(formData, 'language', '')}
-                onChange={ this.changeState.bind(this, 'language')}
-                hintText='English'
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>
-            </Col>
-          </Row> */}
-
-
         </CardContent>
         <CardActions>
           { this.determineButtons(this.data.bundleId) }
@@ -376,7 +146,7 @@ export class BundleDetail extends React.Component {
   }
 
   updateFormData(formData, field, textValue){
-    if(process.env.NODE_ENV === "test") console.log("BundleDetail.updateFormData", formData, field, textValue);
+    if(process.env.NODE_ENV === "test") console.log("BundleDetailOld.updateFormData", formData, field, textValue);
 
     switch (field) {
       case "title":
@@ -392,7 +162,7 @@ export class BundleDetail extends React.Component {
     return formData;
   }
   updateBundle(bundleData, field, textValue){
-    if(process.env.NODE_ENV === "test") console.log("BundleDetail.updateBundle", bundleData, field, textValue);
+    if(process.env.NODE_ENV === "test") console.log("BundleDetailOld.updateBundle", bundleData, field, textValue);
 
     switch (field) {
       case "title":
@@ -406,7 +176,7 @@ export class BundleDetail extends React.Component {
   }
   changeState(field, event, textValue){
     if(process.env.NODE_ENV === "test") console.log("   ");
-    if(process.env.NODE_ENV === "test") console.log("BundleDetail.changeState", field, textValue);
+    if(process.env.NODE_ENV === "test") console.log("BundleDetailOld.changeState", field, textValue);
     if(process.env.NODE_ENV === "test") console.log("this.state", this.state);
 
     let formData = Object.assign({}, this.state.form);
@@ -500,11 +270,39 @@ export class BundleDetail extends React.Component {
   }
 }
 
-BundleDetail.propTypes = {
+BundleDetailOld.propTypes = {
   id: PropTypes.string,
   fhirVersion: PropTypes.string,
   bundleId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   bundle: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
-ReactMixin(BundleDetail.prototype, ReactMeteorData);
+ReactMixin(BundleDetailOld.prototype, ReactMeteorData);
+
+
+function BundleDetail(props){
+
+  // REFACTOR: extract into shared hydration/dehydration library
+  function dehydrateFhirResource(bundle) {
+    // let formData = Object.assign({}, this.state.form);
+    let result = {}
+
+    result.prefix = get(bundle, 'name[0].prefix[0]')
+    result.family = get(bundle, 'name[0].family[0]')
+    result.given = get(bundle, 'name[0].given[0]')
+    result.suffix = get(bundle, 'name[0].suffix[0]')
+    result.identifier = get(bundle, 'identifier[0].value')
+    result.deceased = get(bundle, 'deceasedBoolean')
+    result.gender = get(bundle, 'gender')
+    result.multipleBirth = get(bundle, 'multipleBirthBoolean')
+    result.maritalStatus = get(bundle, 'maritalStatus.text')
+    result.species = get(bundle, 'animal.species.text')
+    result.language = get(bundle, 'communication[0].language.text')
+    result.birthDate = moment(bundle.birthDate).format("YYYY-MM-DD")
+
+    return result;
+  }
+
+
+  return(<div className="bundleDetail">Details</div>)
+}
 export default BundleDetail;

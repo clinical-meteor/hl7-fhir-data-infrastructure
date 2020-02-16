@@ -195,26 +195,26 @@ export class BundleTable extends React.Component {
     let tableRows = [];
     let footer;
 
-    // if(this.data.bundles.length === 0){
-    //   logger.trace('EncountersTable:  No encounters to render.');
-    //   // footer = <TableNoData noDataPadding={ this.props.noDataMessagePadding } />
-    // } else {
-    //   for (var i = 0; i < this.data.bundles.length; i++) {
-    //     tableRows.push(
-    //       <TableRow key={i} className="bundleRow" style={{cursor: "pointer"}} onClick={this.selectBundleRow.bind(this, this.data.bundles[i].id )} >
-    //         <TableCell className='identifier' style={this.data.style.cell}>{this.data.bundles[i].identifier}</TableCell>
-    //         <TableCell className='title' onClick={ this.rowClick.bind('this', this.data.bundles[i]._id)} style={this.data.style.cell}>{this.data.bundles[i].title }</TableCell>
-    //         <TableCell className='subject' onClick={ this.rowClick.bind('this', this.data.bundles[i]._id)} style={this.data.style.cell}>{this.data.bundles[i].subject }</TableCell>
-    //         <TableCell className='author' onClick={ this.rowClick.bind('this', this.data.bundles[i]._id)} style={this.data.style.cell}>{this.data.bundles[i].author }</TableCell>
-    //         <TableCell className='birthDate' onClick={ this.rowClick.bind('this', this.data.bundles[i]._id)} style={{minWidth: '100px', paddingTop: '16px'}}>{this.data.bundles[i].birthDate }</TableCell>
-    //       </TableRow>
-    //     );
-    //   }
-    // }
+    if(this.data.bundles.length === 0){
+      logger.trace('EncountersTable:  No encounters to render.');
+      // footer = <TableNoData noDataPadding={ this.props.noDataMessagePadding } />
+    } else {
+      for (var i = 0; i < this.data.bundles.length; i++) {
+        tableRows.push(
+          <TableRow key={i} className="bundleRow" style={{cursor: "pointer"}} onClick={this.selectBundleRow.bind(this, this.data.bundles[i].id )} >
+            <TableCell className='identifier' style={this.data.style.cell}>{this.data.bundles[i].identifier}</TableCell>
+            <TableCell className='title' onClick={ this.rowClick.bind('this', this.data.bundles[i]._id)} style={this.data.style.cell}>{this.data.bundles[i].title }</TableCell>
+            <TableCell className='subject' onClick={ this.rowClick.bind('this', this.data.bundles[i]._id)} style={this.data.style.cell}>{this.data.bundles[i].subject }</TableCell>
+            <TableCell className='author' onClick={ this.rowClick.bind('this', this.data.bundles[i]._id)} style={this.data.style.cell}>{this.data.bundles[i].author }</TableCell>
+            <TableCell className='birthDate' onClick={ this.rowClick.bind('this', this.data.bundles[i]._id)} style={{minWidth: '100px', paddingTop: '16px'}}>{this.data.bundles[i].birthDate }</TableCell>
+          </TableRow>
+        );
+      }
+    }
     
     return(
       <div>
-        <Table id='bundlesTable' hover >
+        <Table id='bundlesTable' hover="true" >
           <TableHead>
             <TableRow>
               <TableCell className='identifier'>Identifier</TableCell>
