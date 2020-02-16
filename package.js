@@ -54,5 +54,6 @@ Npm.depends({
   "prop-types": "15.7.2",
   "react-mixin": "4.0.0",
   "simpl-schema": "1.5.3",
+  "validator": "10.9.0",
 });
 
