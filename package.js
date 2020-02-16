@@ -28,6 +28,22 @@ Package.onUse(function (api) {
   api.use('session');
   api.use('react-meteor-data@0.2.15');
 
+  api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
+
+  api.export('Bundle');
+  api.export('Bundles');
+  api.export('BundleSchema');
+
+  api.export('Encounter');
+  api.export('Encounters');
+  api.export('EncounterSchema');
+
+  api.export('Patient');
+  api.export('Patients');
+  api.export('PatientSchema');
+
 });
 
 

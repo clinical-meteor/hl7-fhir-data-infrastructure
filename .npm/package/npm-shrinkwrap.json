@@ -1,0 +1,15 @@
+{
+  "lockfileVersion": 1,
+  "dependencies": {
+    "lodash": {
+      "version": "4.17.13",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.13.tgz",
+      "integrity": "sha512-vm3/XWXfWtRua0FkUyEHBZy8kCPjErNBT9fJx8Zvs+U6zjqPbTUOpkaoum3O5uiA8sm+yNMHXfYkTUHFoMxFNA=="
+    },
+    "moment": {
+      "version": "2.22.2",
+      "resolved": "https://registry.npmjs.org/moment/-/moment-2.22.2.tgz",
+      "integrity": "sha1-PCV/mDn8DpP/UxSWMiOeuQeD/2Y="
+    }
+  }
+}
