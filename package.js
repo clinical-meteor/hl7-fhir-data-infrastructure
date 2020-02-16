@@ -19,11 +19,6 @@ Package.onUse(function (api) {
   api.use('matb33:collection-hooks@0.7.15');
   api.use('clinical:hl7-resource-datatypes@4.0.5');
 
-  // might not be worth keeping, remove if possible
-  // or at least bring into the package directly
-  api.use('clinical:base-model@1.4.0');
-
-
   // schemas and cursors
   api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
@@ -57,6 +52,7 @@ Npm.depends({
   "lodash": "4.17.13",
   "material-fhir-ui": "0.9.26",
   "prop-types": "15.7.2",
-  "react-mixin": "4.0.0"
+  "react-mixin": "4.0.0",
+  "simpl-schema": "1.5.3",
 });
 
