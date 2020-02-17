@@ -14,7 +14,7 @@ import {
 
 import TableNoData from 'material-fhir-ui';
 
-import moment from 'moment-es6'
+import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;
