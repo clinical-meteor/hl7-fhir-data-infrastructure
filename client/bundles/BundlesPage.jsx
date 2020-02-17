@@ -226,7 +226,7 @@ function BundlesPage(props){
   }
 
   return(
-    <PageCanvas id="bundlesPage" headerHeight={headerHeight}>
+    <PageCanvas id="bundlesPage" headerHeight={headerHeight} >
       <MuiThemeProvider theme={muiTheme} >
         <Grid container spacing={3}>
           <Grid item md={6}>

@@ -332,10 +332,13 @@ export class PatientsPage extends React.Component {
 
     const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 25);
 
-
+    let headerHeight = 64;
+    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
+      headerHeight = 128;
+    }
 
     return (
-      <PageCanvas id="patientsPageClass" >
+      <PageCanvas id="patientsPageClass" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
           <StyledCard height="auto" scrollable={true} margin={20} >
             <CardHeader title="Patients" />

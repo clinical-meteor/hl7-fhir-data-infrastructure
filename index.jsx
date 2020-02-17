@@ -4,7 +4,13 @@ import BundlesPage from './client/bundles/BundlesPage';
 import BundleTable from './client/bundles/BundleTable';
 import BundleDetail from './client/bundles/BundleDetail';
 
-import PatientsPage from './client/patients/NewPatientsPage';
+// import PatientsPage from './client/patients/NewPatientsPage';
+import PatientsPage from './client/patients/PatientsPage';
+
+import EncountersPage from './client/encounters/EncountersPage';
+import EncountersTable from './client/encounters/EncountersTable';
+import EncounterDetail from './client/encounters/EncounterDetail';
+
 
 var DynamicRoutes = [{
   'name': 'BundlePage',
@@ -16,18 +22,26 @@ var DynamicRoutes = [{
   'path': '/patients',
   'component': PatientsPage,
   'requireAuth': true
+}, {
+  'name': 'EncountersPage',
+  'path': '/encounters',
+  'component': EncountersPage,
+  'requireAuth': true
 }];
 
 var SidebarElements = [{
-    'primaryText': 'Bundles',
-    'to': '/bundles',
-    'href': '/bundles'
-  }, {
-    'primaryText': 'Patients',
-    'to': '/patients',
-    'href': '/patients',
-    // 'iconName': "FaUserInjured"
-  }];
+  'primaryText': 'Bundles',
+  'to': '/bundles',
+  'href': '/bundles'
+}, {
+  'primaryText': 'Patients',
+  'to': '/patients',
+  'href': '/patients'
+}, {
+  'primaryText': 'Encounters',
+  'to': '/encounters',
+  'href': '/encounters'
+}];
   
 var AdminSidebarElements = [{
   'primaryText': 'Bundles',
@@ -36,8 +50,7 @@ var AdminSidebarElements = [{
 }, {
   'primaryText': 'Patients',
   'to': '/patients',
-  'href': '/patients',
-  // 'iconName': "FaUserInjured"
+  'href': '/patients'
 }];
 
 export { 
@@ -48,6 +61,10 @@ export {
   BundlesPage,
   BundleTable,
   BundleDetail,
+
+  EncountersPage,
+  EncounterTable,
+  EncounterDetail,
 
   PatientsPage
 };

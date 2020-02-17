@@ -36,7 +36,6 @@ Package.onUse(function (api) {
   api.export('Patients');
   api.export('PatientSchema');
 
-
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
   api.use('http');
   api.use('session');
