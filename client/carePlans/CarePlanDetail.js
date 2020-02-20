@@ -22,9 +22,9 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
 
-import { ConditionsTable } from 'meteor/clinical:hl7-resource-condition';
-import { GoalsTable } from 'meteor/clinical:hl7-resource-goal';
-import { MedicationsTable } from 'meteor/clinical:hl7-resource-medication';
+import { ConditionsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { GoalsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { MedicationsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 let defaultCarePlan = {
   "resourceType": "CarePlan",

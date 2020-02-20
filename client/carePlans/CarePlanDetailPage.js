@@ -18,9 +18,9 @@ import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import { ConditionsTable } from 'meteor/clinical:hl7-resource-condition';
-import { GoalsTable } from 'meteor/clinical:hl7-resource-goal';
-import { MedicationsTable } from 'meteor/clinical:hl7-resource-medication';
+import { ConditionsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { GoalsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { MedicationsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 export class CarePlanDetailPage extends React.Component {
   getMeteorData() {

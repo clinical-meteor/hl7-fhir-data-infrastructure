@@ -3,19 +3,26 @@ import {
   Table, 
   TableRow, 
   TableCell,
-  TableBody
+  TableBody,
+  TableHead
 } from '@material-ui/core';
 
 import React from 'react';
 import ReactMixin from 'react-mixin';
+import { Meteor } from 'meteor/meteor';
+import { Session } from 'meteor/session';
+
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { get } from 'lodash';
 
 import { browserHistory } from 'react-router';
 import PropTypes from 'prop-types';
 
-import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-import { GoTrashcan } from 'react-icons/go'
+import { Icon } from 'react-icons-kit'
+import { tag } from 'react-icons-kit/fa/tag'
+import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+
+
 
 
 flattenCarePlan = function(plan){
@@ -235,8 +242,8 @@ export class CarePlansTable extends React.Component {
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, carePlan)} />
-          <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, carePlan._id)} />  
+          <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, carePlan)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, carePlan._id)} />
         </TableCell>
       );
     }

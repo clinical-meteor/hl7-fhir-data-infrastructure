@@ -21,13 +21,16 @@ import {
 
 import TableNoData from 'material-fhir-ui';
 
-import moment from 'moment-es6'
+import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-import { GoTrashcan } from 'react-icons/go'
+
+import { Icon } from 'react-icons-kit'
+import { tag } from 'react-icons-kit/fa/tag'
+import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -213,10 +216,10 @@ function MedicationOrdersTable(props){
 
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>
-          <FaTags style={iconStyle} onClick={ showSecurityDialog.bind(this, medicationOrder)} />
-          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(this, medicationOrder._id)} />  
+          <Icon icon={tag} style={iconStyle} onClick={ showSecurityDialog.bind(this, medicationOrder)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={ removeRecord.bind(this, medicationOrder._id)} />
         </TableCell>
-      );
+      );      
     }
   } 
   function renderStatusHeader(){

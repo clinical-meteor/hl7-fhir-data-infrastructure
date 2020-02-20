@@ -21,10 +21,16 @@ import { Meteor } from 'meteor/meteor';
 import { browserHistory } from 'react-router';
 import { get } from 'lodash';
 
-import { IoIosHeartEmpty } from 'react-icons/io';
-import { IoMdPulse} from 'react-icons/io';
-import { FiThermometer } from 'react-icons/fi';
-import { FaStethoscope } from 'react-icons/fa';
+import { Icon } from 'react-icons-kit'
+import {stethoscope} from 'react-icons-kit/fa/stethoscope'
+import {heart} from 'react-icons-kit/fa/heart'
+import {thermometer} from 'react-icons-kit/fa/thermometer'
+import {pulse} from 'react-icons-kit/iconic/pulse'
+
+
+
+
+
 
 // var FontAwesome = require('react-fontawesome');
 
@@ -139,7 +145,7 @@ export class VitalMeasurements extends React.Component {
             <Tab label="Medications" value={1} />
           </Tabs>
           <TabPanel >
-            <IoMdPulse style={{position: 'absolute', top: '40px' }} />
+            <Icon icon={pulse} style={{position: 'absolute', top: '40px' }} />
             <TextField
               id='puleInput'
               ref='pulse'
@@ -153,7 +159,7 @@ export class VitalMeasurements extends React.Component {
               hintStyle={{marginLeft: '20px'}}
               fullWidth
               /><br/>
-            <FiThermometer style={{position: 'absolute', top: '40px' }} />
+            <Icon icon={thermometer} style={{position: 'absolute', top: '40px' }} />
             <TextField
               id='temperatureInput'
               name='temperature'
@@ -166,7 +172,7 @@ export class VitalMeasurements extends React.Component {
               hintStyle={{marginLeft: '20px'}}
               fullWidth
               /><br/>
-            <FaStethoscope style={{position: 'absolute', top: '40px' }} />
+            <Icon icon={pulse} style={{position: 'absolute', top: '40px' }} />
             <TextField
               id='respirationRate'
               name='respiration'
@@ -179,7 +185,7 @@ export class VitalMeasurements extends React.Component {
               hintStyle={{marginLeft: '20px'}}
               fullWidth
               /><br/>
-            <IoIosHeartEmpty style={{position: 'absolute', top: '40px' }} />
+            <Icon icon={heart} style={{position: 'absolute', top: '40px' }} />
             <TextField
               id='bloodPressureInput'
               name='bloodPressure'

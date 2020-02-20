@@ -457,9 +457,9 @@
       "integrity": "sha512-K1DPVvnBCPxzD+G51/cxVIoc2X8uUVl1zpJeE6iKcgHMj4+tbat5Xu4TjV7v2QSDbIeAfLi2hIk+u2+s0MlpUQ=="
     },
     "@types/node": {
-      "version": "13.7.1",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-13.7.1.tgz",
-      "integrity": "sha512-Zq8gcQGmn4txQEJeiXo/KiLpon8TzAl0kmKH4zdWctPj05nWwp1ClMdAVEloqrQKfaC48PNLdgN/aVaLqUrluA=="
+      "version": "13.7.2",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-13.7.2.tgz",
+      "integrity": "sha512-uvilvAQbdJvnSBFcKJ2td4016urcGvsiR+N4dHGU87ml8O2Vl6l+ErOi9w0kXSPiwJ1AYlIW+0pDXDWWMOiWbw=="
     },
     "acorn": {
       "version": "7.1.0",
@@ -854,9 +854,9 @@
       "integrity": "sha1-yjw2iKTpzzpM2nd9xNy8cTJJz3M="
     },
     "caniuse-lite": {
-      "version": "1.0.30001027",
-      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001027.tgz",
-      "integrity": "sha512-7xvKeErvXZFtUItTHgNtLgS9RJpVnwBlWX8jSo/BO8VsF6deszemZSkJJJA1KOKrXuzZH4WALpAJdq5EyfgMLg=="
+      "version": "1.0.30001028",
+      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001028.tgz",
+      "integrity": "sha512-Vnrq+XMSHpT7E+LWoIYhs3Sne8h9lx9YJV3acH3THNCwU/9zV93/ta4xVfzTtnqd3rvnuVpVjE3DFqf56tr3aQ=="
     },
     "chalk": {
       "version": "2.4.2",
@@ -921,9 +921,9 @@
       "integrity": "sha512-3MqfYKj2lLzdMSf8ZIZE/V+Zuy+BgD6f164e8K2w7dgnpKArBDerGYpM46IYYcjnkdPNMjPk9A6VFB8+3SKlXQ=="
     },
     "electron-to-chromium": {
-      "version": "1.3.353",
-      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.353.tgz",
-      "integrity": "sha512-CkG24biyy9qQTQs8U2vGQaiyWSFDxAXP/UGHBveXZ1TGoWOAw+eYZXryrX0UeIMKnQjcaHx33hzYuydv98kqGQ=="
+      "version": "1.3.354",
+      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.354.tgz",
+      "integrity": "sha512-24YMkNiZWOUeF6YeoscWfIGP0oMx+lJpU/miwI+lcu7plIDpyZn8Gx0lx0qTDlzGoz7hx+lpyD8QkbkX5L2Pqw=="
     },
     "emojis-list": {
       "version": "2.1.0",
@@ -1267,9 +1267,9 @@
       "integrity": "sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA=="
     },
     "material-fhir-ui": {
-      "version": "0.9.26",
-      "resolved": "https://registry.npmjs.org/material-fhir-ui/-/material-fhir-ui-0.9.26.tgz",
-      "integrity": "sha512-0J2ZZGL+6DIKgtewqyk7STINrOPZ/LdLtXVToAI4aEZmj+709jxiW6IWvL6nSiXylZoRcPvanusLTfOpC2BucA==",
+      "version": "0.9.32",
+      "resolved": "https://registry.npmjs.org/material-fhir-ui/-/material-fhir-ui-0.9.32.tgz",
+      "integrity": "sha512-tW/YxKBdxFTOlzkU9uXM55j6lqknxuerZa22/aS0S+RcifgTkInqDqkWMOK4Wt3lxIETV469He9OWQDvV6nRTw==",
       "dependencies": {
         "lodash": {
           "version": "4.17.15",

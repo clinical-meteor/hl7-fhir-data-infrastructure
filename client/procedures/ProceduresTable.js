@@ -21,16 +21,14 @@ import {
 } from '@material-ui/core';
 
 
-import moment from 'moment-es6'
+import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-// import { ReactMeteorData } from 'meteor/react-meteor-data';
-// import ReactMixin from 'react-mixin';
-
-import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-import { GoTrashcan } from 'react-icons/go';
+import { Icon } from 'react-icons-kit'
+import { tag } from 'react-icons-kit/fa/tag'
+import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -196,8 +194,8 @@ function ProceduresTable(props){
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <FaTags style={iconStyle} onClick={ onMetaClick.bind(procedure)} />
-          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(procedure._id)} />  
+          <Icon icon={tag} style={iconStyle} onClick={ onMetaClick.bind(procedure)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={ removeRecord.bind(procedure._id)} />
         </TableCell>
       );
     }

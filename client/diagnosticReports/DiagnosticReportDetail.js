@@ -21,7 +21,8 @@ import {
   Typography,
   TextField,
   DatePicker,
-  Box
+  Box,
+  Grid
 } from '@material-ui/core';
 
 import {
@@ -39,8 +40,7 @@ import ReactMixin from 'react-mixin';
 
 import { get, set } from 'lodash';
 import PropTypes from 'prop-types';
-import { Col, Grid, Row } from 'react-bootstrap';
-import { moment } from 'meteor/momentjs:moment'
+
 
 
 
@@ -198,8 +198,8 @@ export class DiagnosticReportDetail extends React.Component {
     }
     if (showDatePicker) {
       return (
-        <Row>
-          <Col md={3} >
+        <Grid container>
+          <Grid item md={3} >
             {/* <DatePicker 
               name='effectiveDate'
               floatingLabelText="Effective Date" 
@@ -227,8 +227,8 @@ export class DiagnosticReportDetail extends React.Component {
                 //   'aria-label': 'change date',
                 // }}
               /> 
-          </Col>
-        </Row>     
+          </Grid>
+        </Grid>     
       );
     }
   }
@@ -240,8 +240,8 @@ export class DiagnosticReportDetail extends React.Component {
       <div id={this.props.id} className="diagnosticReportDetail">
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <CardContent>
-            <Row>
-              <Col md={3}>
+            <Grid container>
+              <Grid item md={3}>
                 <TextField
                   id='identifierInput'
                   name='identifier'
@@ -252,8 +252,8 @@ export class DiagnosticReportDetail extends React.Component {
                   floatingLabelFixed={true}
                   fullWidth
                   /><br/>
-              </Col>
-              <Col md={3}>
+              </Grid>
+              <Grid item md={3}>
                 <TextField
                   id='statusInput'                  
                   name='status'
@@ -264,8 +264,8 @@ export class DiagnosticReportDetail extends React.Component {
                   floatingLabelFixed={true}
                   fullWidth
                   /><br/>
-              </Col>
-              <Col md={3}>
+              </Grid>
+              <Grid item md={3}>
                 <TextField
                   id='codeInput'                  
                   name='code'
@@ -276,8 +276,8 @@ export class DiagnosticReportDetail extends React.Component {
                   floatingLabelFixed={true}
                   fullWidth
                   /><br/>
-              </Col>
-              <Col md={3}>
+              </Grid>
+              <Grid item md={3}>
                 <TextField
                   id='categoryInput'                  
                   name='category'
@@ -288,10 +288,10 @@ export class DiagnosticReportDetail extends React.Component {
                   floatingLabelFixed={true}
                   fullWidth
                   /><br/>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6} >
+              </Grid>
+            </Grid>            
+            <Grid container>
+              <Grid item md={6} >
                 <TextField
                   id='subjectDisplayInput'                  
                   name='subjectDisplay'
@@ -302,8 +302,8 @@ export class DiagnosticReportDetail extends React.Component {
                   floatingLabelFixed={true}
                   fullWidth
                   /><br/>
-              </Col>
-              <Col md={6} >
+              </Grid>
+              <Grid item md={6} >
                 <TextField
                   id='subjectReferenceInput'                  
                   name='subjectReference'
@@ -314,10 +314,10 @@ export class DiagnosticReportDetail extends React.Component {
                   floatingLabelFixed={true}
                   fullWidth
                   /><br/>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6} >
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item md={6} >
                 <TextField
                   id='performerDisplayInput'                  
                   name='performerDisplay'
@@ -328,8 +328,8 @@ export class DiagnosticReportDetail extends React.Component {
                   floatingLabelFixed={true}
                   fullWidth
                   /><br/>
-              </Col>
-              <Col md={6} >
+              </Grid>
+              <Grid item md={6} >
                 <TextField
                   id='performerReferenceInput'                  
                   name='performerReference'
@@ -340,8 +340,8 @@ export class DiagnosticReportDetail extends React.Component {
                   floatingLabelFixed={true}
                   fullWidth
                   /><br/>   
-              </Col>
-            </Row>
+              </Grid>
+            </Grid>
 
             { this.renderDatePicker(true, get(formData, 'effectiveDate') ) }
 

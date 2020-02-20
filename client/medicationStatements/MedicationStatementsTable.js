@@ -3,7 +3,8 @@ import {
   Table, 
   TableRow, 
   TableCell,
-  TableBody
+  TableBody,
+  TableHead
 } from '@material-ui/core';
 
 import { get } from 'lodash';
@@ -12,8 +13,12 @@ import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
-import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-import { GoTrashcan } from 'react-icons/go'
+import { Icon } from 'react-icons-kit'
+import { tag } from 'react-icons-kit/fa/tag'
+import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+
+
+
 
 const flattenMedicationStatement = function(statement, fhirVersion){
   console.log('flattenMedicationStatement', statement)
@@ -166,8 +171,8 @@ export class MedicationStatementsTable extends React.Component {
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, medicationStatement)} />
-          <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, medicationStatement._id)} />  
+          <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, medicationStatement)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, medicationStatement._id)} />
         </TableCell>
       );
     }
@@ -217,7 +222,7 @@ export class MedicationStatementsTable extends React.Component {
     }
 
     return(
-      <Table id='medicationStatementsTable' hover >
+      <Table id='medicationStatementsTable' hover="true" >
         <TableHead>
           <TableRow>
             { this.renderTogglesHeader(this.data.displayToggle) }
@@ -233,9 +238,9 @@ export class MedicationStatementsTable extends React.Component {
             { this.renderDateHeader(this.data.displayDates) }            
           </TableRow>
         </TableHead>
-        <tbody>
+        <TableBody>
           { tableRows }
-        </tbody>
+        </TableBody>
       </Table>
     );
   }

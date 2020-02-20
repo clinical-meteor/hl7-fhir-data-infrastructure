@@ -17,13 +17,15 @@ import {
   TablePagination,
 } from '@material-ui/core';
 
-import moment from 'moment-es6'
+import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-import { GoTrashcan } from 'react-icons/go'
+import { Icon } from 'react-icons-kit'
+import { tag } from 'react-icons-kit/fa/tag'
+import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
@@ -190,8 +192,8 @@ function ObservationsTable(props){
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <FaTags style={iconStyle} onClick={this.onMetaClick.bind(this, observation)} />
-          <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, observation._id)} />  
+          <Icon icon={tag} style={iconStyle} onClick={this.onMetaClick.bind(this, observation)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, observation._id)} />
         </TableCell>
       );
     }

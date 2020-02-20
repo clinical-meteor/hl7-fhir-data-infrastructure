@@ -27,7 +27,7 @@ import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
 import { moment } from 'moment';
 
-import { medicationStatement2, medicationStatement3 } from '../lib/defaultStatements.js';
+import { medicationStatement2, medicationStatement3 } from '../../lib/templates/defaultMedicationStatements';
 
 Session.setDefault('originalMedicationStatement', false);
 
@@ -237,7 +237,7 @@ export class MedicationStatementDetail extends React.Component {
                 label='Patient - Display'
                 value={ get(formData, 'subjectDisplay') }
                 onChange={ this.changeState.bind(this, 'subjectDisplay')}
-                hintText="Jane Doe"
+                // hintText="Jane Doe"
                 fullWidth
                 //floatingLabelFixed={true}
                 /><br/>
@@ -249,7 +249,7 @@ export class MedicationStatementDetail extends React.Component {
                 label='Patient - Reference'
                 value={ get(formData, 'subjectReference') }
                 onChange={ this.changeState.bind(this, 'subjectReference')}
-                hintText="Patient/12345"
+                // hintText="Patient/12345"
                 fullWidth
                 //floatingLabelFixed={true}
                 /><br/>         
@@ -266,18 +266,18 @@ export class MedicationStatementDetail extends React.Component {
                 value={ get(formData, 'medicationDisplay') }
                 onChange={ this.changeState.bind(this, 'medicationDisplay')}
                 //floatingLabelFixed={true}
-                hintText="Aleve - Naproxene Sodium"
+                // hintText="Aleve - Naproxene Sodium"
                 fullWidth
                 /><br/>               
             </Grid>
-            <Grid md={4} >
+            <Grid item md={4} >
               <TextField
                 id='medicationReferenceInput'
                 name='medicationReference'
                 label='Medication - Reference'
                 value={ get(formData, 'medicationReference') }
                 onChange={ this.changeState.bind(this, 'medicationReference')}
-                hintText="Medication/0280-6000"
+                // hintText="Medication/0280-6000"
                 //floatingLabelFixed={true}
                 fullWidth
                 /><br/>     
@@ -291,19 +291,19 @@ export class MedicationStatementDetail extends React.Component {
                 label='Information Source - Display'
                 value={ get(formData, 'informationSourceDisplay') }
                 onChange={ this.changeState.bind(this, 'informationSourceDisplay')}
-                hintText="Pain"
+                // hintText="Pain"
                 fullWidth
                 //floatingLabelFixed={true}
                 /><br/>
             </Grid>
-            <Grid md={4} >
+            <Grid item md={4} >
               <TextField
                 id='informationSourceReferenceInput'
                 name='informationSourceReference'
                 label='Information Source - Reference'
                 value={ get(formData, 'informationSourceReference') }
                 onChange={ this.changeState.bind(this, 'informationSourceReference')}
-                hintText="Condition/777"
+                // hintText="Condition/777"
                 fullWidth
                 //floatingLabelFixed={true}
                 /><br/>   
@@ -318,19 +318,19 @@ export class MedicationStatementDetail extends React.Component {
                 label='Reason - Display Text'
                 value={ get(formData, 'reasonCodeDisplay') }
                 onChange={ this.changeState.bind(this, 'reasonCodeDisplay')}
-                hintText="Pulled Muscle"
+                // hintText="Pulled Muscle"
                 //floatingLabelFixed={true}
                 fullWidth
                 /><br/>   
             </Grid>
-            <Grid md={4} >
+            <Grid item md={4} >
               <TextField
                 id='reasonCodeInput'
                 name='reasonCode'
                 label='Reason - Code Value'
                 value={ get(formData, 'reasonCode') }
                 onChange={ this.changeState.bind(this, 'reasonCode')}
-                hintText="Observation/12345"
+                // hintText="Observation/12345"
                 //floatingLabelFixed={true}
                 fullWidth
                 /><br/>   
@@ -338,7 +338,7 @@ export class MedicationStatementDetail extends React.Component {
           </Grid>
 
           <Grid container spacing={3}>
-            {/* <Grid md={2} >
+            {/* <Grid item md={2} >
               <TextField
                 id='takenInput'
                 name='taken'

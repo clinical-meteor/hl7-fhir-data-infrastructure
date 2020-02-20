@@ -19,12 +19,9 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-// import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-// import { GoTrashcan } from 'react-icons/go';
-
-import Icon from 'react-icons-kit'
+import { Icon } from 'react-icons-kit'
 import {tag} from 'react-icons-kit/fa/tag'
-import {trashO} from 'react-icons-kit/fa/trashO'
+import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 
 
@@ -214,7 +211,7 @@ function EncountersTable(props){
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
           <Icon icon={tag} style={iconStyle} onClick={ onMetaClick.bind(encounter)}  />
-          <Icon icon={trashO} style={iconStyle} onClick={ removeRecord.bind(encounter._id)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={ removeRecord.bind(encounter._id)} />
         </TableCell>
       );
     }

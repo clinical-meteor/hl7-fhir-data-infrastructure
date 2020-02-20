@@ -13,6 +13,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  Grid,
   TextField,
   Select,
   MenuItem,
@@ -23,8 +24,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import { get, set } from 'lodash';
 import PropTypes from 'prop-types';
-import { Col, Grid, Row } from 'react-bootstrap';
-import { moment } from 'meteor/momentjs:moment';
+
 
 export class ConditionDetail extends React.Component {
   constructor(props) {

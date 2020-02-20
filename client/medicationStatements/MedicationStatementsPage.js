@@ -24,6 +24,9 @@ import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
+import { get } from 'lodash';
+
+
 //=============================================================================================================================================
 // TABS
 
@@ -77,9 +80,9 @@ export class MedicationStatementsPage extends React.Component {
       data.selectedMedicationStatement = false;
     }
 
-    data.style = Glass.blur(data.style);
-    data.style.appbar = Glass.darkroom(data.style.appbar);
-    data.style.tab = Glass.darkroom(data.style.tab);
+    // data.style = Glass.blur(data.style);
+    // data.style.appbar = Glass.darkroom(data.style.appbar);
+    // data.style.tab = Glass.darkroom(data.style.tab);
 
     return data;
   }
@@ -102,8 +105,8 @@ export class MedicationStatementsPage extends React.Component {
     }
 
     return (
-      <div id='medicationStatementsPage'>
-        <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+      <PageCanvas id='medicationStatementsPage' headerHeight={headerHeight}>
+        <StyledCard height="auto" scrollable={true} margin={20}  >
             <CardHeader title='Medication Statements' />
             <CardContent>
               <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
@@ -114,17 +117,17 @@ export class MedicationStatementsPage extends React.Component {
                 <MedicationStatementsTable fhirVersion={ this.data.fhirVersion } />
               </TabPanel >
               <TabPanel >
-                <MedicationStatementDetail 
+                {/* <MedicationStatementDetail 
                     id='medicationStatementDetails'
                     fhirVersion={ this.data.fhirVersion }
                     medicationStatement={ this.data.selectedMedicationStatement }
                     medicationStatementId={ this.data.selectedMedicationStatementId } 
                     showDatePicker={true} 
-                  />
+                  /> */}
               </TabPanel >
             </CardContent>
         </StyledCard>        
-      </div>
+      </PageCanvas>
     );
   }
 }

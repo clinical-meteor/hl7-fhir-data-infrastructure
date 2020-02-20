@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, ListGroupItem, FormControl, Button } from 'react-bootstrap';
+// import { ListGroupItem, FormControl, Button } from 'react-bootstrap';
 import { updateCarePlan, removeCarePlan } from '../../../api/careplans/methods.js';
 
 
@@ -38,48 +38,48 @@ const handleRemoveCarePlan = (documentId, event) => {
 };
 
 export const CarePlan = ({ carePlan }) => (
-  <ListGroupItem key={ carePlan._id }>
-    <Row>
-      <Col xs={ 2 } sm={ 1 }>
-        <FormControl
+  // <ListGroupItem key={ carePlan._id }>
+    <Grid container>
+      <Grid item xs={ 2 } sm={ 1 }>
+        {/* <FormControl
           type="text"
           standalone
           defaultValue={ carePlan.carePlanType }
           onKeyUp={ handleUpdateCarePlan.bind(this, carePlan._id) }
-        />
-      </Col>
-      <Col xs={ 2 } sm={ 1 }>
-        <FormControl
+        /> */}
+      </Grid>
+      <Grid item xs={ 2 } sm={ 1 }>
+        {/* <FormControl
           type="text"
           standalone
           defaultValue={ carePlan.carePlanValue }
           onKeyUp={ handleUpdateCarePlan.bind(this, carePlan._id) }
-        />
-      </Col>
-      <Col xs={ 2 } sm={ 1 }>
-        <FormControl
+        /> */}
+      </Grid>
+      <Grid item xs={ 2 } sm={ 1 }>
+        {/* <FormControl
           type="text"
           standalone
           defaultValue={ carePlan.createdAt }
           onKeyUp={ handleUpdateCarePlan.bind(this, carePlan._id) }
-        />
-      </Col>
-      <Col xs={ 2 } sm={ 1 }>
-        <FormControl
+        /> */}
+      </Grid>
+      <Grid item xs={ 2 } sm={ 1 }>
+        {/* <FormControl
           type="text"
           standalone
           defaultValue={ carePlan.patientId }
           onKeyUp={ handleUpdateCarePlan.bind(this, carePlan._id) }
-        />
-      </Col>
-      <Col xs={ 3 } sm={ 2 }>
-        <Button
+        /> */}
+      </Grid>
+      <Grid item xs={ 3 } sm={ 2 }>
+        {/* <Button
           bsStyle="danger"
           className="btn-block"
           onClick={ handleRemoveCarePlan.bind(this, carePlan._id) }>
           Remove
-        </Button>
-      </Col>
-    </Row>
-  </ListGroupItem>
+        </Button> */}
+      </Grid>
+    </Grid>
+  // </ListGroupItem>
 );

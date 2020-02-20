@@ -98,9 +98,9 @@ export class ObservationsPage extends React.Component {
     data.observations = Observations.find().fetch();
     data.observationsCount = Observations.find().count();
 
-    data.style = Glass.blur(data.style);
-    data.style.appbar = Glass.darkroom(data.style.appbar);
-    data.style.tab = Glass.darkroom(data.style.tab);
+    // data.style = Glass.blur(data.style);
+    // data.style.appbar = Glass.darkroom(data.style.appbar);
+    // data.style.tab = Glass.darkroom(data.style.tab);
 
     if(get(Meteor, 'settings.public.logging') === "debug") console.log("ObservationsPage[data]", data);
     return data;
@@ -279,8 +279,8 @@ export class ObservationsPage extends React.Component {
     }
 
     return (
-      <div id="observationsPage">
-        <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+      <PageCanvas id="observationsPage" headerHeight={headerHeight}>
+        <StyledCard height="auto" scrollable={true} margin={20}  >
             <CardHeader title="Observations" />
             <CardContent>
               <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
@@ -325,7 +325,7 @@ export class ObservationsPage extends React.Component {
               </TabPanel >
             </CardContent>            
         </StyledCard>
-      </div>
+      </PageCanvas>
     );
   }
 }

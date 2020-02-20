@@ -17,7 +17,7 @@ import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
 
 import { get, set } from 'lodash';
-
+import moment from 'moment';
 
 
 export class ObservationDetail extends React.Component {

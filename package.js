@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.1.0',
+  version: '6.1.4',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -12,21 +12,28 @@ Package.onUse(function (api) {
 
   api.use('meteor-base@1.4.0');
   api.use('ecmascript@0.13.0');
-
+  api.use('react-meteor-data');
+  api.use('session');
   api.use('mongo');
 
   api.use('aldeed:collection2@3.0.0');
   api.use('matb33:collection-hooks@0.7.15');
   api.use('clinical:hl7-resource-datatypes@4.0.5');
 
+  api.use('clinical:glass-ui@2.4.11')
+
   // schemas and cursors
   api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
   api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
   api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
   api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
+  api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Medications.js', ['client', 'server']);
   api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
   api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
   api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
@@ -46,6 +53,10 @@ Package.onUse(function (api) {
   api.export('CarePlanss');
   api.export('CarePlansSchema');
 
+  api.export('Composition');
+  api.export('Compositions');
+  api.export('CompositionSchema');
+
   api.export('Condition');
   api.export('Conditions');
   api.export('ConditionSchema');
@@ -57,6 +68,18 @@ Package.onUse(function (api) {
   api.export('Immunization');
   api.export('Immunizations');
   api.export('ImmunizationSchema');
+
+  api.export('Measure');
+  api.export('Measures');
+  api.export('MeasureSchema');
+
+  api.export('MeasureReport');
+  api.export('MeasureReports');
+  api.export('MeasureReportSchema');
+
+  api.export('Medication');
+  api.export('Medications');
+  api.export('MedicationSchema');
 
   api.export('MedicationOrder');
   api.export('MedicationOrders');
@@ -95,7 +118,8 @@ Package.onUse(function (api) {
 Npm.depends({
   "moment": "2.22.2",
   "lodash": "4.17.13",
-  "material-fhir-ui": "0.9.26",
+  "material-fhir-ui": "0.9.32",
+  "react-icons-kit": "1.3.1",
   "prop-types": "15.7.2",
   "react-mixin": "4.0.0",
   "simpl-schema": "1.5.3",

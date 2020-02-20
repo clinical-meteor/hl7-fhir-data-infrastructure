@@ -19,6 +19,8 @@ import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
+// import { Glass } from 'meteor/clinical:glass-ui'
+
 //=============================================================================================================================================
 // TABS
 
@@ -58,9 +60,9 @@ export class CarePlansPage extends React.Component {
       currentCarePlan: Session.get('selectedCarePlan')
     };
 
-    data.style = Glass.blur(data.style);
-    data.style.appbar = Glass.darkroom(data.style.appbar);
-    data.style.tab = Glass.darkroom(data.style.tab);
+    // data.style = Glass.blur(data.style);
+    // data.style.appbar = Glass.darkroom(data.style.appbar);
+    // data.style.tab = Glass.darkroom(data.style.tab);
 
     return data;
   }
@@ -76,26 +78,31 @@ export class CarePlansPage extends React.Component {
 
   render() {
     if(process.env.NODE_ENV === "test") console.log('In CarePlansPage render');
-    return (
-      <div id='carePlansPage'>
-        <PageCanvas>
-          <StyledCard height='auto'>
-            <CardHeader title='CarePlans' />
-            <CardContent>
-              <CarePlansTable />
 
-              {/* <Tabs id="carePlansPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-               <Tab className="carePlanListTab" label='CarePlans' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                <CarePlansTable />
-               </Tab>
-               <Tab className="carePlanDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                 <CarePlanDetail id='carePlanDetails' />
-               </Tab>
-             </Tabs> */}
-            </CardContent>
-          </StyledCard>
-        </PageCanvas>
-      </div>
+
+    let headerHeight = 64;
+    if(get(Meteor, 'settings.public.defaults.prominantHeader')){
+      headerHeight = 128;
+    }
+
+    return (
+      <PageCanvas id='carePlansPage' headerHeight={headerHeight}>
+        <StyledCard height='auto'>
+          <CardHeader title='CarePlans' />
+          <CardContent>
+            <CarePlansTable />
+
+            {/* <Tabs id="carePlansPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
+              <Tab className="carePlanListTab" label='CarePlans' onActive={this.handleActive} style={this.data.style.tab} value={1}>
+              <CarePlansTable />
+              </Tab>
+              <Tab className="carePlanDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
+                <CarePlanDetail id='carePlanDetails' />
+              </Tab>
+            </Tabs> */}
+          </CardContent>
+        </StyledCard>
+      </PageCanvas>
     );
   }
 }

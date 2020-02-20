@@ -9,15 +9,19 @@ import BundleTable from './client/bundles/BundleTable';
 import BundleDetail from './client/bundles/BundleDetail';
 
 import CarePlansPage from './client/carePlans/CarePlansPage';
-import CarePlanTable from './client/carePlans/CarePlanTable';
+import CarePlansTable from './client/carePlans/CarePlansTable';
 import CarePlanDetail from './client/carePlans/CarePlanDetail';
 
-import ConditionsPage from './client/condition/ConditionsPage';
-import ConditionTable from './client/condition/ConditionTable';
-import ConditionDetail from './client/condition/ConditionDetail';
+import CompositionsPage from './client/compositions/CompositionsPage';
+import CompositionsTable from './client/compositions/CompositionsTable';
+import CompositionDetail from './client/compositions/CompositionDetail';
+
+import ConditionsPage from './client/conditions/ConditionsPage';
+import ConditionsTable from './client/conditions/ConditionsTable';
+import ConditionDetail from './client/conditions/ConditionDetail';
 
 import DiagnosticReportsPage from './client/diagnosticReports/DiagnosticReportsPage';
-import DiagnosticReportTable from './client/diagnosticReports/DiagnosticReportTable';
+import DiagnosticReportsTable from './client/diagnosticReports/DiagnosticReportsTable';
 import DiagnosticReportDetail from './client/diagnosticReports/DiagnosticReportDetail';
 
 import EncountersPage from './client/encounters/EncountersPage';
@@ -25,30 +29,42 @@ import EncountersTable from './client/encounters/EncountersTable';
 import EncounterDetail from './client/encounters/EncounterDetail';
 
 import ImmunizationsPage from './client/immunizations/ImmunizationsPage';
-import ImmunizationTable from './client/immunizations/ImmunizationTable';
+import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
 import ImmunizationDetail from './client/immunizations/ImmunizationDetail';
 
+import MeasuresPage from './client/measures/MeasuresPage';
+import MeasuresTable from './client/measures/MeasuresTable';
+import MeasureDetail from './client/measures/MeasureDetail';
+
+import MeasureReportsPage from './client/measureReports/MeasureReportsPage';
+import MeasureReportsTable from './client/measureReports/MeasureReportsTable';
+import MeasureReportDetail from './client/measureReports/MeasureReportDetail';
+
+import MedicationsPage from './client/medications/MedicationsPage';
+import MedicationsTable from './client/medications/MedicationsTable';
+import MedicationDetail from './client/medications/MedicationDetail';
+
 import MedicationOrdersPage from './client/medicationOrders/MedicationOrdersPage';
-import MedicationOrderTable from './client/medicationOrders/MedicationOrderTable';
+import MedicationOrdersTable from './client/medicationOrders/MedicationOrdersTable';
 import MedicationOrderDetail from './client/medicationOrders/MedicationOrderDetail';
 
 import MedicationStatementsPage from './client/medicationStatements/MedicationStatementsPage';
-import MedicationStatementTable from './client/medicationStatements/MedicationStatementTable';
+import MedicationStatementsTable from './client/medicationStatements/MedicationStatementsTable';
 import MedicationStatementDetail from './client/medicationStatements/MedicationStatementDetail';
 
 import ObservationsPage from './client/observations/ObservationsPage';
-import ObservationTable from './client/observations/ObservationTable';
+import ObservationsTable from './client/observations/ObservationsTable';
 import ObservationDetail from './client/observations/ObservationDetail';
 
 // import PatientsPage from './client/patients/NewPatientsPage';
 import PatientsPage from './client/patients/PatientsPage';
 
 import PractitionersPage from './client/practitioners/PractitionersPage';
-import PractitionerTable from './client/practitioners/PractitionerTable';
+import PractitionersTable from './client/practitioners/PractitionersTable';
 import PractitionerDetail from './client/practitioners/PractitionerDetail';
 
 import ProceduresPage from './client/procedures/ProceduresPage';
-import ProcedureTable from './client/procedures/ProcedureTable';
+import ProceduresTable from './client/procedures/ProceduresTable';
 import ProcedureDetail from './client/procedures/ProcedureDetail';
 
 
@@ -66,6 +82,11 @@ var DynamicRoutes = [{
   'name': 'CarePlansPage',
   'path': '/careplans',
   'component': CarePlansPage,
+  'requireAuth': true
+}, {
+  'name': 'CompositionsPage',
+  'path': '/compositions',
+  'component': CompositionsPage,
   'requireAuth': true
 }, {
   'name': 'ConditionsPage',
@@ -86,6 +107,21 @@ var DynamicRoutes = [{
   'name': 'ImmunizationsPage',
   'path': '/immunizations',
   'component': ImmunizationsPage,
+  'requireAuth': true
+}, {
+  'name': 'MeasuresPage',
+  'path': '/measures',
+  'component': MeasuresPage,
+  'requireAuth': true
+}, {
+  'name': 'MeasureReportsPage',
+  'path': '/measure-reports',
+  'component': MeasureReportsPage,
+  'requireAuth': true
+}, {
+  'name': 'MedicationsPage',
+  'path': '/medications',
+  'component': MedicationsPage,
   'requireAuth': true
 }, {
   'name': 'MedicationOrdersPage',
@@ -144,6 +180,18 @@ var SidebarElements = [{
   'to': '/immunizations',
   'href': '/immunizations'
 }, {
+  'primaryText': 'Measures',
+  'to': '/measures',
+  'href': '/measures'
+}, {
+  'primaryText': 'Measure Reports',
+  'to': '/measure-reports',
+  'href': '/measure-reports'
+}, {
+  'primaryText': 'Medications',
+  'to': '/medications',
+  'href': '/medications'
+}, {
   'primaryText': 'MedicationOrders',
   'to': '/medication-orders',
   'href': '/medication-orders'
@@ -194,6 +242,10 @@ var AdminSidebarElements = [{
   'to': '/immunizations',
   'href': '/immunizations'
 }, {
+  'primaryText': 'Medications',
+  'to': '/medications',
+  'href': '/medications'
+}, {
   'primaryText': 'MedicationOrders',
   'to': '/medication-orders',
   'href': '/medication-orders'
@@ -235,47 +287,64 @@ export {
   BundleDetail,
 
   CarePlansPage,
-  CarePlanTable,
+  CarePlansTable,
   CarePlanDetail,
 
+  CompositionsPage,
+  CompositionsTable,
+  CompositionDetail,
+
   ConditionsPage,
-  ConditionTable,
+  ConditionsTable,
   ConditionDetail,
 
   DiagnosticReportsPage,
-  DiagnosticReportTable,
+  DiagnosticReportsTable,
   DiagnosticReportDetail,
 
   EncountersPage,
   EncounterTable,
   EncounterDetail,
 
-
   ImmunizationsPage,
-  ImmunizationTable,
+  ImmunizationsTable,
   ImmunizationDetail,
 
+  MeasuresPage,
+  MeasuresTable,
+  MeasureDetail,
+
+  MeasureReportsPage,
+  MeasureReportsTable,
+  MeasureReportDetail,
+
+  MedicationsPage,
+  MedicationsTable,
+  MedicationDetail,
+
   MedicationOrdersPage,
-  MedicationOrderTable,
+  MedicationOrdersTable,
   MedicationOrderDetail,
 
   MedicationStatementsPage,
-  MedicationStatementTable,
+  MedicationStatementsTable,
   MedicationStatementDetail,
 
   ObservationsPage,
-  ObservationTable,
+  ObservationsTable,
   ObservationDetail,
 
   PatientsPage,
 
   PractitionersPage,
-  PractitionerTable,
+  PractitionersTable,
   PractitionerDetail,
 
   ProceduresPage,
-  ProcedureTable,
+  ProceduresTable,
   ProcedureDetail
 };
+
+
 
 

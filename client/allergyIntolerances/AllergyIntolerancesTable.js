@@ -19,15 +19,16 @@ import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
-// import { Table } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { moment } from 'moment';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
-import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-import { GoTrashcan } from 'react-icons/go'
+import { Icon } from 'react-icons-kit'
+import { tag } from 'react-icons-kit/fa/tag'
+import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+
 
 export class AllergyIntolerancesTable extends React.Component {
 
@@ -265,8 +266,8 @@ export class AllergyIntolerancesTable extends React.Component {
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, allergyIntolerance)} />
-          <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, allergyIntolerance._id)} />  
+          <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, allergyIntolerance)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, allergyIntolerance._id)} />
         </TableCell>
       );      
     }
