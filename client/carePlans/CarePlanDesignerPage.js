@@ -11,12 +11,12 @@ import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
 
 // import AccountCircle from 'material-ui/svg-icons/action/account-circle';
 
-import { ActivitiesTable, GoalsTable } from 'meteor/clinical:hl7-resource-goal';
-import { MedicationsTable } from 'meteor/clinical:hl7-resource-medication';
-import { PatientTable } from 'meteor/clinical:hl7-resource-patient';
+import { ActivitiesTable, GoalsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { MedicationsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { PatientTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
-if(Package["clinical:hl7-resource-questionnaire"]){
-  import { QuestionnaireTable } from 'meteor/clinical:hl7-resource-questionnaire';
+if(Package["clinical:hl7-fhir-data-infrastructure"]){
+  import { QuestionnaireTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 }
 
 import { CarePlansTable } from './CarePlansTable';
@@ -269,7 +269,7 @@ export class CarePlanDesignerPage extends React.Component {
     }
     let questionnairesCard;
     if(get(Meteor, 'settings.public.modules.fhir.CarePlans.displayQuestionnairesCard') !== false){
-      if(Package["clinical:hl7-resource-questionnaire"]){
+      if(Package["clinical:hl7-fhir-data-infrastructure){
         questionnairesCard = <section id="questionnairesSection" style={style.indexCardPadding} >
         <StyledCard style={style.indexCard} >
           <CardHeader

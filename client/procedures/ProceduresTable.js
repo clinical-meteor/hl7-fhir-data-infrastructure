@@ -539,7 +539,7 @@ function ProceduresTable(props){
         <TableBody>
           { tableRows }
         </TableBody>
-      </Table>
+      </Table>      
       { paginationFooter }
     </div>
   );

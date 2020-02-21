@@ -279,7 +279,7 @@ export {
   DynamicRoutes, 
 
   AllergyIntolerancesPage,
-  AllergyIntoleranceTable,
+  AllergyIntolerancesTable,
   AllergyIntoleranceDetail,
 
   BundlesPage,
@@ -303,7 +303,7 @@ export {
   DiagnosticReportDetail,
 
   EncountersPage,
-  EncounterTable,
+  EncountersTable,
   EncounterDetail,
 
   ImmunizationsPage,

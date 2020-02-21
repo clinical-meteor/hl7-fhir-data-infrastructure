@@ -333,56 +333,58 @@ export class MeasuresPage extends React.Component {
       Session.set('measurePageTabIndex', newValue)
     }
 
-    return (
-      <div id="measuresPage" style={{paddingLeft: '100px', paddingRight: '100px', paddingBottom: '100px'}}>
-        <MuiThemeProvider theme={muiTheme} >
-          {/* <Container> */}
-            <StyledCard>
-              <CardHeader
-                title="Measures"
-              />
-              <CardContent>
+    let headerHeight = 64;
+    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
+      headerHeight = 148;
+    }
 
-                    <Tabs value={this.data.tabIndex} onChange={handleChange.bind(this)} aria-label="simple tabs example">
-                      <Tab label="History" />
-                      <Tab label="New" />
-                    </Tabs>
-                    <TabPanel value={this.data.tabIndex} index={0}>
-                      <MeasuresTable 
-                        hideIdentifier={true} 
-                        hideCheckboxes={true} 
-                        hideSubjects={false}
-                        noDataMessagePadding={100}
-                        actionButtonLabel="Send"
-                        measures={ this.data.measures }
-                        paginationLimit={10}
-                        hideSubjects={true}
-                        hideClassCode={false}
-                        hideReasonCode={false}
-                        hideReason={false}
-                        hideHistory={false}
-                        // appWidth={ Session.get('appWidth') }
-                        // onRowClick={ this.onTableRowClick }
-                        // onCellClick={ this.onTableCellClick }
-                        // onActionButtonClick={this.tableActionButtonClick}
-                        // onRemoveRecord={ this.onDeleteMeasure }
-                        // query={this.data.measuresTableQuery}
-                        />
-                    </TabPanel>
-                    <TabPanel value={this.data.tabIndex} index={1}>
-                      {/* <MeasureDetail 
-                        id='newMeasure' 
-                        displayDatePicker={true} 
-                        displayBarcodes={false}
-                        showHints={true}
-                        // onInsert={ this.onInsert }
-                        // measure={ this.data.selectedMeasure }
-                        // measureId={ this.data.selectedMeasureId } 
-                        // onDelete={ this.onDeleteMeasure }
-                        // onUpsert={ this.onUpsertMeasure }
-                        // onCancel={ this.onCancelUpsertMeasure } 
-                        /> */}
-                    </TabPanel>
+    return (
+      <PageCanvas id="measuresPage" headerHeight={headerHeight}>
+        <MuiThemeProvider theme={muiTheme} >
+          <StyledCard>
+            <CardHeader title="Measures" />
+            <CardContent>
+
+              <Tabs value={this.data.tabIndex} onChange={handleChange.bind(this)} aria-label="simple tabs example">
+                <Tab label="History" />
+                <Tab label="New" />
+              </Tabs>
+              <TabPanel value={this.data.tabIndex} index={0}>
+                <MeasuresTable 
+                  hideIdentifier={true} 
+                  hideCheckboxes={true} 
+                  hideSubjects={false}
+                  noDataMessagePadding={100}
+                  actionButtonLabel="Send"
+                  measures={ this.data.measures }
+                  paginationLimit={10}
+                  hideSubjects={true}
+                  hideClassCode={false}
+                  hideReasonCode={false}
+                  hideReason={false}
+                  hideHistory={false}
+                  // appWidth={ Session.get('appWidth') }
+                  // onRowClick={ this.onTableRowClick }
+                  // onCellClick={ this.onTableCellClick }
+                  // onActionButtonClick={this.tableActionButtonClick}
+                  // onRemoveRecord={ this.onDeleteMeasure }
+                  // query={this.data.measuresTableQuery}
+                  />
+              </TabPanel>
+              <TabPanel value={this.data.tabIndex} index={1}>
+                {/* <MeasureDetail 
+                  id='newMeasure' 
+                  displayDatePicker={true} 
+                  displayBarcodes={false}
+                  showHints={true}
+                  // onInsert={ this.onInsert }
+                  // measure={ this.data.selectedMeasure }
+                  // measureId={ this.data.selectedMeasureId } 
+                  // onDelete={ this.onDeleteMeasure }
+                  // onUpsert={ this.onUpsertMeasure }
+                  // onCancel={ this.onCancelUpsertMeasure } 
+                  /> */}
+              </TabPanel>
 
                 {/* <Tabs id="measuresPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
                   <Tab className="newMeasureTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0} >
@@ -436,9 +438,8 @@ export class MeasuresPage extends React.Component {
                 </Tabs> */}
               </CardContent>
             </StyledCard>
-          {/* </Container> */}
         </MuiThemeProvider>
-      </div>
+      </PageCanvas>
     );
   }
 }
