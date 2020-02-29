@@ -56,7 +56,7 @@
 // import ObservationsTable from './client/observations/ObservationsTable';
 // import ObservationDetail from './client/observations/ObservationDetail';
 
-// import PatientsPage from './client/patients/PatientsPage';
+import PatientsPage from './client/patients/PatientsPage';
 
 // import PractitionersPage from './client/practitioners/PractitionersPage';
 // import PractitionersTable from './client/practitioners/PractitionersTable';
@@ -138,10 +138,10 @@ var DynamicRoutes = [{
 //   'component': ObservationsPage,
 //   'requireAuth': true
 // }, {
-//   'name': 'PatientPage',
-//   'path': '/patients',
-//   'component': PatientsPage,
-//   'requireAuth': true
+  'name': 'PatientPage',
+  'path': '/patients',
+  'component': PatientsPage,
+  'requireAuth': true
 // }, {
 //   'name': 'PractitionersPage',
 //   'path': '/practitioners',
@@ -333,7 +333,7 @@ export {
   // ObservationsTable,
   // ObservationDetail,
 
-  // PatientsPage,
+  PatientsPage
 
   // PractitionersPage,
   // PractitionersTable,
