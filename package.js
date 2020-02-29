@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.1.9',
+  version: '6.1.10',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -12,10 +12,12 @@ Package.onUse(function (api) {
 
   api.use('meteor-base@1.4.0');
   api.use('ecmascript@0.13.0');
-  api.use('react-meteor-data');
   api.use('session');
   api.use('mongo');
-
+  api.use('http');
+  api.use('session');
+  api.use('react-meteor-data@0.2.15');
+  
   api.use('aldeed:collection2@3.0.0');
   api.use('matb33:collection-hooks@0.7.15');
   api.use('clinical:hl7-resource-datatypes@4.0.5');
@@ -23,23 +25,23 @@ Package.onUse(function (api) {
   // api.use('clinical:glass-ui@2.4.11')
 
   // schemas and cursors
-  api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
-  api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
-  api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
-  api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Medications.js', ['client', 'server']);
-  api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
-  api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Medications.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
 
   // api.export('AllergyIntolerance');
   // api.export('AllergyIntolerances');
@@ -97,9 +99,9 @@ Package.onUse(function (api) {
   // api.export('Observations');
   // api.export('ObservationSchema');
 
-  api.export('Patient');
-  api.export('Patients');
-  api.export('PatientSchema');
+  // api.export('Patient');
+  // api.export('Patients');
+  // api.export('PatientSchema');
 
   // api.export('Practitioner');
   // api.export('Practitioners');
@@ -110,11 +112,9 @@ Package.onUse(function (api) {
   // api.export('ProcedureSchema');
 
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
-  api.use('http');
-  api.use('session');
-  api.use('react-meteor-data@0.2.15');
 
-  api.mainModule('index.jsx', 'client');
+
+  // api.mainModule('index.jsx', 'client');
 
 });
 
