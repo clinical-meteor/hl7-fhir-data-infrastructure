@@ -269,7 +269,7 @@ export class CarePlanDesignerPage extends React.Component {
     }
     let questionnairesCard;
     if(get(Meteor, 'settings.public.modules.fhir.CarePlans.displayQuestionnairesCard') !== false){
-      if(Package["clinical:hl7-fhir-data-infrastructure){
+      if(Package["clinical:hl7-fhir-data-infrastructure"]){
         questionnairesCard = <section id="questionnairesSection" style={style.indexCardPadding} >
         <StyledCard style={style.indexCard} >
           <CardHeader
