@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.1.11',
+  version: '6.1.12',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -10,17 +10,17 @@ Package.describe({
 Package.onUse(function (api) {
   api.versionsFrom('1.1.0.3');
 
-  api.use('meteor-base@1.4.0');
-  api.use('ecmascript@0.13.0');
-  api.use('session');
-  api.use('mongo');
-  api.use('http');
-  api.use('session');
-  api.use('react-meteor-data@0.2.15');
+  // api.use('meteor-base@1.4.0');
+  // api.use('ecmascript@0.13.0');
+  // api.use('session');
+  // api.use('mongo');
+  // api.use('http');
+  // api.use('session');
+  // api.use('react-meteor-data@0.2.15');
   
-  api.use('aldeed:collection2@3.0.0');
-  api.use('matb33:collection-hooks@0.7.15');
-  api.use('clinical:hl7-resource-datatypes@4.0.5');
+  // api.use('aldeed:collection2@3.0.0');
+  // api.use('matb33:collection-hooks@0.7.15');
+  // api.use('clinical:hl7-resource-datatypes@4.0.5');
 
   // api.use('clinical:glass-ui@2.4.11')
 
@@ -120,13 +120,13 @@ Package.onUse(function (api) {
 
 
 Npm.depends({
-  "moment": "2.22.2",
-  "lodash": "4.17.13",
+  // "moment": "2.22.2",
+  // "lodash": "4.17.13",
   // "material-fhir-ui": "0.9.32",
   // "react-icons-kit": "1.3.1",
-  "prop-types": "15.7.2",
-  "react-mixin": "4.0.0",
-  "simpl-schema": "1.5.3",
-  "validator": "10.9.0",
+  // "prop-types": "15.7.2",
+  // "react-mixin": "4.0.0",
+  // "simpl-schema": "1.5.3",
+  // "validator": "10.9.0",
 });
 
