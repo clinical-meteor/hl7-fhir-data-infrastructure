@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.1.21',
+  version: '6.1.22',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -42,73 +42,73 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
   api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
 
-  // api.export('AllergyIntolerance');
-  // api.export('AllergyIntolerances');
-  // api.export('AllergyIntoleranceSchema');
+  api.export('AllergyIntolerance');
+  api.export('AllergyIntolerances');
+  api.export('AllergyIntoleranceSchema');
 
-  // api.export('Bundle');
-  // api.export('Bundles');
-  // api.export('BundleSchema');
+  api.export('Bundle');
+  api.export('Bundles');
+  api.export('BundleSchema');
 
-  // api.export('CarePlans');
-  // api.export('CarePlanss');
-  // api.export('CarePlansSchema');
+  api.export('CarePlans');
+  api.export('CarePlanss');
+  api.export('CarePlansSchema');
 
-  // api.export('Composition');
-  // api.export('Compositions');
-  // api.export('CompositionSchema');
+  api.export('Composition');
+  api.export('Compositions');
+  api.export('CompositionSchema');
 
-  // api.export('Condition');
-  // api.export('Conditions');
-  // api.export('ConditionSchema');
+  api.export('Condition');
+  api.export('Conditions');
+  api.export('ConditionSchema');
 
-  // api.export('DiagnosticReport');
-  // api.export('DiagnosticReports');
-  // api.export('DiagnosticReportSchema');
+  api.export('DiagnosticReport');
+  api.export('DiagnosticReports');
+  api.export('DiagnosticReportSchema');
 
-  // api.export('Encounter');
-  // api.export('Encounters');
-  // api.export('EncounterSchema');
+  api.export('Encounter');
+  api.export('Encounters');
+  api.export('EncounterSchema');
 
-  // api.export('Immunization');
-  // api.export('Immunizations');
-  // api.export('ImmunizationSchema');
+  api.export('Immunization');
+  api.export('Immunizations');
+  api.export('ImmunizationSchema');
 
-  // api.export('Measure');
-  // api.export('Measures');
-  // api.export('MeasureSchema');
+  api.export('Measure');
+  api.export('Measures');
+  api.export('MeasureSchema');
 
-  // api.export('MeasureReport');
-  // api.export('MeasureReports');
-  // api.export('MeasureReportSchema');
+  api.export('MeasureReport');
+  api.export('MeasureReports');
+  api.export('MeasureReportSchema');
 
-  // api.export('Medication');
-  // api.export('Medications');
-  // api.export('MedicationSchema');
+  api.export('Medication');
+  api.export('Medications');
+  api.export('MedicationSchema');
 
-  // api.export('MedicationOrder');
-  // api.export('MedicationOrders');
-  // api.export('MedicationOrderSchema');
+  api.export('MedicationOrder');
+  api.export('MedicationOrders');
+  api.export('MedicationOrderSchema');
 
-  // api.export('MedicationStatement');
-  // api.export('MedicationStatements');
-  // api.export('MedicationStatementSchema');
+  api.export('MedicationStatement');
+  api.export('MedicationStatements');
+  api.export('MedicationStatementSchema');
 
-  // api.export('Observation');
-  // api.export('Observations');
-  // api.export('ObservationSchema');
+  api.export('Observation');
+  api.export('Observations');
+  api.export('ObservationSchema');
 
-  // api.export('Patient');
-  // api.export('Patients');
-  // api.export('PatientSchema');
+  api.export('Patient');
+  api.export('Patients');
+  api.export('PatientSchema');
 
-  // api.export('Practitioner');
-  // api.export('Practitioners');
-  // api.export('PractitionerSchema');
+  api.export('Practitioner');
+  api.export('Practitioners');
+  api.export('PractitionerSchema');
 
-  // api.export('Procedure');
-  // api.export('Procedures');
-  // api.export('ProcedureSchema');
+  api.export('Procedure');
+  api.export('Procedures');
+  api.export('ProcedureSchema');
 
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
 
