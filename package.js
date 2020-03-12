@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.1.19',
+  version: '6.1.20',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -19,7 +19,7 @@ Package.onUse(function (api) {
   
   api.use('aldeed:collection2@3.0.6');
   api.use('matb33:collection-hooks@1.0.1');
-  // api.use('clinical:hl7-resource-datatypes@4.0.5');
+  api.use('clinical:hl7-resource-datatypes@4.0.5');
 
   // api.use('clinical:glass-ui@2.4.11')
 
