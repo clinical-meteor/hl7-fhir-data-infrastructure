@@ -108,16 +108,16 @@ var DynamicRoutes = [{
 //   'component': ImmunizationsPage,
 //   'requireAuth': true
 // }, {
-//   'name': 'MeasuresPage',
-//   'path': '/measures',
-//   'component': MeasuresPage,
-//   'requireAuth': true
-// }, {
-//   'name': 'MeasureReportsPage',
-//   'path': '/measure-reports',
-//   'component': MeasureReportsPage,
-//   'requireAuth': true
-// }, {
+  'name': 'MeasuresPage',
+  'path': '/measures',
+  'component': MeasuresPage,
+  'requireAuth': true
+}, {
+  'name': 'MeasureReportsPage',
+  'path': '/measure-reports',
+  'component': MeasureReportsPage,
+  'requireAuth': true
+}, {
   'name': 'MedicationsPage',
   'path': '/medications',
   'component': MedicationsPage,
@@ -309,13 +309,13 @@ export {
   // ImmunizationsTable,
   // ImmunizationDetail,
 
-  // MeasuresPage,
-  // MeasuresTable,
-  // MeasureDetail,
+  MeasuresPage,
+  MeasuresTable,
+  MeasureDetail,
 
-  // MeasureReportsPage,
-  // MeasureReportsTable,
-  // MeasureReportDetail,
+  MeasureReportsPage,
+  MeasureReportsTable,
+  MeasureReportDetail,
 
   MedicationsPage,
   MedicationsTable,
