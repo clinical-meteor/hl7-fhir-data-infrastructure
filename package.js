@@ -18,7 +18,7 @@ Package.onUse(function (api) {
   api.use('react-meteor-data@0.2.15');
   
   api.use('aldeed:collection2@3.0.6');
-  // api.use('matb33:collection-hooks@0.7.15');
+  api.use('matb33:collection-hooks@1.0.1');
   // api.use('clinical:hl7-resource-datatypes@4.0.5');
 
   // api.use('clinical:glass-ui@2.4.11')
