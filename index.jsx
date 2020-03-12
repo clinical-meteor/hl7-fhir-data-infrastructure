@@ -73,21 +73,21 @@ var DynamicRoutes = [{
   'component': AllergyIntolerancesPage,
   'requireAuth': true
 }, {
-//   'name': 'BundlePage',
-//   'path': '/bundles',
-//   'component': BundlesPage,
-//   'requireAuth': true
-// }, {
+  'name': 'BundlePage',
+  'path': '/bundles',
+  'component': BundlesPage,
+  'requireAuth': true
+}, {
 //   'name': 'CarePlansPage',
 //   'path': '/careplans',
 //   'component': CarePlansPage,
 //   'requireAuth': true
 // }, {
-//   'name': 'CompositionsPage',
-//   'path': '/compositions',
-//   'component': CompositionsPage,
-//   'requireAuth': true
-// }, {
+  'name': 'CompositionsPage',
+  'path': '/compositions',
+  'component': CompositionsPage,
+  'requireAuth': true
+}, {
 //   'name': 'ConditionsPage',
 //   'path': '/conditions',
 //   'component': ConditionsPage,
@@ -281,17 +281,17 @@ export {
   AllergyIntolerancesTable,
   AllergyIntoleranceDetail,
 
-  // BundlesPage,
-  // BundleTable,
-  // BundleDetail,
+  BundlesPage,
+  BundleTable,
+  BundleDetail,
 
   // CarePlansPage,
   // CarePlansTable,
   // CarePlanDetail,
 
-  // CompositionsPage,
-  // CompositionsTable,
-  // CompositionDetail,
+  CompositionsPage,
+  CompositionsTable,
+  CompositionDetail,
 
   // ConditionsPage,
   // ConditionsTable,
