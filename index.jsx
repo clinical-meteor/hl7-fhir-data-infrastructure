@@ -68,11 +68,11 @@ import ProcedureDetail from './client/procedures/ProcedureDetail';
 
 
 var DynamicRoutes = [{
-//   'name': 'AllergyIntolerancesPage',
-//   'path': '/allergies',
-//   'component': AllergyIntolerancesPage,
-//   'requireAuth': true
-// }, {
+  'name': 'AllergyIntolerancesPage',
+  'path': '/allergies',
+  'component': AllergyIntolerancesPage,
+  'requireAuth': true
+}, {
 //   'name': 'BundlePage',
 //   'path': '/bundles',
 //   'component': BundlesPage,
@@ -103,11 +103,11 @@ var DynamicRoutes = [{
 //   'component': EncountersPage,
 //   'requireAuth': true
 // }, {
-//   'name': 'ImmunizationsPage',
-//   'path': '/immunizations',
-//   'component': ImmunizationsPage,
-//   'requireAuth': true
-// }, {
+  'name': 'ImmunizationsPage',
+  'path': '/immunizations',
+  'component': ImmunizationsPage,
+  'requireAuth': true
+}, {
   'name': 'MeasuresPage',
   'path': '/measures',
   'component': MeasuresPage,
@@ -277,9 +277,9 @@ export {
   AdminSidebarElements, 
   DynamicRoutes, 
 
-  // AllergyIntolerancesPage,
-  // AllergyIntolerancesTable,
-  // AllergyIntoleranceDetail,
+  AllergyIntolerancesPage,
+  AllergyIntolerancesTable,
+  AllergyIntoleranceDetail,
 
   // BundlesPage,
   // BundleTable,
@@ -305,9 +305,9 @@ export {
   // EncountersTable,
   // EncounterDetail,
 
-  // ImmunizationsPage,
-  // ImmunizationsTable,
-  // ImmunizationDetail,
+  ImmunizationsPage,
+  ImmunizationsTable,
+  ImmunizationDetail,
 
   MeasuresPage,
   MeasuresTable,
