@@ -68,71 +68,71 @@ import ProcedureDetail from './client/procedures/ProcedureDetail';
 
 
 var DynamicRoutes = [{
-  'name': 'AllergyIntolerancesPage',
-  'path': '/allergies',
-  'component': AllergyIntolerancesPage,
-  'requireAuth': true
-}, {
-  'name': 'BundlePage',
-  'path': '/bundles',
-  'component': BundlesPage,
-  'requireAuth': true
-}, {
-  'name': 'CarePlansPage',
-  'path': '/careplans',
-  'component': CarePlansPage,
-  'requireAuth': true
-}, {
-  'name': 'CompositionsPage',
-  'path': '/compositions',
-  'component': CompositionsPage,
-  'requireAuth': true
-}, {
-  'name': 'ConditionsPage',
-  'path': '/conditions',
-  'component': ConditionsPage,
-  'requireAuth': true
-}, {
-  'name': 'DiagnosticReportsPage',
-  'path': '/diagnostic-reports',
-  'component': DiagnosticReportsPage,
-  'requireAuth': true
-}, {
-  'name': 'EncountersPage',
-  'path': '/encounters',
-  'component': EncountersPage,
-  'requireAuth': true
-}, {
-  'name': 'ImmunizationsPage',
-  'path': '/immunizations',
-  'component': ImmunizationsPage,
-  'requireAuth': true
-}, {
-  'name': 'MeasuresPage',
-  'path': '/measures',
-  'component': MeasuresPage,
-  'requireAuth': true
-}, {
-  'name': 'MeasureReportsPage',
-  'path': '/measure-reports',
-  'component': MeasureReportsPage,
-  'requireAuth': true
-}, {
-  'name': 'MedicationsPage',
-  'path': '/medications',
-  'component': MedicationsPage,
-  'requireAuth': true
-}, {
-  'name': 'MedicationOrdersPage',
-  'path': '/medication-orders',
-  'component': MedicationOrdersPage,
-  'requireAuth': true
-}, {
-  'name': 'MedicationStatementsPage',
-  'path': '/medication-statements',
-  'component': MedicationStatementsPage,
-  'requireAuth': true
-}, {
+//   'name': 'AllergyIntolerancesPage',
+//   'path': '/allergies',
+//   'component': AllergyIntolerancesPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'BundlePage',
+//   'path': '/bundles',
+//   'component': BundlesPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'CarePlansPage',
+//   'path': '/careplans',
+//   'component': CarePlansPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'CompositionsPage',
+//   'path': '/compositions',
+//   'component': CompositionsPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'ConditionsPage',
+//   'path': '/conditions',
+//   'component': ConditionsPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'DiagnosticReportsPage',
+//   'path': '/diagnostic-reports',
+//   'component': DiagnosticReportsPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'EncountersPage',
+//   'path': '/encounters',
+//   'component': EncountersPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'ImmunizationsPage',
+//   'path': '/immunizations',
+//   'component': ImmunizationsPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'MeasuresPage',
+//   'path': '/measures',
+//   'component': MeasuresPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'MeasureReportsPage',
+//   'path': '/measure-reports',
+//   'component': MeasureReportsPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'MedicationsPage',
+//   'path': '/medications',
+//   'component': MedicationsPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'MedicationOrdersPage',
+//   'path': '/medication-orders',
+//   'component': MedicationOrdersPage,
+//   'requireAuth': true
+// }, {
+//   'name': 'MedicationStatementsPage',
+//   'path': '/medication-statements',
+//   'component': MedicationStatementsPage,
+//   'requireAuth': true
+// }, {
   'name': 'ObservationsPage',
   'path': '/observations',
   'component': ObservationsPage,
@@ -142,11 +142,11 @@ var DynamicRoutes = [{
   'path': '/patients',
   'component': PatientsPage,
   'requireAuth': true
-}, {
-  'name': 'PractitionersPage',
-  'path': '/practitioners',
-  'component': PractitionersPage,
-  'requireAuth': true
+// }, {
+//   'name': 'PractitionersPage',
+//   'path': '/practitioners',
+//   'component': PractitionersPage,
+//   'requireAuth': true
 }, {
   'name': 'ProceduresPage',
   'path': '/procedures',
@@ -277,57 +277,57 @@ export {
   AdminSidebarElements, 
   DynamicRoutes, 
 
-  AllergyIntolerancesPage,
-  AllergyIntolerancesTable,
-  AllergyIntoleranceDetail,
+  // AllergyIntolerancesPage,
+  // AllergyIntolerancesTable,
+  // AllergyIntoleranceDetail,
 
-  BundlesPage,
-  BundleTable,
-  BundleDetail,
+  // BundlesPage,
+  // BundleTable,
+  // BundleDetail,
 
-  CarePlansPage,
-  CarePlansTable,
-  CarePlanDetail,
+  // CarePlansPage,
+  // CarePlansTable,
+  // CarePlanDetail,
 
-  CompositionsPage,
-  CompositionsTable,
-  CompositionDetail,
+  // CompositionsPage,
+  // CompositionsTable,
+  // CompositionDetail,
 
-  ConditionsPage,
-  ConditionsTable,
-  ConditionDetail,
+  // ConditionsPage,
+  // ConditionsTable,
+  // ConditionDetail,
 
-  DiagnosticReportsPage,
-  DiagnosticReportsTable,
-  DiagnosticReportDetail,
+  // DiagnosticReportsPage,
+  // DiagnosticReportsTable,
+  // DiagnosticReportDetail,
 
-  EncountersPage,
-  EncountersTable,
-  EncounterDetail,
+  // EncountersPage,
+  // EncountersTable,
+  // EncounterDetail,
 
-  ImmunizationsPage,
-  ImmunizationsTable,
-  ImmunizationDetail,
+  // ImmunizationsPage,
+  // ImmunizationsTable,
+  // ImmunizationDetail,
 
-  MeasuresPage,
-  MeasuresTable,
-  MeasureDetail,
+  // MeasuresPage,
+  // MeasuresTable,
+  // MeasureDetail,
 
-  MeasureReportsPage,
-  MeasureReportsTable,
-  MeasureReportDetail,
+  // MeasureReportsPage,
+  // MeasureReportsTable,
+  // MeasureReportDetail,
 
-  MedicationsPage,
-  MedicationsTable,
-  MedicationDetail,
+  // MedicationsPage,
+  // MedicationsTable,
+  // MedicationDetail,
 
-  MedicationOrdersPage,
-  MedicationOrdersTable,
-  MedicationOrderDetail,
+  // MedicationOrdersPage,
+  // MedicationOrdersTable,
+  // MedicationOrderDetail,
 
-  MedicationStatementsPage,
-  MedicationStatementsTable,
-  MedicationStatementDetail,
+  // MedicationStatementsPage,
+  // MedicationStatementsTable,
+  // MedicationStatementDetail,
 
   ObservationsPage,
   ObservationsTable,
@@ -335,9 +335,9 @@ export {
 
   PatientsPage,
 
-  PractitionersPage,
-  PractitionersTable,
-  PractitionerDetail,
+  // PractitionersPage,
+  // PractitionersTable,
+  // PractitionerDetail,
 
   ProceduresPage,
   ProceduresTable,
