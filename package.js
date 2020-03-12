@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.1.23',
+  version: '6.1.24',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -20,8 +20,6 @@ Package.onUse(function (api) {
   api.use('aldeed:collection2@3.0.6');
   api.use('matb33:collection-hooks@1.0.1');
   api.use('clinical:hl7-resource-datatypes@4.0.5');
-
-  // api.use('clinical:glass-ui@2.4.11')
 
   // schemas and cursors
   api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
@@ -113,8 +111,7 @@ Package.onUse(function (api) {
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
 
 
-  // api.mainModule('index.jsx', 'client');
-
+  api.mainModule('index.jsx', 'client');
 });
 
 
