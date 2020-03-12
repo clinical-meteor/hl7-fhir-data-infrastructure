@@ -93,10 +93,10 @@ var DynamicRoutes = [{
   'component': ConditionsPage,
   'requireAuth': true
 }, {
-//   'name': 'DiagnosticReportsPage',
-//   'path': '/diagnostic-reports',
-//   'component': DiagnosticReportsPage,
-//   'requireAuth': true
+  'name': 'DiagnosticReportsPage',
+  'path': '/diagnostic-reports',
+  'component': DiagnosticReportsPage,
+  'requireAuth': true
 }, {
   'name': 'EncountersPage',
   'path': '/encounters',
@@ -297,9 +297,9 @@ export {
   ConditionsTable,
   ConditionDetail,
 
-  // DiagnosticReportsPage,
-  // DiagnosticReportsTable,
-  // DiagnosticReportDetail,
+  DiagnosticReportsPage,
+  DiagnosticReportsTable,
+  DiagnosticReportDetail,
 
   EncountersPage,
   EncountersTable,
