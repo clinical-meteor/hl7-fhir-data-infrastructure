@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.1.20',
+  version: '6.1.21',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -24,23 +24,23 @@ Package.onUse(function (api) {
   // api.use('clinical:glass-ui@2.4.11')
 
   // schemas and cursors
-  // api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Medications.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
+  api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
+  api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
+  api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Medications.js', ['client', 'server']);
+  api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
+  api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
 
   // api.export('AllergyIntolerance');
   // api.export('AllergyIntolerances');
