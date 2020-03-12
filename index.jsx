@@ -97,12 +97,12 @@ var DynamicRoutes = [{
 //   'path': '/diagnostic-reports',
 //   'component': DiagnosticReportsPage,
 //   'requireAuth': true
-// }, {
-//   'name': 'EncountersPage',
-//   'path': '/encounters',
-//   'component': EncountersPage,
-//   'requireAuth': true
-// }, {
+}, {
+  'name': 'EncountersPage',
+  'path': '/encounters',
+  'component': EncountersPage,
+  'requireAuth': true
+}, {
   'name': 'ImmunizationsPage',
   'path': '/immunizations',
   'component': ImmunizationsPage,
@@ -301,9 +301,9 @@ export {
   // DiagnosticReportsTable,
   // DiagnosticReportDetail,
 
-  // EncountersPage,
-  // EncountersTable,
-  // EncounterDetail,
+  EncountersPage,
+  EncountersTable,
+  EncounterDetail,
 
   ImmunizationsPage,
   ImmunizationsTable,
