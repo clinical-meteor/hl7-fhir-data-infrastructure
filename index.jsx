@@ -78,11 +78,11 @@ var DynamicRoutes = [{
   'component': BundlesPage,
   'requireAuth': true
 }, {
-//   'name': 'CarePlansPage',
-//   'path': '/careplans',
-//   'component': CarePlansPage,
-//   'requireAuth': true
-// }, {
+  'name': 'CarePlansPage',
+  'path': '/careplans',
+  'component': CarePlansPage,
+  'requireAuth': true
+}, {
   'name': 'CompositionsPage',
   'path': '/compositions',
   'component': CompositionsPage,
@@ -285,9 +285,9 @@ export {
   BundleTable,
   BundleDetail,
 
-  // CarePlansPage,
-  // CarePlansTable,
-  // CarePlanDetail,
+  CarePlansPage,
+  CarePlansTable,
+  CarePlanDetail,
 
   CompositionsPage,
   CompositionsTable,
