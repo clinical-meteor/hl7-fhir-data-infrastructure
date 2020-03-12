@@ -52,9 +52,9 @@
 // import MedicationStatementsTable from './client/medicationStatements/MedicationStatementsTable';
 // import MedicationStatementDetail from './client/medicationStatements/MedicationStatementDetail';
 
-// import ObservationsPage from './client/observations/ObservationsPage';
-// import ObservationsTable from './client/observations/ObservationsTable';
-// import ObservationDetail from './client/observations/ObservationDetail';
+import ObservationsPage from './client/observations/ObservationsPage';
+import ObservationsTable from './client/observations/ObservationsTable';
+import ObservationDetail from './client/observations/ObservationDetail';
 
 import PatientsPage from './client/patients/PatientsPage';
 
@@ -133,11 +133,11 @@ var DynamicRoutes = [{
 //   'component': MedicationStatementsPage,
 //   'requireAuth': true
 // }, {
-//   'name': 'ObservationsPage',
-//   'path': '/observations',
-//   'component': ObservationsPage,
-//   'requireAuth': true
-// }, {
+  'name': 'ObservationsPage',
+  'path': '/observations',
+  'component': ObservationsPage,
+  'requireAuth': true
+}, {
   'name': 'PatientPage',
   'path': '/patients',
   'component': PatientsPage,
@@ -329,9 +329,9 @@ export {
   // MedicationStatementsTable,
   // MedicationStatementDetail,
 
-  // ObservationsPage,
-  // ObservationsTable,
-  // ObservationDetail,
+  ObservationsPage,
+  ObservationsTable,
+  ObservationDetail,
 
   PatientsPage
 
