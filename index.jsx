@@ -142,11 +142,11 @@ var DynamicRoutes = [{
   'path': '/patients',
   'component': PatientsPage,
   'requireAuth': true
-// }, {
-//   'name': 'PractitionersPage',
-//   'path': '/practitioners',
-//   'component': PractitionersPage,
-//   'requireAuth': true
+}, {
+  'name': 'PractitionersPage',
+  'path': '/practitioners',
+  'component': PractitionersPage,
+  'requireAuth': true
 }, {
   'name': 'ProceduresPage',
   'path': '/procedures',
@@ -335,9 +335,9 @@ export {
 
   PatientsPage,
 
-  // PractitionersPage,
-  // PractitionersTable,
-  // PractitionerDetail,
+  PractitionersPage,
+  PractitionersTable,
+  PractitionerDetail,
 
   ProceduresPage,
   ProceduresTable,
