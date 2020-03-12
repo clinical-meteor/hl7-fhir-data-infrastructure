@@ -118,21 +118,21 @@ var DynamicRoutes = [{
 //   'component': MeasureReportsPage,
 //   'requireAuth': true
 // }, {
-//   'name': 'MedicationsPage',
-//   'path': '/medications',
-//   'component': MedicationsPage,
-//   'requireAuth': true
-// }, {
-//   'name': 'MedicationOrdersPage',
-//   'path': '/medication-orders',
-//   'component': MedicationOrdersPage,
-//   'requireAuth': true
-// }, {
-//   'name': 'MedicationStatementsPage',
-//   'path': '/medication-statements',
-//   'component': MedicationStatementsPage,
-//   'requireAuth': true
-// }, {
+  'name': 'MedicationsPage',
+  'path': '/medications',
+  'component': MedicationsPage,
+  'requireAuth': true
+}, {
+  'name': 'MedicationOrdersPage',
+  'path': '/medication-orders',
+  'component': MedicationOrdersPage,
+  'requireAuth': true
+}, {
+  'name': 'MedicationStatementsPage',
+  'path': '/medication-statements',
+  'component': MedicationStatementsPage,
+  'requireAuth': true
+}, {
   'name': 'ObservationsPage',
   'path': '/observations',
   'component': ObservationsPage,
@@ -317,17 +317,17 @@ export {
   // MeasureReportsTable,
   // MeasureReportDetail,
 
-  // MedicationsPage,
-  // MedicationsTable,
-  // MedicationDetail,
+  MedicationsPage,
+  MedicationsTable,
+  MedicationDetail,
 
-  // MedicationOrdersPage,
-  // MedicationOrdersTable,
-  // MedicationOrderDetail,
+  MedicationOrdersPage,
+  MedicationOrdersTable,
+  MedicationOrderDetail,
 
-  // MedicationStatementsPage,
-  // MedicationStatementsTable,
-  // MedicationStatementDetail,
+  MedicationStatementsPage,
+  MedicationStatementsTable,
+  MedicationStatementDetail,
 
   ObservationsPage,
   ObservationsTable,
