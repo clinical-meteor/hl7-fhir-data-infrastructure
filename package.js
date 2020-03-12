@@ -110,7 +110,7 @@ Package.onUse(function (api) {
 
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
 
-  // api.mainModule('index.jsx', 'client');
+  api.mainModule('index.jsx', 'client');
 });
 
 
