@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.1.25',
+  version: '6.1.26',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -120,8 +120,8 @@ Npm.depends({
   "prop-types": "15.7.2",
   "react-mixin": "4.0.0",
   "validator": "10.9.0",
-  "simpl-schema": "1.5.3"
-  // "material-fhir-ui": "0.9.32",
+  "simpl-schema": "1.5.3",
+  "material-fhir-ui": "0.9.32"
   // "react-icons-kit": "1.3.1",
 });
 
