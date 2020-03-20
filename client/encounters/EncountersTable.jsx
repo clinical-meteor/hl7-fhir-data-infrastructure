@@ -55,7 +55,7 @@ let styles = {
 }
 
 
-flattenEncounter = function(encounter, dateFormat){
+flattenEncounter = function(encounter, internalDateFormat){
   let result = {
     _id: '',
     meta: '',
@@ -73,8 +73,8 @@ flattenEncounter = function(encounter, dateFormat){
     duration: ''
   };
 
-  if(!dateFormat){
-    dateFormat = get(Meteor, "settings.public.defaults.dateFormat", "YYYY-MM-DD");
+  if(!internalDateFormat){
+    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
   }
 
   result._id =  get(encounter, 'id') ? get(encounter, 'id') : get(encounter, '_id');
@@ -113,10 +113,25 @@ flattenEncounter = function(encounter, dateFormat){
   result.statusHistory = statusHistory.length;
 
   let momentStart = moment(get(encounter, 'period.start', ''))
-  let momentEnd = moment(get(encounter, 'period.end', ''))
+  if(get(encounter, 'period.start')){
+    momentStart = moment(get(encounter, 'period.start', ''))
+  } else if(get(encounter, 'performedPeriod.start')){
+    momentStart = moment(get(encounter, 'performedPeriod.start', ''))
+  }
+  if(momentStart){
+    result.periodStart = momentStart.format(internalDateFormat);
+  } 
 
-  result.periodStart = momentStart.format(dateFormat);
-  result.periodEnd = momentEnd.format(dateFormat);
+
+  let momentEnd;
+  if(get(encounter, 'period.end')){
+    momentEnd = moment(get(encounter, 'period.end', ''))
+  } else if(get(encounter, 'performedPeriod.end')){
+    momentEnd = moment(get(encounter, 'performedPeriod.end', ''))
+  }
+  if(momentEnd){
+    result.periodEnd = momentEnd.format(internalDateFormat);
+  } 
 
   if(momentStart && momentEnd){
     result.duration = Math.abs(momentStart.diff(momentEnd, 'minutes', true))
@@ -133,21 +148,63 @@ function EncountersTable(props){
   logger.verbose('clinical:hl7-resource-encounter.client.EncountersTable');
   logger.data('EncountersTable.props', {data: props}, {source: "EncountersTable.jsx"});
 
+  let { 
+    children, 
+    
+    barcodes,
+    encounters,
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    hideCategory,
+    hideClassCode,
+    hideType,
+    hideTypeCode,
+    hideReason,
+    hideReasonCode,
+    hideSubjects,
+    hideCheckboxes,
+    hideActionIcons,
+    hideIdentifier,
+    hideStatus,
+    hideHistory,
+    hideBarcode,
+    calculateDuration,
+    enteredInError,
+    multiline,
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    actionButtonLabel,
+    hideEndDateTime,
+    hideStartDateTime,
+  
+    showActionButton,
+  
+    rowsPerPage,
+    dateFormat,
+    showMinutes,
+
+    ...otherProps 
+  } = props;
+
   let rows = [];
-  let rowsPerPageToRender = 5;
 
   const classes = useStyles();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
-  if(props.rowsPerPage){
-    // if we receive an override as a prop, render that many rows
-    // best to use rowsPerPage with disablePagination
-    rowsPerPageToRender = props.rowsPerPage;
-  } else {
-    // otherwise default to the user selection
-    rowsPerPageToRender = rowsPerPage;
-  }
+  // if(props.rowsPerPage){
+  //   // if we receive an override as a prop, render that many rows
+  //   // best to use rowsPerPageToRender with disablePagination
+  //   setRowsPerPage(props.rowsPerPage);
+  // } else {
+  //   // otherwise default to the user selection
+  //   setRowsPerPage(props.rowsPerPage);
+  // }
 
   let paginationCount = 101;
   if(props.count){
@@ -156,31 +213,6 @@ function EncountersTable(props){
     paginationCount = rows.length;
   }
 
-
-  function handleChange(row, key, value) {
-    const source = this.state.source;
-    source[row][key] = value;
-    this.setState({source});
-  }
-  function displayOnMobile(width){
-    let style = {};
-    if(['iPhone'].includes(window.navigator.platform)){
-      style.display = "none";
-    }
-    if(width){
-      style.width = width;
-    }
-    return style;
-  }
-  function handleSelect(selected) {
-    this.setState({selected});
-  }
-  function getDate(){
-    return "YYYY/MM/DD";
-  }
-  function noChange(){
-    return "";
-  }
   function rowClick(id){
     // console.log('EncountersTable.rowClick', id);
 
@@ -224,7 +256,7 @@ function EncountersTable(props){
       props.onRemoveRecord(_id);
     }
   }
-  function onActionButtonClick(id){
+  function handleActionButtonClick(id){
     if(typeof props.onActionButtonClick === "function"){
       props.onActionButtonClick(id);
     }
@@ -235,7 +267,7 @@ function EncountersTable(props){
     }
   }
 
-  function onMetaClick(patient){
+  function handleMetaClick(patient){
     let self = this;
     if(props.onMetaClick){
       props.onMetaClick(self, patient);
@@ -450,7 +482,7 @@ function EncountersTable(props){
       );  
     }
   }
-  function onActionButtonClick(id){
+  function handleActionButtonClick(id){
     console.log('onActionButtonClick', id, props);
 
     if(typeof props.onActionButtonClick === "function"){
@@ -468,7 +500,7 @@ function EncountersTable(props){
     if (props.showActionButton === true) {
       return (
         <TableCell className='ActionButton' >
-          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+          <Button onClick={ handleActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
         </TableCell>
       );
     }
@@ -477,13 +509,13 @@ function EncountersTable(props){
   let tableRows = [];
   let encountersToRender = [];
   let proceduresToRender = [];
-  let dateFormat = "YYYY-MM-DD";
+  let internalDateFormat = "YYYY-MM-DD";
 
   if(props.showMinutes){
-    dateFormat = "YYYY-MM-DD hh:mm";
+    internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.dateFormat){
-    dateFormat = props.dateFormat;
+  if(props.internalDateFormat){
+    internalDateFormat = props.dateFormat;
   }
 
   if(props.encounters){
@@ -491,7 +523,7 @@ function EncountersTable(props){
       let count = 0;    
       props.encounters.forEach(function(encounter){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          encountersToRender.push(flattenEncounter(encounter, dateFormat));
+          encountersToRender.push(flattenEncounter(encounter, internalDateFormat));
         }
         count++;
       });  
@@ -573,7 +605,7 @@ function EncountersTable(props){
 
   return(
     <div>
-      <Table size="small" aria-label="a dense table">
+      <Table size="small" aria-label="a dense table" { ...otherProps } >
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
@@ -633,10 +665,7 @@ EncountersTable.propTypes = {
   actionButtonLabel: PropTypes.string,
   hideEndDateTime: PropTypes.bool,
   hideStartDateTime: PropTypes.bool,
-
-  onActionButtonClick: PropTypes.func,
   showActionButton: PropTypes.bool,
-  actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
@@ -644,7 +673,8 @@ EncountersTable.propTypes = {
 };
 
 EncountersTable.defaultProps = {
-  hideBarcode: true
+  hideBarcode: true,
+  rowsPerPage: 5
 }
 
 

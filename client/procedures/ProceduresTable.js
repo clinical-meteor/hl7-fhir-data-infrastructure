@@ -50,26 +50,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-// let styles = {
-//   hideOnPhone: {
-//     visibility: 'visible',
-//     display: 'table'
-//   },
-//   cellHideOnPhone: {
-//     visibility: 'visible',
-//     display: 'table',
-//     paddingTop: '16px',
-//     maxWidth: '120px'
-//   },
-//   cell: {
-//     paddingTop: '16px'
-//   }
-// }
 
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenProcedure = function(procedure, dateFormat){
+flattenProcedure = function(procedure, internalDateFormat){
   let result = {
     _id: '',
     id: '',
@@ -88,8 +73,8 @@ flattenProcedure = function(procedure, dateFormat){
     bodySiteDisplay: ''
   };
 
-  if(!dateFormat){
-    dateFormat = get(Meteor, "settings.public.defaults.dateFormat", "YYYY-MM-DD");
+  if(!internalDateFormat){
+    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
   }
 
   result._id =  get(procedure, 'id') ? get(procedure, 'id') : get(procedure, '_id');
@@ -110,14 +95,14 @@ flattenProcedure = function(procedure, dateFormat){
     result.subjectReference = get(procedure, 'patient.reference', '');
   }
 
-  result.performedStart = get(procedure, 'performedDateTime');      
-  result.performerDisplay = get(procedure, 'performer.display');
+  result.performedStart = moment(get(procedure, 'performedDateTime')).format(internalDateFormat);      
+  result.performerDisplay = moment(get(procedure, 'performer.display')).format(internalDateFormat);
   result.performerReference = get(procedure, 'performer.reference');
   result.bodySiteDisplay = get(procedure, 'bodySite.display');
 
   if(get(procedure, 'performedPeriod')){
-    result.performedStart = moment(get(procedure, 'performedPeriod.start')).format(dateFormat);      
-    result.performedEnd = moment(get(procedure, 'performedPeriod.end')).format(dateFormat);      
+    result.performedStart = moment(get(procedure, 'performedPeriod.start')).format(internalDateFormat);      
+    result.performedEnd = moment(get(procedure, 'performedPeriod.end')).format(internalDateFormat);      
   }
 
   let notes = get(procedure, 'notes')
@@ -136,24 +121,64 @@ function ProceduresTable(props){
   logger.verbose('clinical:hl7-resource-encounter.client.ProceduresTable');
   logger.data('ProceduresTable.props', {data: props}, {source: "ProceduresTable.jsx"});
 
+  const { 
+    children, 
+
+    data,
+    procedures,
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    hideCheckboxes,
+    hideIdentifier,
+    hideActionIcons,
+    hideCategory,
+    hideStatus,
+    hideSubject,
+    hideSubjectReference,
+    hidePerformedDate,
+    hidePerformedDateEnd,
+    hidePerformer,
+    hideBodySite,
+    hideNotes,
+    hideCode,
+    hideCodeDisplay,
+    hideBarcode,
+    filterEnteredInError,
+  
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    showActionButton,
+    actionButtonLabel,
+  
+    rowsPerPage,
+    dateFormat,
+    showMinutes,
+    
+    ...otherProps 
+  } = props;
+
   const classes = useStyles();
 
   //---------------------------------------------------------------------
   // Pagination
 
   let rows = [];
-  let rowsPerPageToRender = 5;
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
-  if(props.rowsPerPage){
-    // if we receive an override as a prop, render that many rows
-    // best to use rowsPerPage with disablePagination
-    rowsPerPageToRender = props.rowsPerPage;
-  } else {
-    // otherwise default to the user selection
-    rowsPerPageToRender = rowsPerPage;
-  }
+  // if(props.rowsPerPage){
+  //   // if we receive an override as a prop, render that many rows
+  //   // best to use rowsPerPageToRender with disablePagination
+  //   setRowsPerPage(props.rowsPerPage)
+  // } else {
+  //   // otherwise default to the user selection
+  //   setRowsPerPage(props.rowsPerPage)
+  // }
 
   let paginationCount = 101;
   if(props.count){
@@ -194,13 +219,13 @@ function ProceduresTable(props){
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <Icon icon={tag} style={iconStyle} onClick={ onMetaClick.bind(procedure)} />
+          <Icon icon={tag} style={iconStyle} onClick={ handleMetaClick.bind(procedure)} />
           <Icon icon={iosTrashOutline} style={iconStyle} onClick={ removeRecord.bind(procedure._id)} />
         </TableCell>
       );
     }
   } 
-  function onMetaClick(_id){
+  function handleMetaClick(_id){
     logger.info('Opening metadata for procedure: ' + _id)
     if(props.onMetaClick){
       props.onMetaClick(_id);
@@ -212,7 +237,7 @@ function ProceduresTable(props){
       props.onRemoveRecord(_id);
     }
   }
-  function onActionButtonClick(id){
+  function handleActionButtonClick(id){
     if(typeof props.onActionButtonClick === "function"){
       props.onActionButtonClick(id);
     }
@@ -352,7 +377,7 @@ function ProceduresTable(props){
     if (props.showActionButton === true) {
       return (
         <TableCell className='ActionButton' >
-          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+          <Button onClick={ handleActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
         </TableCell>
       );
     }
@@ -445,13 +470,13 @@ function ProceduresTable(props){
 
   let tableRows = [];
   let proceduresToRender = [];
-  let dateFormat = "YYYY-MM-DD";
+  let internalDateFormat = "YYYY-MM-DD";
 
   if(props.showMinutes){
-    dateFormat = "YYYY-MM-DD hh:mm";
+    internalDateFormat = "YYYY-MM-DD hh:mm";
   }
   if(props.dateFormat){
-    dateFormat = props.dateFormat;
+    internalDateFormat = props.dateFormat;
   }
 
   if(props.procedures){
@@ -459,7 +484,7 @@ function ProceduresTable(props){
       let count = 0;    
       props.procedures.forEach(function(procedure){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          proceduresToRender.push(flattenProcedure(procedure, dateFormat));
+          proceduresToRender.push(flattenProcedure(procedure, internalDateFormat));
         }
         count++;
       });  
@@ -515,7 +540,7 @@ function ProceduresTable(props){
 
   return(
     <div>
-      <Table id="proceduresTable" size="small" aria-label="a dense table" hover="true" >
+      <Table id="proceduresTable" size="small" aria-label="a dense table" { ...otherProps } >
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
@@ -577,9 +602,12 @@ ProceduresTable.propTypes = {
   showActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 
-  rowsPerPage: PropTypes.number,
+  rowsPerPageToRender: PropTypes.number,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool
 };
+ProceduresTable.defaultProps = {
+  rowsPerPage: 5
+}
 
 export default ProceduresTable;
