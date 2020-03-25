@@ -197,15 +197,6 @@ function EncountersTable(props){
   const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
-  // if(props.rowsPerPage){
-  //   // if we receive an override as a prop, render that many rows
-  //   // best to use rowsPerPageToRender with disablePagination
-  //   setRowsPerPage(props.rowsPerPage);
-  // } else {
-  //   // otherwise default to the user selection
-  //   setRowsPerPage(props.rowsPerPage);
-  // }
-
   let paginationCount = 101;
   if(props.count){
     paginationCount = props.count;
@@ -469,14 +460,14 @@ function EncountersTable(props){
     }
   }
   function renderDurationHeader(){
-    if (!props.calculateDuration) {
+    if (props.calculateDuration) {
       return (
         <TableCell className='duration'>Duration</TableCell>
       );
     }
   }
   function renderDuration(duration){
-    if (!props.calculateDuration) {
+    if (props.calculateDuration) {
       return (
         <TableCell className='duration'>{ duration }</TableCell>
       );  

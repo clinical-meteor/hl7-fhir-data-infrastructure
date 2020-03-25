@@ -30,9 +30,7 @@ import { Icon } from 'react-icons-kit'
 import { tag } from 'react-icons-kit/fa/tag'
 import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
-import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
-
+import FhirUtilities from '../../lib/FhirUtilities';
 
 //===========================================================================
 // THEMING
@@ -74,7 +72,7 @@ flattenProcedure = function(procedure, internalDateFormat){
   };
 
   if(!internalDateFormat){
-    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
+    internalDateFormat = "YYYY-MM-DD";
   }
 
   result._id =  get(procedure, 'id') ? get(procedure, 'id') : get(procedure, '_id');
@@ -152,7 +150,7 @@ function ProceduresTable(props){
     onMetaClick,
     onRemoveRecord,
     onActionButtonClick,
-    showActionButton,
+    hideActionButton,
     actionButtonLabel,
   
     rowsPerPage,
@@ -193,9 +191,9 @@ function ProceduresTable(props){
   function rowClick(id){
     // logger.info('ProceduresTable.rowClick', id);
 
-    Session.set("selectedProcedureId", id);
-    Session.set('procedurePageTabIndex', 1);
-    Session.set('procedureDetailState', false);
+    // Session.set("selectedProcedureId", id);
+    // Session.set('procedurePageTabIndex', 1);
+    // Session.set('procedureDetailState', false);
 
     if(props && (typeof props.onRowClick === "function")){
       props.onRowClick(id);
@@ -281,7 +279,9 @@ function ProceduresTable(props){
   function renderSubjectReference(referenceString){
     if (!props.hideSubjectReference) {
       return (
-        <TableCell className='subjectReference'>{ referenceString }</TableCell>
+        <TableCell className='patientReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
+          { FhirUtilities.pluckReferenceId(referenceString) }
+        </TableCell>
       );
     }
   }
@@ -367,17 +367,17 @@ function ProceduresTable(props){
     }
   }
   function renderActionButtonHeader(){
-    if (props.showActionButton === true) {
+    if (!props.hideActionButton) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
-  function renderActionButton(patient){
-    if (props.showActionButton === true) {
+  function renderActionButton(procedure){
+    if (!props.hideActionButton) {
       return (
         <TableCell className='ActionButton' >
-          <Button onClick={ handleActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+          <Button onClick={ handleActionButtonClick.bind(this, get(procedure, "id"))}>{ get(props, "actionButtonLabel", "") }</Button>
         </TableCell>
       );
     }
@@ -599,7 +599,7 @@ ProceduresTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  showActionButton: PropTypes.bool,
+  hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 
   rowsPerPageToRender: PropTypes.number,
