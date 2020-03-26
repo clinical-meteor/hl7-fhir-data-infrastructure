@@ -19,9 +19,9 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-import { Icon } from 'react-icons-kit'
-import { tag } from 'react-icons-kit/fa/tag'
-import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+// import { Icon } from 'react-icons-kit'
+// import { tag } from 'react-icons-kit/fa/tag'
+// import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
@@ -448,8 +448,8 @@ function ConditionsTable(props){
 
       return (
         <TableCell className='actionIcons' style={{width: '120px'}}>
-          <Icon icon={tag} style={iconStyle} onClick={showSecurityDialog.bind(this, condition)} />
-          <Icon icon={iosTrashOutline} style={iconStyle} onClick={removeRecord.bind(this, condition._id)} />
+          {/* <Icon icon={tag} style={iconStyle} onClick={showSecurityDialog.bind(this, condition)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={removeRecord.bind(this, condition._id)} /> */}
         </TableCell>
       );
     }
