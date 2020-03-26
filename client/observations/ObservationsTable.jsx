@@ -22,9 +22,9 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-import { Icon } from 'react-icons-kit'
-import { tag } from 'react-icons-kit/fa/tag'
-import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+// import { Icon } from 'react-icons-kit'
+// import { tag } from 'react-icons-kit/fa/tag'
+// import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
@@ -192,8 +192,8 @@ function ObservationsTable(props){
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <Icon icon={tag} style={iconStyle} onClick={this.onMetaClick.bind(this, observation)} />
-          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, observation._id)} />
+          {/* <Icon icon={tag} style={iconStyle} onClick={this.onMetaClick.bind(this, observation)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, observation._id)} /> */}
         </TableCell>
       );
     }

@@ -18,9 +18,9 @@ import { get } from 'lodash';
 import { browserHistory } from 'react-router';
 import PropTypes from 'prop-types';
 
-import { Icon } from 'react-icons-kit'
-import { tag } from 'react-icons-kit/fa/tag'
-import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+// import { Icon } from 'react-icons-kit'
+// import { tag } from 'react-icons-kit/fa/tag'
+// import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 
 
@@ -242,8 +242,8 @@ export class CarePlansTable extends React.Component {
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, carePlan)} />
-          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, carePlan._id)} />
+          {/* <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, carePlan)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, carePlan._id)} /> */}
         </TableCell>
       );
     }

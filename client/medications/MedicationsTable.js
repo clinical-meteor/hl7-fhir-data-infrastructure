@@ -14,8 +14,8 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
-import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-import { GoTrashcan } from 'react-icons/go'
+// import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
+// import { GoTrashcan } from 'react-icons/go'
 
 Session.setDefault('selectedMedications', []);
 
@@ -136,8 +136,8 @@ export class MedicationsTable extends React.Component {
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, medication)} />
-          <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, medication._id)} />  
+          {/* <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, medication)} />
+          <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, medication._id)} />   */}
         </TableCell>
       );
     }

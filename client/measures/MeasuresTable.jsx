@@ -25,8 +25,8 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-import { GoTrashcan } from 'react-icons/go';
+// import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
+// import { GoTrashcan } from 'react-icons/go';
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
@@ -211,8 +211,8 @@ function MeasuresTable(props){
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <FaTags style={iconStyle} onClick={ onMetaClick.bind(measure)} />
-          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(measure._id)} />  
+          {/* <FaTags style={iconStyle} onClick={ onMetaClick.bind(measure)} />
+          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(measure._id)} />   */}
         </TableCell>
       );
     }

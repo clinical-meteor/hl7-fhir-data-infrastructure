@@ -17,9 +17,9 @@ import ReactMixin from 'react-mixin';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
-import { Icon } from 'react-icons-kit'
-import { tag } from 'react-icons-kit/fa/tag'
-import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+// import { Icon } from 'react-icons-kit'
+// import { tag } from 'react-icons-kit/fa/tag'
+// import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 
 
@@ -180,8 +180,8 @@ export class ImmunizationsTable extends React.Component {
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, immunization)} />
-          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, immunization._id)} />
+          {/* <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, immunization)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, immunization._id)} /> */}
         </TableCell>
       );
     }
