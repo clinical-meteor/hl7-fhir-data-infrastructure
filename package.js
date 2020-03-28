@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.2.1',
+  version: '6.2.2',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -30,6 +30,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
   api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Locations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
   api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/Medications.js', ['client', 'server']);
@@ -72,6 +73,11 @@ Package.onUse(function (api) {
   api.export('Immunizations');
   api.export('ImmunizationSchema');
 
+  api.export('Location');
+  api.export('Locations');
+  api.export('LocationSchema');
+  api.export('HospitalLocations');
+  
   api.export('Measure');
   api.export('Measures');
   api.export('MeasureSchema');

@@ -32,6 +32,8 @@ import ImmunizationsPage from './client/immunizations/ImmunizationsPage';
 import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
 import ImmunizationDetail from './client/immunizations/ImmunizationDetail';
 
+import LocationsTable from './client/locations/LocationsTable';
+
 import MeasuresPage from './client/measures/MeasuresPage';
 import MeasuresTable from './client/measures/MeasuresTable';
 import MeasureDetail from './client/measures/MeasureDetail';
@@ -308,6 +310,8 @@ export {
   ImmunizationsPage,
   ImmunizationsTable,
   ImmunizationDetail,
+
+  LocationsTable,
 
   MeasuresPage,
   MeasuresTable,

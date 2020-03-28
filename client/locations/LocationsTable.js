@@ -1,135 +1,245 @@
-import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
-import { Table } from 'react-bootstrap';
-import Toggle from 'material-ui/Toggle';
-import { GlassCard, VerticalCanvas, Glass } from 'meteor/clinical:glass-ui';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-Session.setDefault('selectedLocations', []);
+import { 
+  Button,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableFooter,
+  TablePagination,
+} from '@material-ui/core';
 
-export class LocationTable extends React.Component {
-  getMeteorData() {
+import moment from 'moment'
+import _ from 'lodash';
+let get = _.get;
+let set = _.set;
 
-    // this should all be handled by props
-    // or a mixin!
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        block: {
-          maxWidth: 250
-        },
-        checkbox: {
-          //marginBottom: 16
-        },
-        row: Glass.darkroom({
-          opacity: Session.get('globalOpacity'),
-          cursor: 'pointer'
-        })
-      },
-      selected: [],
-      locations: []
-    };
+import FhirUtilities from '../../lib/FhirUtilities';
 
-    if(this.props.data){
-       data.locations = this.props.data;
-    } else {
-      data.locations = Locations.find().map(function(location){
-        let result = {
-          _id: '',
-          name: '',
-          manufacturer: '',
-          form: '',
-          primaryIngredient: ''
-        };
+//===========================================================================
+// THEMING
 
-        if (location._id ) {
-          result._id = location._id;
-        }
-        if (location.name ) {
-          result.name = location.name;
-        }
-        if (location.position ) { 
-          result.position = location.position;
-        }
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  foo: {}
+}));
 
-        return result;
-      })
-    }
-
-    if (Session.get('darkroomEnabled')) {
-      data.style.color = 'black';
-      data.style.background = 'white';
-    } else {
-      data.style.color = 'white';
-      data.style.background = 'black';
-    }
-
-    // this could be another mixin
-    if (Session.get('glassBlurEnabled')) {
-      data.style.filter = 'blur(3px)';
-      data.style.WebkitFilter = 'blur(3px)';
-    }
-
-    // this could be another mixin
-    if (Session.get('backgroundBlurEnabled')) {
-      data.style.backdropFilter = 'blur(5px)';
-    }
-
-    //console.log("data", data);
-    return data;
-  }
-  handleChange(row, key, value) {
-    const source = this.state.source;
-    source[row][key] = value;
-    this.setState({source});
-  }
-
-  handleSelect(selected) {
-    this.setState({selected});
-  }
-
-  rowClick(id){
-    Session.set('locationUpsert', false);
-    Session.set('selectedLocationId', id);
-    Session.set('locationPageTabIndex', 2);
-  }
-  render () {
-    if(process.env.NODE_ENV === "test") console.log('LocationTable.render()', this.state)
-
-    let tableRows = [];
-    // console.log('this.data.locations', this.data.locations);
-    
-    for (var i = 0; i < this.data.locations.length; i++) {
-      tableRows.push(
-      <tr className='locationRow' ref='med-{i}' key={i} style={this.data.style.row} onClick={ this.rowClick.bind('this', this.data.locations[i]._id) }>
-        <td className="cardinality">{(this.data.locations[i].cardinality) ? this.data.locations[i].cardinality : ''}</td>
-        <td className="name hidden-on-phone">{this.data.locations[i].name}</td>
-        <td className="latitutude">{(this.data.locations[i].position) ? this.data.locations[i].position.latitude : ''}</td>
-        <td className="longitude">{(this.data.locations[i].position) ? this.data.locations[i].position.longitude : ''}</td>
-        <td className="altitude">{(this.data.locations[i].position) ? this.data.locations[i].position.altitude : ''}</td>
-      </tr>);
-    }
-
-
-    return(
-      <Table id="locationsTable" ref='locationsTable' >
-        <thead>
-          <tr>
-            <th className="cardinality hidden-on-phone">cardinality</th>
-            <th className="name hidden-on-phone">name</th>
-            <th className="latitutude">latitutude</th>
-            <th className="longitude">longitude</th>
-            <th className="altitude">altitude</th>
-          </tr>
-        </thead>
-        <tbody>
-          { tableRows }
-        </tbody>
-      </Table>
-    );
+let styles = {
+  hideOnPhone: {
+    visibility: 'visible',
+    display: 'table'
+  },
+  cellHideOnPhone: {
+    visibility: 'visible',
+    display: 'table',
+    paddingTop: '16px',
+    maxWidth: '120px'
+  },
+  cell: {
+    paddingTop: '16px'
   }
 }
 
 
-ReactMixin(LocationTable.prototype, ReactMeteorData);
-export default LocationTable;
+//===========================================================================
+// FLATTENING / MAPPING
+
+flattenLocation = function(location){
+  let result = {
+    _id: '',
+    id: '',
+    meta: '',
+    identifier: '',
+    name: '',
+    address: '',
+    type: '',
+    latitude: '',
+    longitude: ''
+  };
+
+  result.severity = get(location, 'severity.text', '');
+
+  if (get(location, '_id')){
+    result._id = get(location, '_id');
+  }
+  if (get(location, 'name')) {
+    result.name = get(location, 'name');
+  }
+  if (get(location, 'address')) {
+    result.address = FhirUtilities.stringifyAddress(get(location, 'address'), {noPrefix: true});
+  }
+  if (get(location, 'type')) {
+    result.name = get(location, 'type[0].text');
+  }
+  if (get(location, 'position.latitude')) {
+    result.latitude = get(location, 'position.latitude', null);
+  }
+  if (get(location, 'position.longitude')) {
+    result.longitude = get(location, 'position.longitude', null);
+  }
+
+  return result;
+}
+
+
+
+
+
+
+// Session.setDefault('selectedLocations', []);
+
+
+function LocationsTable(props){
+  logger.info('Rendering the LocationsTable');
+  logger.verbose('clinical:hl7-resource-locations.client.LocationsTable');
+  logger.data('LocationsTable.props', {data: props}, {source: "LocationsTable.jsx"});
+
+  const classes = useStyles();
+
+  let { 
+    children, 
+
+    locations,
+
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    displayName,
+    displayLatLng,
+
+    rowsPerPage,
+    dateFormat,
+    showMinutes,
+    displayEnteredInError,
+
+    ...otherProps 
+  } = props;
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(props.count){
+    paginationCount = props.count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  //---------------------------------------------------------------------
+  // Methods  
+
+  function rowClick(id){
+    // Session.set('selectedConditionId', id);
+    // Session.set('locationPageTabIndex', 2);
+  };
+
+  //---------------------------------------------------------------------
+  // Array Parsing  
+
+  let tableRows = [];
+  let locationsToRender = [];
+
+  if(props.locations){
+    if(props.locations.length > 0){     
+      let count = 0;    
+
+      props.locations.forEach(function(location){
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          locationsToRender.push(flattenLocation(location));
+        }
+        count++;
+      });  
+    }
+  }
+
+
+  if(locationsToRender.length === 0){
+    logger.trace('ConditionsTable: No locations to render.');
+    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+  } else {
+    for (var i = 0; i < locationsToRender.length; i++) {
+      logger.trace('locationsToRender[i]', locationsToRender[i])
+      tableRows.push(
+        <TableRow className='locationRow' key={i} onClick={ rowClick.bind(this, get(locationsToRender[i], "_id")) } hover={true} >
+          {/* <TableCell className="cardinality">{(this.data.locations[i].cardinality) ? this.data.locations[i].cardinality : ''}</TableCell> */}
+          <TableCell className="name">{ get(locationsToRender[i], "name") }</TableCell>
+          <TableCell className="address">{ get(locationsToRender[i], "address") }</TableCell>
+          <TableCell className="type">{ get(locationsToRender[i], "type") }</TableCell>
+          <TableCell className="latitutude">{get(locationsToRender[i], "latitude")}</TableCell>
+          <TableCell className="longitude">{get(locationsToRender[i], "longitude")}</TableCell>
+          {/* <TableCell className="altitude">{get(locationsToRender[i], "altitute")}</TableCell> */}
+        </TableRow>
+      );
+    }
+  }
+
+  
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!props.disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+  return(
+    <div>
+      <Table size="small" aria-label="a dense table" { ...otherProps }>
+        <TableHead>
+          <TableRow>
+            {/* <TableCell className="cardinality hidden-on-phone">Cardinality</TableCell> */}
+            <TableCell className="name">Name</TableCell>
+            <TableCell className="address">Address</TableCell>
+            <TableCell className="type">Type</TableCell>
+            <TableCell className="latitutude">Latitutude</TableCell>
+            <TableCell className="longitude">Longitude</TableCell>
+            {/* <TableCell className="altitude">Altitude</TableCell> */}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          { tableRows }
+        </TableBody>
+      </Table>
+    { paginationFooter }
+    </div>
+  );
+}
+
+
+LocationsTable.propTypes = {
+  locations: PropTypes.array,
+  query: PropTypes.object,
+  paginationLimit: PropTypes.number,
+  disablePagination: PropTypes.bool,
+  rowsPerPage: PropTypes.number,
+
+  displayName: PropTypes.bool,
+  displayLatLng: PropTypes.bool
+}
+
+LocationsTable.defaultProps = {
+  rowsPerPage: 5
+}
+
+export default LocationsTable;

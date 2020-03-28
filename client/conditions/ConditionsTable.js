@@ -217,18 +217,18 @@ function ConditionsTable(props){
   //---------------------------------------------------------------------
   // Helper Functions
 
-  function removeRecord(_id){
-    logger.info('Removing condition: ' + _id)
-    // Conditions._collection.remove({_id: _id})
-  }
-  function showSecurityDialog(condition){
-    // logger.log('showSecurityDialog', condition)
+  // function removeRecord(_id){
+  //   logger.info('Removing condition: ' + _id)
+  //   // Conditions._collection.remove({_id: _id})
+  // }
+  // function showSecurityDialog(condition){
+  //   // logger.log('showSecurityDialog', condition)
 
-    // Session.set('securityDialogResourceJson', Conditions.findOne(get(condition, '_id')));
-    // Session.set('securityDialogResourceType', 'Condition');
-    // Session.set('securityDialogResourceId', get(condition, '_id'));
-    // Session.set('securityDialogOpen', true);
-  }
+  //   // Session.set('securityDialogResourceJson', Conditions.findOne(get(condition, '_id')));
+  //   // Session.set('securityDialogResourceType', 'Condition');
+  //   // Session.set('securityDialogResourceId', get(condition, '_id'));
+  //   // Session.set('securityDialogOpen', true);
+  // }
   function displayOnMobile(width){
     let style = {};
     if(['iPhone'].includes(window.navigator.platform)){
@@ -487,8 +487,8 @@ function ConditionsTable(props){
   }
 
   function rowClick(id){
-    Session.set('selectedConditionId', id);
-    Session.set('conditionPageTabIndex', 2);
+    // Session.set('selectedConditionId', id);
+    // Session.set('conditionPageTabIndex', 2);
   };
 
 
