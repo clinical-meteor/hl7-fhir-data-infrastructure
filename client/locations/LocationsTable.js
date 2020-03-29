@@ -89,9 +89,7 @@ flattenLocation = function(location){
 
 
 
-
 // Session.setDefault('selectedLocations', []);
-
 
 function LocationsTable(props){
   logger.info('Rendering the LocationsTable');
@@ -170,7 +168,7 @@ function LocationsTable(props){
     for (var i = 0; i < locationsToRender.length; i++) {
       logger.trace('locationsToRender[i]', locationsToRender[i])
       tableRows.push(
-        <TableRow className='locationRow' key={i} onClick={ rowClick.bind(this, get(locationsToRender[i], "_id")) } hover={true} >
+        <TableRow className='locationRow' key={i} onClick={ rowClick.bind(this, get(locationsToRender[i], "_id")) } hover={true} style={{height: '42px'}} >
           {/* <TableCell className="cardinality">{(this.data.locations[i].cardinality) ? this.data.locations[i].cardinality : ''}</TableCell> */}
           <TableCell className="name">{ get(locationsToRender[i], "name") }</TableCell>
           <TableCell className="address">{ get(locationsToRender[i], "address") }</TableCell>
@@ -207,7 +205,7 @@ function LocationsTable(props){
     <div>
       <Table size="small" aria-label="a dense table" { ...otherProps }>
         <TableHead>
-          <TableRow>
+          <TableRow >
             {/* <TableCell className="cardinality hidden-on-phone">Cardinality</TableCell> */}
             <TableCell className="name">Name</TableCell>
             <TableCell className="address">Address</TableCell>
