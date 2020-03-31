@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.3.1',
+  version: '6.3.2',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -27,6 +27,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
   api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
   api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
@@ -37,6 +38,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
   api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
   api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Organizations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
   api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
   api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
@@ -60,6 +62,10 @@ Package.onUse(function (api) {
   api.export('Condition');
   api.export('Conditions');
   api.export('ConditionSchema');
+
+  api.export('Device');
+  api.export('Devices');
+  api.export('DeviceSchema');
 
   api.export('DiagnosticReport');
   api.export('DiagnosticReports');
@@ -101,6 +107,10 @@ Package.onUse(function (api) {
   api.export('Observation');
   api.export('Observations');
   api.export('ObservationSchema');
+
+  api.export('Organization');
+  api.export('Organizations');
+  api.export('OrganizationSchema');
 
   api.export('Patient');
   api.export('Patients');

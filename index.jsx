@@ -20,6 +20,10 @@ import ConditionsPage from './client/conditions/ConditionsPage';
 import ConditionsTable from './client/conditions/ConditionsTable';
 import ConditionDetail from './client/conditions/ConditionDetail';
 
+import DevicesPage from './client/devices/DevicesPage';
+import DevicesTable from './client/devices/DevicesTable';
+import DeviceDetail from './client/devices/DeviceDetail';
+
 import DiagnosticReportsPage from './client/diagnosticReports/DiagnosticReportsPage';
 import DiagnosticReportsTable from './client/diagnosticReports/DiagnosticReportsTable';
 import DiagnosticReportDetail from './client/diagnosticReports/DiagnosticReportDetail';
@@ -58,6 +62,10 @@ import ObservationsPage from './client/observations/ObservationsPage';
 import ObservationsTable from './client/observations/ObservationsTable';
 import ObservationDetail from './client/observations/ObservationDetail';
 
+import OrganizationsPage from './client/organizations/OrganizationsPage';
+import OrganizationsTable from './client/organizations/OrganizationsTable';
+import OrganizationDetail from './client/organizations/OrganizationDetail';
+
 import PatientsPage from './client/patients/PatientsPage';
 
 import PractitionersPage from './client/practitioners/PractitionersPage';
@@ -88,6 +96,11 @@ var DynamicRoutes = [{
   'name': 'CompositionsPage',
   'path': '/compositions',
   'component': CompositionsPage,
+  'requireAuth': true
+}, {
+  'name': 'DevicesPage',
+  'path': '/devices',
+  'component': DevicesPage,
   'requireAuth': true
 }, {
   'name': 'ConditionsPage',
@@ -140,6 +153,11 @@ var DynamicRoutes = [{
   'component': ObservationsPage,
   'requireAuth': true
 }, {
+  'name': 'OrganizationsPage',
+  'path': '/organizations',
+  'component': OrganizationsPage,
+  'requireAuth': true
+}, {
   'name': 'PatientPage',
   'path': '/patients',
   'component': PatientsPage,
@@ -165,11 +183,15 @@ var SidebarElements = [{
   'to': '/bundles',
   'href': '/bundles'
 }, {
-  'primaryText': 'CarePlans',
+  'primaryText': 'Care Plans',
   'to': '/careplans',
   'href': '/careplans'
 }, {
-  'primaryText': 'DiagnosticReports',
+  'primaryText': 'Devices',
+  'to': '/devices',
+  'href': '/devices'
+}, {
+  'primaryText': 'Diagnostic Reports',
   'to': '/diagnostic-reports',
   'href': '/diagnostic-reports'
 }, {
@@ -193,17 +215,21 @@ var SidebarElements = [{
   'to': '/medications',
   'href': '/medications'
 }, {
-  'primaryText': 'MedicationOrders',
+  'primaryText': 'Medication Orders',
   'to': '/medication-orders',
   'href': '/medication-orders'
 }, {
-  'primaryText': 'MedicationStatements',
+  'primaryText': 'Medication Statements',
   'to': '/medication-statements',
   'href': '/medication-statements'
 }, {
   'primaryText': 'Observations',
   'to': '/observations',
   'href': '/observations'
+}, {
+  'primaryText': 'Organizations',
+  'to': '/organizations',
+  'href': '/organizations'
 }, {
   'primaryText': 'Patients',
   'to': '/patients',
@@ -227,11 +253,15 @@ var AdminSidebarElements = [{
   'to': '/bundles',
   'href': '/bundles'
 }, {
-  'primaryText': 'CarePlans',
+  'primaryText': 'Care Plans',
   'to': '/careplans',
   'href': '/careplans'
 }, {
-  'primaryText': 'DiagnosticReports',
+  'primaryText': 'Devices',
+  'to': '/devices',
+  'href': '/devices'
+}, {
+  'primaryText': 'Diagnostic Reports',
   'to': '/diagnostic-reports',
   'href': '/diagnostic-reports'
 }, {
@@ -242,18 +272,30 @@ var AdminSidebarElements = [{
   'primaryText': 'Immunizations',
   'to': '/immunizations',
   'href': '/immunizations'
+},  {
+  'primaryText': 'Measures',
+  'to': '/measures',
+  'href': '/measures'
+}, {
+  'primaryText': 'Measure Reports',
+  'to': '/measure-reports',
+  'href': '/measure-reports'
 }, {
   'primaryText': 'Medications',
   'to': '/medications',
   'href': '/medications'
 }, {
-  'primaryText': 'MedicationOrders',
+  'primaryText': 'Medication Orders',
   'to': '/medication-orders',
   'href': '/medication-orders'
 }, {
-  'primaryText': 'MedicationStatements',
+  'primaryText': 'Medication Statements',
   'to': '/medication-statements',
   'href': '/medication-statements'
+}, {
+  'primaryText': 'Observations',
+  'to': '/observations',
+  'href': '/observations'
 }, {
   'primaryText': 'Observations',
   'to': '/observations',
@@ -299,6 +341,10 @@ export {
   ConditionsTable,
   ConditionDetail,
 
+  DevicesPage,
+  DevicesTable,
+  DeviceDetail,
+
   DiagnosticReportsPage,
   DiagnosticReportsTable,
   DiagnosticReportDetail,
@@ -336,6 +382,10 @@ export {
   ObservationsPage,
   ObservationsTable,
   ObservationDetail,
+
+  OrganizationsPage,
+  OrganizationsTable,
+  OrganizationDetail,
 
   PatientsPage,
 

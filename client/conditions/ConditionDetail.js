@@ -6,6 +6,12 @@
 //
 // =======================================================================
 
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+import ReactMixin from 'react-mixin';
+
 import { 
   Button,
   Card,
@@ -19,11 +25,7 @@ import {
   MenuItem,
 } from '@material-ui/core';
 
-import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
 import { get, set } from 'lodash';
-import PropTypes from 'prop-types';
 
 
 export class ConditionDetail extends React.Component {

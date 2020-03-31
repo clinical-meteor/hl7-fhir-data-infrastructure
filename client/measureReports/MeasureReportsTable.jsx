@@ -89,7 +89,6 @@ flattenMeasureReport = function(measureReport){
   result.identifier = get(measureReport, 'identifier[0].value', '');
 
 
-
   result.status = get(measureReport, 'status', '');
   result.periodStart = moment(get(measureReport, 'period.start', '')).format("YYYY-MM-DD hh:mm");
   result.periodEnd = moment(get(measureReport, 'period.end', '')).format("YYYY-MM-DD hh:ss");

@@ -214,6 +214,25 @@ function ConditionsTable(props){
     paginationCount = rows.length;
   }
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!props.disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+
   //---------------------------------------------------------------------
   // Helper Functions
 
@@ -241,6 +260,10 @@ function ConditionsTable(props){
     }
     return style;
   }
+
+  //---------------------------------------------------------------------
+  // Column Rendering
+
   function renderCheckboxHeader(){
     if (props.displayCheckboxes) {
       return (
@@ -492,6 +515,10 @@ function ConditionsTable(props){
   };
 
 
+
+  //---------------------------------------------------------------------
+  // Table Rows
+
   let tableRows = [];
   let conditionsToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
@@ -559,23 +586,8 @@ function ConditionsTable(props){
 
   
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!props.disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
+  //---------------------------------------------------------------------
+  // Actual Render Method
 
   return(
     <div>

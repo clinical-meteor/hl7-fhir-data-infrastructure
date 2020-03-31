@@ -132,7 +132,7 @@ function TabPanel(props) {
 }
 
 //=============================================================================================================================================
-// REACT CLASS
+// MAIN COMPONENT
 
 export class ConditionsPage extends React.Component {
   getMeteorData() {
