@@ -72,8 +72,8 @@ flattenLocation = function(location){
   if (get(location, 'address')) {
     result.address = FhirUtilities.stringifyAddress(get(location, 'address'), {noPrefix: true});
   }
-  if (get(location, 'type')) {
-    result.name = get(location, 'type[0].text');
+  if (get(location, 'type.text')) {
+    result.type = get(location, 'type.text');
   }
   if (get(location, 'position.latitude')) {
     result.latitude = get(location, 'position.latitude', null);
@@ -100,20 +100,15 @@ function LocationsTable(props){
 
   let { 
     children, 
-
     locations,
+
+    displayName,
+    displayLatLng,
 
     query,
     paginationLimit,
     disablePagination,
-  
-    displayName,
-    displayLatLng,
-
     rowsPerPage,
-    dateFormat,
-    showMinutes,
-    displayEnteredInError,
 
     ...otherProps 
   } = props;
@@ -237,6 +232,7 @@ LocationsTable.propTypes = {
 }
 
 LocationsTable.defaultProps = {
+  hideName: false,
   rowsPerPage: 5
 }
 

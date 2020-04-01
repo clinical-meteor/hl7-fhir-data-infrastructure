@@ -25,8 +25,11 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-// import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-// import { GoTrashcan } from 'react-icons/go';
+import FhirUtilities from '../../lib/FhirUtilities';
+
+
+//===========================================================================
+// THEMING
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
@@ -57,107 +60,63 @@ let styles = {
   }
 }
 
+//===========================================================================
+// FLATTENING / MAPPING
 
-flattenMeasureReport = function(measureReport){
+flattenMeasureReport = function(measureReport, measuresCursor){
   let result = {
     _id: '',
+    id: '',
     meta: '',
-    subject: '',
-    subjectId: '',
     identifier: '',
-    status: '',
-    statusHistory: 0,
+    type: '',
+    measureUrl: '',
+    measureTitle: '',
+    date: '',
+    reporter: '',
     periodStart: '',
     periodEnd: '',
-    measureReference: '', 
-    reasonDisplay: '', 
-    typeCode: '',
-    typeDisplay: '',
-    classCode: ''
+    groupCode: '',
+    populationCode: '',
+    populationCount: '',
+    measureScore: '',
+    stratifierCount: ''
   };
 
   result._id =  get(measureReport, 'id') ? get(measureReport, 'id') : get(measureReport, '_id');
-
-
-  if(get(measureReport, 'subject.display', '')){
-    result.subject = get(measureReport, 'subject.display', '');
-  } else {
-    result.subject = get(measureReport, 'subject.reference', '');
-  }
-  result.subjectId = get(measureReport, 'subject.reference', '');
-
+  result.id = get(measureReport, 'id', '');
   result.identifier = get(measureReport, 'identifier[0].value', '');
+  result.type = get(measureReport, 'type', '');
 
+  result.measureUrl = FhirUtilities.pluckReferenceId(get(measureReport, 'measure')); 
 
-  result.status = get(measureReport, 'status', '');
+  if(measuresCursor && result.measureUrl){
+    let measure = measuresCursor.findOne({id: result.measureUrl});
+    result.measureTitle = get(measure, 'title');
+  }
+
+  result.date = moment(get(measureReport, 'date', '')).format("YYYY-MM-DD hh:mm");
+  if(get(measureReport, 'reporter.display', '')){
+    result.reporter = get(measureReport, 'reporter.display', '');
+  } else {
+    result.reporter = get(measureReport, 'reporter.reference', '');
+  }
+
   result.periodStart = moment(get(measureReport, 'period.start', '')).format("YYYY-MM-DD hh:mm");
   result.periodEnd = moment(get(measureReport, 'period.end', '')).format("YYYY-MM-DD hh:ss");
-  result.measureReference = get(measureReport, 'measure.reference', '');
-  result.reasonDisplay = get(measureReport, 'reason[0].coding[0].display', '');
-  result.typeCode = get(measureReport, 'type[0].coding[0].code', '');
-  result.typeDisplay = get(measureReport, 'type[0].coding[0].display', '');
 
-  if(get(measureReport, 'class.code')){
-    result.classCode = get(measureReport, 'class.code', '');
-  } else if(get(measureReport, 'class')){
-    result.classCode = get(measureReport, 'class', '');
-  }
+  result.groupCode = get(measureReport, 'group[0].coding[0].code', '');
+  result.populationCode = get(measureReport, 'group[0].population[0].coding[0].code', '');
+  result.populationCount = get(measureReport, 'group[0].population[0].count', '');
 
-  let statusHistory = get(measureReport, 'statusHistory', []);
+  result.measureScore = get(measureReport, 'group[0].measureScore.value', '');
 
-  result.statusHistory = statusHistory.length;
+
+  let stratifierArray = get(measureReport, 'group[0].stratifier', []);
+  result.stratifierCount = stratifierArray.length;
 
   return result;
 }
-
-
-// export class MeasureReportsTable extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       selected: [],
-//       measureReports: []
-//     }
-//   }
-//   getMeteorData() {
-
-//     // this should all be handled by props
-//     // or a mixin!
-//     let data = {
-//       style: {
-//         text: Glass.darkroom()
-//       },
-//       selected: [],
-//       measureReports: []
-//     };
-
-//     if(props.data){
-//       logger.info('props.data', props.data);
-
-//       if(props.data.length > 0){              
-//         props.data.forEach(function(measureReport){
-//           data.measureReports.push(flattenMeasureReport(measureReport));
-//         });  
-//       }
-//     } else {
-//       let query = {};
-//       if(props.query){
-//         query = props.query
-//       }
-//       if(props.hideEnteredInError){
-//         query['verificationStatus'] = {
-//           $nin: ['entered-in-error']  // unconfirmed | provisional | differential | confirmed | refuted | entered-in-error
-//         }
-//       }
-
-//       data.measureReports = MeasureReports.find(query).map(function(measureReport){
-//         return flattenMeasureReport(measureReport);
-//       });
-//     }
-
-//     if(process.env.NODE_ENV === "test") logger.info("MeasureReportsTable[data]", data);
-//     return data;
-//   }
 
 
 
@@ -169,34 +128,89 @@ function MeasureReportsTable(props){
 
   const classes = useStyles();
 
-  function handleChange(row, key, value) {
-    const source = this.state.source;
-    source[row][key] = value;
-    this.setState({source});
-  }
-  function displayOnMobile(width){
-    let style = {};
-    if(['iPhone'].includes(window.navigator.platform)){
-      style.display = "none";
-    }
-    if(width){
-      style.width = width;
-    }
-    return style;
-  }
-  function handleSelect(selected) {
-    this.setState({selected});
-  }
-  function getDate(){
-    return "YYYY/MM/DD";
-  }
-  function noChange(){
-    return "";
-  }
+  let { 
+    children, 
+    locations,
+
+
+    hideCheckboxes,
+    hideIdentifier,
+    hideTypeCode,
+    hideMeasureTitle,
+    hideMeasureUrl,
+    hideDate,
+    hideReporter,
+    hidePeriodStart,
+    hidePeriodEnd,
+    hideGroupCode,
+    hidePopulationCode,
+    hidePopulationCount,
+    hideMeasureScore,
+    hideStratificationCount,
+    hideActionIcons,
+    measuresCursor,
+
+    query,
+    paginationLimit,
+    disablePagination,
+    rowsPerPage,
+
+    ...otherProps 
+  } = props;
+
+  // ------------------------------------------------------------------------
+  // Helper Functions
+
+
   function rowClick(id){
-    Session.set("selectedMeasureReportId", id);
-    Session.set('measureReportPageTabIndex', 1);
-    Session.set('measureReportDetailState', false);
+
+  }
+
+  function removeRecord(_id){
+    logger.info('Remove measureReport: ' + _id)
+    if(props.onRemoveRecord){
+      props.onRemoveRecord(_id);
+    }
+  }
+  function handleActionButtonClick(id){
+    if(typeof props.onActionButtonClick === "function"){
+      props.onActionButtonClick(id);
+    }
+  }
+  function cellClick(id){
+    if(typeof props.onCellClick === "function"){
+      props.onCellClick(id);
+    }
+  }
+
+  function handleMetaClick(patient){
+    let self = this;
+    if(props.onMetaClick){
+      props.onMetaClick(self, patient);
+    }
+  }
+
+
+  // ------------------------------------------------------------------------
+  // Column Rendering
+
+  function renderToggleHeader(){
+    if (!props.hideCheckboxes) {
+      return (
+        <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
+      );
+    }
+  }
+  function renderToggle(){
+    if (!props.hideCheckboxes) {
+      return (
+        <TableCell className="toggle" style={{width: '60px'}}>
+            {/* <Checkbox
+              defaultChecked={true}
+            /> */}
+        </TableCell>
+      );
+    }
   }
   function renderActionIconsHeader(){
     if (!props.hideActionIcons) {
@@ -222,29 +236,190 @@ function MeasureReportsTable(props){
       );
     }
   } 
-  function removeRecord(_id){
-    logger.info('Remove measureReport: ' + _id)
-    if(props.onRemoveRecord){
-      props.onRemoveRecord(_id);
+  function renderIdentifier(identifier){
+    if (!props.hideIdentifier) {
+      return (
+        <TableCell className='identifier'>{ identifier }</TableCell>
+      );
     }
   }
-  function onActionButtonClick(id){
-    if(typeof props.onActionButtonClick === "function"){
-      props.onActionButtonClick(id);
+  function renderIdentifierHeader(){
+    if (!props.hideIdentifier) {
+      return (
+        <TableCell className='identifier'>Identifier</TableCell>
+      );
     }
   }
-  function cellClick(id){
-    if(typeof props.onCellClick === "function"){
-      props.onCellClick(id);
+  function renderType(type){
+    if (!props.hideType) {
+      return (
+        <TableCell className='type'>{ type }</TableCell>
+      );
     }
   }
+  function renderTypeHeader(){
+    if (!props.hideType) {
+      return (
+        <TableCell className='type'>Type</TableCell>
+      );
+    }
+  }
+  function renderMeasureTitleHeader(){
+    if (!props.hideMeasureTitle) {
+      return (
+        <TableCell className='measureTitle'>Measure</TableCell>
+      );
+    }
+  }
+  function renderMeasureTitle(title){
+    if (!props.hideMeasureTitle) {
+      return (
+        <TableCell className='measureTitle'>{ title }</TableCell>
+      );  
+    }
+  }
+  function renderMeasureUrlHeader(){
+    if (!props.hideMeasureUrl) {
+      return (
+        <TableCell className='measureUrl'>Measure Url</TableCell>
+      );
+    }
+  }
+  function renderMeasureUrl(url){
+    if (!props.hideMeasureUrl) {
+      return (
+        <TableCell className='measureUrl'>{ url }</TableCell>
+      );  
+    }
+  }
+  function renderDate(date){
+    if (!props.hideDate) {
+      return (
+        <TableCell className='date'>{ date }</TableCell>
+      );
+    }
+  }
+  function renderDateHeader(){
+    if (!props.hideDate) {
+      return (
+        <TableCell className='date'>Date</TableCell>
+      );
+    }
+  }
+  function renderReporter(reporter){
+    if (!props.hideReporter) {
+      return (
+        <TableCell className='reporter'>{ reporter }</TableCell>
+      );
+    }
+  }
+  function renderReporterHeader(){
+    if (!props.hideReporter) {
+      return (
+        <TableCell className='reporter'>Reporter</TableCell>
+      );
+    }
+  }
+  function renderPeriodStart(periodStart){
+    if (!props.hidePeriodStart) {
+      return (
+        <TableCell className='periodStart'>{ periodStart }</TableCell>
+      );
+    }
+  }
+  function renderPeriodStartHeader(){
+    if (!props.hidePeriodStart) {
+      return (
+        <TableCell className='periodStart'>Start</TableCell>
+      );
+    }
+  }
+  function renderPeriodEnd(periodEnd){
+    if (!props.hidePeriodEnd) {
+      return (
+        <TableCell className='periodEnd'>{ periodEnd }</TableCell>
+      );
+    }
+  }
+  function renderPeriodEndHeader(){
+    if (!props.hidePeriodEnd) {
+      return (
+        <TableCell className='periodEnd'>End</TableCell>
+      );
+    }
+  }
+  function renderGroupCode(groupCode){
+    if (!props.hideGroupCode) {
+      return (
+        <TableCell className='groupCode'>{ groupCode }</TableCell>
+      );
+    }
+  }
+  function renderGroupCodeHeader(){
+    if (!props.hideGroupCode) {
+      return (
+        <TableCell className='groupCode'>Group Code</TableCell>
+      );
+    }
+  }
+  function renderPopulationCode(populationCode){
+    if (!props.hidePopulationCode) {
+      return (
+        <TableCell className='populationCode'>{ populationCode }</TableCell>
+      );
+    }
+  }
+  function renderPopulationCodeHeader(){
+    if (!props.hidePopulationCode) {
+      return (
+        <TableCell className='populationCode'>Population Code</TableCell>
+      );
+    }
+  }
+  function renderPopulationCount(populationCount){
+    if (!props.hidePopulationCount) {
+      return (
+        <TableCell className='populationCount'>{ populationCount }</TableCell>
+      );
+    }
+  }
+  function renderPopulationCountHeader(){
+    if (!props.hidePopulationCount) {
+      return (
+        <TableCell className='populationCount'>Population Count</TableCell>
+      );
+    }
+  }
+  function renderMeasureScore(measureScore){
+    if (!props.hideMeasureScore) {
+      return (
+        <TableCell className='measureScore'>{ measureScore }</TableCell>
+      );
+    }
+  }
+  function renderMeasureScoreHeader(){
+    if (!props.hideMeasureScore) {
+      return (
+        <TableCell className='measureScore'>Measure Score</TableCell>
+      );
+    }
+  }
+  function renderStratificationCount(stratificationCount){
+    if (!props.hideStratificationCount) {
+      return (
+        <TableCell className='stratificationCount'>{ stratificationCount }</TableCell>
+      );
+    }
+  }
+  function renderStratificationCountHeader(){
+    if (!props.hideStratificationCount) {
+      return (
+        <TableCell className='stratificationCount'>Stratificaiton</TableCell>
+      );
+    }
+  }
+  
 
-  function onMetaClick(patient){
-    let self = this;
-    if(props.onMetaClick){
-      props.onMetaClick(self, patient);
-    }
-  }
   function renderBarcode(id){
     if (!props.hideIdentifier) {
       return (
@@ -259,163 +434,11 @@ function MeasureReportsTable(props){
       );
     }
   }
-  function renderIdentifier(identifier){
-    if (!props.hideSubjects) {
-      return (
-        <TableCell className='identifier'>{ identifier }</TableCell>
-      );
-    }
-  }
-  function renderIdentifierHeader(){
-    if (!props.hideSubjects) {
-      return (
-        <TableCell className='identifier'>Identifier</TableCell>
-      );
-    }
-  }
-  function renderDescription(identifier){
-    let description = "";
-    if(typeof identifier === "string"){
-      description = identifier;
-    }
 
-    if(typeof Measures === "object"){
-      let measures = Measures.find({'identifier[0].value': identifier}).fetch();
-      if(measures && measures[0])
-      description = get(measures[0], 'description', '');
-    }
+  
+  
 
-    if (!props.showDescription) {
-      return (
-        <TableCell className='description'>{ description }</TableCell>
-      );
-    }
-  }
-  function renderDescriptionHeader(){
-    if (!props.showDescription) {
-      return (
-        <TableCell className='description'>Description</TableCell>
-      );
-    }
-  }
-  function renderStatus(valueString){
-    if (!props.hideStatus) {
-      return (
-        <TableCell className='value'>{ valueString }</TableCell>
-      );
-    }
-  }
-  function renderStatusHeader(){
-    if (!props.hideStatus) {
-      return (
-        <TableCell className='value'>Value</TableCell>
-      );
-    }
-  }
 
-  function renderHistory(valueString){
-    if (!props.hideHistory) {
-      return (
-        <TableCell className='history'>{ valueString }</TableCell>
-      );
-    }
-  }
-  function renderHistoryHeader(){
-    if (!props.hideHistory) {
-      return (
-        <TableCell className='history'>Value</TableCell>
-      );
-    }
-  }
-
-  function renderTypeCodeHeader(){
-    if (!props.hideTypeCode) {
-      return (
-        <TableCell className='typecode'>TypeCode</TableCell>
-      );
-    }
-  }
-  function renderTypeCode(code){
-    if (!props.hideTypeCode) {
-      return (
-        <TableCell className='typecode'>{ code }</TableCell>
-      );  
-    }
-  }
-  function renderClassCodeHeader(){
-    if (!props.hideClassCode) {
-      return (
-        <TableCell className='classcode'>Class</TableCell>
-      );
-    }
-  }
-  function renderClassCode(code){
-    if (!props.hideClassCode) {
-      return (
-        <TableCell className='classcode'>{ code }</TableCell>
-      );  
-    }
-  }
-  function renderMeasureReferenceHeader(){
-    if (!props.hideMeasureReference) {
-      return (
-        <TableCell className='measure'>Measure</TableCell>
-      );
-    }
-  }
-  function renderMeasureReference(code){
-    if (!props.hideMeasureReference) {
-      return (
-        <TableCell className='measure'>{ code }</TableCell>
-      );  
-    }
-  }
-  function renderReasonHeader(){
-    if (!props.hideReason) {
-      return (
-        <TableCell className='reason'>Reason</TableCell>
-      );
-    }
-  }
-  function renderReason(code){
-    if (!props.hideReason) {
-      return (
-        <TableCell className='reason'>{ code }</TableCell>
-      );  
-    }
-  }
-  function renderCategoryHeader(){
-    if (props.multiline === false) {
-      return (
-        <TableCell className='category'>Category</TableCell>
-      );
-    }
-  }
-  function renderCategory(category){
-    if (props.multiline === false) {
-      return (
-        <TableCell className='category'>{ category }</TableCell>
-      );
-    }
-  }
-  function renderToggleHeader(){
-    if (!props.hideCheckboxes) {
-      return (
-        <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
-      );
-    }
-  }
-  function renderToggle(){
-    if (!props.hideCheckboxes) {
-      return (
-        <TableCell className="toggle" style={{width: '60px'}}>
-            {/* <Checkbox
-              defaultChecked={true}
-            /> */}
-        </TableCell>
-      );
-    }
-  }
 
 
 
@@ -424,7 +447,7 @@ function MeasureReportsTable(props){
   if(props.measureReports){
     if(props.measureReports.length > 0){              
       props.measureReports.forEach(function(measureReport){
-        measureReportsToRender.push(flattenMeasureReport(measureReport));
+        measureReportsToRender.push(flattenMeasureReport(measureReport, props.measuresCursor));
       });  
     }
   }
@@ -434,66 +457,28 @@ function MeasureReportsTable(props){
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < measureReportsToRender.length; i++) {
-      if(props.multiline){
-        tableRows.push(
-          <TableRow className="measureReportRow" key={i} onClick={ rowClick(measureReportsToRender[i]._id)} >
-            { renderToggle() }
-            { renderActionIcons(measureReportsToRender[i]) }
-
-
-            { renderIdentifier(measureReportsToRender[i].identifier)}
-            { renderDescription(measureReportsToRender[i].identifier)}
-            { renderMeasureReference(measureReportsToRender[i].measureReference)}
-
-            {/* { renderClassCode(measureReportsToRender[i].classCode) }
-            { renderTypeCode(measureReportsToRender[i].typeCode) } */}
-            {/* <TableCell className='classCode' >{measureReportsToRender[i].classCode }</TableCell> */}
-            {/* <TableCell className='typeCode' >{measureReportsToRender[i].typeCode }</TableCell> */}
-            {/* <TableCell className='typeDisplay' >{measureReportsToRender[i].typeDisplay }</TableCell>
-            { renderReason(measureReportsToRender[i].reasonDisplay)} */}
-            {/* <TableCell className='measureReference' >{measureReportsToRender[i].measureReference }</TableCell>
-            <TableCell className='reasonDisplay' >{measureReportsToRender[i].reasonDisplay }</TableCell> */}
-
-            { renderStatus(measureReportsToRender[i].status)}
-            {/* { renderHistory(measureReportsToRender[i].statusHistory)} */}
-
-            {/* <TableCell className='status' >{measureReportsToRender[i].status }</TableCell>
-            <TableCell className='statusHistory' >{measureReportsToRender[i].statusHistory }</TableCell> */}
-            <TableCell className='periodStart' style={{minWidth: '140px'}}>{measureReportsToRender[i].periodStart }</TableCell>
-            <TableCell className='periodEnd' style={{minWidth: '140px'}}>{measureReportsToRender[i].periodEnd }</TableCell>
-            { renderBarcode(measureReportsToRender[i]._id)}
-          </TableRow>
-        );    
-
-      } else {
-        tableRows.push(
-          <TableRow className="measureReportRow" key={i} onClick={ rowClick.bind(measureReportsToRender[i]._id)} >            
-            { renderToggle() }
-            { renderActionIcons(measureReportsToRender[i]) }
-            { renderIdentifier(measureReportsToRender[i].identifier)}
-            { renderDescription(measureReportsToRender[i].identifier)}
-            { renderMeasureReference(measureReportsToRender[i].measureReference)}
-
-            {/* { renderClassCode(measureReportsToRender[i].classCode) }
-            { renderTypeCode(measureReportsToRender[i].typeCode) } */}
-            {/* <TableCell className='classCode' >{ measureReportsToRender[i].classCode }</TableCell> */}
-            {/* <TableCell className='typeCode' >{ measureReportsToRender[i].typeCode }</TableCell> */}
-            {/* <TableCell className='typeDisplay' >{ measureReportsToRender[i].typeDisplay }</TableCell>
-            { renderReason(measureReportsToRender[i].reasonDisplay)} */}
-            {/* <TableCell className='measureReference' >{ measureReportsToRender[i].measureReference }</TableCell>
-            <TableCell className='reasonDisplay' >{ measureReportsToRender[i].reasonDisplay }</TableCell> */}
-
-            { renderStatus(measureReportsToRender[i].status)}
-            {/* { renderHistory(measureReportsToRender[i].statusHistory)} */}
-
-            {/* <TableCell className='status' >{ measureReportsToRender[i].status }</TableCell>
-            <TableCell className='statusHistory' >{ measureReportsToRender[i].statusHistory }</TableCell> */}
-            <TableCell className='periodStart' style={{minWidth: '140px'}}>{ measureReportsToRender[i].periodStart }</TableCell>
-            <TableCell className='periodEnd' style={{minWidth: '140px'}}>{ measureReportsToRender[i].periodEnd }</TableCell>
-            { renderBarcode(measureReportsToRender[i]._id)}
-          </TableRow>
-        );    
-      }
+      tableRows.push(
+        <TableRow className="measureReportRow" key={i} onClick={ rowClick.bind(measureReportsToRender[i]._id)} >            
+          { renderToggle() }
+          { renderActionIcons(measureReportsToRender[i]) }
+          { renderIdentifier(measureReportsToRender[i].identifier)}
+          
+          { renderType(measureReportsToRender[i].type) }
+          { renderDate(measureReportsToRender[i].date) }
+          { renderReporter(measureReportsToRender[i].reporter) }
+          { renderMeasureTitle(measureReportsToRender[i].measureTitle)}
+          { renderMeasureUrl(measureReportsToRender[i].measureUrl)}
+          { renderPeriodStart(measureReportsToRender[i].periodStart) }
+          { renderPeriodEnd(measureReportsToRender[i].periodEnd) }
+          { renderGroupCode(measureReportsToRender[i].groupCode) }
+          { renderPopulationCode(measureReportsToRender[i].populationCode) }
+          { renderPopulationCount(measureReportsToRender[i].populationCount) }
+          { renderMeasureScore(measureReportsToRender[i].measureScore) }
+          { renderStratificationCount(measureReportsToRender[i].stratificationCount) }          
+          
+          { renderBarcode(measureReportsToRender[i]._id)}
+        </TableRow>
+      );    
     }
   }
 
@@ -504,25 +489,20 @@ function MeasureReportsTable(props){
           { renderToggleHeader() }
           { renderActionIconsHeader() }
           { renderIdentifierHeader() }
-          { renderDescriptionHeader() }
-          { renderMeasureReferenceHeader() }
-          
-          {/* { renderClassCodeHeader() }
-          { renderTypeCodeHeader() } */}
-          {/* <TableCell className='classCode'>Class</TableCell> */}
-          {/* <TableCell className='typeCode'>TypeCode</TableCell> */}
-          {/* <TableCell className='typeDisplay'>Type</TableCell>
-          { renderReasonHeader() } */}
-          {/* <TableCell className='measureReference'>ReasonCode</TableCell>
-          <TableCell className='reasonDisplay'>Reason</TableCell> */}
 
-          { renderStatusHeader() }
-          {/* { renderHistoryHeader() } */}
+          { renderTypeHeader() }
+          { renderDateHeader() }
+          { renderReporterHeader() }
+          { renderMeasureTitleHeader() }
+          { renderMeasureUrlHeader() }
+          { renderPeriodStartHeader() }
+          { renderPeriodEndHeader() }
+          { renderGroupCodeHeader() }
+          { renderPopulationCodeHeader() }
+          { renderPopulationCountHeader() }
+          { renderMeasureScoreHeader() }
+          { renderStratificationCountHeader() }    
 
-          {/* <TableCell className='status'>Status</TableCell>
-          <TableCell className='statusHistory'>History</TableCell> */}
-          <TableCell className='start' style={{minWidth: '140px'}}>Start</TableCell>
-          <TableCell className='end' style={{minWidth: '140px'}}>End</TableCell>
           { renderBarcodeHeader() }
         </TableRow>
       </TableHead>
@@ -538,27 +518,51 @@ MeasureReportsTable.propTypes = {
   measureReports: PropTypes.array,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
-  hideClassCode: PropTypes.bool,
-  hideTypeCode: PropTypes.bool,
-  hideReason: PropTypes.bool,
-  hideMeasureReference: PropTypes.bool,
-  hideSubjects: PropTypes.bool,
+  rowsPerPage: PropTypes.number,
+
   hideCheckboxes: PropTypes.bool,
-  hideActionIcons: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
-  hideStatus: PropTypes.bool,
-  hideHistory: PropTypes.bool,
-  showDescription: PropTypes.bool,
-  enteredInError: PropTypes.bool,
-  multiline: PropTypes.bool,
+  hideTypeCode: PropTypes.bool,
+  hideMeasureUrl: PropTypes.bool,
+  hideDate: PropTypes.bool,
+  hideReporter: PropTypes.bool,
+  hidePeriodStart: PropTypes.bool,
+  hidePeriodEnd: PropTypes.bool,
+  hideGroupCode: PropTypes.bool,
+  hidePopulationCode: PropTypes.bool,
+  hidePopulationCount: PropTypes.bool,
+  hideMeasureScore: PropTypes.bool,
+  hideStratificationCount: PropTypes.bool,
+  hideActionIcons: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
-  showActionButton: PropTypes.bool
-};
+  showActionButton: PropTypes.bool,
 
+  measuresCursor: PropTypes.object
+};
+MeasureReportsTable.defaultProps = {
+  rowsPerPage: 5,
+  hideCheckboxes: true,
+  hideIdentifier: true,
+  hideStatus: true,
+  hideTypeCode: true,
+  hideMeasureTitle: false,
+  hideMeasureUrl: true,
+  hideDate: false,
+  hideReporter: false,
+  hidePeriodStart: false,
+  hidePeriodEnd: false,
+  hideGroupCode: true,
+  hidePopulationCode: true,
+  hidePopulationCount: true,
+  hideMeasureScore: false,
+  hideStratificationCount: true,
+  hideActionIcons: true,
+}
 
 export default MeasureReportsTable; 

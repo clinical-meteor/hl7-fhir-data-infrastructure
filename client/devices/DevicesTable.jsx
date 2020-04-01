@@ -58,7 +58,7 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenCondition = function(condition, internalDateFormat){
+flattenDevice = function(device, internalDateFormat){
   let result = {
     _id: '',
     id: '',
@@ -75,15 +75,15 @@ flattenCondition = function(condition, internalDateFormat){
     internalDateFormat = "YYYY-MM-DD";
   }
 
-  result._id =  get(condition, 'id') ? get(condition, 'id') : get(condition, '_id');
-  result.id = get(condition, 'id', '');
-  result.identifier = get(condition, 'identifier[0].value', '');
+  result._id =  get(device, 'id') ? get(device, 'id') : get(device, '_id');
+  result.id = get(device, 'id', '');
+  result.identifier = get(device, 'identifier[0].value', '');
 
-  result.deviceType = get(condition, 'type.text', '');
-  result.deviceModel = get(condition, 'model', '');
-  result.manufacturer = get(condition, 'manufacturer', '');
-  result.serialNumber = get(condition, 'identifier[0].value', '');
-  result.note = get(condition, 'note[0].text', '');
+  result.deviceType = get(device, 'type.text', '');
+  result.deviceModel = get(device, 'model', '');
+  result.manufacturer = get(device, 'manufacturer', '');
+  result.serialNumber = get(device, 'identifier[0].value', '');
+  result.note = get(device, 'note[0].text', '');
 
   return result;
 }
@@ -100,7 +100,7 @@ function DevicesTable(props){
     children, 
 
     data,
-    conditions,
+    devices,
     query,
     paginationLimit,
     disablePagination,
@@ -162,6 +162,19 @@ function DevicesTable(props){
 
 
   //---------------------------------------------------------------------
+  // Helper Functions
+
+  function removeRecord(_id){
+    console.log('removeRecord')
+  }
+  function rowClick(id){
+    console.log('rowClick')
+  }
+  function handleActionButtonClick(){
+    console.log('handleActionButtonClick')
+  }
+
+  //---------------------------------------------------------------------
   // Column Rendering 
 
   function renderCheckboxHeader(){
@@ -189,7 +202,7 @@ function DevicesTable(props){
       );
     }
   }
-  function renderActionIcons( condition ){
+  function renderActionIcons( device ){
     if (props.displayActionIcons) {
 
       let iconStyle = {
@@ -201,8 +214,8 @@ function DevicesTable(props){
 
       return (
         <TableCell className='actionIcons' style={{width: '120px'}}>
-          {/* <Icon icon={tag} style={iconStyle} onClick={showSecurityDialog.bind(this, condition)} />
-          <Icon icon={iosTrashOutline} style={iconStyle} onClick={removeRecord.bind(this, condition._id)} /> */}
+          {/* <Icon icon={tag} style={iconStyle} onClick={showSecurityDialog.bind(this, device)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={removeRecord.bind(this, device._id)} /> */}
         </TableCell>
       );
     }
@@ -257,7 +270,7 @@ function DevicesTable(props){
   // Table Rows
 
   let tableRows = [];
-  let conditionsToRender = [];
+  let devicesToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
   if(props.showMinutes){
@@ -267,13 +280,13 @@ function DevicesTable(props){
     internalDateFormat = props.dateFormat;
   }
 
-  if(props.conditions){
-    if(props.conditions.length > 0){     
+  if(props.devices){
+    if(props.devices.length > 0){     
       let count = 0;    
 
-      props.conditions.forEach(function(condition){
+      props.devices.forEach(function(device){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          conditionsToRender.push(flattenCondition(condition, internalDateFormat));
+          devicesToRender.push(flattenDevice(device, internalDateFormat));
         }
         count++;
       });  
@@ -283,24 +296,24 @@ function DevicesTable(props){
   let rowStyle = {
     cursor: 'pointer'
   }
-  if(conditionsToRender.length === 0){
-    logger.trace('ConditionsTable: No conditions to render.');
+  if(devicesToRender.length === 0){
+    logger.trace('ConditionsTable: No devices to render.');
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
-    for (var i = 0; i < conditionsToRender.length; i++) {
-      if(get(conditionsToRender[i], 'modifierExtension[0]')){
+    for (var i = 0; i < devicesToRender.length; i++) {
+      if(get(devicesToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
-      logger.trace('conditionsToRender[i]', conditionsToRender[i])
+      logger.trace('devicesToRender[i]', devicesToRender[i])
       tableRows.push(
-        <TableRow className="deviceRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, conditionsToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+        <TableRow className="deviceRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, devicesToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
           <TableCell className='deviceType'>{this.data.devices[i].type.text }</TableCell>
           <TableCell className='manufacturer'>{this.data.devices[i].manufacturer }</TableCell>
           <TableCell className='deviceModel'>{this.data.devices[i].model }</TableCell>
           <TableCell className='serialNumber'>{this.data.devices[i].identifier[0] ? this.data.devices[i].identifier[0].value :  '' }</TableCell>
           <TableCell className="costOfOwnership">{ (this.data.devices[i].note && this.data.devices[i].note[0]) ? this.data.devices[i].note[0].text : '' }</TableCell>
-          { renderBarcode(conditionsToRender[i]._id)}
-          { renderActionButton(conditionsToRender[i]) }
+          { renderBarcode(devicesToRender[i]._id)}
+          { renderActionButton(devicesToRender[i]) }
         </TableRow>
       );    
     }
@@ -313,7 +326,7 @@ function DevicesTable(props){
 
   return(
     <div>
-      <Table className='conditionsTable' size="small" aria-label="a dense table" { ...otherProps }>
+      <Table className='devicesTable' size="small" aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
             { renderCheckboxHeader() }  
@@ -398,7 +411,7 @@ function DevicesTable(props){
 
 DevicesTable.propTypes = {
   data: PropTypes.array,
-  conditions: PropTypes.array,
+  devices: PropTypes.array,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,

@@ -20,7 +20,7 @@ import ReactMixin from 'react-mixin';
 
 
 
-const flattenMedicationStatement = function(statement, fhirVersion){
+flattenMedicationStatement = function(statement, fhirVersion){
   console.log('flattenMedicationStatement', statement)
 
   var newRow = {

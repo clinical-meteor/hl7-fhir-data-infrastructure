@@ -80,7 +80,7 @@ let styles = {
     result.id = get(organization, 'id', '');
     result.identifier = get(organization, 'identifier[0].value', '');
 
-    result.name = get(organization, 'name')
+    result.name = get(organization, 'name', '')
 
     result.phone = FhirUtilities.pluckPhone(get(organization, 'telecom'));
     result.email = FhirUtilities.pluckEmail(get(organization, 'telecom'));
@@ -119,23 +119,24 @@ function OrganizationsTable(props){
     paginationLimit,
     disablePagination,
   
-    displayCheckboxes,
-    displayActionIcons,
-    displayIdentifier,
-    displayName,
-    displayPhone,
-    displayEmail,
-    displayAddressLine,
-    displayCity,
-    displayState,
-    displayPostalCode,
+    hideCheckboxes,
+    hideActionIcons,
+    hideIdentifier,
+    hideName,
+    hidePhone,
+    hideEmail,
+    hideAddressLine,
+    hideCity,
+    hideState,
+    hidePostalCode,
   
     onCellClick,
     onRowClick,
     onMetaClick,
     onRemoveRecord,
-    onActionButtonClick,
-    showActionButton,
+    onActionButtonClihandle,
+    hideActionButton,
+    hideBarcode,
     actionButtonLabel,
   
     rowsPerPage,
@@ -181,18 +182,33 @@ function OrganizationsTable(props){
     />
   }
 
+
+  //---------------------------------------------------------------------
+  // Helper Methods  
+
+
+  function removeRecord(_id){
+    console.log('removeRecord')
+  }
+  function rowClick(id){
+    console.log('rowClick')
+  }
+  function handleActionButtonClick(){
+    console.log('handleActionButtonClick')
+  }
+
   //---------------------------------------------------------------------
   // Column Rendering
 
   function renderCheckboxHeader(){
-    if (props.displayCheckboxes) {
+    if (!props.hideCheckboxes) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(patientId ){
-    if (props.displayCheckboxes) {
+    if (!props.hideCheckboxes) {
       return (
         <TableCell className="toggle">
           <Checkbox
@@ -203,14 +219,14 @@ function OrganizationsTable(props){
     }
   }
   function renderActionIconsHeader(){
-    if (props.displayActionIcons) {
+    if (!props.hideActionIcons) {
       return (
         <TableCell className='actionIcons'>Actions</TableCell>
       );
     }
   }
   function renderActionIcons( organization ){
-    if (props.displayActionIcons) {
+    if (!props.hideActionIcons) {
 
       let iconStyle = {
         marginLeft: '4px', 
@@ -237,7 +253,21 @@ function OrganizationsTable(props){
   function renderIdentifierHeader(){
     if (!props.hideIdentifier) {
       return (
-        <TableCell className="identifier hidden-on-phone">identifier</TableCell>
+        <TableCell className="identifier hidden-on-phone">Identifier</TableCell>
+      );
+    }
+  }
+  function renderName(name){
+    if (!props.hideName) {
+      return (
+        <TableCell className="name">{ name }</TableCell>
+      );
+    }
+  }
+  function renderNameHeader(){
+    if (!props.hideName) {
+      return (
+        <TableCell className="name">Name</TableCell>
       );
     }
   }
@@ -251,7 +281,7 @@ function OrganizationsTable(props){
   function renderPhoneHeader(){
     if (!props.hidePhone) {
       return (
-        <TableCell className="phone">phone</TableCell>
+        <TableCell className="phone">Phone</TableCell>
       );
     }
   }
@@ -265,7 +295,7 @@ function OrganizationsTable(props){
   function renderEmailHeader(){
     if (!props.hideEmail) {
       return (
-        <TableCell className="email hidden-on-phone">email</TableCell>
+        <TableCell className="email hidden-on-phone">Email</TableCell>
       );
     }
   }
@@ -293,7 +323,7 @@ function OrganizationsTable(props){
   function renderCityHeader(){
     if (!props.hideCity) {
       return (
-        <TableCell className="city">city</TableCell>
+        <TableCell className="city">City</TableCell>
       );
     }
   }
@@ -307,7 +337,7 @@ function OrganizationsTable(props){
   function renderStateHeader(){
     if (!props.hideState) {
       return (
-        <TableCell className="city">city</TableCell>
+        <TableCell className="state">State</TableCell>
       );
     }
   }
@@ -321,36 +351,36 @@ function OrganizationsTable(props){
   function renderPostalCodeHeader(){
     if (!props.hidePostalCode) {
       return (
-        <TableCell className="postalCode hidden-on-phone">postalCode</TableCell>
+        <TableCell className="postalCode hidden-on-phone">Postal Code</TableCell>
       );
     }
   }
   function renderBarcode(id){
-    if (props.displayBarcode) {
+    if (!props.hideBarcode) {
       return (
         <TableCell><span className="barcode helveticas">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (props.displayBarcode) {
+    if (!props.hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
     }
   }
   function renderActionButtonHeader(){
-    if (props.showActionButton === true) {
+    if (!props.hideActionButton) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
   function renderActionButton(patient){
-    if (props.showActionButton === true) {
+    if (!props.hideActionButton) {
       return (
         <TableCell className='ActionButton' >
-          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+          <Button onClick={ handleActionButtonClick.bind(this, patient._id)}>{ get(props, "actionButtonLabel", "") }</Button>
         </TableCell>
       );
     }
@@ -376,7 +406,7 @@ function OrganizationsTable(props){
 
       props.organizations.forEach(function(organization){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          organizationsToRender.push(flattenOrganization(organization, internalDateFormat));
+          organizationsToRender.push(flattenOrganization(organization));
         }
         count++;
       });  
@@ -399,14 +429,15 @@ function OrganizationsTable(props){
         <TableRow className="organizationRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, organizationsToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
           { renderCheckbox() }
           { renderActionIcons(organizationsToRender[i]) }
-          { renderIdentifier(organizationsToRender.identifier ) }
+          { renderIdentifier(organizationsToRender[i].identifier ) }
 
-          {renderPhone(organizationsToRender.phone)}
-          {renderEmail(organizationsToRender.email)}
-          {renderAddressLine(organizationsToRender.addressLine)}
-          {renderCity(organizationsToRender.city)}
-          {renderState(organizationsToRender.state)}
-          {renderPostalCode(organizationsToRender.postalCode)}
+          {renderName(organizationsToRender[i].name)}
+          {renderPhone(organizationsToRender[i].phone)}
+          {renderEmail(organizationsToRender[i].email)}
+          {renderAddressLine(organizationsToRender[i].addressLine)}
+          {renderCity(organizationsToRender[i].city)}
+          {renderState(organizationsToRender[i].state)}
+          {renderPostalCode(organizationsToRender[i].postalCode)}
 
           { renderBarcode(organizationsToRender[i]._id)}
           { renderActionButton(organizationsToRender[i]) }
@@ -428,6 +459,7 @@ function OrganizationsTable(props){
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
 
+            { renderNameHeader() }
             { renderPhoneHeader() }
             { renderEmailHeader() }
             { renderCityHeader() }
@@ -456,23 +488,24 @@ OrganizationsTable.propTypes = {
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  displayCheckboxes:  PropTypes.bool,
-  displayActionIcons:  PropTypes.bool,
-  displayIdentifier:  PropTypes.bool,
-  displayName:  PropTypes.bool,
-  displayPhone:  PropTypes.bool,
-  displayEmail:  PropTypes.bool,
-  displayAddressLine:  PropTypes.bool,
-  displayCity:  PropTypes.bool,
-  displayState:  PropTypes.bool,
-  displayPostalCode:  PropTypes.bool,
+  hideCheckboxes:  PropTypes.bool,
+  hideActionIcons:  PropTypes.bool,
+  hideIdentifier:  PropTypes.bool,
+  hideName:  PropTypes.bool,
+  hidePhone:  PropTypes.bool,
+  hideEmail:  PropTypes.bool,
+  hideAddressLine:  PropTypes.bool,
+  hideCity:  PropTypes.bool,
+  hideState:  PropTypes.bool,
+  hidePostalCode:  PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
-  onActionButtonClick: PropTypes.func,
-  showActionButton: PropTypes.bool,
+  onActionButtonClihandle: PropTypes.func,
+  hideActionButton: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,
@@ -482,6 +515,9 @@ OrganizationsTable.propTypes = {
 };
 
 OrganizationsTable.defaultProps = {
+  hideName: false,
+  hideActionButton: true,
+  hideBarcode: true,
   rowsPerPage: 5
 }
 

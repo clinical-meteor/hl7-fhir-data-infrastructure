@@ -236,31 +236,16 @@ function ConditionsTable(props){
   //---------------------------------------------------------------------
   // Helper Functions
 
-  // function removeRecord(_id){
-  //   logger.info('Removing condition: ' + _id)
-  //   // Conditions._collection.remove({_id: _id})
-  // }
-  // function showSecurityDialog(condition){
-  //   // logger.log('showSecurityDialog', condition)
-
-  //   // Session.set('securityDialogResourceJson', Conditions.findOne(get(condition, '_id')));
-  //   // Session.set('securityDialogResourceType', 'Condition');
-  //   // Session.set('securityDialogResourceId', get(condition, '_id'));
-  //   // Session.set('securityDialogOpen', true);
-  // }
-  function displayOnMobile(width){
-    let style = {};
-    if(['iPhone'].includes(window.navigator.platform)){
-      style.display = "none";
-    }
-    if(width){
-      style.width = width;
-    } else {
-      style.minWidth = '140px'
-    }
-    return style;
+  function removeRecord(_id){
+    console.log('removeRecord')
   }
-
+  function rowClick(id){
+    console.log('rowClick')
+  }
+  function handleActionButtonClick(){
+    console.log('handleActionButtonClick')
+  }
+  
   //---------------------------------------------------------------------
   // Column Rendering
 
@@ -441,14 +426,14 @@ function ConditionsTable(props){
   function renderVerification(verificationStatus){
     if (props.displayVerification) {
       return (
-        <TableCell className='verificationStatus' style={ displayOnMobile()} >{ verificationStatus }</TableCell>
+        <TableCell className='verificationStatus' >{ verificationStatus }</TableCell>
       );
     }
   }
   function renderVerificationHeader(){
     if (props.displayVerification) {
       return (
-        <TableCell className='verificationStatus' style={ displayOnMobile('140px')} >Verification</TableCell>
+        <TableCell className='verificationStatus' >Verification</TableCell>
       );
     }
   }
