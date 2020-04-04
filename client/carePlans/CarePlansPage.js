@@ -19,6 +19,7 @@ import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
+import { get } from 'lodash';
 
 //=============================================================================================================================================
 // TABS
@@ -79,13 +80,13 @@ export class CarePlansPage extends React.Component {
     if(process.env.NODE_ENV === "test") console.log('In CarePlansPage render');
 
 
-    let headerHeight = 64;
+    let headerHeight = 84;
     if(get(Meteor, 'settings.public.defaults.prominantHeader')){
-      headerHeight = 128;
+      headerHeight = 148;
     }
 
     return (
-      <PageCanvas id='carePlansPage' headerHeight={headerHeight}>
+      <PageCanvas id='carePlansPage' headerHeight={headerHeight} >
         <StyledCard height='auto'>
           <CardHeader title='CarePlans' />
           <CardContent>
