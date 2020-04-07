@@ -97,8 +97,19 @@ flattenEncounter = function(encounter, internalDateFormat){
   result.subjectId = get(encounter, 'subject.reference', '');
 
   result.status = get(encounter, 'status', '');
-  result.reasonCode = get(encounter, 'reason[0].coding[0].code', '');
-  result.reasonDisplay = get(encounter, 'reason[0].coding[0].display', '');
+
+  if(get(encounter, 'reasonCode[0].coding[0].code')){
+    result.reasonCode = get(encounter, 'reasonCode[0].coding[0].code', '');
+  } else if(get(encounter, 'reason[0].coding[0].code')){
+    result.reasonCode = get(encounter, 'reason[0].coding[0].code', '');
+  }
+
+  if(get(encounter, 'reasonCode[0].coding[0].code')){
+    result.reasonDisplay = get(encounter, 'reasonCode[0].coding[0].display', '');
+  } else if(get(encounter, 'reason[0].coding[0].code')){
+    result.reasonDisplay = get(encounter, 'reason[0].coding[0].display', '');
+  }
+
   result.typeCode = get(encounter, 'type[0].coding[0].code', '');
   result.typeDisplay = get(encounter, 'type[0].coding[0].display', '');
 

@@ -1,4 +1,6 @@
 
+import FhirUtilities from './lib/FhirUtilities';
+import FhirDehydrator from './lib/FhirDehydrator';
 
 import AllergyIntolerancesPage from './client/allergyIntolerances/AllergyIntolerancesPage';
 import AllergyIntolerancesTable from './client/allergyIntolerances/AllergyIntolerancesTable';
@@ -395,7 +397,10 @@ export {
 
   ProceduresPage,
   ProceduresTable,
-  ProcedureDetail
+  ProcedureDetail,
+
+  FhirDehydrator,
+  FhirUtilities
 };
 
 

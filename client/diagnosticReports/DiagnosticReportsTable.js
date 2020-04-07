@@ -26,6 +26,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
 import { get } from 'lodash';
+import moment from 'moment';
 
 const mapDiagnosticReportToRow = function(report, fhirVersion){
   //console.log('report', report)
