@@ -177,6 +177,12 @@ export class OrganizationsPage extends React.Component {
   }
 
   render() {
+
+    let headerHeight = 64;
+    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
+      headerHeight = 128;
+    }
+    
     return (
       <PageCanvas id="organizationsPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >

@@ -389,6 +389,7 @@ export {
   ImmunizationDetail,
 
   LocationsTable,
+  LocationPage,
 
   MeasuresPage,
   MeasuresTable,

@@ -14,7 +14,7 @@ import {
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import LocationDetail from './LocationDetail';
-import LocationTable from './LocationsTable';
+import LocationsTable from './LocationsTable';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -162,7 +162,9 @@ export class LocationsPage extends React.Component {
       locationSearchFilter: Session.get('locationSearchFilter'),
       selectedLocationId: Session.get('selectedLocationId'),
       currentLocation: null,
-      fhirVersion: Session.get('fhirVersion') 
+      fhirVersion: Session.get('fhirVersion') ,
+      locations: Locations.find().fetch(),
+      locationsCount: Locations.find().count()
     };
 
     
@@ -178,6 +180,7 @@ export class LocationsPage extends React.Component {
     if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
       headerHeight = 128;
     }
+    const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
           
     return (
       <PageCanvas id="locationsPage" headerHeight={headerHeight} >
@@ -187,7 +190,11 @@ export class LocationsPage extends React.Component {
               title="Locations"
             />
             <CardContent>
-              <LocationTable />
+              <LocationsTable 
+                locations={this.data.locations}
+                rowsPerPage={rowsPerPage}
+                count={this.data.locationsCount}      
+              />
             </CardContent>
           </StyledCard>
         </MuiThemeProvider>
