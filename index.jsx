@@ -79,7 +79,7 @@ import ProceduresTable from './client/procedures/ProceduresTable';
 import ProcedureDetail from './client/procedures/ProcedureDetail';
 
 
-var DynamicRoutes = [{
+let DynamicRoutes = [{
   'name': 'AllergyIntolerancesPage',
   'path': '/allergies',
   'component': AllergyIntolerancesPage,
@@ -176,22 +176,30 @@ var DynamicRoutes = [{
   'requireAuth': true
 } ];
 
-var SidebarElements = [{
+let SidebarElements = [{
   'primaryText': 'Allergies & Intolerances',
   'to': '/allergies',
   'href': '/allergies'
 }, {
   'primaryText': 'Bundles',
   'to': '/bundles',
-  'href': '/bundles'
+  'href': '/bundles',
+  'iconName': 'suitcase'  
 }, {
   'primaryText': 'Care Plans',
   'to': '/careplans',
-  'href': '/careplans'
+  'href': '/careplans',
+  'iconName': 'notepad'  
+}, {
+  'primaryText': 'Conditions',
+  'to': '/conditions',
+  'href': '/conditions',
+  'iconName': 'heartbeat'  
 }, {
   'primaryText': 'Devices',
   'to': '/devices',
-  'href': '/devices'
+  'href': '/devices',
+  'iconName': 'ic_devices'  
 }, {
   'primaryText': 'Diagnostic Reports',
   'to': '/diagnostic-reports',
@@ -199,11 +207,18 @@ var SidebarElements = [{
 }, {
   'primaryText': 'Encounters',
   'to': '/encounters',
-  'href': '/encounters'
+  'href': '/encounters',
+  'iconName': 'ic_transfer_within_a_station'
 }, {
   'primaryText': 'Immunizations',
   'to': '/immunizations',
-  'href': '/immunizations'
+  'href': '/immunizations',
+  'iconName': 'eyedropper'  
+}, {
+  'primaryText': 'Locations',
+  'to': '/locations',
+  'href': '/locations',
+  'iconName': 'location' 
 }, {
   'primaryText': 'Measures',
   'to': '/measures',
@@ -215,38 +230,46 @@ var SidebarElements = [{
 }, {
   'primaryText': 'Medications',
   'to': '/medications',
-  'href': '/medications'
+  'href': '/medications',
+  'iconName': 'erlenmeyerFlask'  
 }, {
   'primaryText': 'Medication Orders',
   'to': '/medication-orders',
-  'href': '/medication-orders'
+  'href': '/medication-orders',
+  'iconName': 'ic_local_pharmacy'  
 }, {
   'primaryText': 'Medication Statements',
   'to': '/medication-statements',
-  'href': '/medication-statements'
+  'href': '/medication-statements',
+  'iconName': 'ic_local_pharmacy'  
 }, {
   'primaryText': 'Observations',
   'to': '/observations',
-  'href': '/observations'
+  'href': '/observations',
+  'iconName': 'iosPulseStrong' 
 }, {
   'primaryText': 'Organizations',
   'to': '/organizations',
-  'href': '/organizations'
+  'href': '/organizations',
+  'iconName': 'hospitalO'
 }, {
   'primaryText': 'Patients',
   'to': '/patients',
-  'href': '/patients'
+  'href': '/patients',
+  'iconName': 'users'
 }, {
   'primaryText': 'Practitioners',
   'to': '/practitioners',
-  'href': '/practitioners'
+  'href': '/practitioners',
+  'iconName': 'userMd'
 }, {
   'primaryText': 'Procedures',
   'to': '/procedures',
-  'href': '/procedures'
+  'href': '/procedures',
+  'iconName': 'bath'
 }];
   
-var AdminSidebarElements = [{
+let AdminSidebarElements = [{
   'primaryText': 'Allergies & Intolerances',
   'to': '/allergies',
   'href': '/allergies'
