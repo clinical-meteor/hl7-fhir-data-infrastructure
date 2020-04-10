@@ -1,12 +1,25 @@
-import { CardActions, CardText } from 'material-ui/Card';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { 
+  Button,
+  Card,
+  Checkbox,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Divider,
+  Grid,
+  Tab, 
+  Tabs,
+  TextField,
+  Typography,
+  Box
+} from '@material-ui/core';
 
-import RaisedButton from 'material-ui/RaisedButton';
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
-import TextField from 'material-ui/TextField';
-import PropTypes from 'prop-types';
+
 import { get, set } from 'lodash';
 
 
@@ -89,12 +102,11 @@ export class LocationDetail extends React.Component {
 
     return (
       <div id={this.props.id} className="locationDetail" style={{height: '100%'}}>
-        <CardText>
-          <Row>
-            <Col md={8}>
+        <CardContent>
+          <Grid container spacer={3}>
+            <Grid item md={8}>
               <TextField
                 id='nameInput'
-                ref='name'
                 name='name'
                 floatingLabelText='Location Name'
                 value={ get(formData, 'name') }
@@ -103,11 +115,10 @@ export class LocationDetail extends React.Component {
                 hintText='Home'
                 fullWidth
                 /><br/>
-            </Col>
-            <Col md={4}>
+            </Grid>
+            <Grid item md={4}>
               <TextField
                 id='statusInput'
-                ref='status'
                 name='status'
                 floatingLabelText='Status'
                 value={ get(formData, 'status') }
@@ -116,14 +127,13 @@ export class LocationDetail extends React.Component {
                 hintText='active | suspended | inactive'
                 fullWidth
                 /><br/>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
 
-          <Row>
-            <Col md={4}>
+          <Grid container spacing={3}>
+            <Grid item md={4}>
               <TextField
                 id='latitudeInput'
-                ref='latitude'
                 name='latitude'
                 floatingLabelText='Latitude'
                 value={ get(formData, 'latitude')}
@@ -132,11 +142,10 @@ export class LocationDetail extends React.Component {
                 hintText='41.7895716'
                 fullWidth
                 /><br/>
-            </Col>
-            <Col md={4}>
+            </Grid>
+            <Grid item md={4}>
               <TextField
                 id='longitudeInput'
-                ref='longitude'
                 name='longitude'
                 floatingLabelText='Longitude'
                 value={ get(formData, 'longitude') }
@@ -145,11 +154,10 @@ export class LocationDetail extends React.Component {
                 hintText='-87.599661'
                 fullWidth
                 /><br/>
-            </Col>
-            <Col md={4}>
+            </Grid>
+            <Grid item md={4}>
               <TextField
                 id='altitudeInput'
-                ref='altitude'
                 name='altitude'
                 floatingLabelText='Altitude'
                 value={ get(formData, 'altitude') }
@@ -157,9 +165,9 @@ export class LocationDetail extends React.Component {
                 floatingLabelFixed={true}                
                 fullWidth
                 /><br/>
-            </Col>
-          </Row>
-        </CardText>
+            </Grid>
+          </Grid>
+        </CardContent>
         <CardActions>
           { this.determineButtons(this.data.locationId) }
         </CardActions>
@@ -171,13 +179,13 @@ export class LocationDetail extends React.Component {
     if (locationId) {
       return (
         <div>
-          <RaisedButton id="updateLocationButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}}  />
-          <RaisedButton id="deleteLocationButton" label="Delete" onClick={this.handleDeleteButton.bind(this)}  />
+          <Button id="updateLocationButton" color="primary" variant="contained" onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} >Save</Button>
+          <Button id="deleteLocationButton" onClick={this.handleDeleteButton.bind(this)} >Delete</Button>
         </div>
       );
     } else {
       return(
-        <RaisedButton id="saveLocationButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} />
+        <Button id="saveLocationButton" color="primary" variant="contained" onClick={this.handleSaveButton.bind(this)} >Save</Button>
       );
     }
   }
@@ -274,9 +282,9 @@ export class LocationDetail extends React.Component {
           if (error) {
             console.log("error", error);
 
-            Bert.alert(error.reason, 'danger');
+            // Bert.alert(error.reason, 'danger');
           } else {
-            Bert.alert('Location updated!', 'success');
+            // Bert.alert('Location updated!', 'success');
             Session.set('locationPageTabIndex', 1);
             Session.set('selectedLocation', false);
           }
@@ -287,9 +295,9 @@ export class LocationDetail extends React.Component {
 
       Locations._collection.insert(fhirLocationData, function(error) {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          // Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('Location added!', 'success');
+          // Bert.alert('Location added!', 'success');
           Session.set('locationPageTabIndex', 1);
           Session.set('selectedLocation', false);
         }
@@ -306,15 +314,15 @@ export class LocationDetail extends React.Component {
     let self = this;
     Locations._collection.remove({_id: this.props.locationId}, function(error, result){
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        // Bert.alert(error.reason, 'danger');
       } else {
-        Bert.alert('Location deleted!', 'success');
+        // Bert.alert('Location deleted!', 'success');
         Session.set('locationPageTabIndex', 1);
         Session.set('selectedLocation', false);
         Session.set('locationUpsert', false);
       }
       if (result) {
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Locations", recordId: self.props.locationId});
+        // HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Locations", recordId: self.props.locationId});
       }
     })
   }

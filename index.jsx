@@ -39,6 +39,7 @@ import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
 import ImmunizationDetail from './client/immunizations/ImmunizationDetail';
 
 import LocationsTable from './client/locations/LocationsTable';
+import LocationsPage from './client/locations/LocationsPage';
 
 import MeasuresPage from './client/measures/MeasuresPage';
 import MeasuresTable from './client/measures/MeasuresTable';
@@ -123,6 +124,11 @@ let DynamicRoutes = [{
   'name': 'ImmunizationsPage',
   'path': '/immunizations',
   'component': ImmunizationsPage,
+  'requireAuth': true
+}, {
+  'name': 'LocationsPage',
+  'path': '/locations',
+  'component': LocationsPage,
   'requireAuth': true
 }, {
   'name': 'MeasuresPage',
