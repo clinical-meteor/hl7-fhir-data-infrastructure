@@ -48,7 +48,7 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenLocation = function(location){
+flattenLocation = function(location, simplifiedAddress){
   let result = {
     _id: '',
     id: '',
@@ -56,6 +56,10 @@ flattenLocation = function(location){
     identifier: '',
     name: '',
     address: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: '',
     type: '',
     latitude: '',
     longitude: ''
@@ -70,10 +74,26 @@ flattenLocation = function(location){
     result.name = get(location, 'name');
   }
   if (get(location, 'address')) {
-    result.address = FhirUtilities.stringifyAddress(get(location, 'address'), {noPrefix: true});
+    if(simplifiedAddress){
+      result.address = FhirUtilities.stringifyAddress(get(location, 'address'), {noPrefix: true});
+    } else {
+      result.address = get(location, 'address');
+    }
   }
-  if (get(location, 'type.text')) {
-    result.type = get(location, 'type.text');
+  if (get(location, 'address.city')) {
+    result.city = get(location, 'address.city');
+  }
+  if (get(location, 'address.state')) {
+    result.state = get(location, 'address.state');
+  }
+  if (get(location, 'address.postalCode')) {
+    result.postalCode = get(location, 'address.postalCode');
+  }
+  if (get(location, 'address.country')) {
+    result.country = get(location, 'address.country');
+  }
+  if (get(location, 'type[0].text')) {
+    result.type = get(location, 'type[0].text');
   }
   if (get(location, 'position.latitude')) {
     result.latitude = get(location, 'position.latitude', null);
@@ -102,8 +122,15 @@ function LocationsTable(props){
     children, 
     locations,
 
-    displayName,
-    displayLatLng,
+    hideIdentifier,
+    hideName,
+    hideAddress,
+    hideCity,
+    hideState,
+    hidePostalCode,
+    hideType,
+  
+    simplifiedAddress,
 
     query,
     paginationLimit,
@@ -128,6 +155,152 @@ function LocationsTable(props){
     paginationCount = rows.length;
   }
 
+
+  //---------------------------------------------------------------------
+  // Methods
+
+
+  function renderNameHeader(){
+    if (!props.hideName) {
+      return (
+        <TableCell className="name">Name</TableCell>
+      );
+    }
+  }
+  function renderName(name){
+    if (!props.hideName) {
+      return (
+        <TableCell className='name'>{ name }</TableCell>
+      );  
+    }
+  }
+  function renderIdentifierHeader(){
+    if (!props.hideIdentifier) {
+      return (
+        <TableCell className="identifier">Identifier</TableCell>
+      );
+    }
+  }
+  function renderIdentifier(identifier){
+    if (!props.hideIdentifier) {
+      return (
+        <TableCell className='identifier'>{ identifier }</TableCell>
+      );  
+    }
+  }
+  function renderAddressHeader(){
+    if (!props.hideAddress) {
+      return (
+        <TableCell className="address">Address</TableCell>
+      );
+    }
+  }
+  function renderAddress(address){
+    if (!props.hideAddress) {
+      return (
+        <TableCell className='address'>{ address }</TableCell>
+      );  
+    }
+  }
+  function renderCityHeader(){
+    if (!props.hideCity) {
+      return (
+        <TableCell className="city">City</TableCell>
+      );
+    }
+  }
+  function renderCity(city){
+    if (!props.hideCity) {
+      return (
+        <TableCell className='city'>{ city }</TableCell>
+      );  
+    }
+  }
+  function renderStateHeader(){
+    if (!props.hideState) {
+      return (
+        <TableCell className="state">State</TableCell>
+      );
+    }
+  }
+  function renderState(state){
+    if (!props.hideState) {
+      return (
+        <TableCell className='state'>{ state }</TableCell>
+      );  
+    }
+  }
+  function renderPostalCodeHeader(){
+    if (!props.hidePostalCode) {
+      return (
+        <TableCell className="postalCode">Postal Code</TableCell>
+      );
+    }
+  }
+  function renderPostalCode(postalCode){
+    if (!props.hidePostalCode) {
+      return (
+        <TableCell className='postalCode'>{ postalCode }</TableCell>
+      );  
+    }
+  }
+  function renderCountryHeader(){
+    if (!props.hideCountry) {
+      return (
+        <TableCell className="country">Country</TableCell>
+      );
+    }
+  }
+  function renderCountry(country){
+    if (!props.hideCountry) {
+      return (
+        <TableCell className='country'>{ country }</TableCell>
+      );  
+    }
+  }
+  function renderTypeHeader(){
+    if (!props.hideType) {
+      return (
+        <TableCell className="type">Type</TableCell>
+      );
+    }
+  }
+  function renderType(type){
+    if (!props.hideType) {
+      return (
+        <TableCell className='type'>{ type }</TableCell>
+      );  
+    }
+  }
+  function renderLatitudeHeader(){
+    if (!props.hideLatitude) {
+      return (
+        <TableCell className="latitude">Latitude</TableCell>
+      );
+    }
+  }
+  function renderLatitude(latitude){
+    if (!props.hideLatitude) {
+      return (
+        <TableCell className='latitude'>{ latitude }</TableCell>
+      );  
+    }
+  }
+  function renderLongitudeHeader(){
+    if (!props.hideLongitude) {
+      return (
+        <TableCell className="longitude">Longitude</TableCell>
+      );
+    }
+  }
+  function renderLongitude(longitude){
+    if (!props.hideLongitude) {
+      return (
+        <TableCell className='longitude'>{ longitude }</TableCell>
+      );  
+    }
+  }
+
   //---------------------------------------------------------------------
   // Methods  
 
@@ -148,7 +321,7 @@ function LocationsTable(props){
 
       props.locations.forEach(function(location){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          locationsToRender.push(flattenLocation(location));
+          locationsToRender.push(flattenLocation(location, simplifiedAddress));
         }
         count++;
       });  
@@ -164,13 +337,16 @@ function LocationsTable(props){
       logger.trace('locationsToRender[i]', locationsToRender[i])
       tableRows.push(
         <TableRow className='locationRow' key={i} onClick={ rowClick.bind(this, get(locationsToRender[i], "_id")) } hover={true} style={{height: '42px'}} >
-          {/* <TableCell className="cardinality">{(this.data.locations[i].cardinality) ? this.data.locations[i].cardinality : ''}</TableCell> */}
-          <TableCell className="name">{ get(locationsToRender[i], "name") }</TableCell>
-          <TableCell className="address">{ get(locationsToRender[i], "address") }</TableCell>
-          <TableCell className="type">{ get(locationsToRender[i], "type") }</TableCell>
-          <TableCell className="latitutude">{get(locationsToRender[i], "latitude")}</TableCell>
-          <TableCell className="longitude">{get(locationsToRender[i], "longitude")}</TableCell>
-          {/* <TableCell className="altitude">{get(locationsToRender[i], "altitute")}</TableCell> */}
+           { renderIdentifier(get(locationsToRender[i], "identifier")) }
+           { renderName(get(locationsToRender[i], "name")) }
+           { renderAddress(get(locationsToRender[i], "address")) }
+           { renderCity(get(locationsToRender[i], "city")) }
+           { renderState(get(locationsToRender[i], "state")) }
+           { renderPostalCode(get(locationsToRender[i], "postalCode")) }
+           { renderCountry(get(locationsToRender[i], "country")) }
+           { renderType(get(locationsToRender[i], "type")) }
+           { renderLatitude(get(locationsToRender[i], "latitude")) }
+           { renderLongitude(get(locationsToRender[i], "longitude")) }
         </TableRow>
       );
     }
@@ -202,12 +378,16 @@ function LocationsTable(props){
         <TableHead>
           <TableRow >
             {/* <TableCell className="cardinality hidden-on-phone">Cardinality</TableCell> */}
-            <TableCell className="name">Name</TableCell>
-            <TableCell className="address">Address</TableCell>
-            <TableCell className="type">Type</TableCell>
-            <TableCell className="latitutude">Latitutude</TableCell>
-            <TableCell className="longitude">Longitude</TableCell>
-            {/* <TableCell className="altitude">Altitude</TableCell> */}
+            { renderIdentifierHeader() }
+            { renderNameHeader() }
+            { renderAddressHeader() }
+            { renderCityHeader() }
+            { renderStateHeader() }
+            { renderPostalCodeHeader() }
+            { renderCountryHeader() }
+            { renderTypeHeader() }
+            { renderLatitudeHeader() }
+            { renderLongitudeHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
@@ -227,12 +407,29 @@ LocationsTable.propTypes = {
   disablePagination: PropTypes.bool,
   rowsPerPage: PropTypes.number,
 
-  displayName: PropTypes.bool,
-  displayLatLng: PropTypes.bool
+  hideIdentifier: PropTypes.bool,
+  hideName: PropTypes.bool,
+  hideAddress: PropTypes.bool,
+  hideCity: PropTypes.bool,
+  hideState: PropTypes.bool,
+  hidePostalCode: PropTypes.bool,
+  hideType: PropTypes.bool,
+
+  hideLatLng: PropTypes.bool,
+
+  simplifiedAddress: PropTypes.bool
 }
 
 LocationsTable.defaultProps = {
+  hideIdentifier: true,
   hideName: false,
+  hideAddress: false,
+  hideCity: false,
+  hideState: false,
+  hidePostalCode: false,
+  hideType: false,
+
+  simplifiedAddress: true,
   rowsPerPage: 5
 }
 
