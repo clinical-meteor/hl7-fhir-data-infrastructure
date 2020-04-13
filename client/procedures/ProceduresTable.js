@@ -497,7 +497,7 @@ function ProceduresTable(props){
   } else {
     for (var i = 0; i < proceduresToRender.length; i++) {
       tableRows.push(
-        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, proceduresToRender[i]._id)} style={{cursor: 'pointer'}} hover="true" >            
+        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, proceduresToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
           { renderToggle() }
           { renderActionIcons(proceduresToRender[i]) }
           { renderIdentifier(proceduresToRender.identifier ) }
@@ -604,10 +604,12 @@ ProceduresTable.propTypes = {
 
   rowsPerPageToRender: PropTypes.number,
   dateFormat: PropTypes.string,
-  showMinutes: PropTypes.bool
+  showMinutes: PropTypes.bool,
+  count: PropTypes.number
 };
 ProceduresTable.defaultProps = {
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  hideActionButton: true
 }
 
 export default ProceduresTable;

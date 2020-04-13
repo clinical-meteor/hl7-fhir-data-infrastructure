@@ -641,7 +641,8 @@ ConditionsTable.propTypes = {
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  displayEnteredInError: PropTypes.bool
+  displayEnteredInError: PropTypes.bool,
+  count: PropTypes.number
 };
 
 ConditionsTable.defaultProps = {

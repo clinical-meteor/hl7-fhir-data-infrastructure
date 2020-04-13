@@ -56,12 +56,13 @@ let styles = {
   }
 }
 
-flattenObservation = function(observation, dateFormat){
+flattenObservation = function(observation, dateFormat, props){
   let result = {
     _id: '',
     meta: '',
     category: '',
-    code: '',
+    codeValue: '',
+    codeDisplay: '',
     valueString: '',
     value: '',
     observationValue: '',
@@ -72,7 +73,9 @@ flattenObservation = function(observation, dateFormat){
     createdBy: '',
     effectiveDateTime: '',
     issued: '',
-    unit: ''
+    unit: '',
+    numerator: '',
+    denominator: ''
   };
 
   if(!dateFormat){
@@ -82,8 +85,19 @@ flattenObservation = function(observation, dateFormat){
   result._id =  get(observation, 'id') ? get(observation, 'id') : get(observation, '_id');
 
   result.category = get(observation, 'category.text', '');
-  result.code = get(observation, 'code.text', '');
-  result.codeValue = get(observation, 'code.coding[0].code', '');
+
+  if(get(observation, 'code.coding[0].code')){
+    result.codeValue = get(observation, 'code.coding[0].code', '');
+  } else {
+    result.codeValue = get(observation, 'code.text', '');
+  }
+  if(get(observation, 'code.coding[0].display')){
+    result.codeDisplay = get(observation, 'code.coding[0].display', '');
+  } else {
+    result.codeDisplay = get(observation, 'code.text', '');
+  }
+
+  // result.codeValue = get(observation, 'code.coding[0].code', '');
   result.valueString = get(observation, 'valueString', '');
   result.comparator = get(observation, 'valueQuantity.comparator', '');
   result.observationValue = Number.parseFloat(get(observation, 'valueQuantity.value', 0)).toFixed(2);;
@@ -109,6 +123,17 @@ flattenObservation = function(observation, dateFormat){
       result.value = result.comparator + ' ';
     } 
     result.value = result.value + result.observationValue + ' ' + result.unit;
+  }
+
+  if(Array.isArray(get(observation, 'component'))){
+    observation.component.forEach(function(componentObservation){
+      if(get(componentObservation, 'code.coding[0].code') === get(props, 'numeratorCode')){
+        result.numerator = get(componentObservation, 'code.valueQuantity.value') + get(componentObservation, 'code.valueQuantity.unit')
+      }
+      if(get(componentObservation, 'code.coding[0].code') === get(props, 'denominatorCode')){
+        result.denominator = get(componentObservation, 'code.valueQuantity.value') + get(componentObservation, 'code.valueQuantity.unit')
+      }
+    })
   }
 
   return result;
@@ -400,6 +425,35 @@ function ObservationsTable(props){
       );
     }
   }
+  function renderComponentNumerator(numerator){
+    if (!props.hideNumerator) {
+      return (
+        <TableCell className='numerator'>{ numerator }</TableCell>
+      );
+    }
+  }
+  function renderComponentNumeratorHeader(){
+    if (!props.hideNumerator) {
+      return (
+        <TableCell className='numerator'>{props.numeratorLabel}</TableCell>
+      );
+    }
+  }
+  function renderComponentDenominator(denominator){
+    if (!props.hideDenominator) {
+      return (
+        <TableCell className='denominator'>{ denominator }</TableCell>
+      );
+    }
+  }
+  function renderComponentDenominatorHeader(){
+    if (!props.hideDenominator) {
+      return (
+        <TableCell className='denominator'>{props.denominatorLabel}</TableCell>
+      );
+    }
+  }
+
 
   let tableRows = [];
   let observationsToRender = [];
@@ -437,12 +491,14 @@ function ObservationsTable(props){
             { renderActionIcons(observationsToRender[i]) }
             { renderCategory(observationsToRender[i].category) }
             { renderCodeValue(observationsToRender[i].codeValue) }
-            { renderCode(observationsToRender[i].code, observationsToRender[i].value) }
+            { renderCode(observationsToRender[i].codeDisplay, observationsToRender[i].value) }
             { renderValue(observationsToRender[i].value)}
             { renderSubject(observationsToRender[i].subject)}
             { renderStatus(observationsToRender[i].status) }
             { renderDevice(observationsToRender[i].device)}
             { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
+            { renderComponentNumerator(observationsToRender[i].numerator)}
+            { renderComponentDenominator(observationsToRender[i].denominator)}
             { renderBarcode(observationsToRender[i]._id)}
           </TableRow>
         );    
@@ -454,12 +510,14 @@ function ObservationsTable(props){
             { renderActionIcons(observationsToRender[i]) }
             { renderCategory(observationsToRender[i].category) }
             { renderCodeValue(observationsToRender[i].codeValue) }
-            { renderCode(observationsToRender[i].code) }
+            { renderCode(observationsToRender[i].codeDisplay) }
             { renderValue(observationsToRender[i].value)}
             { renderSubject(observationsToRender[i].subject)}
             { renderStatus(observationsToRender[i].status) }
             { renderDevice(observationsToRender[i].device)}
             { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
+            { renderComponentNumerator(observationsToRender[i].numerator)}
+            { renderComponentDenominator(observationsToRender[i].denominator)}
             { renderBarcode(observationsToRender[i]._id)}
           </TableRow>
         );    
@@ -486,26 +544,31 @@ function ObservationsTable(props){
   }
   
   return(
-    <Table id="observationsTable" >
-      <TableHead>
-        <TableRow>
-          { renderToggleHeader() }
-          { renderActionIconsHeader() }
-          { renderCategoryHeader() }
-          { renderCodeValueHeader() }
-          { renderCodeHeader() }
-          { renderValueHeader() }
-          { renderSubjectHeader() }
-          { renderStatusHeader() }
-          { renderDeviceHeader() }
-          { renderEffectiveDateTimeHeader() }
-          { renderBarcodeHeader() }
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        { tableRows }
-      </TableBody>
-    </Table>
+    <div>
+      <Table id="observationsTable" >
+        <TableHead>
+          <TableRow>
+            { renderToggleHeader() }
+            { renderActionIconsHeader() }
+            { renderCategoryHeader() }
+            { renderCodeValueHeader() }
+            { renderCodeHeader() }
+            { renderValueHeader() }
+            { renderSubjectHeader() }
+            { renderStatusHeader() }
+            { renderDeviceHeader() }
+            { renderEffectiveDateTimeHeader() }
+            { renderComponentNumeratorHeader()}
+            { renderComponentDenominatorHeader()}
+            { renderBarcodeHeader() }
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          { tableRows }
+        </TableBody>
+      </Table>
+      { paginationFooter }
+    </div>
   );  
 }
 
@@ -530,9 +593,19 @@ ObservationsTable.propTypes = {
   hideCode: PropTypes.bool,
   hideDevices: PropTypes.bool,
   hideComparator: PropTypes.bool,
+
+  hideNumerator: PropTypes.bool,
+  hideDenominator: PropTypes.bool,
+  denominatorLabel: PropTypes.string,
+  denominatorCode: PropTypes.string,
+  numeratorLabel: PropTypes.string,
+  numeratorCode: PropTypes.string,
+
   enteredInError: PropTypes.bool,
   multiline: PropTypes.bool,
-  
+
+  hideBarcodes: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
@@ -542,8 +615,20 @@ ObservationsTable.propTypes = {
 
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
-  showMinutes: PropTypes.bool
+  showMinutes: PropTypes.bool,
+
+  count: PropTypes.number
 };
+ObservationsTable.defaultProps = {
+  hideBarcode: true,
+  rowsPerPage: 5,
+  hideNumerator: true,
+  hideDenominator: true,
+  numeratorLabel: "Systolic",
+  denominatorLabel: "Diastolic",
+  numeratorCode: "8480-6",
+  denominatorLabel: "8462-4"
+}
 
 
 export default ObservationsTable; 

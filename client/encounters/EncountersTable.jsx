@@ -671,7 +671,8 @@ EncountersTable.propTypes = {
 
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
-  showMinutes: PropTypes.bool
+  showMinutes: PropTypes.bool,
+  count: PropTypes.number
 };
 
 EncountersTable.defaultProps = {
