@@ -627,7 +627,7 @@ ObservationsTable.defaultProps = {
   numeratorLabel: "Systolic",
   denominatorLabel: "Diastolic",
   numeratorCode: "8480-6",
-  denominatorLabel: "8462-4"
+  denominatorCode: "8462-4"
 }
 
 

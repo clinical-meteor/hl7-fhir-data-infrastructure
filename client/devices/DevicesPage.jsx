@@ -25,6 +25,8 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { get } from 'lodash';
 
+import { StyledCard, PageCanvas } from 'material-fhir-ui';
+
 
 //=============================================================================================================================================
 // Session Variables
@@ -166,6 +168,12 @@ export class DevicesPage extends React.Component {
 
   render() {
     if(process.env.NODE_ENV === "test") console.log('In DevicesPage render');
+
+    let headerHeight = 64;
+    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
+      headerHeight = 128;
+    }
+    
     return (
       <PageCanvas id="devicesPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
