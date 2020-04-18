@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.4.9',
+  version: '6.4.12',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -22,6 +22,8 @@ Package.onUse(function (api) {
   api.use('clinical:hl7-resource-datatypes@4.0.5');
 
   // schemas and cursors
+  api.addFiles('lib/BaseModel.js', ['client', 'server']);
+
   api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
   api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
   api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
@@ -123,6 +125,8 @@ Package.onUse(function (api) {
   api.export('Procedure');
   api.export('Procedures');
   api.export('ProcedureSchema');
+
+  api.export('BaseModel');
 
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
   api.mainModule('index.jsx', 'client');

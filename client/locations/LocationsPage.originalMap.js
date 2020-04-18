@@ -1,7 +1,8 @@
-import { CardText, CardTitle } from 'material-ui/Card';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { CardContent, CardHeader } from '@material-ui/core';
+
 import { Tab, Tabs } from 'material-ui/Tabs';
-import { GlassCard, FullPageCanvas, Glass } from 'meteor/clinical:glass-ui';
+
+import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import Checkbox from 'material-ui/Checkbox';
 import { EJSON } from 'meteor/ejson';
@@ -335,9 +336,7 @@ export class LocationsPage extends React.Component {
       data.home.lng = get(Meteor.user(), 'profile.locations.home.position.longitude')
     }
 
-    data.style = Glass.blur(data.style);
-    data.style.appbar = Glass.darkroom(data.style.appbar);
-    data.style.tab = Glass.darkroom(data.style.tab);
+
     data.apiKey = get(Meteor, 'settings.public.google.maps.apiKey', '');
 
     if(process.env.NODE_ENV === "test") console.log("LocationsPage[data]", data);
@@ -441,12 +440,12 @@ export class LocationsPage extends React.Component {
 
     // we know that the vertical canvas with locations will be displayed regardless of whether
     // we load the background map; so lets create a variable to set it up
-    var canvas = <FullPageCanvas position="fixed" style={{top: '0px'}}>
-      <GlassCard height='auto' width='768px' >
-        <CardTitle
+    var canvas = <PageCanvas position="fixed" style={{top: '0px'}}>
+      <StyledCard height='auto' width='768px' >
+        <CardHeader
           title="Locations"
         />
-        <CardText>
+        <CardContent>
           <Tabs id="locationsPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}> <Tab className="newLocationTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0} >
               <LocationDetail 
                 id='newLocation'
@@ -465,7 +464,7 @@ export class LocationsPage extends React.Component {
               />
             </Tab>
             <Tab className="layersDetail" label='Layers' onActive={this.handleActive} style={this.data.style.tab} value={3}>
-              <CardText>      
+              <CardContent>      
               <TextField
                   id='geojsonUrl'
                   ref='geojsonUrl'
@@ -502,10 +501,10 @@ export class LocationsPage extends React.Component {
                 <Checkbox label="Lipid Panels" style={styles.checkbox} disabled={true} />
                 <Checkbox label="Outpatient Visits" style={styles.checkbox} disabled={true} />
                 <p>Contact <a href="mailto:sales@symptomatic.io">sales@symptomatic.io</a> for more information about enabling neighborhood level geodata.</p>
-              </CardText>
+              </CardContent>
             </Tab>
             <Tab className="findNearMe" label='Proximity' onActive={this.handleActive} style={this.data.style.tab} value={4}>
-              <CardText>      
+              <CardContent>      
               <TextField
                   id='proximityInput'
                   ref='proximity'
@@ -521,10 +520,10 @@ export class LocationsPage extends React.Component {
                 <RaisedButton id="findNearMe" label="Find Near Me" primary={true} onClick={this.findNearMe.bind(this)}  /> <br/><br/>
                 <RaisedButton id="clear" label="Clear Selection" primary={true} onClick={this.clearProximity }  />
 
-              </CardText>
+              </CardContent>
             </Tab>
             {/* <Tab className="quickAnalysisTab" label='Analysis' onActive={this.handleActive} style={this.data.style.tab} value={4}>
-              <CardText>
+              <CardContent>
                   <Row>
                     <Col md={4}>
                       <TextField
@@ -554,12 +553,12 @@ export class LocationsPage extends React.Component {
                   <hr />
 
                   <LocationTable data={ this.data.tspRoute } />
-              </CardText>
+              </CardContent>
             </Tab> */}
           </Tabs>
-        </CardText>
-      </GlassCard>
-    </FullPageCanvas>;
+        </CardContent>
+      </StyledCard>
+    </PageCanvas>;
 
 
     var pageContent;

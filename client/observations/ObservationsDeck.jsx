@@ -3,7 +3,6 @@
 
 // import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-// import { CardTitle, CardText, CardActions } from 'material-ui/Card';
 // import RaisedButton from 'material-ui/RaisedButton';
 
 // import { Observations } from '/imports/api/observations/observations.js';

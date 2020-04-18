@@ -511,9 +511,6 @@ function MeasureDetail(props){
     }
   }
 
-  let titleStyle = {
-    fontWeight: 'bold'
-  }
 
   let inputStyle = {
     marginTop: '20px'
@@ -528,7 +525,6 @@ function MeasureDetail(props){
               id='titleInput'                
               name='title'
               label='Title'
-              style={titleStyle}
               /><br/>          
             <TextField
               id='descriptionInput'                

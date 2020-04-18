@@ -1,3 +1,4 @@
+import BaseModel from './lib/BaseModel';
 
 import FhirUtilities from './lib/FhirUtilities';
 import FhirDehydrator from './lib/FhirDehydrator';
@@ -78,6 +79,8 @@ import PractitionerDetail from './client/practitioners/PractitionerDetail';
 import ProceduresPage from './client/procedures/ProceduresPage';
 import ProceduresTable from './client/procedures/ProceduresTable';
 import ProcedureDetail from './client/procedures/ProcedureDetail';
+
+import DynamicSpacer from './ui/DynamicSpacer';
 
 
 let DynamicRoutes = [{
@@ -430,7 +433,11 @@ export {
   ProcedureDetail,
 
   FhirDehydrator,
-  FhirUtilities
+  FhirUtilities,
+
+  BaseModel,
+
+  DynamicSpacer
 };
 
 

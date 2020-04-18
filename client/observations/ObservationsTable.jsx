@@ -547,7 +547,7 @@ function ObservationsTable(props){
     <div>
       <Table id="observationsTable" >
         <TableHead>
-          <TableRow>
+          <TableRow key='tableHeader'>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
             { renderCategoryHeader() }

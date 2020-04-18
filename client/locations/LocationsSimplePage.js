@@ -1,7 +1,7 @@
 
 
-import { CardText, CardTitle } from 'material-ui/Card';
-import { GlassCard, FullPageCanvas, Glass } from 'meteor/clinical:glass-ui';
+import { CardContent, CardHeader } from '@material-ui/core';
+import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -27,16 +27,16 @@ export class LocationsSimplePage extends React.Component {
 
   render() {  
 
-    var canvas = <FullPageCanvas width={768} >
-      <GlassCard height='auto'>
-        <CardTitle
+    var canvas = <PageCanvas width={768} >
+      <StyledCard height='auto'>
+        <CardHeader
           title="Locations"
         />
-        <CardText>
+        <CardContent>
           <LocationTable />
-        </CardText>
-      </GlassCard>
-    </FullPageCanvas>;
+        </CardContent>
+      </StyledCard>
+    </PageCanvas>;
           
     return (
       <div id="locationsPage"> 
