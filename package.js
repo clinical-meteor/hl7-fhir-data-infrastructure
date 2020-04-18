@@ -38,6 +38,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/Medications.js', ['client', 'server']);
   api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
+  api.addFiles('lib/schemas/MedicationRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
   api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Organizations.js', ['client', 'server']);
@@ -101,6 +102,10 @@ Package.onUse(function (api) {
   api.export('MedicationOrder');
   api.export('MedicationOrders');
   api.export('MedicationOrderSchema');
+
+  api.export('MedicationRequest');
+  api.export('MedicationRequests');
+  api.export('MedicationRequestSchema');
 
   api.export('MedicationStatement');
   api.export('MedicationStatements');
