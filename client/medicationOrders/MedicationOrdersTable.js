@@ -459,7 +459,7 @@ function MedicationOrdersTable(props){
 
   return(
     <div>
-      <Table id="proceduresTable" size="small" aria-label="a dense table" hover="true" >
+      <Table id="proceduresTable" size="small" aria-label="a dense table" hover={true} >
         <TableHead>
           <TableRow>
             { renderToggleHeader() }

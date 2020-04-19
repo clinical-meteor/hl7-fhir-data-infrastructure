@@ -151,9 +151,12 @@ flattenCondition = function(condition, internalDateFormat){
 }
 
 
+//===========================================================================
+// MAIN COMPONENT
+
 function ConditionsTable(props){
   logger.info('Rendering the ConditionsTable');
-  logger.verbose('clinical:hl7-resource-encounter.client.ConditionsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ConditionsTable');
   logger.data('ConditionsTable.props', {data: props}, {source: "ConditionsTable.jsx"});
 
   const classes = useStyles();

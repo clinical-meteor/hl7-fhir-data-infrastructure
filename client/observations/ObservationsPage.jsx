@@ -283,29 +283,31 @@ export class ObservationsPage extends React.Component {
         <StyledCard height="auto" scrollable={true} margin={20}  >
             <CardHeader title="Observations" />
             <CardContent>
-              <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
+              <ObservationsTable 
+                displayBarcodes={false} 
+                multiline={false}
+                hideSubjects={true}
+                hideDevices={true}
+                multiline={false}                  
+                hideComparator={true}
+                hideValue={false}
+                noDataMessagePadding={100}
+                observations={ this.data.observations }
+                count={ this.data.observationsCount }
+                rowsPerPage={20}
+                actionButtonLabel="Send"
+                onRowClick={ this.onTableRowClick }
+                onCellClick={ this.onTableCellClick }
+                onActionButtonClick={this.tableActionButtonClick}
+                onRemoveRecord={ this.onDeleteObservation }
+                />
+
+              {/* <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
                 <Tab label="History" value={0} />
                 <Tab label="New" value={1} />
               </Tabs>
               <TabPanel >
-                <ObservationsTable 
-                  displayBarcodes={false} 
-                  multiline={false}
-                  hideSubjects={true}
-                  hideDevices={true}
-                  multiline={false}                  
-                  hideComparator={true}
-                  hideValue={false}
-                  noDataMessagePadding={100}
-                  observations={ this.data.observations }
-                  count={ this.data.observationsCount }
-                  rowsPerPage={20}
-                  actionButtonLabel="Send"
-                  onRowClick={ this.onTableRowClick }
-                  onCellClick={ this.onTableCellClick }
-                  onActionButtonClick={this.tableActionButtonClick}
-                  onRemoveRecord={ this.onDeleteObservation }
-                  />
+                
               </TabPanel >
               <TabPanel >
                 <ObservationDetail 
@@ -322,7 +324,7 @@ export class ObservationsPage extends React.Component {
                   onUpsert={ this.onUpsertObservation }
                   onCancel={ this.onCancelUpsertObservation } 
               />
-              </TabPanel >
+              </TabPanel > */}
             </CardContent>            
         </StyledCard>
       </PageCanvas>

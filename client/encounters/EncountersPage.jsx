@@ -341,111 +341,29 @@ export class EncountersPage extends React.Component {
     return (
       <PageCanvas id="encountersPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
-          {/* <Container> */}
             <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
               <CardHeader
                 title={ encountersCount + " Encounters"}
               />
               <CardContent>
-
-                    <div>
-                      <Tabs value={this.data.tabIndex} onChange={this.handleTabChange.bind(this)} aria-label="simple tabs example">
-                        <Tab label="History" value={0} />
-                        <Tab label="New" value={1} />
-                      </Tabs>
-                      <TabPanel >
-                        <EncountersTable 
-                          hideIdentifier={true} 
-                          hideCheckboxes={true} 
-                          hideSubjects={false}
-                          noDataMessagePadding={100}
-                          actionButtonLabel="Send"
-                          hideSubjects={false}
-                          hideClassCode={false}
-                          hideReasonCode={false}
-                          hideReason={false}
-                          hideHistory={false}
-                          encounters={ this.data.encounters }
-                          rowsPerPage={rowsPerPage}
-                          count={this.data.encountersCount}      
-                          showMinutes={true}
-                          // appWidth={ Session.get('appWidth') }
-                          // onRowClick={ this.onTableRowClick }
-                          // onCellClick={ this.onTableCellClick }
-                          // onActionButtonClick={this.tableActionButtonClick}
-                          // onRemoveRecord={ this.onDeleteEncounter }
-                          // query={this.data.encountersTableQuery}
-                          />
-                      </TabPanel>
-                      {/* <TabPanel >
-                        <EncounterDetail 
-                          id='newEncounter' 
-                          displayDatePicker={true} 
-                          displayBarcodes={false}
-                          showHints={true}
-                          // onInsert={ this.onInsert }
-                          // encounter={ this.data.selectedEncounter }
-                          // encounterId={ this.data.selectedEncounterId } 
-                          // onDelete={ this.onDeleteEncounter }
-                          // onUpsert={ this.onUpsertEncounter }
-                          // onCancel={ this.onCancelUpsertEncounter } 
-                          />
-                      </TabPanel> */}
-                    </div>
-
-                {/* <Tabs id="encountersPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-                  <Tab className="newEncounterTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0} >
-                    <EncounterDetail 
-                      id='newEncounter' 
-                      displayDatePicker={true} 
-                      displayBarcodes={false}
-                      showHints={true}
-                      onInsert={ this.onInsert }
-                      encounter={ this.data.selectedEncounter }
-                      encounterId={ this.data.selectedEncounterId } 
-
-                      onDelete={ this.onDeleteEncounter }
-                      onUpsert={ this.onUpsertEncounter }
-                      onCancel={ this.onCancelUpsertEncounter } 
-
-                      />
-                  </Tab>
-                  <Tab className="encounterListTab" label='Encounters' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                    <EncountersTable 
-                      hideIdentifier={true} 
-                      hideSubjects={false}
-                      noDataMessagePadding={100}
-                      encounters={ this.data.encounters }
-                      paginationLimit={ this.data.pagnationLimit }
-                      appWidth={ Session.get('appWidth') }
-                      actionButtonLabel="Send"
-                      onRowClick={ this.onTableRowClick }
-                      onCellClick={ this.onTableCellClick }
-                      onActionButtonClick={this.tableActionButtonClick}
-                      onRemoveRecord={ this.onDeleteEncounter }
-                      query={this.data.encountersTableQuery}
-                      />
-                  </Tab>
-                  <Tab className="encounterDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                    <EncounterDetail 
-                      id='encounterDetails' 
-                      displayDatePicker={true} 
-                      displayBarcodes={false}
-                      encounter={ this.data.selectedEncounter }
-                      encounterId={ this.data.selectedEncounterId } 
-                      showEncounterInputs={true}
-                      showHints={false}
-                      onInsert={ this.onInsert }
-
-                      onDelete={ this.onDeleteEncounter }
-                      onUpsert={ this.onUpsertEncounter }
-                      onCancel={ this.onCancelUpsertEncounter } 
+                <EncountersTable 
+                  hideIdentifier={true} 
+                  hideCheckboxes={true} 
+                  hideSubjects={false}
+                  noDataMessagePadding={100}
+                  actionButtonLabel="Send"
+                  hideSubjects={false}
+                  hideClassCode={false}
+                  hideReasonCode={false}
+                  hideReason={false}
+                  hideHistory={false}
+                  encounters={ this.data.encounters }
+                  rowsPerPage={rowsPerPage}
+                  count={this.data.encountersCount}      
+                  showMinutes={true}
                   />
-                  </Tab>
-                </Tabs> */}
               </CardContent>
             </StyledCard>
-          {/* </Container> */}
         </MuiThemeProvider>
       </PageCanvas>
     );

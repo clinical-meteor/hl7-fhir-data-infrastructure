@@ -58,6 +58,10 @@ import MedicationOrdersPage from './client/medicationOrders/MedicationOrdersPage
 import MedicationOrdersTable from './client/medicationOrders/MedicationOrdersTable';
 import MedicationOrderDetail from './client/medicationOrders/MedicationOrderDetail';
 
+import MedicationRequestsPage from './client/medicationRequests/MedicationRequestsPage';
+import MedicationRequestsTable from './client/medicationRequests/MedicationRequestsTable';
+import MedicationRequestDetail from './client/medicationRequests/MedicationRequestDetail';
+
 import MedicationStatementsPage from './client/medicationStatements/MedicationStatementsPage';
 import MedicationStatementsTable from './client/medicationStatements/MedicationStatementsTable';
 import MedicationStatementDetail from './client/medicationStatements/MedicationStatementDetail';
@@ -409,6 +413,10 @@ export {
   MedicationOrdersPage,
   MedicationOrdersTable,
   MedicationOrderDetail,
+
+  MedicationRequestsPage,
+  MedicationRequestsTable,
+  MedicationRequestDetail,
 
   MedicationStatementsPage,
   MedicationStatementsTable,

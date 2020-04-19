@@ -204,33 +204,12 @@ export class ConditionsPage extends React.Component {
           <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
           <CardHeader title={ this.data.conditionsCount + " Conditions"} />
               <CardContent>
-                <div>
-                  <Tabs value={this.data.tabIndex} onChange={this.handleTabChange.bind(this)} aria-label="simple tabs example">
-                    <Tab label="History" value={0} />
-                    <Tab label="New" value={1} />
-                  </Tabs>
-                  <TabPanel >
-                    <ConditionsTable 
-                      conditions={this.data.conditions}
-                      noDataMessagePadding={100}
-                      count={this.data.conditionsCount}  
-                    />
-                  </TabPanel>
-                  <TabPanel >
-                    {/* <ConditionDetail 
-                      id='conditionDetails' 
-                      fhirVersion={ this.data.fhirVersion }
-                      condition={ this.data.selectedCondition }
-                      conditionId={ this.data.currentConditionId } 
-                      showDatePicker={true} 
-                      showHints={false}
-                      onInsert={ this.onInsert }
-                      onUpdate={ this.onUpdate }
-                      onRemove={ this.onRemove }
-                      onCancel={ this.onCancel }
-                    /> */}
-                  </TabPanel>
-                </div>
+
+                <ConditionsTable 
+                  conditions={this.data.conditions}
+                  noDataMessagePadding={100}
+                  count={this.data.conditionsCount}  
+                />
               </CardContent>
           </StyledCard>
         </MuiThemeProvider>

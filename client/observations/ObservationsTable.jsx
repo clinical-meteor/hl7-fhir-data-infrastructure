@@ -84,7 +84,11 @@ flattenObservation = function(observation, dateFormat, props){
 
   result._id =  get(observation, 'id') ? get(observation, 'id') : get(observation, '_id');
 
-  result.category = get(observation, 'category.text', '');
+  if(get(observation, 'category[0].text')){
+    result.category = get(observation, 'category[0].text', '');
+  } else if (get(observation, 'category[0].coding[0].display')){
+    result.category = get(observation, 'category[0].coding[0].display', '');
+  }
 
   if(get(observation, 'code.coding[0].code')){
     result.codeValue = get(observation, 'code.coding[0].code', '');
@@ -98,10 +102,6 @@ flattenObservation = function(observation, dateFormat, props){
   }
 
   // result.codeValue = get(observation, 'code.coding[0].code', '');
-  result.valueString = get(observation, 'valueString', '');
-  result.comparator = get(observation, 'valueQuantity.comparator', '');
-  result.observationValue = Number.parseFloat(get(observation, 'valueQuantity.value', 0)).toFixed(2);;
-  result.unit = get(observation, 'valueQuantity.unit', '');
   result.subject = get(observation, 'subject.display', '');
   result.subjectId = get(observation, 'subject.reference', '');
   result.device = get(observation, 'device.display', '');
@@ -126,14 +126,39 @@ flattenObservation = function(observation, dateFormat, props){
   }
 
   if(Array.isArray(get(observation, 'component'))){
+    // sometimes observations have multiple components
+    // a great example is blood pressure, which includes systolic and diastolic measurements
     observation.component.forEach(function(componentObservation){
+      // we grab the numerator and denominator and put in separate fields
       if(get(componentObservation, 'code.coding[0].code') === get(props, 'numeratorCode')){
-        result.numerator = get(componentObservation, 'code.valueQuantity.value') + get(componentObservation, 'code.valueQuantity.unit')
+        result.numerator = get(componentObservation, 'valueQuantity.value') + get(componentObservation, 'code.valueQuantity.unit')
       }
       if(get(componentObservation, 'code.coding[0].code') === get(props, 'denominatorCode')){
-        result.denominator = get(componentObservation, 'code.valueQuantity.value') + get(componentObservation, 'code.valueQuantity.unit')
+        result.denominator = get(componentObservation, 'valueQuantity.value') + get(componentObservation, 'code.valueQuantity.unit')
       }
     })
+    // and if it's multiComponentValue, we string it all together into a nice string to be displayed
+    if(props.multiComponentValues){
+      result.unit = get(observation, 'valueQuantity.unit', '');  
+      result.valueString = result.numerator + " / " + result.denominator + " " +  result.unit;
+    }
+  } else {
+    // most observations arrive in a single component
+    // some values are a string, such as Blood Type, or pos/neg
+    if(get(observation, 'valueString')){
+      result.valueString = get(observation, 'valueString', '');
+    } else if(get(observation, 'valueCodeableConcept')){
+      result.valueString = get(observation, 'valueCodeableConcept.text', '');
+    } else {
+      // other values are quantities with units
+      // we need to place the quantity bits in the appropriate cells
+      result.comparator = get(observation, 'valueQuantity.comparator', '');
+      result.observationValue = Number.parseFloat(get(observation, 'valueQuantity.value', 0)).toFixed(2);;
+      result.unit = get(observation, 'valueQuantity.unit', '');  
+
+      // but we also want to string it together into a nice readable string
+      result.valueString = result.comparator + " " + result.observationValue + " " + result.unit;
+    }
   }
 
   return result;
@@ -141,27 +166,78 @@ flattenObservation = function(observation, dateFormat, props){
 
 
 function ObservationsTable(props){
-  // logger.log('ObservationsTable.props', props);
-  // logger.log('ObservationsTable.props.observations', props.observations);
+  logger.info('Rendering the ObservationsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ObservationsTable');
+  logger.data('ObservationsTable.props', {data: props}, {source: "ObservationsTable.jsx"});
+
+  //---------------------------------------------------------------------
+  // Properties
+
+  const {
+    observations,
+    query,
+    barcodes,
+    paginationLimit,
+    disablePagination,
+  
+    hideCheckboxes,
+    hideActionIcons,
+    hideIdentifier,
+    hideCategory,
+    hideValue,
+    hideSubject,
+    hideSubjects,
+    hideSubjectReference,
+    hideEffectiveDateTime,
+    hideStatus,
+    hideCodeValue,
+    hideCode,
+    hideDevices,
+    hideComparator,
+  
+    hideNumerator,
+    hideDenominator,
+    denominatorLabel,
+    denominatorCode,
+    numeratorLabel,
+    numeratorCode,
+  
+    enteredInError,
+    multiline,
+    multiComponentValues,
+  
+    hideBarcode,
+  
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    actionButtonLabel,
+  
+    rowsPerPage,
+    dateFormat,
+    showMinutes,
+    count,
+
+    ...otherProps
+
+  } = props
+
+
+  //---------------------------------------------------------------------
+  // Styling 
 
   const classes = useStyles();
+
 
   //---------------------------------------------------------------------
   // Pagination
 
   let rows = [];
-  let rowsPerPageToRender = 5;
+  
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  if(props.rowsPerPage){
-    // if we receive an override as a prop, render that many rows
-    // best to use rowsPerPage with disablePagination
-    rowsPerPageToRender = props.rowsPerPage;
-  } else {
-    // otherwise default to the user selection
-    rowsPerPageToRender = rowsPerPage;
-  }
+  const [rowsPerPageToRender, setRowsPerPage] = useState(props.rowsPerPage);
 
   let paginationCount = 101;
   if(props.count){
@@ -170,34 +246,10 @@ function ObservationsTable(props){
     paginationCount = rows.length;
   }
 
-  // handleChange(row, key, value) {
-  //   const source = this.state.source;
-  //   source[row][key] = value;
-  //   this.setState({source});
-  // }
-  // displayOnMobile(width){
-  //   let style = {};
-  //   if(['iPhone'].includes(window.navigator.platform)){
-  //     style.display = "none";
-  //   }
-  //   if(width){
-  //     style.width = width;
-  //   }
-  //   return style;
-  // }
-  // function handleSelect(selected) {
-  //   setState({selected});
-  // }
-  // function getDate(){
-  //   return "YYYY/MM/DD";
-  // }
-  // function noChange(){
-  //   return "";
-  // }
   function rowClick(id){
-    Session.set("selectedObservationId", id);
-    Session.set('observationPageTabIndex', 2);
-    Session.set('observationDetailState', false);
+    if(typeof props.onRowClick === "function"){
+      props.onRowClick(id);
+    }
   }
   function renderActionIconsHeader(){
     if (!props.hideActionIcons) {
@@ -229,7 +281,7 @@ function ObservationsTable(props){
       props.onRemoveRecord(_id);
     }
   }
-  function onActionButtonClick(id){
+  function handleActionButtonClick(id){
     if(typeof props.onActionButtonClick === "function"){
       props.onActionButtonClick(id);
     }
@@ -240,21 +292,21 @@ function ObservationsTable(props){
     }
   }
 
-  function onMetaClick(patient){
+  function handleMetaClick(patient){
     let self = this;
     if(props.onMetaClick){
       props.onMetaClick(self, patient);
     }
   }
   function renderBarcode(id){
-    if (!props.hideBarcodes) {
+    if (!props.hideBarcode) {
       return (
         <TableCell><span className="barcode helvetica">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcodes) {
+    if (!props.hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
@@ -338,14 +390,14 @@ function ObservationsTable(props){
     }
   }
   function renderCategoryHeader(){
-    if (props.multiline === false) {
+    if (!props.hideCategory) {
       return (
         <TableCell className='category'>Category</TableCell>
       );
     }
   }
   function renderCategory(category){
-    if (props.multiline === false) {
+    if (!props.hideCategory) {
       return (
         <TableCell className='category'>{ category }</TableCell>
       );
@@ -458,13 +510,13 @@ function ObservationsTable(props){
   let tableRows = [];
   let observationsToRender = [];
   let footer;
-  let dateFormat = "YYYY-MM-DD";
+  let internalDateFormat = "YYYY-MM-DD";
 
   if(props.showMinutes){
-    dateFormat = "YYYY-MM-DD hh:mm";
+    internalDateFormat = "YYYY-MM-DD hh:mm";
   }
   if(props.dateFormat){
-    dateFormat = props.dateFormat;
+    internalDateFormat = props.dateFormat;
   }
 
   if(props.observations){
@@ -472,7 +524,7 @@ function ObservationsTable(props){
       let count = 0;    
       props.observations.forEach(function(observation){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          observationsToRender.push(flattenObservation(observation, dateFormat));
+          observationsToRender.push(flattenObservation(observation, internalDateFormat, props));
         }
         count++;
       });  
@@ -486,13 +538,13 @@ function ObservationsTable(props){
     for (var i = 0; i < observationsToRender.length; i++) {
       if(props.multiline){
         tableRows.push(
-          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} >
+          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} hover={true}>
             { renderToggle() }
             { renderActionIcons(observationsToRender[i]) }
             { renderCategory(observationsToRender[i].category) }
             { renderCodeValue(observationsToRender[i].codeValue) }
             { renderCode(observationsToRender[i].codeDisplay, observationsToRender[i].value) }
-            { renderValue(observationsToRender[i].value)}
+            { renderValue(observationsToRender[i].valueString)}
             { renderSubject(observationsToRender[i].subject)}
             { renderStatus(observationsToRender[i].status) }
             { renderDevice(observationsToRender[i].device)}
@@ -505,13 +557,13 @@ function ObservationsTable(props){
 
       } else {
         tableRows.push(
-          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} >            
+          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} hover={true}>            
             { renderToggle() }
             { renderActionIcons(observationsToRender[i]) }
             { renderCategory(observationsToRender[i].category) }
             { renderCodeValue(observationsToRender[i].codeValue) }
             { renderCode(observationsToRender[i].codeDisplay) }
-            { renderValue(observationsToRender[i].value)}
+            { renderValue(observationsToRender[i].valueString)}
             { renderSubject(observationsToRender[i].subject)}
             { renderStatus(observationsToRender[i].status) }
             { renderDevice(observationsToRender[i].device)}
@@ -545,7 +597,7 @@ function ObservationsTable(props){
   
   return(
     <div>
-      <Table id="observationsTable" >
+      <Table id="observationsTable" size="small" aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow key='tableHeader'>
             { renderToggleHeader() }
@@ -603,8 +655,9 @@ ObservationsTable.propTypes = {
 
   enteredInError: PropTypes.bool,
   multiline: PropTypes.bool,
+  multiComponentValues: PropTypes.bool,
 
-  hideBarcodes: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -627,7 +680,8 @@ ObservationsTable.defaultProps = {
   numeratorLabel: "Systolic",
   denominatorLabel: "Diastolic",
   numeratorCode: "8480-6",
-  denominatorCode: "8462-4"
+  denominatorCode: "8462-4",
+  multiComponentValues: false
 }
 
 

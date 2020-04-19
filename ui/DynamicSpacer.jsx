@@ -12,7 +12,7 @@ export function DynamicSpacer(props){
     spacerHeight = height + 'px';
   }
 
-  return(<div class="dynamicSpacer" style={{ height: spacerHeight }}></div>)
+  return(<div className="dynamicSpacer" style={{ height: spacerHeight }}></div>)
 }
 
 export default DynamicSpacer;

@@ -1,79 +1,240 @@
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import { 
   Grid, 
   Checkbox,
   Button,
   Table,
   TableRow,
-  TableHeader,
+  TableHead,
   TableBody,
   TableCell,
+  TableFooter,
+  TablePagination,
   Box
 } from '@material-ui/core';
 
+import { Session } from 'meteor/session'
+import { Meteor } from 'meteor/meteor'
 
-import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
 import { get } from 'lodash';
-import PropTypes from 'prop-types';
+import moment from 'moment';
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
+import FhirUtilities from '../../lib/FhirUtilities';
+
+
+//===========================================================================
+// THEMING
+
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
+}));
+
+let styles = {
+  hideOnPhone: {
+    visibility: 'visible',
+    display: 'table'
+  },
+  cellHideOnPhone: {
+    visibility: 'visible',
+    display: 'table',
+    paddingTop: '16px',
+    maxWidth: '120px'
+  },
+  cell: {
+    paddingTop: '16px'
+  }
+}
 
 
 
-export class ImmunizationsTable extends React.Component {
+//===========================================================================
+// FLATTENING / MAPPING
 
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity')
-      },
-      selected: [],
-      immunizations: [],
-      displayCheckbox: false,
-      displayDates: false
-    }
-
-    if(this.props.displayCheckboxs){
-      data.displayCheckbox = this.props.displayCheckboxs;
-    }
-    if(this.props.displayDates){
-      data.displayDates = this.props.displayDates;
-    }
-    if(this.props.data){
-      data.immunizations = this.props.data;
-    } else {
-      if(Immunizations.find({}, {$sort: {'identifier.type.text': 1}}).count() > 0){
-        data.immunizations = Immunizations.find({}, {$sort: {'identifier.type.text': 1}}).fetch();
-      }
-    }
-    if(process.env.NODE_ENV === "test") console.log("ImmunizationsTable[data]", data);
-
-    return data;
+flattenImmunization = function(immunization, internalDateFormat){
+  let result = {
+    _id: '',
+    id: '',
+    meta: '',
+    identifier: '',
+    patientDisplay: '',
+    patientReference: '',
+    performerDisplay: '',
+    performerReference: '',
+    vaccineCode: '',
+    vaccineDisplay: '',
+    status: '',
+    reported: '',
+    date: ''
   };
 
-  displayOnMobile(width){
-    let style = {};
-    if(['iPhone'].includes(window.navigator.platform)){
-      style.display = "none";
-    }
-    if(width){
-      style.width = width;
-    }
-    return style;
+  if(!internalDateFormat){
+    internalDateFormat = "YYYY-MM-DD";
   }
-  renderCheckboxHeader(){
-    if (!this.props.hideCheckboxes) {
+
+  result._id =  get(immunization, 'id') ? get(immunization, 'id') : get(immunization, '_id');
+  result.id = get(immunization, 'id', '');
+  result.identifier = get(immunization, 'identifier[0].value', '');
+
+  if(get(immunization, 'patient')){
+    result.patientDisplay = get(immunization, 'patient.display', '');
+    result.patientReference = get(immunization, 'patient.reference', '');
+  } else if (get(immunization, 'subject')){
+    result.patientDisplay = get(immunization, 'subject.display', '');
+    result.patientReference = get(immunization, 'subject.reference', '');
+  }
+
+  if(get(immunization, 'performer')){
+    result.performerDisplay = get(immunization, 'performer.display', '');
+    result.performerReference = get(immunization, 'performer.reference', '');
+  } 
+
+  result.performerDisplay = get(immunization, 'asserter.display', '');
+
+  if(get(immunization, 'status.coding[0].code')){
+    result.status = get(immunization, 'status.coding[0].code', '');  //R4
+  } else {
+    result.status = get(immunization, 'status', '');                 // DSTU2
+  }
+
+  result.vaccineCode = get(immunization, 'vaccineCode.coding[0].code', '');
+
+  if(get(immunization, 'vaccineCode.coding[0].display')){
+    result.vaccineDisplay = get(immunization, 'vaccineCode.coding[0].display', '');  //R4
+  } else {
+    result.vaccineDisplay = get(immunization, 'vaccineCode.text', '');                 // DSTU2
+  }
+
+  result.barcode = get(immunization, '_id', '');
+
+  if(get(immunization, 'occurrenceDateTime')){
+    result.date = moment(get(immunization, 'occurrenceDateTime')).format("YYYY-MM-DD");
+  } else {
+    result.date = moment(get(immunization, 'date')).format("YYYY-MM-DD");
+  }
+  result.reported = moment(get(immunization, 'reported', '')).format("YYYY-MM-DD");
+
+  return result;
+}
+
+
+//===========================================================================
+// MAIN COMPONENT
+
+function ImmunizationsTable(props){
+  logger.info('Rendering the ImmunizationsTable');
+  logger.verbose('clinical:hl7-resource-encounter.client.ImmunizationsTable');
+  logger.data('ImmunizationsTable.props', {data: props}, {source: "ImmunizationsTable.jsx"});
+
+  const classes = useStyles();
+
+  let { 
+    children, 
+
+    data,
+    immunizations,
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    hideCheckbox,
+    hideActionIcons,
+    hideIdentifier,
+    hideDate,
+    hideStatus,
+    hidePatient,
+    hidePerformer,
+    hideVaccineCode,
+
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    showActionButton,
+    actionButtonLabel,
+  
+    rowsPerPage,
+    dateFormat,
+    showMinutes,
+    displayEnteredInError,
+
+    ...otherProps 
+  } = props;
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(props.count){
+    paginationCount = props.count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    setPage(newPage);
+  }
+
+  let paginationFooter;
+  if(!props.disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+
+  //---------------------------------------------------------------------
+  // Helper Functions
+
+  function removeRecord(_id){
+    console.log('removeRecord')
+  }
+  function rowClick(id){
+    console.log('rowClick')
+  }
+  function handleActionButtonClick(){
+    console.log('handleActionButtonClick')
+  }
+  
+  //---------------------------------------------------------------------
+  // Column Rendering
+
+  function renderCheckboxHeader(){
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
-  renderCheckbox(){
-    if (!this.props.hideCheckboxes) {
+  function renderCheckbox(){
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle">
             <Checkbox
@@ -83,73 +244,102 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderDateHeader(){
-    if (!this.props.hideDate) {
+  function renderDateHeader(){
+    if (!props.hideDate) {
       return (
         <TableCell className='date'>Date</TableCell>
       );
     }
   }
-  renderDate(newDate ){
-    if (!this.props.hideDate) {
+  function renderDate(newDate ){
+    if (!props.hideDate) {
       return (
         <TableCell className='date'>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
 
-  renderIdentifierHeader(){
-    if (!this.props.hideIdentifier) {
+  function renderIdentifierHeader(){
+    if (!props.hideIdentifier) {
       return (
         <TableCell className="identifier">Identifier</TableCell>
       );
     }
   }
-  renderIdentifier(immunization){
-    if (!this.props.hideIdentifier) {
+  function renderIdentifier(immunization){
+    if (!props.hideIdentifier) {
       
       return (
         <TableCell className='identifier'>{ get(immunization, 'identifier[0].value') }</TableCell>       );
     }
   }
-  renderStatusHeader(){
-    if (!this.props.hideStatus) {
+  function renderStatusHeader(){
+    if (!props.hideStatus) {
       return (
         <TableCell className="status">Status</TableCell>
       );
     }
   }
-  renderStatus(status){
-    if (!this.props.hideStatus) {
+  function renderStatus(status){
+    if (!props.hideStatus) {
       
       return (
         <TableCell className='status'>{ status }</TableCell>       );
     }
   }
+  function renderVaccineCodeHeader(){
+    if (!props.hideVaccineCode) {
+      return (
+        <TableCell className="vaccineCode">Vaccine Code</TableCell>
+      );
+    }
+  }
+  function renderVaccineCode(vaccineCode){
+    if (!props.hideVaccineCode) {
+      
+      return (
+        <TableCell className='vaccineCode'>{ vaccineCode }</TableCell>       );
+    }
+  }
 
-  renderPatientHeader(){
-    if (!this.props.hidePatient) {
+  function renderVaccineCodeTextHeader(){
+    if (!props.hideVaccineCodeText) {
+      return (
+        <TableCell className="vaccineCodeText">Vaccine</TableCell>
+      );
+    }
+  }
+  function renderVaccineCodeText(vaccineCodeText){
+    if (!props.hideVaccineCodeText) {
+      
+      return (
+        <TableCell className='vaccineCodeText'>{ vaccineCodeText }</TableCell>       );
+    }
+  }
+
+  function renderPatientHeader(){
+    if (!props.hidePatient) {
       return (
         <TableCell className="patient">Patient</TableCell>
       );
     }
   }
-  renderPatient(immunization){
-    if (!this.props.hidePatient) {
+  function renderPatient(immunization){
+    if (!props.hidePatient) {
       
       return (
         <TableCell className='patient'>{ get(immunization, 'patient.display') }</TableCell>       );
     }
   }
-  renderPerformerHeader(){
-    if (!this.props.hidePerformer) {
+  function renderPerformerHeader(){
+    if (!props.hidePerformer) {
       return (
         <TableCell className="performer">Performer</TableCell>
       );
     }
   }
-  renderPerformer(immunization){
-    if (!this.props.hidePerformer) {
+  function renderPerformer(immunization){
+    if (!props.hidePerformer) {
       
       return (
         <TableCell className='performer'>{ get(immunization, 'performer.display') }</TableCell>       );
@@ -157,20 +347,20 @@ export class ImmunizationsTable extends React.Component {
   }
 
 
-  rowClick(id){
+  function rowClick(id){
     Session.set('immunizationsUpsert', false);
     Session.set('selectedImmunizationId', id);
     Session.set('immunizationPageTabIndex', 2);
   };
-  renderActionIconsHeader(){
-    if (!this.props.hideActionIcons) {
+  function renderActionIconsHeader(){
+    if (!props.hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
-  renderActionIcons(immunization ){
-    if (!this.props.hideActionIcons) {
+  function renderActionIcons(immunization ){
+    if (!props.hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -186,25 +376,25 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   } 
-  renderIdentifierHeader(){
-    if (!this.props.hideIdentifier) {
+  function renderIdentifierHeader(){
+    if (!props.hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
-  renderIdentifier(identifier ){
-    if (!this.props.hideIdentifier) {
+  function renderIdentifier(identifier ){
+    if (!props.hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   } 
-  removeRecord(_id){
+  function removeRecord(_id){
     console.log('Remove patient ', _id)
     Immunizations._collection.remove({_id: _id})
   }
-  showSecurityDialog(immunization){
+  function showSecurityDialog(immunization){
     console.log('showSecurityDialog', immunization)
 
     Session.set('securityDialogResourceJson', Immunizations.findOne(get(immunization, '_id')));
@@ -212,99 +402,114 @@ export class ImmunizationsTable extends React.Component {
     Session.set('securityDialogResourceId', get(immunization, '_id'));
     Session.set('securityDialogOpen', true);
   }
-  render () {
-    // console.log('this.data', this.data)
 
-    let tableRows = [];
-    for (var i = 0; i < this.data.immunizations.length; i++) {
-      let newRow = {
-        patientDisplay: get(this.data.immunizations[i], 'patient.display'),
-        patientReference: get(this.data.immunizations[i], 'patient.reference'),
-        performerDisplay: get(this.data.immunizations[i], 'performer.display'),
-        performerReference: get(this.data.immunizations[i], 'performer.reference'),
-        identifier: get(this.data.immunizations[i], 'identifier[0].value'),
-        status: get(this.data.immunizations[i], 'status'),
-        vaccineCode: get(this.data.immunizations[i], 'vaccineCode.text'),
-        reported: get(this.data.immunizations[i], 'reported'),
-        date: get(this.data.immunizations[i], 'date')
-      }
 
-      let rowStyle = {
-        cursor: 'pointer',
-        textAlign: 'left'
-      }
-      if(get(this.data.immunizations[i], 'modifierExtension[0]')){
+  //---------------------------------------------------------------------
+  // Table Rows
+
+  let tableRows = [];
+  let immunizationsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(props.showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(props.dateFormat){
+    internalDateFormat = props.dateFormat;
+  }
+
+  if(props.immunizations){
+    if(props.immunizations.length > 0){     
+      let count = 0;    
+
+      props.immunizations.forEach(function(immunization){
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          immunizationsToRender.push(flattenImmunization(immunization, internalDateFormat));
+        }
+        count++;
+      });  
+    }
+  }
+
+  let rowStyle = {
+    cursor: 'pointer'
+  }
+  if(immunizationsToRender.length === 0){
+    logger.trace('ConditionsTable: No immunizations to render.');
+  } else {
+    for (var i = 0; i < immunizationsToRender.length; i++) {
+      if(get(immunizationsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
-
+      logger.trace('immunizationsToRender[i]', immunizationsToRender[i])
       tableRows.push(
-        <TableRow key={i} className="immunizationRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
-          { this.renderCheckbox() }
-          { this.renderActionIcons(this.data.immunizations[i]) }
-          { this.renderIdentifier( newRow.identifier ) }
-          <TableCell className='vaccineCode'>{ newRow.vaccineCode }</TableCell>
-
-          { this.renderStatus( newRow.status ) }
-          { this.renderPatient(this.data.immunizations[i]) }
-          { this.renderPerformer(this.data.immunizations[i]) }
-
-          {/* <TableCell className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</TableCell> */}
-          {/* <TableCell className='status' style={this.displayOnMobile()}>{ newRow.status }</TableCell>
-          <TableCell className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</TableCell>
-          <TableCell className='performer' style={this.displayOnMobile()} >{ newRow.performerDisplay }</TableCell> */}
-
-          { this.renderDate(newRow.date) }
+        <TableRow className="immunizationRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, immunizationsToRender[i]._id)} hover={true} >            
+          { renderCheckbox() }
+          { renderActionIcons(immunizations[i]) }
+          { renderIdentifier( immunizationsToRender[i].identifier ) }
+          { renderVaccineCode( immunizationsToRender[i].vaccineCode ) }
+          { renderVaccineCodeText( immunizationsToRender[i].vaccineDisplay ) }
+          { renderStatus( immunizationsToRender[i].status ) }
+          { renderPatient(immunizations[i].patientDisplay) }
+          { renderPerformer(immunizations[i].performerDisplay) }
+          { renderDate(immunizationsToRender[i].date) }
         </TableRow>
-      )
+      );    
     }
+  }
 
-    return(
-      <Table id='immunizationsTable' hover >
+  //---------------------------------------------------------------------
+  // Actual Render Method
+
+  return(
+    <div>
+      <Table className='immunizationsTable' size="small" aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
-            { this.renderCheckboxHeader() }
-            { this.renderActionIconsHeader() }
-            { this.renderIdentifierHeader() }
-            {/* <TableCell className='identifier' style={this.displayOnMobile()} >identifier</TableCell> */}
-
-            <TableCell className='vaccineCode'>Vaccine Code</TableCell>
-
-            {/* <TableCell className='status' style={this.displayOnMobile()} >status</TableCell>
-            <TableCell className='patient' style={this.displayOnMobile()} >patient</TableCell>
-            <TableCell className='performer' style={this.displayOnMobile()} >performer</TableCell> */}
-
-            { this.renderStatusHeader() }
-            { this.renderPatientHeader() }
-            { this.renderPerformerHeader() }
-
-            { this.renderDateHeader() }
+              { renderCheckboxHeader() }
+              { renderActionIconsHeader() }
+              { renderIdentifierHeader() }
+              { renderVaccineCodeHeader() }
+              { renderVaccineCodeTextHeader() }
+              { renderStatusHeader() }
+              { renderPatientHeader() }
+              { renderPerformerHeader() }
+              { renderDateHeader() }
           </TableRow>
         </TableHead>
-        <tbody>
+        <TableBody>
           { tableRows }
-        </tbody>
+        </TableBody>
       </Table>
-    );
-  }
+    { paginationFooter }
+    </div>
+  );
 }
 
 ImmunizationsTable.propTypes = {
   id: PropTypes.string,
   fhirVersion: PropTypes.string,
+  immunizations: PropTypes.array,
 
-  hideCheckboxes: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
+  hideActionIcons: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideDate: PropTypes.bool,
   hideStatus: PropTypes.bool,
   hidePatient: PropTypes.bool,
   hidePerformer: PropTypes.bool,
- 
+  hideVaccineCode: PropTypes.bool,
+  hideVaccineCodeText: PropTypes.bool,
+  
+  rowsPerPage: PropTypes.number,
   limit: PropTypes.number,
   query: PropTypes.object,
   patient: PropTypes.string,
   patientDisplay: PropTypes.string,
   sort: PropTypes.string
-  // onPatientClick: PropTypes.func
 };
-ReactMixin(ImmunizationsTable.prototype, ReactMeteorData);
+ImmunizationsTable.defaultProps = {
+  rowsPerPage: 5
+}
+
 export default ImmunizationsTable;

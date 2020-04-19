@@ -25,7 +25,7 @@ This Atmosphere package requires the following dependencies added to your `packa
 "react-mixin": "4.0.0",
 "validator": "10.9.0",
 "simpl-schema": "1.5.3",
-"material-fhir-ui": "0.9.34"
+"material-fhir-ui": "0.9.43"
 "react-icons-kit": "1.3.1"
 ```
 

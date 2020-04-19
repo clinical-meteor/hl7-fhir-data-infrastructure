@@ -1,30 +1,79 @@
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import { 
-  Checkbox, 
-  Table, 
-  TableRow, 
-  TableCell,
+  Button,
+  Checkbox,
+  Table,
   TableBody,
-  TableHead
+  TableCell,
+  TableHead,
+  TableRow,
+  TableFooter,
+  TablePagination,
 } from '@material-ui/core';
 
 import { get } from 'lodash';
+import moment from 'moment'
 
-import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
+import FhirUtilities from '../../lib/FhirUtilities';
 
+
+//===========================================================================
+// THEMING
+
+import { useTheme } from '@material-ui/styles';
+
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexShrink: 0,
+    marginLeft: theme.spacing(2.5),
+  },
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
+}));
+
+let styles = {
+  hideOnPhone: {
+    visibility: 'visible',
+    display: 'table'
+  },
+  cellHideOnPhone: {
+    visibility: 'visible',
+    display: 'table',
+    paddingTop: '16px',
+    maxWidth: '120px'
+  },
+  cell: {
+    paddingTop: '16px'
+  }
+}
+
+
+//===========================================================================
+// FLATTENING / MAPPING
 
 
 flattenMedicationStatement = function(statement, fhirVersion){
   console.log('flattenMedicationStatement', statement)
 
-  var newRow = {
+  var result = {
     '_id': statement._id,
+    'status': '',
+    'category': '',
     'medication': '',
     'medicationReference': '',
     'medicationDisplay': '',
@@ -35,133 +84,216 @@ flattenMedicationStatement = function(statement, fhirVersion){
     'dateAsserted': null,
     'informationSource': '',
     'subjectDisplay': '',
+    'subjectReference': '',
     'taken': '',
     'reasonCodeDisplay': '',
+    'reasonReference': '',
     'dosage': '',
   };
 
-  // STU3
-  if(fhirVersion === "v3.0.1"){
-    newRow.subjectDisplay = get(statement, 'subject.display');
-    newRow.medication = get(statement, 'medicationReference.reference');
-    newRow.medication = get(statement, 'medicationReference.display');
-    newRow.medication = get(statement, 'medicationCodeableConcept.coding[0].display');
-    newRow.identifier = get(statement, 'identifier[0].value');
-    newRow.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD");
-    newRow.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD");
-    newRow.informationSource = get(statement, 'informationSource.display');
-    newRow.taken = get(statement, 'taken');
-    newRow.reasonCodeDisplay = get(statement, 'reasonCode[0].coding[0].display');  
+  if(get(medicationRequest, 'patient')){
+    result.subjectDisplay = get(medicationRequest, 'patient.display');
+  } else if(get(medicationRequest, 'subject')){
+    result.subjectDisplay = get(medicationRequest, 'subject.display');
   }
 
+  if(get(medicationRequest, 'patient')){
+    result.subjectReference = get(medicationRequest, 'patient.reference');
+  } else if(get(medicationRequest, 'subject')){
+    result.subjectReference = get(medicationRequest, 'subject.reference');
+  }
+  
   // DSTU2
-  if(fhirVersion === "v1.0.2"){
-    newRow.subjectDisplay = get(statement, 'patient.display');
-    newRow.medicationReference = get(statement, 'medicationReference.reference');
-    newRow.medicationDisplay = get(statement, 'medicationReference.display');
-    newRow.medication = get(statement, 'medicationReference.display');
-    newRow.reasonCode = get(statement, 'reasonForUseCodeableConcept.coding[0].code');
-    newRow.reasonCodeDisplay = get(statement, 'reasonForUseCodeableConcept.coding[0].display');
-    newRow.identifier = get(statement, 'identifier[0].value');
-    newRow.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD");
-    newRow.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD");
-    newRow.informationSource = get(statement, 'supportingInformation[0].display');
-    newRow.reasonCodeDisplay = get(statement, 'reasonForUseCodeableConcept.coding[0].display');  
+  if(["v1.0.2", "DSTU2"].includes(fhirVersion)){
+    result.medicationReference = get(statement, 'medicationReference.reference');
+    result.medicationDisplay = get(statement, 'medicationReference.display');
+    result.reasonCode = get(statement, 'reasonForUseCodeableConcept.coding[0].code');
+    result.reasonCodeDisplay = get(statement, 'reasonForUseCodeableConcept.coding[0].display');
+    result.identifier = get(statement, 'identifier[0].value');
+    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD");
+    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD");
+    result.informationSource = get(statement, 'supportingInformation[0].display');
+    result.reasonCodeDisplay = get(statement, 'reasonForUseCodeableConcept.coding[0].display');  
+  }
+
+  // STU3
+  if(["v3.0.1", "STU3"].includes(fhirVersion)){
+    result.medicationReference = get(statement, 'medicationReference.reference');
+    result.medicationDisplay = get(statement, 'medicationReference.display');
+    result.medicationCodeDisplay = get(statement, 'medicationCodeableConcept.coding[0].display');
+    result.medicationCode = get(statement, 'medicationCodeableConcept.coding[0].code');
+    result.identifier = get(statement, 'identifier[0].value');
+    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD");
+    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD");
+    result.informationSource = get(statement, 'informationSource.display');
+    result.taken = get(statement, 'taken');
+    result.reasonCodeDisplay = get(statement, 'reasonCode[0].coding[0].display');  
+  }
+
+  // R4
+  if(["v4.0.1", "R4"].includes(fhirVersion)){
+    result.status = get(statement, 'status');
+    result.medicationReference = get(statement, 'medicationReference.reference');
+    result.medicationDisplay = get(statement, 'medicationReference.display');
+    result.medicationCodeDisplay = get(statement, 'medicationCodeableConcept.coding[0].display');
+    result.medicationCode = get(statement, 'medicationCodeableConcept.coding[0].code');
+    result.identifier = get(statement, 'identifier[0].value');
+    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD");
+    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD");
+    result.informationSource = get(statement, 'informationSource.display');
+    result.reasonReference = get(statement, 'reasonReference[0].reference');  
+    result.category = get(statement, 'category.text');  
+    if(get(statement, 'reasonCode[0].text')){
+      result.reasonCodeDisplay = get(statement, 'reasonCode[0].text');  
+    } else {
+      result.reasonCodeDisplay = get(statement, 'reasonCode[0].coding[0].display');  
+    }
   }
 
 
-  return newRow;
+
+  return result;
 }
 
-export class MedicationStatementsTable extends React.Component {
 
-  getMeteorData() {
+//===========================================================================
+// MAIN COMPONENT
 
-    // this should all be handled by props
-    // or a mixin!
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity')
-      },
-      selected: [],
-      medicationStatements: [],
-      displayToggle: false,
-      displayDates: true,
-      fhirVersion: 'v1.0.2'
-    }
+function MedicationStatementsTable(props){
+  logger.info('Rendering the MedicationStatementsTable');
+  logger.verbose('clinical:hl7-resource-encounter.client.MedicationStatementsTable');
+  logger.data('MedicationStatementsTable.props', {data: props}, {source: "MedicationStatementsTable.jsx"});
 
-    if(this.props.fhirVersion){
-      data.fhirVersion = this.props.fhirVersion;
-    }
-    
-    if(this.props.displayToggles){
-      data.displayToggle = this.props.displayToggles;
-    }
-    if(this.props.displayDates){
-      data.displayDates = this.props.displayDates;
-    }
-    if(this.props.data){
-      this.props.data.map(function(statement){
-        data.medicationStatements.push(flattenMedicationStatement(statement, data.fhirVersion));        
-      });
-    } else {
-      if(MedicationStatements.find().count() > 0){
+  const classes = useStyles();
 
-        MedicationStatements.find().map(function(statement){        
-          data.medicationStatements.push(flattenMedicationStatement(statement, data.fhirVersion));
-        });
-      } else {
-        data.medicationStatements = [];        
-      }
-    }
+  let { 
+    children, 
 
+    data,
+    medicatoinStatements,
+    query,
+    paginationLimit,
+    disablePagination,
+
+    displayCheckboxes,
+    displayActionIcons,
+    displayIdentifier,
+    displaySubjectName,
+    displaySubjectReference,
+    displayStatus,
+    displayMedicationReference,
+    displayMedicationDisplay,
+    displayMedicationCode,
+    displayMedicationCodeDisplay,
+    displayEffectiveDate,
+    displayDateAsserted,
+    displayCategory,
+    displayReasonCodeDisplay,
+    displayReason,
   
-    if(process.env.NODE_ENV === "test") console.log("MedicationStatementsTable[data]", data);
-    return data;
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    showActionButton,
+    actionButtonLabel,
+  
+    rowsPerPage,
+    dateFormat,
+    showMinutes,
+    displayEnteredInError,
+
+    ...otherProps 
+  } = props;
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(props.count){
+    paginationCount = props.count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    setPage(newPage);
   };
 
-  renderTogglesHeader(displayToggle){
-    if (displayToggle) {
+  let paginationFooter;
+  if(!props.disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+  //---------------------------------------------------------------------
+  // Helper Functions
+  
+  function removeRecord(_id){
+    console.log('Remove medication statement ', _id)
+
+    // MedicationStatements._collection.remove({_id: _id})
+  }
+  function showSecurityDialog(medicationStatement){
+    console.log('showSecurityDialog', medicationStatement)
+
+    // Session.set('securityDialogResourceJson', MedicationStatements.findOne(get(medicationStatement, '_id')));
+    // Session.set('securityDialogResourceType', 'MedicationStatement');
+    // Session.set('securityDialogResourceId', get(medicationStatement, '_id'));
+    // Session.set('securityDialogOpen', true);
+  }
+  function rowClick(id){
+    // Session.set('medicationStatementsUpsert', false);
+    // Session.set('selectedMedicationStatementId', id);
+    // Session.set('medicationStatementPageTabIndex', 2);
+  };
+
+
+  //---------------------------------------------------------------------
+  // Render Functions
+
+  function renderCheckboxHeader(){
+    if (props.displayCheckboxes) {
       return (
-        <TableCell className="toggle">toggle</TableCell>
+        <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
-  renderToggles(displayToggle, patientId ){
-    if (displayToggle) {
+  function renderCheckbox(patientId ){
+    if (props.displayCheckboxes) {
       return (
         <TableCell className="toggle">
-            <Checkbox
-              defaultChecked={true}
-              //style={styles.toggle}
-            />
-          </TableCell>
+          <Checkbox
+            defaultChecked={true}
+          />
+        </TableCell>
       );
     }
   }
-  renderDateHeader(displayDates){
-    if (displayDates) {
+  function renderActionIconsHeader(){
+    if (props.displayActionIcons) {
       return (
-        <TableCell className='date'>Asserted At</TableCell>
+        <TableCell className='actionIcons'>Actions</TableCell>
       );
     }
   }
-  renderDate(displayDates, newDate ){
-    if (displayDates) {
-      return (
-        <TableCell className='dateAsserted'>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
-      );
-    }
-  }
-  renderActionIconsHeader(){
-    if (!this.props.hideActionIcons) {
-      return (
-        <TableCell className='actionIcons' style={{minWidth: '120px'}}>Actions</TableCell>
-      );
-    }
-  }
-  renderActionIcons(medicationStatement ){
-    if (!this.props.hideActionIcons) {
+  function renderActionIcons( condition ){
+    if (props.displayActionIcons) {
+
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -170,82 +302,304 @@ export class MedicationStatementsTable extends React.Component {
       }
 
       return (
-        <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          {/* <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, medicationStatement)} />
-          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, medicationStatement._id)} /> */}
+        <TableCell className='actionIcons' style={{width: '120px'}}>
+          {/* <Icon icon={tag} style={iconStyle} onClick={showSecurityDialog.bind(this, condition)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={removeRecord.bind(this, condition._id)} /> */}
+        </TableCell>
+      );
+    }
+  } 
+  function renderIdentifierHeader(){
+    if (props.displayIdentifier) {
+      return (
+        <TableCell className='identifier'>Identifier</TableCell>
+      );
+    }
+  }
+  function renderIdentifier(identifier ){
+    if (props.displayIdentifier) {
+      return (
+        <TableCell className='identifier'>{ identifier }</TableCell>
+      );
+    }
+  } 
+  function renderCategoryHeader(){
+    if (props.displayCategory) {
+      return (
+        <TableCell className='category'>Category</TableCell>
+      );
+    }
+  }
+  function renderCategory(category ){
+    if (props.displayCategory) {
+      return (
+        <TableCell className='category'>{ category }</TableCell>
+      );
+    }
+  } 
+  function renderSourceHeader(){
+    if (props.displaySource) {
+      return (
+        <TableCell className='source'>Source</TableCell>
+      );
+    }
+  }
+  function renderSource(source ){
+    if (props.displaySource) {
+      return (
+        <TableCell className='source'>{ source }</TableCell>
+      );
+    }
+  } 
+  function renderReasonHeader(){
+    if (props.displayReason) {
+      return (
+        <TableCell className='reason'>Reason</TableCell>
+      );
+    }
+  }
+  function renderReason(reason ){
+    if (props.displayReason) {
+      return (
+        <TableCell className='reason'>{ reason }</TableCell>
+      );
+    }
+  } 
+
+  function renderSubjectNameHeader(){
+    if (props.displaySubjectName) {
+      return (
+        <TableCell className='subjectDisplay'>Subject</TableCell>
+      );
+    }
+  }
+  function renderSubjectName(subjectDisplay ){
+    if (props.displaySubjectName) {
+      return (
+        <TableCell className='subjectDisplay' style={{minWidth: '140px'}}>{ subjectDisplay }</TableCell>
+      );
+    }
+  }
+  function renderSubjectReferenceHeader(){
+    if (props.displaySubjectReference) {
+      return (
+        <TableCell className='subjectReference'>Subject Reference</TableCell>
+      );
+    }
+  }
+  function renderSubjectReference(subjectReference ){
+    if (props.displaySubjectReference) {
+      return (
+        <TableCell className='subjectReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
+          { FhirUtilities.pluckReferenceId(subjectReference) }
         </TableCell>
       );
     }
   }
-  removeRecord(_id){
-    console.log('Remove medication statement ', _id)
-    MedicationStatements._collection.remove({_id: _id})
+  function renderMedicationReferenceHeader(){
+    if (props.displayMedicationReference) {
+      return (
+        <TableCell className='medicationReference'>Medication</TableCell>
+      );
+    }
   }
-  showSecurityDialog(medicationStatement){
-    console.log('showSecurityDialog', medicationStatement)
-
-    Session.set('securityDialogResourceJson', MedicationStatements.findOne(get(medicationStatement, '_id')));
-    Session.set('securityDialogResourceType', 'MedicationStatement');
-    Session.set('securityDialogResourceId', get(medicationStatement, '_id'));
-    Session.set('securityDialogOpen', true);
+  function renderMedicationReference(medicationReference ){
+    if (props.displayMedicationReference) {
+      return (
+        <TableCell className='medicationReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
+          { FhirUtilities.pluckReferenceId(medicationReference) }
+        </TableCell>
+      );
+    }
   }
-  rowClick(id){
-    Session.set('medicationStatementsUpsert', false);
-    Session.set('selectedMedicationStatementId', id);
-    Session.set('medicationStatementPageTabIndex', 2);
-  };
-  render () {
-    let tableRows = [];
-    for (var i = 0; i < this.data.medicationStatements.length; i++) {
+  function renderEffectiveDateHeader(){
+    if (props.displayEffectiveDate) {
+      return (
+        <TableCell className='effectiveDate'>Effective Date</TableCell>
+      );
+    }
+  }
+  function renderEffectiveDate(effectiveDate){
+    if (props.displayEffectiveDate) {
+      return (
+        <TableCell className='effectiveDate'>{ moment(effectiveDate).format('YYYY-MM-DD') }</TableCell>
+      );
+    }
+  }
 
-      let rowStyle = {
-        cursor: 'pointer'
-      }
-      if(get(this.data.medicationStatements[i], 'modifierExtension[0]')){
+  function renderBarcode(id){
+    if (props.displayBarcode) {
+      return (
+        <TableCell><span className="barcode helveticas">{id}</span></TableCell>
+      );
+    }
+  }
+  function renderBarcodeHeader(){
+    if (props.displayBarcode) {
+      return (
+        <TableCell>System ID</TableCell>
+      );
+    }
+  }
+  function renderActionButtonHeader(){
+    if (props.showActionButton === true) {
+      return (
+        <TableCell className='ActionButton' >Action</TableCell>
+      );
+    }
+  }
+  function renderActionButton(patient){
+    if (props.showActionButton === true) {
+      return (
+        <TableCell className='ActionButton' >
+          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+        </TableCell>
+      );
+    }
+  }
+
+
+  //---------------------------------------------------------------------
+  // Table Rows
+
+  let tableRows = [];
+  let medicationStatementsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(props.showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(props.dateFormat){
+    internalDateFormat = props.dateFormat;
+  }
+
+  if(props.medicationStatements){
+    if(props.medicationStatements.length > 0){     
+      let count = 0;    
+
+      // if(props.displayEnteredInError){
+      //   query.verificationStatus = {
+      //     $nin: ["entered-in-error"]  // unconfirmed | provisional | differential | confirmed | refuted | entered-in-error
+      //   }
+      // }
+
+      props.medicationStatements.forEach(function(medicationStatement){
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          medicationStatementsToRender.push(flattenMedicationStatement(medicationStatement, "R4"));
+        }
+        count++;
+      });  
+    }
+  }
+
+  let rowStyle = {
+    cursor: 'pointer'
+  }
+  if(medicationStatementsToRender.length === 0){
+    logger.trace('ConditionsTable: No medicationStatements to render.');
+    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+  } else {
+    for (var i = 0; i < medicationStatementsToRender.length; i++) {
+      if(get(medicationStatementsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
-
+      logger.trace('medicationStatementsToRender[i]', medicationStatementsToRender[i])
       tableRows.push(
-        <TableRow key={i} className="medicationStatementRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.medicationStatements[i]._id)} >
-          { this.renderToggles(this.data.displayToggle, this.data.medicationStatements[i]) }
-          { this.renderActionIcons(this.data.medicationStatements[i]) }
-          <TableCell className='medication'>{ this.data.medicationStatements[i].medication }</TableCell>
-          {/* <TableCell className='effectiveDateTime'>{ moment(this.data.medicationStatements[i].effectiveDateTime).format("YYYY-MM-DD") }</TableCell> */}
-          <TableCell className='informationSource'>{ this.data.medicationStatements[i].informationSource }</TableCell>
-          <TableCell className='subject'>{ this.data.medicationStatements[i].subjectDisplay }</TableCell>
-          {/* <TableCell className='taken'>{ this.data.medicationStatements[i].taken }</TableCell> */}
-          <TableCell className='reason'>{ this.data.medicationStatements[i].reasonCodeDisplay }</TableCell>
-          {/* <TableCell className='dosage'>{ this.data.medicationStatements[i].dosage }</TableCell> */}
-          { this.renderDate(this.data.displayDates, this.data.medicationStatements[i].dateAsserted) }
+        <TableRow className="medicationStatementRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, medicationStatementsToRender[i]._id)} hover={true} >            
+          { renderCheckbox() }
+          { renderActionIcons(medicationStatementsToRender[i]) }
+          { renderIdentifier(medicationStatementsToRender.identifier ) }
+          { renderSubjectName(medicationStatementsToRender[i].subjectDisplay ) } 
+          { renderSubjectReference(medicationStatementsToRender[i].subjectReference ) }   
+          { renderCategory(medicationStatementsToRender.category ) }
+          { renderMedicationReference(medicationStatementsToRender[i].medicationReference ) }   
+          { renderSource(medicationStatementsToRender[i].informationSource) }
+          { renderReason(medicationStatementsToRender[i].reasonCodeDisplay) }
+          { renderEffectiveDate( medicationStatementsToRender[i].dateAsserted) }
+          { renderBarcode(medicationStatementsToRender[i]._id)}
+          { renderActionButton(medicationStatementsToRender[i]) }
         </TableRow>
-      )
+      );    
     }
+  }
 
-    return(
-      <Table id='medicationStatementsTable' hover="true" >
+
+  //---------------------------------------------------------------------
+  // Actual Render Method
+
+  return(
+    <div>
+      <Table className='medicationStatementsTable' size="small" aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
-            { this.renderTogglesHeader(this.data.displayToggle) }
-            { this.renderActionIconsHeader() }
-
-            <TableCell className='medication'>Medication</TableCell>
-            {/* <TableCell className='effectiveDateTime'>Date /time</TableCell> */}
-            <TableCell className='informationSource'>Source</TableCell>
-            <TableCell className='subject'>Subject</TableCell>
-            {/* <TableCell className='taken'>taken</TableCell> */}
-            <TableCell className='reason'>Reason</TableCell>
-            {/* <TableCell className='dosage'>dosage</TableCell> */}
-            { this.renderDateHeader(this.data.displayDates) }            
+            { renderCheckboxHeader() } 
+            { renderActionIconsHeader() }
+            { renderIdentifierHeader() }
+            { renderSubjectNameHeader() }
+            { renderSubjectReferenceHeader() }
+            { renderCategoryHeader() }
+            { renderMedicationReferenceHeader() }
+            { renderSourceHeader() }
+            { renderReasonHeader() }
+            { renderEffectiveDateHeader() }     
+            { renderBarcodeHeader() }
+            { renderActionButtonHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
           { tableRows }
         </TableBody>
       </Table>
-    );
-  }
+    { paginationFooter }
+    </div>
+  );
 }
 
 
-ReactMixin(MedicationStatementsTable.prototype, ReactMeteorData);
+MedicationStatementsTable.propTypes = {
+  data: PropTypes.array,
+  medicationStatements: PropTypes.array,
+  query: PropTypes.object,
+  paginationLimit: PropTypes.number,
+  disablePagination: PropTypes.bool,
+
+  displayCheckboxes: PropTypes.bool,
+  displayActionIcons: PropTypes.bool,
+  displayIdentifier: PropTypes.bool,
+  displaySubjectName: PropTypes.bool,
+  displaySubjectReference: PropTypes.bool,
+  displayStatus: PropTypes.bool,
+  displayMedicationReference: PropTypes.bool,
+  displayMedicationDisplay: PropTypes.bool,
+  displayMedicationCode: PropTypes.bool,
+  displayMedicationCodeDisplay: PropTypes.bool,
+  displayEffectiveDate: PropTypes.bool,
+  displayDateAsserted: PropTypes.bool,
+  displayCategory: PropTypes.bool,
+  displayReasonCodeDisplay: PropTypes.bool,
+  displayReason: PropTypes.bool,
+
+  onCellClick: PropTypes.func,
+  onRowClick: PropTypes.func,
+  onMetaClick: PropTypes.func,
+  onRemoveRecord: PropTypes.func,
+  onActionButtonClick: PropTypes.func,
+  showActionButton: PropTypes.bool,
+  actionButtonLabel: PropTypes.string,
+
+  rowsPerPage: PropTypes.number,
+  dateFormat: PropTypes.string,
+  showMinutes: PropTypes.bool,
+  displayEnteredInError: PropTypes.bool,
+  count: PropTypes.number
+};
+
+MedicationStatementsTable.defaultProps = {
+  displayReason: true,
+  displaySubjectReference: true,
+  rowsPerPage: 5
+}
+
+
+
 export default MedicationStatementsTable;

@@ -1,97 +1,299 @@
-
-import { 
-  Checkbox, 
-  Table, 
-  TableRow, 
-  TableCell,
-  TableBody
-} from '@material-ui/core';
-
-import React from 'react';
-import ReactMixin from 'react-mixin';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-
-import { get } from 'lodash';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-// import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-// import { GoTrashcan } from 'react-icons/go'
+import { 
+  Button,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableFooter,
+  TablePagination,
+} from '@material-ui/core';
+
+import { get } from 'lodash';
+
+import FhirUtilities from '../../lib/FhirUtilities';
+
+//===========================================================================
+// THEMING
+
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexShrink: 0,
+    marginLeft: theme.spacing(2.5),
+  },
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
+}));
+
+let styles = {
+  hideOnPhone: {
+    visibility: 'visible',
+    display: 'table'
+  },
+  cellHideOnPhone: {
+    visibility: 'visible',
+    display: 'table',
+    paddingTop: '16px',
+    maxWidth: '120px'
+  },
+  cell: {
+    paddingTop: '16px'
+  }
+}
+
+//===========================================================================
+// FLATTENING / MAPPING
+
+
+flattenMedication = function(medication, internalDateFormat, fhirVersion){
+  let result = {
+    _id: '',
+    status: '',
+    code: '',
+    name: '',
+    manufacturer: '',
+    activeIngredient: '',
+    form: '',
+    amount: '',
+    activeIngredient: ''
+  };
+
+  result._id = get(medication, '_id');
+  result.status = get(medication, 'status');
+
+  if(get(medication, 'code.text')){
+    result.name = get(medication, 'code.text');
+  } else {
+    result.name = get(medication, 'code.coding[0].display');
+  }
+
+  result.code = get(medication, 'code.coding[0].code');
+
+  result.form = get(medication, 'product.form.coding[0].display');
+  result.activeIngredient = get(medication, 'product.ingredient[0].item.display');
+  result.amount = get(medication, 'package.content[0].amount.value');
+  result.manufacturer = get(medication, 'manufacturer.display');
+
+  // if we get a specific fhirVersion, be explicit about where to get the value
+  switch (fhirVersion) {
+    case '1.0.2':
+      result.activeIngredient = get(medication, 'product.ingredient[0].item.display');            
+      break;      
+    case '3.0.1':
+      result.activeIngredient = get(medication, 'product.ingredient[0].itemReference.display');            
+      break;      
+    default:
+      // otherwise, walk through the likely steps, if possible
+      // may be worth extracting to Medication.prototype.getPrimaryIngredient()
+      if(get(medication, 'product.ingredient[0].item.display')){
+        result.activeIngredient = get(medication, 'product.ingredient[0].item.display');            
+      } else if(get(medication, 'product.ingredient[0].itemReference.display')){
+        result.activeIngredient = get(medication, 'product.ingredient[0].itemReference.display');
+      }
+      break;
+  }
+
+  return result;
+
+
+  // let result = {
+  //   _id: '',
+  //   id: '',
+  //   meta: '',
+  //   identifier: '',
+  //   clinicalStatus: '',
+  //   patientDisplay: '',
+  //   patientReference: '',
+  //   asserterDisplay: '',
+  //   verificationStatus: '',
+  //   severity: '',
+  //   snomedCode: '',
+  //   snomedDisplay: '',
+  //   evidenceDisplay: '',
+  //   barcode: '',
+  //   onsetDateTime: '',
+  //   abatementDateTime: ''
+  // };
+
+  // if(!internalDateFormat){
+  //   internalDateFormat = "YYYY-MM-DD";
+  // }
+
+  // result._id =  get(medication, 'id') ? get(medication, 'id') : get(medication, '_id');
+  // result.id = get(medication, 'id', '');
+  // result.identifier = get(medication, 'identifier[0].value', '');
+
+  // if(get(medication, 'patient')){
+  //   result.patientDisplay = get(medication, 'patient.display', '');
+  //   result.patientReference = get(medication, 'patient.reference', '');
+  // } else if (get(medication, 'subject')){
+  //   result.patientDisplay = get(medication, 'subject.display', '');
+  //   result.patientReference = get(medication, 'subject.reference', '');
+  // }
+  // result.asserterDisplay = get(medication, 'asserter.display', '');
+
+
+  // if(get(medication, 'clinicalStatus.coding[0].code')){
+  //   result.clinicalStatus = get(medication, 'clinicalStatus.coding[0].code', '');  //R4
+  // } else {
+  //   result.clinicalStatus = get(medication, 'clinicalStatus', '');                 // DSTU2
+  // }
+
+  // if(get(medication, 'verificationStatus.coding[0].code')){
+  //   result.verificationStatus = get(medication, 'verificationStatus.coding[0].code', '');  // R4
+  // } else {
+  //   result.verificationStatus = get(medication, 'verificationStatus', '');                 // DSTU2
+  // }
+
+  // result.snomedCode = get(medication, 'code.coding[0].code', '');
+  // result.snomedDisplay = get(medication, 'code.coding[0].display', '');
+
+  // result.evidenceDisplay = get(medication, 'evidence[0].detail[0].display', '');
+  // result.barcode = get(medication, '_id', '');
+  // result.severity = get(medication, 'severity.text', '');
+
+  // result.onsetDateTime = moment(get(medication, 'onsetDateTime', '')).format("YYYY-MM-DD");
+  // result.abatementDateTime = moment(get(medication, 'abatementDateTime', '')).format("YYYY-MM-DD");
+
+  // return result;
+}
+
+//===========================================================================
+// SESSION VARIABLES
 
 Session.setDefault('selectedMedications', []);
 
-export class MedicationsTable extends React.Component {
-  getMeteorData() {
-    let self = this;
 
-    // this should all be handled by props
-    // or a mixin!
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        block: {
-          maxWidth: 250
-        },
-        checkbox: {
-          //marginBottom: 16
-        },
-        // rowText: Glass.darkroom({cursor: 'pointer'})
-      },
-      selected: [],
-      medications: Medications.find().map(function(medication){
-        let result = {
-          _id: '',
-          name: '',
-          manufacturer: '',
-          activeIngredient: '',
-          form: '',
-          amount: '',
-          activeIngredient: ''
-        };
+//===========================================================================
+// TYPES & DEFAULT VALUES
 
-        result._id = get(medication, '_id');
-        result.code = get(medication, 'code.coding[0].code');
-        result.code = get(medication, 'code.text');
-        result.name = get(medication, 'code.coding[0].display');
-        result.form = get(medication, 'product.form.coding[0].display');
-        result.activeIngredient = get(medication, 'product.ingredient[0].item.display');
-        result.amount = get(medication, 'package.content[0].amount.value');
-        result.manufacturer = get(medication, 'manufacturer.display');
+MedicationsTable.propTypes = {
+  medications: PropTypes.array,
+  fhirVersion: PropTypes.string,
+  query: PropTypes.object,
+  paginationLimit: PropTypes.number,
+  hideCheckbox: PropTypes.bool,
+  hideActionIcons: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+  hideActiveIngredient: PropTypes.bool,
+  hideForm: PropTypes.bool,
+  hideCode: PropTypes.bool,
+  hideManufacturer: PropTypes.bool,
+  hideName: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
+  onRowClick: PropTypes.func
+};
 
-        // if we get a specific fhirVersion, be explicit about where to get the value
-        switch (self.props.fhirVersion) {
-          case '1.0.2':
-            result.activeIngredient = get(medication, 'product.ingredient[0].item.display');            
-            break;      
-          case '3.0.1':
-            result.activeIngredient = get(medication, 'product.ingredient[0].itemReference.display');            
-            break;      
-          default:
-            // otherwise, walk through the likely steps, if possible
-            // may be worth extracting to Medication.prototype.getPrimaryIngredient()
-            if(get(medication, 'product.ingredient[0].item.display')){
-              result.activeIngredient = get(medication, 'product.ingredient[0].item.display');            
-            } else if(get(medication, 'product.ingredient[0].itemReference.display')){
-              result.activeIngredient = get(medication, 'product.ingredient[0].itemReference.display');
-            }
-            break;
-        }
+MedicationsTable.defaultProps = {
+  rowsPerPage: 5
+};
 
-        return result;
-      })
-    };
+//===========================================================================
+// MAIN COMPONENT
+
+function MedicationsTable(props){
+  logger.info('Rendering the MedicationsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.MedicationsTable');
+  logger.data('MedicationsTable.props', {data: props}, {source: "MedicationsTable.jsx"});
+
+  const classes = useStyles();
+
+  let { 
+    children, 
+
+    medications,
+    fhirVersion,
+    query,
+    paginationLimit,
+    hideIdentifier,
+    hideCheckbox,
+    hideActionIcons,
+    hideActiveIngredient,
+    hideForm,
+    hideName,
+    hideCode,
+    hideManufacturer,
+    hideBarcode,
+    onRowClick,
+    rowsPerPage,
+
+    ...otherProps 
+  } = props;
 
 
-    return data;
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(props.count){
+    paginationCount = props.count;
+  } else {
+    paginationCount = rows.length;
   }
-  renderCheckboxHeader(){
-    if (!this.props.hideCheckbox) {
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!props.disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+  //---------------------------------------------------------------------
+  // Helper Functions
+
+  function removeRecord(_id){
+    console.log('removeRecord')
+  }
+  function rowClick(id){
+    console.log('rowClick')
+  }
+  function handleActionButtonClick(){
+    console.log('handleActionButtonClick')
+  }
+  function showSecurityDialog(medication){
+    console.log('showSecurityDialog', medication)
+  }
+
+  //---------------------------------------------------------------------
+  // Render Functions
+
+  function renderCheckboxHeader(){
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle"></TableCell>
       );
     }
   }
-  renderCheckbox(patientId ){
-    if (!this.props.hideCheckbox) {
+  function renderCheckbox(patientId ){
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle">
             <Checkbox
@@ -101,32 +303,32 @@ export class MedicationsTable extends React.Component {
       );
     }
   }
-  renderIdentifierHeader(){
-    if (!this.props.hideIdentifier) {
+  function renderIdentifierHeader(){
+    if (!props.hideIdentifier) {
       return (
         <TableCell className="identifier">Identifier</TableCell>
       );
     }
   }
-  renderIdentifier(medication ){
-    if (!this.props.hideIdentifier) {
+  function renderIdentifier(medication ){
+    if (!props.hideIdentifier) {
       let classNames = 'identifier';
-      if(this.props.barcodes){
+      if(props.barcodes){
         classNames = 'barcode identifier'
       }
       return (
         <TableCell className={classNames}>{ get(medication, 'identifier[0].value') }</TableCell>       );
     }
   }
-  renderActionIconsHeader(){
-    if (!this.props.hideActionIcons) {
+  function renderActionIconsHeader(){
+    if (!props.hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>Actions</TableCell>
       );
     }
   }
-  renderActionIcons( medication ){
-    if (!this.props.hideActionIcons) {
+  function renderActionIcons( medication ){
+    if (!props.hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -142,77 +344,196 @@ export class MedicationsTable extends React.Component {
       );
     }
   } 
-  removeRecord(_id){
-    console.log('Remove medication ', _id)
-    Medications._collection.remove({_id: _id})
-  }
-  showSecurityDialog(medication){
-    console.log('showSecurityDialog', medication)
 
-    Session.set('securityDialogResourceJson', Medications.findOne(get(medication, '_id')));
-    Session.set('securityDialogResourceType', 'Medication');
-    Session.set('securityDialogResourceId', get(medication, '_id'));
-    Session.set('securityDialogOpen', true);
-  }
-  rowClick(id){
-    Session.set('medicationUpsert', false);
-    Session.set('selectedMedicationId', id);
-    Session.set('medicationPageTabIndex', 2);
-  }
-  render () {
-    if(process.env.NODE_ENV === "test") console.log("MedicationTable.render()");
-
-    let tableRows = [];
-    for (var i = 0; i < this.data.medications.length; i++) {
-      tableRows.push(
-      <TableRow className='medicationRow' ref='med-{i}' key={i} style={this.data.style.rowText} onClick={ this.rowClick.bind('this', this.data.medications[i]._id) }>
-        { this.renderCheckbox(this.data.medications[i]) }
-        { this.renderActionIcons(this.data.medications[i]) }
-        <TableCell className="code hidden-on-phone">{this.data.medications[i].code}</TableCell>
-        <TableCell className="name hidden-on-phone">{this.data.medications[i].name}</TableCell>
-        <TableCell className="manufacturer hidden-on-phone">{this.data.medications[i].manufacturer}</TableCell>
-        <TableCell className="amount">{this.data.medications[i].amount}</TableCell>
-        <TableCell className="form">{this.data.medications[i].form}</TableCell>
-        <TableCell className="activeIngredient">{this.data.medications[i].activeIngredient}</TableCell>
-        { this.renderIdentifier(this.data.medications[i]) }
-      </TableRow>);
+  function renderCode(code){
+    if (!props.hideCode) {
+      return (
+        <TableCell className='code'>{code}</TableCell>
+      );
     }
+  }
+  function renderCodeHeader(){
+    if (!props.hideCode) {
+      return (
+        <TableCell className='code'>Code</TableCell>
+      );
+    }
+  }
+
+  function renderName(name){
+    if (!props.hideName) {
+      return (
+        <TableCell className='name'>{name}</TableCell>
+      );
+    }
+  }
+  function renderNameHeader(){
+    if (!props.hideName) {
+      return (
+        <TableCell className='name'>Name</TableCell>
+      );
+    }
+  }
 
 
-    return(
-      <Table id="medicationsTable" ref='medicationsTable' hover >
+  function renderForm(form){
+    if (!props.hideForm) {
+      return (
+        <TableCell className='form'>{form}</TableCell>
+      );
+    }
+  }
+  function renderFormHeader(){
+    if (!props.hideForm) {
+      return (
+        <TableCell className='form'>Form</TableCell>
+      );
+    }
+  }
+
+  function renderManufacturer(manufacturer){
+    if (!props.hideManufacturer) {
+      return (
+        <TableCell className='manufacturer' >{ manufacturer }</TableCell>
+      );
+    }
+  }
+  function renderManufacturerHeader(){
+    if (!props.hideManufacturer) {
+      return (
+        <TableCell className='manufacturer' >Manufacturer</TableCell>
+      );
+    }
+  }
+  function renderActiveIngredient(id){
+    if (!props.hideActiveIngredient) {
+      return (
+        <TableCell className='activeIngredient'>{id}</TableCell>
+      );
+    }
+  }
+  function renderActiveIngredientHeader(){
+    if (!props.hideActiveIngredient) {
+      return (
+        <TableCell className='activeIngredient'>Active Ingredient</TableCell>
+      );
+    }
+  }
+  function renderBarcode(id){
+    if (props.hideBarcode) {
+      return (
+        <TableCell><span className="barcode helveticas">{id}</span></TableCell>
+      );
+    }
+  }
+  function renderBarcodeHeader(){
+    if (props.hideBarcode) {
+      return (
+        <TableCell>System ID</TableCell>
+      );
+    }
+  }
+  function renderActionButtonHeader(){
+    if (props.showActionButton === true) {
+      return (
+        <TableCell className='ActionButton' >Action</TableCell>
+      );
+    }
+  }
+  function renderActionButton(patient){
+    if (props.showActionButton === true) {
+      return (
+        <TableCell className='ActionButton' >
+          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+        </TableCell>
+      );
+    }
+  }
+
+  //---------------------------------------------------------------------
+  // Table Rows
+
+  let tableRows = [];
+  let medicationsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(props.showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(props.dateFormat){
+    internalDateFormat = props.dateFormat;
+  }
+
+  if(props.medications){
+    if(props.medications.length > 0){     
+      let count = 0;    
+
+      props.medications.forEach(function(medication){
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          medicationsToRender.push(flattenMedication(medication, internalDateFormat, "R4"));
+        }
+        count++;
+      });  
+    }
+  }
+
+  let rowStyle = {
+    cursor: 'pointer'
+  }
+  if(medicationsToRender.length === 0){
+    logger.trace('ConditionsTable: No medications to render.');
+    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+  } else {
+    for (var i = 0; i < medicationsToRender.length; i++) {
+      if(get(medicationsToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      logger.trace('medicationsToRender[i]', medicationsToRender[i])
+      tableRows.push(
+        <TableRow className="medicationRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, medicationsToRender[i]._id)} hover={true} >            
+          { renderCheckbox() }
+          { renderActionIcons(medicationsToRender[i]) }
+          { renderIdentifier(medicationsToRender[i].identifier ) }
+          { renderCode(medicationsToRender[i].code ) }
+          { renderName(medicationsToRender[i].name ) }
+          { renderManufacturer(medicationsToRender[i].manufacturer) }
+          { renderForm(medicationsToRender[i].form) }
+          { renderActiveIngredient(medicationsToRender[i].activeIngredient) }
+          { renderBarcode(medicationsToRender[i]._id)}
+          { renderActionButton(medicationsToRender[i]) }
+        </TableRow>
+      );    
+    }
+  }
+
+  return(
+    <div>
+      <Table className="medicationsTable" size="small" aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
-            { this.renderCheckboxHeader() }
-            { this.renderActionIconsHeader() }
-            <TableCell className="code hidden-on-phone">Code</TableCell>
-            <TableCell className="name hidden-on-phone">Name</TableCell>
-            <TableCell className="manufacturer hidden-on-phone">Manufacturer</TableCell>
-            <TableCell className="amount">Amount</TableCell>
-            <TableCell className="form">Form</TableCell>
-            <TableCell className="activeIngredient">Active ingredient</TableCell>
-            { this.renderIdentifierHeader() }
+            { renderCheckboxHeader() }
+            { renderActionIconsHeader() }
+            { renderIdentifierHeader() }
+            { renderCodeHeader() }
+            { renderNameHeader() }
+            { renderManufacturerHeader() }
+            { renderFormHeader() }
+            { renderActiveIngredientHeader() }
+            { renderBarcodeHeader() }
+            { renderActionButtonHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
           { tableRows }
         </TableBody>
       </Table>
-    );
-  }
+      { paginationFooter }
+    </div>
+  );
 }
 
 
-MedicationsTable.propTypes = {
-  data: PropTypes.array,
-  fhirVersion: PropTypes.string,
-  query: PropTypes.object,
-  paginationLimit: PropTypes.number,
-  hideIdentifier: PropTypes.bool,
-  hideCheckbox: PropTypes.bool,
-  hideActionIcons: PropTypes.bool,
-  barcodes: PropTypes.bool,
-  onRowClick: PropTypes.func
-};
-ReactMixin(MedicationsTable.prototype, ReactMeteorData);
+
+
+
 export default MedicationsTable;

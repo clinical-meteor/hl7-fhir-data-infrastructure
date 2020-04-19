@@ -9,9 +9,11 @@ import {
   TextField,
   DatePicker,
   Tab, 
-  Tabs
+  Tabs,
+  Box
 } from '@material-ui/core';
 
+import { PageCanvas, StyledCard } from 'material-fhir-ui';
 
 import ImmunizationDetail from './ImmunizationDetail';
 import ImmunizationsTable from './ImmunizationsTable';
@@ -22,6 +24,7 @@ import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
+import { get } from 'lodash';
 //=============================================================================================================================================
 // TABS
 
@@ -62,7 +65,9 @@ export class ImmunizationsPage extends React.Component {
       immunizationSearchFilter: Session.get('immunizationSearchFilter'),
       selectedImmunizationId: Session.get('selectedImmunizationId'),
       fhirVersion: Session.get('fhirVersion'),
-      selectedImmunization: false
+      selectedImmunization: false,
+
+      immunizations: Immunizations.find().fetch()
     };
 
     if (Session.get('selectedImmunizationId')){
@@ -91,24 +96,29 @@ export class ImmunizationsPage extends React.Component {
     if(process.env.NODE_ENV === "test") console.log('ImmunizationsPage.render()', this.data);
 
     let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader')){
+    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
       headerHeight = 128;
     }
     
     return (
-      <div id='immunizationsPage'>
-        <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+      <PageCanvas id='immunizationsPage' headerHeight={headerHeight} >
+        <StyledCard height="auto" scrollable={true} margin={20} >
             <CardHeader title='Immunizations' />
             <CardContent>
+              <Grid container>
+                <Grid item md={12}>
+                  <ImmunizationsTable 
+                    immunizations={this.data.immunizations }    
+                    displayDates={true}
+                  />
+                </Grid>
+              </Grid>
 
-            <Tabs id="immunizationsPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
+            {/* <Tabs id="immunizationsPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
                 <Tab label="Immunizations" value={0} />
                 <Tab label="Edit" value={1} />
               </Tabs>
               <TabPanel className="immunizationListTab"  >
-                <ImmunizationsTable 
-                    displayDates={true}
-                  />
               </TabPanel >
               <TabPanel className="immunizationDetailsTab" >
                 <ImmunizationDetail 
@@ -118,10 +128,10 @@ export class ImmunizationsPage extends React.Component {
                   immunizationId={ this.data.selectedImmunizationId }
                   showDatePicker={true} 
                   />
-              </TabPanel>
+              </TabPanel> */}
             </CardContent>
         </StyledCard>
-      </div>
+      </PageCanvas>
     );
   }
 }

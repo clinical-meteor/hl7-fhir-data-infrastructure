@@ -89,6 +89,7 @@ flattenMedicationRequest = function(medicationRequest, dateFormat){
     dosageInstructionText: '',
     medicationCodeableConcept: '',
     medicationCode: '',
+    medicationReference: '',
     dosage: ''
   };
 
@@ -103,10 +104,23 @@ flattenMedicationRequest = function(medicationRequest, dateFormat){
     result.medicationCode = get(medicationRequest, 'medicationCodeableConcept.coding[0].code');
   } 
 
+  result.medicationReference = get(medicationRequest, 'medicationReference.reference');
+
   result.status = get(medicationRequest, 'status');
   result.identifier = get(medicationRequest, 'identifier[0].value');
-  result.patientDisplay = get(medicationRequest, 'patient.display');
-  result.patientReference = get(medicationRequest, 'patient.reference');
+
+  if(get(medicationRequest, 'patient')){
+    result.patientDisplay = get(medicationRequest, 'patient.display');
+  } else if(get(medicationRequest, 'subject')){
+    result.patientDisplay = get(medicationRequest, 'subject.display');
+  }
+
+  if(get(medicationRequest, 'patient')){
+    result.patientReference = get(medicationRequest, 'patient.reference');
+  } else if(get(medicationRequest, 'subject')){
+    result.patientReference = get(medicationRequest, 'subject.reference');
+  }
+  
   result.prescriberDisplay = get(medicationRequest, 'prescriber.display');
   result.dateWritten = moment(get(medicationRequest, 'dateWritten')).format(dateFormat);
   
@@ -162,14 +176,14 @@ function MedicationRequestsTable(props){
     }
   }
   function renderCheckboxHeader(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -180,14 +194,14 @@ function MedicationRequestsTable(props){
     }
   }
   function renderToggleHeader(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -495,7 +509,7 @@ MedicationRequestsTable.propTypes = {
   disablePagination: PropTypes.bool,
   fhirVersion: PropTypes.string,
 
-  hideCheckboxes: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideMedication: PropTypes.bool,
