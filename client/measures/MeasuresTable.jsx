@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
@@ -6,7 +6,8 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableRow
+  TableRow,
+  TablePagination
 } from '@material-ui/core';
 
 import TableNoData from 'material-fhir-ui';
@@ -53,7 +54,7 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenMeasure = function(measure){
+flattenMeasure = function(measure, internalDateFormat){
   let result = {
     _id: '',
     meta: '',
@@ -73,11 +74,15 @@ flattenMeasure = function(measure){
     context: ''
   };
 
+  if(!internalDateFormat){
+    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
+  }
+
   result._id =  get(measure, 'id') ? get(measure, 'id') : get(measure, '_id');
   result.id = get(measure, 'id', '');
   result.identifier = get(measure, 'identifier[0].value', '');
-  result.date = moment(get(measure, 'date', '')).format("YYYY-MM-DD hh:mm");
-  result.lastReviewDate = moment(get(measure, 'lastReviewDate', '')).format("YYYY-MM-DD hh:mm");
+  result.date = moment(get(measure, 'date', '')).format(internalDateFormat);
+  result.lastReviewDate = moment(get(measure, 'lastReviewDate', '')).format(internalDateFormat);
 
   result.publisher = get(measure, 'publisher', '');
   result.title = get(measure, 'title', '');
@@ -459,15 +464,61 @@ function MeasuresTable(props){
     }
   }
 
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(props.count){
+    paginationCount = props.count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!props.disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+  
+  
+  //---------------------------------------------------------------------
+  // Table Rows
 
 
 
   let tableRows = [];
   let measuresToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(props.showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(props.internalDateFormat){
+    internalDateFormat = props.dateFormat;
+  }
+
+
   if(props.measures){
     if(props.measures.length > 0){              
       props.measures.forEach(function(measure){
-        measuresToRender.push(flattenMeasure(measure));
+        measuresToRender.push(flattenMeasure(measure, internalDateFormat));
       });  
     }
   }
@@ -504,34 +555,37 @@ function MeasuresTable(props){
   }
 
   return(
-    <Table size="small" aria-label="a dense table">
-      <TableHead>
-        <TableRow>
-          { renderToggleHeader() }
-          { renderActionIconsHeader() }
-          { renderDateHeader() }
+    <div>
+      <Table size="small" aria-label="a dense table">
+        <TableHead>
+          <TableRow>
+            { renderToggleHeader() }
+            { renderActionIconsHeader() }
+            { renderDateHeader() }
 
-          { renderPublisherHeader() }
-          { renderStatusHeader() }
-          { renderTitleHeader() }
-          { renderLastReviewedDateHeader() }
-          { renderAuthorHeader() }
-          { renderReviewerHeader() }
-          { renderScoringHeader() }
-          { renderTypeHeader() }
-          { renderRiskAdjustmentHeader() }
-          { renderRateAggregationHeader() }
-          { renderSupplementalDataCountHeader() }
-          { renderContextHeader() }
-          { renderPopulationCountHeader() }
+            { renderPublisherHeader() }
+            { renderStatusHeader() }
+            { renderTitleHeader() }
+            { renderLastReviewedDateHeader() }
+            { renderAuthorHeader() }
+            { renderReviewerHeader() }
+            { renderScoringHeader() }
+            { renderTypeHeader() }
+            { renderRiskAdjustmentHeader() }
+            { renderRateAggregationHeader() }
+            { renderSupplementalDataCountHeader() }
+            { renderContextHeader() }
+            { renderPopulationCountHeader() }
 
-          { renderBarcodeHeader() }
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        { tableRows }
-      </TableBody>
-    </Table>
+            { renderBarcodeHeader() }
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          { tableRows }
+        </TableBody>
+      </Table>
+      { paginationFooter }
+    </div>
   );
 }
 
@@ -540,6 +594,7 @@ MeasuresTable.propTypes = {
   measures: PropTypes.array,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
+  showMinutes: PropTypes.bool,
 
   hideDate: PropTypes.bool,
   hideStatus: PropTypes.bool,
@@ -565,6 +620,7 @@ MeasuresTable.propTypes = {
   actionButtonLabel: PropTypes.string
 };
 MeasuresTable.defaultProps = {
+  showMinutes: false,
   hideStatus: false,
   hideTitle: false,
   hideDate: false,

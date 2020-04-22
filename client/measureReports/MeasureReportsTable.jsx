@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
@@ -15,7 +15,8 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableRow
+  TableRow,
+  TablePagination
 } from '@material-ui/core';
 
 import TableNoData from 'material-fhir-ui';
@@ -63,7 +64,7 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenMeasureReport = function(measureReport, measuresCursor){
+flattenMeasureReport = function(measureReport, measuresCursor, internalDateFormat, measureShorthand){
   let result = {
     _id: '',
     id: '',
@@ -83,6 +84,10 @@ flattenMeasureReport = function(measureReport, measuresCursor){
     stratifierCount: ''
   };
 
+  if(!internalDateFormat){
+    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
+  }
+
   result._id =  get(measureReport, 'id') ? get(measureReport, 'id') : get(measureReport, '_id');
   result.id = get(measureReport, 'id', '');
   result.identifier = get(measureReport, 'identifier[0].value', '');
@@ -92,18 +97,22 @@ flattenMeasureReport = function(measureReport, measuresCursor){
 
   if(measuresCursor && result.measureUrl){
     let measure = measuresCursor.findOne({id: result.measureUrl});
-    result.measureTitle = get(measure, 'title');
+    if(measureShorthand){
+      result.measureTitle = get(measure, 'id');
+    } else {
+      result.measureTitle = get(measure, 'title');
+    }
   }
 
-  result.date = moment(get(measureReport, 'date', '')).format("YYYY-MM-DD hh:mm");
+  result.date = moment(get(measureReport, 'date', '')).format(internalDateFormat);
   if(get(measureReport, 'reporter.display', '')){
     result.reporter = get(measureReport, 'reporter.display', '');
   } else {
     result.reporter = get(measureReport, 'reporter.reference', '');
   }
 
-  result.periodStart = moment(get(measureReport, 'period.start', '')).format("YYYY-MM-DD hh:mm");
-  result.periodEnd = moment(get(measureReport, 'period.end', '')).format("YYYY-MM-DD hh:ss");
+  result.periodStart = moment(get(measureReport, 'period.start', '')).format(internalDateFormat);
+  result.periodEnd = moment(get(measureReport, 'period.end', '')).format(internalDateFormat);
 
   result.groupCode = get(measureReport, 'group[0].coding[0].code', '');
   result.populationCode = get(measureReport, 'group[0].population[0].coding[0].code', '');
@@ -131,7 +140,7 @@ function MeasureReportsTable(props){
   let { 
     children, 
     locations,
-
+    showMinutes,
 
     hideCheckboxes,
     hideIdentifier,
@@ -149,6 +158,7 @@ function MeasureReportsTable(props){
     hideStratificationCount,
     hideActionIcons,
     measuresCursor,
+    measureShorthand,
 
     query,
     paginationLimit,
@@ -295,14 +305,14 @@ function MeasureReportsTable(props){
   function renderDate(date){
     if (!props.hideDate) {
       return (
-        <TableCell className='date'>{ date }</TableCell>
+        <TableCell className='date' style={{minWidth: '120px'}}>{ date }</TableCell>
       );
     }
   }
   function renderDateHeader(){
     if (!props.hideDate) {
       return (
-        <TableCell className='date'>Date</TableCell>
+        <TableCell className='date' style={{minWidth: '120px'}}>Date</TableCell>
       );
     }
   }
@@ -439,15 +449,59 @@ function MeasureReportsTable(props){
   
 
 
+  //---------------------------------------------------------------------
+  // Pagination
 
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(props.count){
+    paginationCount = props.count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!props.disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+  
+  
+  //---------------------------------------------------------------------
+  // Table Rows
 
 
   let tableRows = [];
   let measureReportsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(props.showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(props.internalDateFormat){
+    internalDateFormat = props.dateFormat;
+  }
+
   if(props.measureReports){
     if(props.measureReports.length > 0){              
       props.measureReports.forEach(function(measureReport){
-        measureReportsToRender.push(flattenMeasureReport(measureReport, props.measuresCursor));
+        measureReportsToRender.push(flattenMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand));
       });  
     }
   }
@@ -483,33 +537,35 @@ function MeasureReportsTable(props){
   }
 
   return(
-    <Table size="small" aria-label="a dense table">
-      <TableHead>
-        <TableRow>
-          { renderToggleHeader() }
-          { renderActionIconsHeader() }
-          { renderIdentifierHeader() }
+    <div>
+      <Table size="small" aria-label="a dense table">
+        <TableHead>
+          <TableRow>
+            { renderToggleHeader() }
+            { renderActionIconsHeader() }
+            { renderIdentifierHeader() }
 
-          { renderTypeHeader() }
-          { renderDateHeader() }
-          { renderReporterHeader() }
-          { renderMeasureTitleHeader() }
-          { renderMeasureUrlHeader() }
-          { renderPeriodStartHeader() }
-          { renderPeriodEndHeader() }
-          { renderGroupCodeHeader() }
-          { renderPopulationCodeHeader() }
-          { renderPopulationCountHeader() }
-          { renderMeasureScoreHeader() }
-          { renderStratificationCountHeader() }    
-
-          { renderBarcodeHeader() }
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        { tableRows }
-      </TableBody>
-    </Table>
+            { renderTypeHeader() }
+            { renderDateHeader() }
+            { renderReporterHeader() }
+            { renderMeasureTitleHeader() }
+            { renderMeasureUrlHeader() }
+            { renderPeriodStartHeader() }
+            { renderPeriodEndHeader() }
+            { renderGroupCodeHeader() }
+            { renderPopulationCodeHeader() }
+            { renderPopulationCountHeader() }
+            { renderMeasureScoreHeader() }
+            { renderStratificationCountHeader() }    
+            { renderBarcodeHeader() }
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          { tableRows }
+        </TableBody>
+      </Table>
+      { paginationFooter }
+    </div>
   );
 }
 
@@ -519,6 +575,7 @@ MeasureReportsTable.propTypes = {
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   rowsPerPage: PropTypes.number,
+  showMinutes: PropTypes.bool,
 
   hideCheckboxes: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
@@ -543,10 +600,12 @@ MeasureReportsTable.propTypes = {
   actionButtonLabel: PropTypes.string,
   showActionButton: PropTypes.bool,
 
-  measuresCursor: PropTypes.object
+  measuresCursor: PropTypes.object,
+  measureShorthand: PropTypes.bool
 };
 MeasureReportsTable.defaultProps = {
   rowsPerPage: 5,
+  showMinutes: false,
   hideCheckboxes: true,
   hideIdentifier: true,
   hideStatus: true,
@@ -563,6 +622,7 @@ MeasureReportsTable.defaultProps = {
   hideMeasureScore: false,
   hideStratificationCount: true,
   hideActionIcons: true,
+  measureShorthand: false
 }
 
 export default MeasureReportsTable; 
