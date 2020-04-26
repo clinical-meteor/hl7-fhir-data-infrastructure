@@ -179,26 +179,28 @@ export class MedicationOrdersPage extends React.Component {
       <PageCanvas id="medicationOrdersPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
           <StyledCard height="auto" scrollable={true} margin={20} >
-            <CardHeader title='Medication Orders' />
+            <CardHeader title={this.data.medicationOrdersCount + ' Medication Orders'} />
             <CardContent>
-              <div id="medicationOrdersPageTabs">
+              <MedicationOrdersTable 
+                medicationOrders={this.data.medicationOrders}
+                rowsPerPage={20}
+                hideBarcodes={true}
+                hidePatient={true}
+                count={this.data.medicationOrdersCount}
+              />
+
+              {/* <div id="medicationOrdersPageTabs">
                 <Tabs value={this.data.tabIndex} onChange={this.handleTabChange.bind(this)} aria-label="simple tabs example">
                   <Tab label="Prescription History" value={0} />
                   <Tab label="New" value={1} />
                 </Tabs>
                 <TabPanel >
-                  <MedicationOrdersTable 
-                    medicationOrders={this.data.medicationOrders}
-                    rowsPerPage={20}
-                    hideBarcodes={true}
-                    hidePatient={true}
-                    count={this.data.medicationOrdersCount}
-                  />
+                  
                 </TabPanel >
                 <TabPanel >
                   <MedicationOrderDetail id='newMedicationOrder' />
                 </TabPanel >
-              </div>
+              </div> */}
             </CardContent>
           </StyledCard>
         </MuiThemeProvider>

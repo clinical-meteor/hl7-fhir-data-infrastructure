@@ -215,12 +215,12 @@ function EncountersTable(props){
     paginationCount = rows.length;
   }
 
+  //---------------------------------------------------------------------
+  // Render Methods
+
+
   function rowClick(id){
     // console.log('EncountersTable.rowClick', id);
-
-    Session.set("selectedEncounterId", id);
-    Session.set('encounterPageTabIndex', 1);
-    Session.set('encounterDetailState', false);
 
     if(props && (typeof props.onRowClick === "function")){
       props.onRowClick(id);
@@ -507,6 +507,10 @@ function EncountersTable(props){
       );
     }
   }
+
+
+  //---------------------------------------------------------------------
+  // Table Rows
 
   let tableRows = [];
   let encountersToRender = [];

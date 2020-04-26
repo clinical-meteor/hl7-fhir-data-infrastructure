@@ -216,7 +216,8 @@ let SidebarElements = [{
 }, {
   'primaryText': 'Diagnostic Reports',
   'to': '/diagnostic-reports',
-  'href': '/diagnostic-reports'
+  'href': '/diagnostic-reports',
+  'iconName': 'notepad'
 }, {
   'primaryText': 'Encounters',
   'to': '/encounters',
@@ -235,11 +236,13 @@ let SidebarElements = [{
 }, {
   'primaryText': 'Measures',
   'to': '/measures',
-  'href': '/measures'
+  'href': '/measures',
+  "iconName": 'dashboard'
 }, {
   'primaryText': 'Measure Reports',
   'to': '/measure-reports',
-  'href': '/measure-reports'
+  'href': '/measure-reports',
+  "iconName": 'dashboard'
 }, {
   'primaryText': 'Medications',
   'to': '/medications',

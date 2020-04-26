@@ -176,6 +176,7 @@ export class MeasureReportsPage extends React.Component {
     console.log('MeasureReportsPage.data.options', data.options)
 
     data.measureReports = MeasureReports.find(data.query, data.options).fetch();
+    data.measureReportsCount = MeasureReports.find(data.query, data.options).count();
 
 
     // data.style = Glass.blur(data.style);
@@ -341,37 +342,34 @@ export class MeasureReportsPage extends React.Component {
     return (
       <PageCanvas id="measureReportsPage" headerHeight={headerHeight}>
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard>
-            <CardHeader title="MeasureReports" />
+          <StyledCard height="auto">
+            <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
             <CardContent>
-              <Tabs value={this.data.tabIndex} onChange={handleChange.bind(this)} aria-label="simple tabs example">
-                <Tab label="History" />
-                <Tab label="New" />
-              </Tabs>
-              <TabPanel value={this.data.tabIndex} index={0}>
-                <MeasureReportsTable 
+              <MeasureReportsTable 
                   hideIdentifier={true} 
                   hideCheckboxes={true} 
                   hideSubjects={false}
                   noDataMessagePadding={100}
                   actionButtonLabel="Send"
                   measureReports={ this.data.measureReports }
+                  count={ this.data.measureReportsCount }
                   paginationLimit={10}
                   hideSubjects={true}
                   hideClassCode={false}
                   hideReasonCode={false}
                   hideReason={false}
                   hideHistory={false}
-                  // appWidth={ Session.get('appWidth') }
-                  // onRowClick={ this.onTableRowClick }
-                  // onCellClick={ this.onTableCellClick }
-                  // onActionButtonClick={this.tableActionButtonClick}
-                  // onRemoveRecord={ this.onDeleteMeasureReport }
-                  // query={this.data.measureReportsTableQuery}
                   />
+
+              {/* <Tabs value={this.data.tabIndex} onChange={handleChange.bind(this)} aria-label="simple tabs example">
+                <Tab label="History" />
+                <Tab label="New" />
+              </Tabs>
+              <TabPanel value={this.data.tabIndex} index={0}>
+                
               </TabPanel>
               <TabPanel value={this.data.tabIndex} index={1}>
-                {/* <MeasureReportDetail 
+                <MeasureReportDetail 
                   id='newMeasureReport' 
                   displayDatePicker={true} 
                   displayBarcodes={false}
@@ -382,8 +380,8 @@ export class MeasureReportsPage extends React.Component {
                   // onDelete={ this.onDeleteMeasureReport }
                   // onUpsert={ this.onUpsertMeasureReport }
                   // onCancel={ this.onCancelUpsertMeasureReport } 
-                  /> */}
-              </TabPanel>
+                  />
+              </TabPanel> */}
 
                 {/* <Tabs id="measureReportsPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
                   <Tab className="newMeasureReportTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0} >

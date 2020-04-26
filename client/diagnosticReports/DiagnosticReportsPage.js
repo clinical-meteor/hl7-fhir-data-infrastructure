@@ -167,12 +167,12 @@ export class DiagnosticReportsPage extends React.Component {
   }
 
   handleTabChange(index){
-    Session.set('diagnosticReportPageTabIndex', index);
+    // Session.set('diagnosticReportPageTabIndex', index);
   }
 
   onNewTab(){
-    Session.set('selectedDiagnosticReportId', false);
-    Session.set('diagnosticReportUpsert', false);
+    // Session.set('selectedDiagnosticReportId', false);
+    // Session.set('diagnosticReportUpsert', false);
   }
 
   render() {
@@ -187,9 +187,13 @@ export class DiagnosticReportsPage extends React.Component {
       <PageCanvas id="measuresPage" headerHeight={headerHeight}>
         <MuiThemeProvider theme={muiTheme}>
           <StyledCard height="auto" scrollable={true} margin={20} >
-            <CardHeader title='Diagnostic Reports' />
+            <CardHeader title={this.data.diagnosticReportCount + ' Diagnostic Reports'} />
             <CardContent>
-              <Tabs id="diagnosticReportsPageTabs" value={ this.data.tabIndex} onChange={ this.handleTabChange.bind(this) }>
+              <DiagnosticReportsTable 
+                diagnosticReports={this.data.diagnosticReports}
+                count={this.data.diagnosticReportCount}
+                fhirVersion={ this.data.fhirVersion }/>
+              {/* <Tabs id="diagnosticReportsPageTabs" value={ this.data.tabIndex} onChange={ this.handleTabChange.bind(this) }>
                 <Tab id='reportHistoryTab' label='History' value={0} />
                 <Tab id="viewReportTab" label='Report' value={1} />
               </Tabs>
@@ -200,14 +204,14 @@ export class DiagnosticReportsPage extends React.Component {
                   fhirVersion={ this.data.fhirVersion }/>
               </TabPanel>
               <TabPanel>
-                {/* <DiagnosticReportDetail 
+                <DiagnosticReportDetail 
                   id='viewDiagnosticReport'
                   showDatePicker={ false }   
                   fhirVersion={  this.data.fhirVersion }
                   diagnosticReport={  this.data.selectedDiagnosticReport }
                   diagnosticReportId={  this.data.selectedDiagnosticReportId } 
-                />   */}
-              </TabPanel>
+                />  
+              </TabPanel> */}
             </CardContent>
           </StyledCard>
         </MuiThemeProvider>

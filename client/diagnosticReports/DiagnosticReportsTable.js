@@ -22,199 +22,481 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
 
 import { get } from 'lodash';
 import moment from 'moment';
 
-const mapDiagnosticReportToRow = function(report, fhirVersion){
+import FhirUtilities from '../../lib/FhirUtilities';
+import FhirDehydrator from '../../lib/FhirDehydrator';
+
+
+//===========================================================================
+// THEMING
+
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
+}));
+
+let styles = {
+  hideOnPhone: {
+    visibility: 'visible',
+    display: 'table'
+  },
+  cellHideOnPhone: {
+    visibility: 'visible',
+    display: 'table',
+    paddingTop: '16px',
+    maxWidth: '120px'
+  },
+  cell: {
+    paddingTop: '16px'
+  }
+}
+
+
+
+//===========================================================================
+// FLATTENING / MAPPING
+
+flattenDiagnosticReport = function(report, internalDateFormat){
   //console.log('report', report)
   
-  var newRow = {
+  var result = {
     _id: '',
+    meta: '',
+    identifier: '',
     subjectDisplay: '',
-    code: '',
+    subjectReference: '',
+    reportCodeDisplay: '',
+    reportCode: '',
     status: '',
     issued: '',
     performerDisplay: '',
+    performerReference: '',
     identifier: '',
     category: '',
     effectiveDate: ''
   };
-  if (report){
-    if(report._id){
-      newRow._id = report._id;
-    }
-    if(report.subject){
-      if(report.subject.display){
-        newRow.subjectDisplay = report.subject.display;
-      } else {
-        newRow.subjectDisplay = report.subject.reference;          
-      }
-    }
-    if(fhirVersion === "v3.0.1"){
-      if(get(report, 'performer[0].actor.display')){
-        newRow.performerDisplay = get(report, 'performer[0].actor.display');
-      } else {
-        newRow.performerDisplay = get(report, 'performer[0].actor.reference');          
-      }
-    }
-    if(fhirVersion === "v1.0.2"){
-      if(report.performer){
-        newRow.performerDisplay = get(report, 'performer.display');
-      } else {
-        newRow.performerDisplay = get(report, 'performer.reference'); 
-      }      
-    }
+  
+  if(!internalDateFormat){
+    internalDateFormat = "YYYY-MM-DD";
+  }
 
-    if(get(report, 'category.coding[0].code')){
-      newRow.category = get(report, 'category.coding[0].code');
-    } else {
-      newRow.category = get(report, 'category.text');
-    }
+  result.id = get(report, 'id', '');
+  result.identifier = get(report, 'identifier[0].value', '');
 
-    newRow.code = get(report, 'code.text', '');
-    newRow.identifier = get(report, 'identifier[0].value', '');
-    newRow.status = get(report, 'status', '');
-    newRow.effectiveDate = moment(get(report, 'effectiveDateTime')).format("YYYY-MM-DD");
-    newRow.issued = moment(get(report, 'issued')).format("YYYY-MM-DD"); 
+  if(get(report, 'patient')){
+    result.subjectDisplay = get(report, 'patient.display', '');
+    result.subjectReference = get(report, 'patient.reference', '');
+  } else if (get(report, 'subject')){
+    result.subjectDisplay = get(report, 'subject.display', '');
+    result.subjectReference = get(report, 'subject.reference', '');
+  }
 
-    return newRow;  
-  } 
+  if(get(report, 'performer[0].actor')){
+    result.performerDisplay = get(report, 'performer[0].actor.display');
+    result.performerReference = get(report, 'performer[0].actor.reference');          
+  } else if(get(report, 'performer[0]')){
+    result.performerDisplay = get(report, 'performer[0].display');
+    result.performerReference = get(report, 'performer[0].reference');
+  } else if(get(report, 'performer')){
+    result.performerDisplay = get(report, 'performer.display');
+    result.performerReference = get(report, 'performer.reference');
+  }      
+
+  if(get(report, 'category.text')){
+    result.category = get(report, 'category.text');
+  } else if(get(report, 'category.coding[0].display')){
+    result.category = get(report, 'category.coding[0].display');
+  } else {
+    result.category = get(report, 'category.coding[0].code');
+  }
+
+  if(get(report, 'code.text')){
+    result.reportCodeDisplay = get(report, 'code.text');
+  } else {
+    result.reportCodeDisplay = get(report, 'code.coding[0].display');
+  }
+  result.reportCode = get(report, 'code.coding[0].code');
+
+  result.identifier = get(report, 'identifier[0].value', '');
+  result.status = get(report, 'status', '');
+  result.effectiveDate = moment(get(report, 'effectiveDateTime')).format("YYYY-MM-DD");
+  result.issued = moment(get(report, 'issued')).format("YYYY-MM-DD"); 
+
+  return result;  
 }
 
 
-export class DiagnosticReportsTable extends React.Component {
-  getMeteorData() {
+//===========================================================================
+// MAIN COMPONENT
 
-    // this should all be handled by props
-    // or a mixin!
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity')
-      },
-      selected: [],
-      diagnosticReports: [],
-      displayToggle: false,
-      displayDates: true,
-      fhirVersion: 'v1.0.2'
-    }
+function DiagnosticReportsTable(props){
+  logger.info('Rendering the DiagnosticReportsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.DiagnosticReportsTable');
+  logger.data('DiagnosticReportsTable.props', {data: props}, {source: "DiagnosticReportsTable.jsx"});
 
-    if(this.props.fhirVersion){
-      data.fhirVersion = this.props.fhirVersion;
-    }
+  const classes = useStyles();
 
-    if(this.props.displayToggles){
-      data.displayToggle = this.props.displayToggles;
-    }
-    if(this.props.displayDates){
-      data.displayDates = this.props.displayDates;
-    }
-    
-    if(this.props.data){
-      this.props.data.map(function(report){
-        data.diagnosticReports.push(mapDiagnosticReportToRow(report, data.fhirVersion));        
-      });
-    } else {
-      if(DiagnosticReports.find().count() > 0){
-        DiagnosticReports.find().map(function(report){
-          data.diagnosticReports.push(mapDiagnosticReportToRow(report, data.fhirVersion));        
-        });
-      }
-    }
-    
-    if(process.env.NODE_ENV === "test") console.log("DiagnosticReportsTable[data]", data);
-    return data;
-  };
 
-  renderTogglesHeader(displayToggle){
-    if (displayToggle) {
-      return (
-        <TableCell className="toggle">toggle</TableCell>
-      );
-    }
-  }
-  renderToggles(displayToggle, patientId ){
-    if (displayToggle) {
-      return (
-        <TableCell className="toggle">
-          <Checkbox
-            defaultChecked={true}
-          />
-        </TableCell>
-      );
-    }
-  }
-  renderDateHeader(displayDates){
-    if (displayDates) {
-      return (
-        <TableCell className='effectiveDateTime'  style={{width: '120px'}}>Effective Date</TableCell>
-      );
-    }
-  }
-  renderDate(displayDates, newDate ){
-    if (displayDates) {
-      return (
-        <TableCell className='date'  style={{width: '120px'}}>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
-      );
-    }
-  }
-  rowClick(id){
-    Session.set('diagnosticReportsUpsert', false);
-    Session.set('selectedDiagnosticReportId', id);
-    Session.set('diagnosticReportPageTabIndex', 1);
+  let { 
+    children, 
 
+    data,
+    conditions,
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    showActionButton,
+    actionButtonLabel,
+  
+    rowsPerPage,
+    dateFormat,
+    showMinutes,
+
+    ...otherProps 
+  } = props;
+
+
+  //---------------------------------------------------------------------
+  // Render Methods
+
+  function rowClick(id){
     if(typeof this.props.onRowClick === "function"){
       this.props.onRowClick(id);
     }
   };
-  render () {
-    if(process.env.NODE_ENV === "test") console.log('DiagnosticReportsTable.render()', this.data.diagnosticReports)
 
-    let tableRows = [];
-    for (var i = 0; i < this.data.diagnosticReports.length; i++) {
-
-      tableRows.push(
-        <TableRow key={i} className="diagnosticReportRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.diagnosticReports[i]._id)} >
-          { this.renderToggles(this.data.displayToggle, this.data.diagnosticReports[i]) }
-
-          <TableCell className='subjectDisplay' style={{minWidth: '400px'}}>{ this.data.diagnosticReports[i].subjectDisplay }</TableCell>
-          <TableCell className='code'>{ this.data.diagnosticReports[i].code }</TableCell>
-          <TableCell className='status'>{ this.data.diagnosticReports[i].status }</TableCell>
-          <TableCell className='issued'  style={{width: '120px'}}>{ this.data.diagnosticReports[i].issued }</TableCell>
-          <TableCell className='performerDisplay'>{ this.data.diagnosticReports[i].performerDisplay }</TableCell>
-          <TableCell className='identifier'>{ this.data.diagnosticReports[i].identifier }</TableCell>
-          {/* <TableCell className='effectiveDateTime'>{ this.data.diagnosticReports[i].effectiveDate }</TableCell> */}
-          <TableCell className='category'>{ this.data.diagnosticReports[i].category }</TableCell>
-          { this.renderDate(this.data.displayDates, this.data.diagnosticReports[i].effectiveDate) }
-        </TableRow>
-      )
+  function renderToggleHeader(){
+    if (!props.hideCheckboxes) {
+      return (
+        <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
+      );
     }
+  }
+  function renderToggle(){
+    if (!props.hideCheckboxes) {
+      return (
+        <TableCell className="toggle" style={{width: '60px'}}>
+            {/* <Checkbox
+              defaultChecked={true}
+            /> */}
+        </TableCell>
+      );
+    }
+  }
+  function renderActionIconsHeader(){
+    if (!props.hideActionIcons) {
+      return (
+        <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
+      );
+    }
+  }
+  function renderActionIcons(encounter ){
+    if (!props.hideActionIcons) {
+      let iconStyle = {
+        marginLeft: '4px', 
+        marginRight: '4px', 
+        marginTop: '4px', 
+        fontSize: '120%'
+      }
 
-    return(
-      <Table id='diagnosticReportsTable' size="small" aria-label="a dense table">
+      return (
+        <TableCell className='actionIcons' style={{minWidth: '120px'}}>
+          {/* <Icon icon={tag} style={iconStyle} onClick={ onMetaClick.bind(encounter)}  />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={ removeRecord.bind(encounter._id)} /> */}
+        </TableCell>
+      );
+    }
+  } 
+  function renderSubject(name){
+    if (!props.hideSubjects) {
+      return (<TableCell className='name'>{ name }</TableCell>);
+    }
+  }
+  function renderSubjectHeader(){
+    if (!props.hideSubjects) {
+      return (
+        <TableCell className='name'>Subject</TableCell>
+      );
+    }
+  }
+  function renderStatus(valueString){
+    if (!props.hideStatus) {
+      return (
+        <TableCell className='value'>{ valueString }</TableCell>
+      );
+    }
+  }
+  function renderStatusHeader(){
+    if (!props.hideStatus) {
+      return (
+        <TableCell className='value'>Status</TableCell>
+      );
+    }
+  }
+  function renderIssuedDateHeader(){
+    if (!props.hideStartDateTime) {
+      return (
+        <TableCell className='start' style={{minWidth: '140px'}}>Start</TableCell>
+      );
+    }
+  }
+  function renderIssuedDate(periodStart){
+    if (!props.hideStartDateTime) {
+      return (
+        <TableCell className='periodStart' style={{minWidth: '140px'}}>{ periodStart }</TableCell>
+      );
+    }
+  }
+  function renderBarcode(id){
+    if (!props.hideBarcode) {
+      return (
+        <TableCell><span className="barcode helvetica">{id}</span></TableCell>
+      );
+    }
+  }
+  function renderBarcodeHeader(){
+    if (!props.hideBarcode) {
+      return (
+        <TableCell>System ID</TableCell>
+      );
+    }
+  }
+  function renderActionButtonHeader(){
+    if (props.showActionButton === true) {
+      return (
+        <TableCell className='ActionButton' >Action</TableCell>
+      );
+    }
+  }
+  function renderActionButton(patient){
+    if (props.showActionButton === true) {
+      return (
+        <TableCell className='ActionButton' >
+          <Button onClick={ handleActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+        </TableCell>
+      );
+    }
+  }
+  function renderIdentifier(identifier){
+    if (!props.hideIdentifier) {
+      return (
+        <TableCell className='identifier'>{ identifier }</TableCell>
+      );
+    }
+  }
+  function renderIdentifierHeader(){
+    if (!props.hideIdentifier) {
+      return (
+        <TableCell className='identifier'>Identifier</TableCell>
+      );
+    }
+  }
+  function renderCodeHeader(){
+    if (!props.hideCode) {
+      return (
+        <TableCell className='code'>Code</TableCell>
+      );
+    }
+  }
+  function renderCode(code){
+    if (!props.hideCode) {
+      return (
+        <TableCell className='code'>{ code }</TableCell>
+      );  
+    }
+  }
+  function renderPerformer(text){
+    if (!props.hidePerformer) {
+      return (
+        <TableCell className='performer'>{ text }</TableCell>
+      );
+    }
+  }
+  function renderPerformerHeader(){
+    if (!props.hidePerformer) {
+      return (
+        <TableCell className='performer'>Performer</TableCell>
+      );
+    }
+  }
+  function renderCategoryHeader(){
+    if (!props.hideCategory) {
+      return (
+        <TableCell className='category'>Category</TableCell>
+      );
+    }
+  }
+  function renderCategory(category){
+    if (!props.hideCategory) {
+      return (
+        <TableCell className='category'>{ category }</TableCell>
+      );
+    }
+  }
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(props.count){
+    paginationCount = props.count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!props.disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+  //---------------------------------------------------------------------
+  // Table Rows
+
+  let tableRows = [];
+  let diagnosticReportsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+  
+  if(props.showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(props.internalDateFormat){
+    internalDateFormat = props.dateFormat;
+  }
+
+  if(props.diagnosticReports){
+    if(props.diagnosticReports.length > 0){     
+      let count = 0;    
+      props.diagnosticReports.forEach(function(diagnosticReport){
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          diagnosticReportsToRender.push(flattenDiagnosticReport(diagnosticReport, internalDateFormat));
+        }
+        count++;
+      });  
+    }
+  }
+
+  if(diagnosticReportsToRender.length === 0){
+    logger.trace('DiagnosticReportsTable:  No reports to render.');
+    
+  } else {
+    for (var i = 0; i < diagnosticReportsToRender.length; i++) {
+      tableRows.push(
+        <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, encountersToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+          { renderToggle() }
+          { renderActionIcons(encountersToRender[i]) }
+          { renderSubject(encountersToRender[i].subjectDisplay)}
+          { renderStatus(encountersToRender[i].status)}
+          { renderIssuedDate(encountersToRender[i].issued)}  
+          { renderPerformer(encountersToRender[i].performerDisplay)}  
+          { renderCategory(encountersToRender[i].category)}  
+          { renderCode(encountersToRender[i].reportCodeDisplay)}  
+          { renderIdentifierHeader(diagnosticReportsToRender[i].identifier)}
+          { renderBarcode(encountersToRender[i]._id)}
+          { renderActionButton(encountersToRender[i]) }
+        </TableRow>
+      );
+    }
+  }
+  return(
+    <div>
+      <Table className="diagnosticReportTable" size="small" aria-label="a dense table" { ...otherProps } >
         <TableHead>
           <TableRow>
-          { this.renderTogglesHeader(this.data.displayToggle) }
-            <TableCell className='subjectDisplay' style={{width: '140px'}}>Subject</TableCell>
-            <TableCell className='code'>Code</TableCell>
-            <TableCell className='status'>Status</TableCell>
-            <TableCell className='issued' style={{width: '120px'}}>Issued</TableCell>
-            <TableCell className='performerDisplay'>Performer</TableCell>
-            <TableCell className='identifier'>Identifier</TableCell>
-            <TableCell className='category'>Category</TableCell>
-            { this.renderDateHeader(this.data.displayDates) }
+            { renderToggleHeader() }
+            { renderActionIconsHeader() }
+            { renderSubjectHeader() }
+            { renderStatusHeader() }
+            { renderIssuedDateHeader() }
+            { renderPerformerHeader() }
+            { renderCategoryHeader() }
+            { renderCodeHeader() }
+            { renderIdentifierHeader()}
+            { renderBarcodeHeader() }
+            { renderActionButtonHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
           { tableRows }
         </TableBody>
       </Table>
-    );
-  }
+      { paginationFooter }
+    </div>
+  );
+
 }
 
 
-ReactMixin(DiagnosticReportsTable.prototype, ReactMeteorData);
+
+DiagnosticReportsTable.propTypes = {
+  disagnosticReports: PropTypes.array,
+  paginationLimit: PropTypes.number,
+  disablePagination: PropTypes.bool,
+
+  hideCheckboxes: PropTypes.bool,
+  hideActionIcons: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+  hideCategory: PropTypes.bool,
+  hideStatus: PropTypes.bool,
+  hideSubject: PropTypes.bool,
+  hideSubjectReference: PropTypes.bool,
+  hideIssuedDate: PropTypes.bool,
+  hidePerformer: PropTypes.bool,
+  hideCode: PropTypes.bool,
+  hideCodeDisplay: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
+
+  onCellClick: PropTypes.func,
+  onRowClick: PropTypes.func,
+  onMetaClick: PropTypes.func,
+  onRemoveRecord: PropTypes.func,
+  onActionButtonClick: PropTypes.func,
+  hideActionButton: PropTypes.bool,
+  actionButtonLabel: PropTypes.string,
+
+  rowsPerPageToRender: PropTypes.number,
+  dateFormat: PropTypes.string,
+  showMinutes: PropTypes.bool,
+  count: PropTypes.number
+};
+DiagnosticReportsTable.defaultProps = {
+  rowsPerPage: 5,
+  hideActionButton: true
+}
+
 export default DiagnosticReportsTable;

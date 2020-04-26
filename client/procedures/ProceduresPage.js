@@ -177,11 +177,13 @@ export class ProceduresPage extends React.Component {
       headerHeight = 128;
     }
 
+    let proceduresTitle = this.data.proceduresCount + " Procedures";
+
     return (
       <PageCanvas id="proceduresPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
             <StyledCard height="auto" scrollable={true} margin={20} >
-              <CardHeader title='Procedures' />
+              <CardHeader title={proceduresTitle} />
               <CardContent>
                 <ProceduresTable 
                   procedures={this.data.procedures}
@@ -189,11 +191,13 @@ export class ProceduresPage extends React.Component {
                   displayDates={true} 
                   count={this.data.proceduresCount}
                   rowsPerPage={20}
+                  hideActionIcons={true}
+                  hideIdentifier={true}
                   hideCategory={true}
                   hideBodySite={true}
                   hideSubject={true}
                   showMinutes={true}
-                  hideBarcode={true}
+                  hideBarcode={false}
                   hideCheckboxes={true}
                   />
                 {/* <Tabs id="proceduresPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>

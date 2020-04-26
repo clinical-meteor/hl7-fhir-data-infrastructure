@@ -571,9 +571,7 @@ function ProceduresTable(props){
 }
 
 ProceduresTable.propTypes = {
-  data: PropTypes.array,
   procedures: PropTypes.array,
-  query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 

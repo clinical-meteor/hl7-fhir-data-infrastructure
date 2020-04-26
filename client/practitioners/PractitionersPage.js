@@ -83,10 +83,6 @@ export class PractitionersPage extends React.Component {
       data.selectedPractitioner = false;
     }
 
-    // data.style = Glass.blur(data.style);
-    // data.style.appbar = Glass.darkroom(data.style.appbar);
-    // data.style.tab = Glass.darkroom(data.style.tab);
-
     if(process.env.NODE_ENV === "test") console.log("PractitionersPage[data]", data);
     return data;
   }

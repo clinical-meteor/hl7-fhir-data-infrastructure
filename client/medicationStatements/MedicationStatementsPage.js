@@ -67,7 +67,9 @@ export class MedicationStatementsPage extends React.Component {
       medicationStatementSearchFilter: Session.get('medicationStatementSearchFilter'),
       selectedMedicationStatementId: Session.get('selectedMedicationStatementId'),
       fhirVersion: Session.get('fhirVersion'),
-      selectedMedicationStatement: false
+      selectedMedicationStatement: false,
+      medicationStatements: MedicationStatements.find().fetch(),
+      medicationStatementsCount: MedicationStatements.find().count()
     }; 
 
     if(Session.get('fhirVersion')){
@@ -107,9 +109,14 @@ export class MedicationStatementsPage extends React.Component {
     return (
       <PageCanvas id='medicationStatementsPage' headerHeight={headerHeight}>
         <StyledCard height="auto" scrollable={true} margin={20}  >
-            <CardHeader title='Medication Statements' />
+            <CardHeader title={this.data.medicationStatementsCount + ' Medication Statements'} />
             <CardContent>
-              <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
+              <MedicationStatementsTable 
+                fhirVersion={ this.data.fhirVersion } 
+                medicationStatements={this.data.medicationStatements} 
+                count={this.data.medicationStatementsCount}
+              />
+              {/* <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
                 <Tab label="History" value={0} />
                 <Tab label="New" value={1} />
               </Tabs>
@@ -117,14 +124,14 @@ export class MedicationStatementsPage extends React.Component {
                 <MedicationStatementsTable fhirVersion={ this.data.fhirVersion } />
               </TabPanel >
               <TabPanel >
-                {/* <MedicationStatementDetail 
+                <MedicationStatementDetail 
                     id='medicationStatementDetails'
                     fhirVersion={ this.data.fhirVersion }
                     medicationStatement={ this.data.selectedMedicationStatement }
                     medicationStatementId={ this.data.selectedMedicationStatementId } 
                     showDatePicker={true} 
-                  /> */}
-              </TabPanel >
+                  />
+              </TabPanel > */}
             </CardContent>
         </StyledCard>        
       </PageCanvas>

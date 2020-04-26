@@ -281,7 +281,7 @@ export class ObservationsPage extends React.Component {
     return (
       <PageCanvas id="observationsPage" headerHeight={headerHeight}>
         <StyledCard height="auto" scrollable={true} margin={20}  >
-            <CardHeader title="Observations" />
+            <CardHeader title={this.data.observationsCount + " Observations"} />
             <CardContent>
               <ObservationsTable 
                 displayBarcodes={false} 

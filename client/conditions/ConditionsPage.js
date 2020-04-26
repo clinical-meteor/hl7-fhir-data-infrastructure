@@ -209,6 +209,7 @@ export class ConditionsPage extends React.Component {
                   conditions={this.data.conditions}
                   noDataMessagePadding={100}
                   count={this.data.conditionsCount}  
+                  autoColumns={true}
                 />
               </CardContent>
           </StyledCard>

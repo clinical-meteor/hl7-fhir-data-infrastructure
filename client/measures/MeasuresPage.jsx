@@ -176,6 +176,7 @@ export class MeasuresPage extends React.Component {
     console.log('MeasuresPage.data.options', data.options)
 
     data.measures = Measures.find(data.query, data.options).fetch();
+    data.measuresCount = Measures.find(data.query, data.options).count();
 
 
     // data.style = Glass.blur(data.style);
@@ -341,50 +342,46 @@ export class MeasuresPage extends React.Component {
     return (
       <PageCanvas id="measuresPage" headerHeight={headerHeight}>
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard>
-            <CardHeader title="Measures" />
+          <StyledCard height="auto">
+            <CardHeader title={this.data.measuresCount + " Measures"} />
             <CardContent>
 
-              <Tabs value={this.data.tabIndex} onChange={handleChange.bind(this)} aria-label="simple tabs example">
+              <MeasuresTable 
+                hideIdentifier={true} 
+                hideCheckboxes={true} 
+                hideSubjects={false}
+                noDataMessagePadding={100}
+                actionButtonLabel="Send"
+                measures={ this.data.measures }
+                paginationLimit={10}
+                hideSubjects={true}
+                hideClassCode={false}
+                hideReasonCode={false}
+                hideReason={false}
+                hideHistory={false}
+                />
+
+              {/* <Tabs value={this.data.tabIndex} onChange={handleChange.bind(this)} aria-label="simple tabs example">
                 <Tab label="History" />
                 <Tab label="New" />
               </Tabs>
               <TabPanel value={this.data.tabIndex} index={0}>
-                <MeasuresTable 
-                  hideIdentifier={true} 
-                  hideCheckboxes={true} 
-                  hideSubjects={false}
-                  noDataMessagePadding={100}
-                  actionButtonLabel="Send"
-                  measures={ this.data.measures }
-                  paginationLimit={10}
-                  hideSubjects={true}
-                  hideClassCode={false}
-                  hideReasonCode={false}
-                  hideReason={false}
-                  hideHistory={false}
-                  // appWidth={ Session.get('appWidth') }
-                  // onRowClick={ this.onTableRowClick }
-                  // onCellClick={ this.onTableCellClick }
-                  // onActionButtonClick={this.tableActionButtonClick}
-                  // onRemoveRecord={ this.onDeleteMeasure }
-                  // query={this.data.measuresTableQuery}
-                  />
+                
               </TabPanel>
               <TabPanel value={this.data.tabIndex} index={1}>
-                {/* <MeasureDetail 
+                <MeasureDetail 
                   id='newMeasure' 
                   displayDatePicker={true} 
                   displayBarcodes={false}
                   showHints={true}
-                  // onInsert={ this.onInsert }
-                  // measure={ this.data.selectedMeasure }
-                  // measureId={ this.data.selectedMeasureId } 
-                  // onDelete={ this.onDeleteMeasure }
-                  // onUpsert={ this.onUpsertMeasure }
-                  // onCancel={ this.onCancelUpsertMeasure } 
-                  /> */}
-              </TabPanel>
+                  onInsert={ this.onInsert }
+                  measure={ this.data.selectedMeasure }
+                  measureId={ this.data.selectedMeasureId } 
+                  onDelete={ this.onDeleteMeasure }
+                  onUpsert={ this.onUpsertMeasure }
+                  onCancel={ this.onCancelUpsertMeasure } 
+                  />
+              </TabPanel> */}
 
                 {/* <Tabs id="measuresPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
                   <Tab className="newMeasureTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0} >

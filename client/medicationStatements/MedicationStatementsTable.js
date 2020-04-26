@@ -91,16 +91,16 @@ flattenMedicationStatement = function(statement, fhirVersion){
     'dosage': '',
   };
 
-  if(get(medicationRequest, 'patient')){
-    result.subjectDisplay = get(medicationRequest, 'patient.display');
-  } else if(get(medicationRequest, 'subject')){
-    result.subjectDisplay = get(medicationRequest, 'subject.display');
+  if(get(statement, 'patient')){
+    result.subjectDisplay = get(statement, 'patient.display');
+  } else if(get(statement, 'subject')){
+    result.subjectDisplay = get(statement, 'subject.display');
   }
 
-  if(get(medicationRequest, 'patient')){
-    result.subjectReference = get(medicationRequest, 'patient.reference');
-  } else if(get(medicationRequest, 'subject')){
-    result.subjectReference = get(medicationRequest, 'subject.reference');
+  if(get(statement, 'patient')){
+    result.subjectReference = get(statement, 'patient.reference');
+  } else if(get(statement, 'subject')){
+    result.subjectReference = get(statement, 'subject.reference');
   }
   
   // DSTU2

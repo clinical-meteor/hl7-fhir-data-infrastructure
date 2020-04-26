@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
@@ -24,6 +24,7 @@ let set = _.set;
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
+import FhirDehydrator from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -180,7 +181,7 @@ function ConditionsTable(props){
     displaySnomedCode,
     displaySnomedDisplay,
     displayVerification,
-    displayServerity,
+    displaySeverity,
     displayEvidence,
     displayDates,
     displayEndDate,
@@ -194,6 +195,7 @@ function ConditionsTable(props){
     showActionButton,
     actionButtonLabel,
   
+    autoColumns,
     rowsPerPage,
     dateFormat,
     showMinutes,
@@ -205,9 +207,28 @@ function ConditionsTable(props){
   //---------------------------------------------------------------------
   // Pagination
 
+  
   let rows = [];
+  const [hasInitializedAutoColumns, setHasInitializedAutoColumns] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  const [autoColumnState, setAutoColumns] = useState({
+    checkboxes: false,
+    actionIcons: false,
+    identifier: false,
+    patientName: false,
+    patientReference: false,
+    asserterName: false,
+    clinicalStatus: false,
+    snomedCode: false,
+    snomedDisplay: false,
+    verification: false,
+    serverity: false,
+    evidence: false,
+    dates: false,
+    endDate: false,
+    displayBarcode: false
+  });
 
 
   let paginationCount = 101;
@@ -233,6 +254,82 @@ function ConditionsTable(props){
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
     />
+  }
+
+  //--------------------------------------------------------------------------------
+  // Autocolumns  
+
+    
+  if(Array.isArray(conditions)){
+    if(!hasInitializedAutoColumns){
+      let columnHasData = {
+        identifier: false,
+        patientName: false,
+        patientReference: false,
+        asserterName: false,
+        clinicalStatus: false,
+        snomedCode: false,
+        snomedDisplay: false,
+        verification: false,
+        serverity: false,
+        evidence: false,
+        dates: false,
+        endDate: false,
+        barcode: false
+      }
+      
+      let flattenedCollection = conditions.map(function(record){
+        return FhirDehydrator.dehydrateCondition(record, "YYYY-MM-DD");
+      });      
+  
+      flattenedCollection.forEach(function(row){
+        if(get(row, 'id')){
+          columnHasData.barcode = true;
+        }
+        if(get(row, 'identifier')){
+          columnHasData.identifier = true;
+        }
+        if(get(row, 'clinicalStatus')){
+          columnHasData.clinicalStatus = true;
+        }
+        if(get(row, 'verificationStatus')){
+          columnHasData.barcode = true;
+        }
+        if(get(row, 'verificationStatus')){
+          columnHasData.barcode = true;
+        }
+        if(get(row, 'patientDisplay')){
+          columnHasData.patientName = true;
+        }
+        if(get(row, 'patientReference')){
+          columnHasData.patientReference = true;
+        }
+        if(get(row, 'severity')){
+          columnHasData.severity = true;
+        }
+        if(get(row, 'snomedCode')){
+          columnHasData.snomedCode = true;
+        }
+        if(get(row, 'snomedDisplay')){
+          columnHasData.snomedDisplay = true;
+        }
+        if(get(row, 'evidenceDisplay')){
+          columnHasData.barcode = true;
+        }
+        if(get(row, 'evidence')){
+          columnHasData.barcode = true;
+        }
+        if(get(row, 'onsetDateTime')){
+          columnHasData.dates = true;
+        }
+        if(get(row, 'abatementDateTime')){
+          columnHasData.endDate = true;
+        }
+      })
+  
+      setHasInitializedAutoColumns(true);
+      setAutoColumns(columnHasData)
+    }
   }
 
 
@@ -271,42 +368,42 @@ function ConditionsTable(props){
     }
   }
   function renderDateHeader(){
-    if (props.displayDates) {
+    if (props.displayDates || (props.autoColumns && autoColumnState.dates)) {
       return (
         <TableCell className='date' style={{minWidth: '100px'}}>Start</TableCell>
       );
     }
   }
   function renderEndDateHeader(){
-    if (props.displayDates && props.displayEndDate) {
+    if ((props.displayDates && props.displayEndDate) || (props.autoColumns && autoColumnState.endDate)) {
       return (
         <TableCell className='date' style={{minWidth: '100px'}}>End</TableCell>
       );
     }
   }
   function renderStartDate(startDate ){
-    if (props.displayDates) {
+    if (props.displayDates || (props.autoColumns && autoColumnState.dates)) {
       return (
         <TableCell className='date'>{ moment(startDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
   function renderEndDate(endDate ){
-    if (props.displayDates && props.displayEndDate) {
+    if ((props.displayDates && props.displayEndDate) || (props.autoColumns && autoColumnState.endDate)) {
       return (
         <TableCell className='date'>{ moment(endDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
   function renderPatientNameHeader(){
-    if (props.displayPatientName) {
+    if (props.displayPatientName || (props.autoColumns && autoColumnState.patientName)) {
       return (
         <TableCell className='patientDisplay'>Patient</TableCell>
       );
     }
   }
   function renderPatientName(patientDisplay ){
-    if (props.displayPatientName) {
+    if (props.displayPatientName || (props.autoColumns && autoColumnState.patientName)) {
       return (
         <TableCell className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</TableCell>
       );
@@ -329,14 +426,14 @@ function ConditionsTable(props){
     }
   }
   function renderAsserterNameHeader(){
-    if (props.displayAsserterName) {
+    if (props.displayAsserterName || (props.autoColumns && autoColumnState.asserterName)) {
       return (
         <TableCell className='asserterDisplay'>Asserter</TableCell>
       );
     }
   }
   function renderAsserterName(asserterDisplay ){
-    if (props.displayAsserterName) {
+    if (props.displayAsserterName || (props.autoColumns && autoColumnState.asserterName)) {
       return (
         <TableCell className='asserterDisplay' style={{minWidth: '140px'}}>{ asserterDisplay }</TableCell>
       );
@@ -357,14 +454,14 @@ function ConditionsTable(props){
     }
   } 
   function renderEvidenceHeader(){
-    if (props.displayEvidence) {
+    if (props.displayEvidence || (props.autoColumns && autoColumnState.evidence)) {
       return (
         <TableCell className='evidence'>Evidence</TableCell>
       );
     }
   }
   function renderEvidence(evidenceDisplay ){
-    if (props.displayEvidence) {
+    if (props.displayEvidence || (props.autoColumns && autoColumnState.evidence)) {
       return (
         <TableCell className='evidence'>{ evidenceDisplay }</TableCell>
       );
@@ -627,7 +724,7 @@ ConditionsTable.propTypes = {
   displaySnomedCode: PropTypes.bool,
   displaySnomedDisplay: PropTypes.bool,
   displayVerification: PropTypes.bool,
-  displayServerity: PropTypes.bool,
+  displaySeverity: PropTypes.bool,
   displayEvidence: PropTypes.bool,
   displayDates: PropTypes.bool,
   displayEndDate: PropTypes.bool,
@@ -652,19 +749,20 @@ ConditionsTable.defaultProps = {
   displayCheckboxes: false,
   displayActionIcons: false,
   displayIdentifier: false,
-  displayPatientName: true,
+  displayPatientName: false,
   displayPatientReference: true,
-  displayAsserterName: true,
+  displayAsserterName: false,
   displayClinicalStatus: true,
   displaySnomedCode: true,
   displaySnomedDisplay: true,
   displayVerification: true,
-  displayServerity: true,
-  displayEvidence: true,
+  displaySeverity: true,
+  displayEvidence: false,
   displayDates: true,
   displayEndDate: true,
   displayBarcode: false,
   disablePagination: false,
+  autoColumns: true,
   rowsPerPage: 5
 }
 
