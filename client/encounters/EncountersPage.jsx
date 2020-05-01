@@ -341,7 +341,7 @@ export class EncountersPage extends React.Component {
     return (
       <PageCanvas id="encountersPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
-            <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+            <StyledCard height="auto" scrollable={true} margin={20} >
               <CardHeader
                 title={ encountersCount + " Encounters"}
               />
@@ -350,7 +350,6 @@ export class EncountersPage extends React.Component {
                   hideIdentifier={true} 
                   hideCheckboxes={true} 
                   hideSubjects={false}
-                  noDataMessagePadding={100}
                   actionButtonLabel="Send"
                   hideSubjects={false}
                   hideClassCode={false}
@@ -361,6 +360,8 @@ export class EncountersPage extends React.Component {
                   rowsPerPage={rowsPerPage}
                   count={this.data.encountersCount}      
                   showMinutes={true}
+                  hideActionIcons={true}
+                  hideBarcode={false}
                   />
               </CardContent>
             </StyledCard>

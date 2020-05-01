@@ -2,6 +2,7 @@ import BaseModel from './lib/BaseModel';
 
 import FhirUtilities from './lib/FhirUtilities';
 import FhirDehydrator from './lib/FhirDehydrator';
+import LayoutHelpers from './lib/LayoutHelpers';
 
 import AllergyIntolerancesPage from './client/allergyIntolerances/AllergyIntolerancesPage';
 import AllergyIntolerancesTable from './client/allergyIntolerances/AllergyIntolerancesTable';
@@ -445,6 +446,7 @@ export {
 
   FhirDehydrator,
   FhirUtilities,
+  LayoutHelpers,
 
   BaseModel,
 

@@ -284,7 +284,9 @@ export class ObservationsPage extends React.Component {
             <CardHeader title={this.data.observationsCount + " Observations"} />
             <CardContent>
               <ObservationsTable 
-                displayBarcodes={false} 
+                hideCheckbox={true}
+                hideActionIcons={true}
+                hideBarcode={false} 
                 multiline={false}
                 hideSubjects={true}
                 hideDevices={true}

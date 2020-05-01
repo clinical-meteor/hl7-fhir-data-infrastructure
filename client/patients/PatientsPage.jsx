@@ -343,40 +343,41 @@ export class PatientsPage extends React.Component {
           <StyledCard height="auto" scrollable={true} margin={20} >
             <CardHeader title="Patients" />
             <CardContent>
-              <Tabs value={this.state.tabIndex} onChange={ handleTabChange } aria-label="simple tabs example">
+              <PatientTable 
+                hideActionIcons={true}
+                noDataMessagePadding={100}
+                patients={ this.data.patients }
+                paginationLimit={ this.pagnationLimit }
+                rowsPerPage={rowsPerPage}
+                count={this.data.patientCount}
+                onRowClick={ this.onTableRowClick }
+                showCounts={true}
+                cursors={this.data.dataCursors}
+                hideIdentifier={true}
+                hideActive={true}
+                hideBarcode={false}                
+              />   
+
+              {/* <Tabs value={this.state.tabIndex} onChange={ handleTabChange } aria-label="simple tabs example">
                 <Tab label="Directory" />
                 <Tab label="New" />
               </Tabs>
               <br />
               <br />
               <TabPanel value={this.state.tabIndex} index={0}>
-                <PatientTable 
-                  noDataMessagePadding={100}
-                  patients={ this.data.patients }
-                  paginationLimit={ this.pagnationLimit }
-                  rowsPerPage={rowsPerPage}
-                  count={this.data.patientCount}
-                  onRowClick={ this.onTableRowClick }
-                  showCounts={true}
-                  cursors={this.data.dataCursors}
-                  hideActive={true}
-                  // appWidth={ Session.get('appWidth') }
-                  // actionButtonLabel="Send"
-                  // onCellClick={ this.onTableCellClick }
-                  // onActionButtonClick={this.tableActionButtonClick}
-                />    
+ 
               </TabPanel>
               <TabPanel value={this.state.tabIndex} index={1}>
                 <PatientDetail 
-                  // id='patientDetails' 
-                  // fhirVersion={ this.data.fhirVersion }
-                  // patient={ this.data.selectedPatient }
-                  // patientId={ this.data.selectedPatientId }
-                  // onDelete={ this.onDeletePatient }
-                  // onUpsert={ this.onUpsertPatient }
-                  // onCancel={ this.onCancelUpsertPatient } 
+                  id='patientDetails' 
+                  fhirVersion={ this.data.fhirVersion }
+                  patient={ this.data.selectedPatient }
+                  patientId={ this.data.selectedPatientId }
+                  onDelete={ this.onDeletePatient }
+                  onUpsert={ this.onUpsertPatient }
+                  onCancel={ this.onCancelUpsertPatient } 
                 />
-              </TabPanel>  
+              </TabPanel>   */}
             </CardContent>
           </StyledCard>                
 

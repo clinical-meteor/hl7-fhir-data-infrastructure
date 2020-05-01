@@ -63,15 +63,19 @@ flattenMeasure = function(measure, internalDateFormat){
     status: '',
     title: '',
     date: '',
+    approvalDate: '',
     lastReviewDate: '',
+    lastEdited: '',
     author: '',
     reviewer: '',
+    endorser: '',
     scoring: '',
     type: '',
     riskAdjustment: '',
     rateAggregation: '',
     supplementalDataCount: '',
-    context: ''
+    context: '', 
+    version: ''
   };
 
   if(!internalDateFormat){
@@ -81,29 +85,43 @@ flattenMeasure = function(measure, internalDateFormat){
   result._id =  get(measure, 'id') ? get(measure, 'id') : get(measure, '_id');
   result.id = get(measure, 'id', '');
   result.identifier = get(measure, 'identifier[0].value', '');
-  result.date = moment(get(measure, 'date', '')).format(internalDateFormat);
-  result.lastReviewDate = moment(get(measure, 'lastReviewDate', '')).format(internalDateFormat);
+
+  if(get(measure, 'lastReviewDate')){
+    result.lastReviewDate = moment(get(measure, 'lastReviewDate', '')).format(internalDateFormat);
+  }
+  if(get(measure, 'approvalDate')){
+    result.approvalDate = moment(get(measure, 'approvalDate', '')).format(internalDateFormat);
+  }
+  if(get(measure, 'date')){
+    result.lastEdited = moment(get(measure, 'date', '')).format(internalDateFormat);
+  }
 
   result.publisher = get(measure, 'publisher', '');
   result.title = get(measure, 'title', '');
+  result.description = get(measure, 'description', '');
   result.status = get(measure, 'status', '');
+  result.version = get(measure, 'version', '');
 
   result.context = get(measure, 'useContext[0].valueCodeableConcept.text', '');
 
-  if(get(measure, 'author.display')){
-    result.author = get(measure, 'author.display', '');
-  } else {
-    result.author = FhirUtilities.pluckReferenceId(get(measure, 'author.reference'));
-  }
+  // if(get(measure, 'author.display')){
+  //   result.author = get(measure, 'author.display', '');
+  // } else {
+  //   result.author = FhirUtilities.pluckReferenceId(get(measure, 'author.reference'));
+  // }
 
-  if(get(measure, 'reviewer.display')){
-    result.reviewer = get(measure, 'reviewer.display', '');
-  } else {
-    result.reviewer = FhirUtilities.pluckReferenceId(get(measure, 'reviewer.reference'));
-  }
+  // if(get(measure, 'reviewer.display')){
+  //   result.reviewer = get(measure, 'reviewer.display', '');
+  // } else {
+  //   result.reviewer = FhirUtilities.pluckReferenceId(get(measure, 'reviewer.reference'));
+  // }
+
+  result.editor = get(measure, 'editor[0].name', '');
+  result.reviewer = get(measure, 'reviewer[0].name', '');
+  result.endorser = get(measure, 'endorser[0].name', '');
 
   result.scoring = get(measure, 'scoring.coding[0].display', '');
-  result.type = get(measure, 'type.coding[0].display', '');
+  result.type = get(measure, 'type[0].coding[0].display', '');
 
   result.riskAdjustment = get(measure, 'riskAdjustment', '');
   result.rateAggregation = get(measure, 'rateAggregation', '');
@@ -132,20 +150,25 @@ function MeasuresTable(props){
   let { 
     children, 
 
-    data,
-    conditions,
+    measures,
     query,
     paginationLimit,
     disablePagination,
 
+    hideCheckbox,
+    hideActionIcons,
+    hideVersion,
     hideStatus,
     hidePublisher,
     hideTitle,
     hideDescription,
-    hideDate,
+    hideApprovalDate,
+    hideLastEditedDate,
     hideLastReviewed,
     hideAuthor,
+    hideEditor,
     hideReviewer,
+    hideEndorser,
     hideScoring,
     hideType,
     hideRiskAdjustment,
@@ -153,6 +176,7 @@ function MeasuresTable(props){
     hideSupplementalData,
     hideContext,
     hidePopulationCount,
+    hideBarcode,
 
     onCellClick,
     onRowClick,
@@ -174,8 +198,8 @@ function MeasuresTable(props){
   // ------------------------------------------------------------------------
   // Helper Functions
 
-  function rowClick(id){
-    console.log('Clicking row ' + id)
+  function handleRowClick(_id){
+    console.log('Clicking row ' + _id)
     if(props.onRowClick){
       props.onRowClick(_id);
     }
@@ -208,14 +232,14 @@ function MeasuresTable(props){
   // Column Rendering
 
   function renderToggleHeader(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -250,7 +274,20 @@ function MeasuresTable(props){
     }
   } 
 
-
+  function renderVersion(version){
+    if (!props.hideVersion) {
+      return (
+        <TableCell className='version'>{ version }</TableCell>
+      );
+    }
+  }
+  function renderVersionHeader(){
+    if (!props.hideVersion) {
+      return (
+        <TableCell className='version'>Version</TableCell>
+      );
+    }
+  }
   function renderStatus(status){
     if (!props.hideStatus) {
       return (
@@ -279,35 +316,64 @@ function MeasuresTable(props){
       );
     }
   }
+  function renderDescription(description){
+    if (!props.hideDescription) {
+      return (
+        <TableCell className='description'>{ description }</TableCell>
+      );
+    }
+  }
+  function renderDescriptionHeader(){
+    if (!props.hideDescription) {
+      return (
+        <TableCell className='description'>Description</TableCell>
+      );
+    }
+  }
 
-  function renderDate(date){
-    if (!props.hideDate) {
+  function renderApprovalDate(approvalDate){
+    if (!props.hideApprovalDate) {
       return (
-        <TableCell className='date'>{ date }</TableCell>
+        <TableCell className='approvalDate'>{ approvalDate }</TableCell>
       );
     }
   }
-  function renderDateHeader(){
-    if (!props.hideDate) {
+  function renderApprovalDateHeader(){
+    if (!props.hideApprovalDate) {
       return (
-        <TableCell className='date'>Date</TableCell>
+        <TableCell className='approvalDate' style={{minWidth: '140px'}}>Approval Date</TableCell>
       );
     }
   }
-  function renderLastReviewedDate(date){
-    if (!props.hideLastReviewed) {
+  function renderLastReviewDate(lastReview){
+    if (!props.hideLastReviewDate) {
       return (
-        <TableCell className='lastReviewed'>{ date }</TableCell>
+        <TableCell className='lastReview'>{ lastReview }</TableCell>
       );
     }
   }
-  function renderLastReviewedDateHeader(){
-    if (!props.hideLastReviewed) {
+  function renderLastReviewDateHeader(){
+    if (!props.hideLastReviewDate) {
       return (
-        <TableCell className='lastReviewed'>Last Reviewed</TableCell>
+        <TableCell className='lastReview' style={{minWidth: '140px'}}>Last Review</TableCell>
       );
     }
   }
+  function renderLastEditedDate(lastEdited){
+    if (!props.hideLastEditedDate) {
+      return (
+        <TableCell className='lastEdited'>{ lastEdited }</TableCell>
+      );
+    }
+  }
+  function renderLastEditedDateHeader(){
+    if (!props.hideLastEditedDate) {
+      return (
+        <TableCell className='lastEdited' style={{minWidth: '140px'}}>Last Edited</TableCell>
+      );
+    }
+  }
+
   function renderAuthor(name){
     if (!props.hideAuthor) {
       return (
@@ -318,7 +384,7 @@ function MeasuresTable(props){
   function renderAuthorHeader(){
     if (!props.hideAuthor) {
       return (
-        <TableCell className='author'>Author</TableCell>
+        <TableCell className='author' style={{minWidth: '140px'}}>Author</TableCell>
       );
     }
   }
@@ -332,7 +398,21 @@ function MeasuresTable(props){
   function renderPublisherHeader(){
     if (!props.hidePublisher) {
       return (
-        <TableCell className='publisher'>Publisher</TableCell>
+        <TableCell className='publisher' style={{minWidth: '200px'}}>Publisher</TableCell>
+      );
+    }
+  }
+  function renderEditor(name){
+    if (!props.hideEditor) {
+      return (
+        <TableCell className='editor'>{ name }</TableCell>
+      );
+    }
+  }
+  function renderEditorHeader(){
+    if (!props.hideEditor) {
+      return (
+        <TableCell className='editor' style={{minWidth: '140px'}}>Editor</TableCell>
       );
     }
   }
@@ -346,35 +426,49 @@ function MeasuresTable(props){
   function renderReviewerHeader(){
     if (!props.hideReviewer) {
       return (
-        <TableCell className='reviewer'>Reviewer</TableCell>
+        <TableCell className='reviewer' style={{minWidth: '140px'}}>Reviewer</TableCell>
+      );
+    }
+  }
+  function renderEndorser(name){
+    if (!props.hideEndorser) {
+      return (
+        <TableCell className='endorser'>{ name }</TableCell>
+      );
+    }
+  }
+  function renderEndorserHeader(){
+    if (!props.hideEndorser) {
+      return (
+        <TableCell className='endorser' style={{minWidth: '140px'}}>Endorser</TableCell>
       );
     }
   }
   function renderScoring(score){
     if (!props.hideScoring) {
       return (
-        <TableCell className='scoring'>{ score }</TableCell>
+        <TableCell className='scoring' style={{minWidth: '180px'}}>{ score }</TableCell>
       );
     }
   }
   function renderScoringHeader(){
     if (!props.hideScoring) {
       return (
-        <TableCell className='scoring'>Reviewer</TableCell>
+        <TableCell className='scoring'>Scoring</TableCell>
       );
     }
   }
   function renderTypeHeader(){
     if (!props.hideType) {
       return (
-        <TableCell className='category'>Category</TableCell>
+        <TableCell className='type'>Type</TableCell>
       );
     }
   }
-  function renderType(category){
+  function renderType(type){
     if (!props.hideType) {
       return (
-        <TableCell className='category'>{ category }</TableCell>
+        <TableCell className='type'>{ type }</TableCell>
       );
     }
   }
@@ -450,14 +544,14 @@ function MeasuresTable(props){
   }
 
   function renderBarcode(id){
-    if (!props.hideIdentifier) {
+    if (!props.hideBarcode) {
       return (
-        <TableCell><span className="barcode">{id}</span></TableCell>
+        <TableCell><span className="barcode helveticas">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideIdentifier) {
+    if (!props.hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
@@ -529,17 +623,21 @@ function MeasuresTable(props){
   } else {
     for (var i = 0; i < measuresToRender.length; i++) {
       tableRows.push(
-        <TableRow className="measureRow" key={i} onClick={ rowClick(measuresToRender[i]._id)} >
+        <TableRow className="measureRow" key={i} onClick={ handleRowClick.bind(this, measuresToRender[i]._id)} hover={true} style={{cursor: 'pointer', height: '52px'}}>
           { renderToggle() }
           { renderActionIcons(measuresToRender[i]) }
-          { renderDate(measuresToRender[i].date) }
-
+          { renderTitle(measuresToRender[i].title) }          
+          { renderDescription(measuresToRender[i].description) }          
+          { renderVersion(measuresToRender[i].version) }
           { renderPublisher(measuresToRender[i].publisher) }
           { renderStatus(measuresToRender[i].status) }
-          { renderTitle(measuresToRender[i].title) }
-          { renderLastReviewedDate(measuresToRender[i].lastReviewedDate) }
           { renderAuthor(measuresToRender[i].author) }
+          { renderEditor(measuresToRender[i].editor) }
+          { renderLastEditedDate(measuresToRender[i].lastEdited) }                    
           { renderReviewer(measuresToRender[i].reviewer) }
+          { renderLastReviewDate(measuresToRender[i].lastReviewDate) }                    
+          { renderEndorser(measuresToRender[i].endorser) }
+          { renderApprovalDate(measuresToRender[i].approvalDate) }
           { renderScoring(measuresToRender[i].scoring) }
           { renderType(measuresToRender[i].type) }
           { renderRiskAdjustment(measuresToRender[i].riskAdjustment) }
@@ -547,8 +645,7 @@ function MeasuresTable(props){
           { renderSupplementalDataCount(measuresToRender[i].supplementalDataCount) }
           { renderContext(measuresToRender[i].context) }
           { renderPopulationCount(measuresToRender[i].cohortCount) }
-
-          { renderBarcode(measuresToRender[i]._id)}
+          { renderBarcode(measuresToRender[i].id)}
         </TableRow>
       );       
     }
@@ -561,14 +658,18 @@ function MeasuresTable(props){
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
-            { renderDateHeader() }
-
+            { renderTitleHeader() }
+            { renderDescriptionHeader() }
+            { renderVersionHeader() }
             { renderPublisherHeader() }
             { renderStatusHeader() }
-            { renderTitleHeader() }
-            { renderLastReviewedDateHeader() }
             { renderAuthorHeader() }
+            { renderEditorHeader() }
+            { renderLastEditedDateHeader() }
             { renderReviewerHeader() }
+            { renderLastReviewDateHeader() }
+            { renderEndorserHeader() }
+            { renderApprovalDateHeader() }
             { renderScoringHeader() }
             { renderTypeHeader() }
             { renderRiskAdjustmentHeader() }
@@ -576,7 +677,6 @@ function MeasuresTable(props){
             { renderSupplementalDataCountHeader() }
             { renderContextHeader() }
             { renderPopulationCountHeader() }
-
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -596,14 +696,20 @@ MeasuresTable.propTypes = {
   paginationLimit: PropTypes.number,
   showMinutes: PropTypes.bool,
 
-  hideDate: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
+  hideActionIcons: PropTypes.bool,
+  hideApprovalDate: PropTypes.bool,
+  hideVersion: PropTypes.bool,
   hideStatus: PropTypes.bool,
   hideTitle: PropTypes.bool,
   hideDescription: PropTypes.bool,
+  hideLastEditedDate: PropTypes.bool,
   hideLastReviewed: PropTypes.bool,
   hidePublisher: PropTypes.bool,
   hideAuthor: PropTypes.bool,
+  hideEditor: PropTypes.bool,
   hideReviewer: PropTypes.bool,
+  hideEndorser: PropTypes.bool,
   hideScoring: PropTypes.bool,
   hideType: PropTypes.bool,
   hideRiskAdjustment: PropTypes.bool,
@@ -611,7 +717,8 @@ MeasuresTable.propTypes = {
   hideSupplementalData: PropTypes.bool,
   hideContext: PropTypes.bool,
   hidePopulationCount: PropTypes.bool,
-  
+  hideBarcode: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
@@ -620,15 +727,21 @@ MeasuresTable.propTypes = {
   actionButtonLabel: PropTypes.string
 };
 MeasuresTable.defaultProps = {
+  hideCheckbox: true,
+  hideActionIcons: true,
   showMinutes: false,
+  hideVersion: false,
   hideStatus: false,
   hideTitle: false,
-  hideDate: false,
+  hideApprovalDate: false,
   hideDescription: true,
-  hideLastReviewed: true,
+  hideLastEditedDate: false,
+  hideLastReviewed: false,
   hidePublisher: false,
   hideAuthor: true,
-  hideReviewer: true,
+  hideEditor: false,
+  hideReviewer: false,
+  hideEndorser: false,
   hideScoring: true,
   hideType: true,
   hideRiskAdjustment: true,
@@ -636,6 +749,7 @@ MeasuresTable.defaultProps = {
   hideSupplementalData: true,
   hideContext: true,
   hidePopulationCount: false,
+  hideBarcode: true,
   rowsPerPage: 5
 }
 

@@ -67,7 +67,7 @@ flattenObservation = function(observation, dateFormat, props){
     value: '',
     observationValue: '',
     subject: '',
-    subjectId: '',
+    subjectReference: '',
     status: '',
     device: '',
     createdBy: '',
@@ -103,7 +103,7 @@ flattenObservation = function(observation, dateFormat, props){
 
   // result.codeValue = get(observation, 'code.coding[0].code', '');
   result.subject = get(observation, 'subject.display', '');
-  result.subjectId = get(observation, 'subject.reference', '');
+  result.subjectReference = get(observation, 'subject.reference', '');
   result.device = get(observation, 'device.display', '');
   result.status = get(observation, 'status', '');
   
@@ -180,7 +180,7 @@ function ObservationsTable(props){
     paginationLimit,
     disablePagination,
   
-    hideCheckboxes,
+    hideCheckbox,
     hideActionIcons,
     hideIdentifier,
     hideCategory,
@@ -326,6 +326,20 @@ function ObservationsTable(props){
       );
     }
   }
+  function renderSubjectReference(id){
+    if (!props.hideSubjectReference) {
+      return (
+        <TableCell className='subjectReference'>{ id }</TableCell>
+      );
+    }
+  }
+  function renderSubjectReferenceHeader(){
+    if (!props.hideSubjectReference) {
+      return (
+      <TableCell className='subjectReference'>Subject Reference</TableCell>
+      );
+    }
+  }
   function renderDevice(device){
     if (!props.hideDevices) {
       return (
@@ -432,14 +446,14 @@ function ObservationsTable(props){
     }
   }
   function renderToggleHeader(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             <Checkbox
@@ -546,18 +560,19 @@ function ObservationsTable(props){
             { renderCode(observationsToRender[i].codeDisplay, observationsToRender[i].value) }
             { renderValue(observationsToRender[i].valueString)}
             { renderSubject(observationsToRender[i].subject)}
+            { renderSubjectReference(observationsToRender[i].subjectReference)}
             { renderStatus(observationsToRender[i].status) }
             { renderDevice(observationsToRender[i].device)}
             { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
             { renderComponentNumerator(observationsToRender[i].numerator)}
             { renderComponentDenominator(observationsToRender[i].denominator)}
-            { renderBarcode(observationsToRender[i]._id)}
+            { renderBarcode(observationsToRender[i].id)}
           </TableRow>
         );    
 
       } else {
         tableRows.push(
-          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} hover={true}>            
+          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i].id)} hover={true}>            
             { renderToggle() }
             { renderActionIcons(observationsToRender[i]) }
             { renderCategory(observationsToRender[i].category) }
@@ -565,12 +580,13 @@ function ObservationsTable(props){
             { renderCode(observationsToRender[i].codeDisplay) }
             { renderValue(observationsToRender[i].valueString)}
             { renderSubject(observationsToRender[i].subject)}
+            { renderSubjectReference(observationsToRender[i].subjectReference)}
             { renderStatus(observationsToRender[i].status) }
             { renderDevice(observationsToRender[i].device)}
             { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
             { renderComponentNumerator(observationsToRender[i].numerator)}
             { renderComponentDenominator(observationsToRender[i].denominator)}
-            { renderBarcode(observationsToRender[i]._id)}
+            { renderBarcode(observationsToRender[i].id)}
           </TableRow>
         );    
       }
@@ -607,6 +623,7 @@ function ObservationsTable(props){
             { renderCodeHeader() }
             { renderValueHeader() }
             { renderSubjectHeader() }
+            { renderSubjectReferenceHeader() }
             { renderStatusHeader() }
             { renderDeviceHeader() }
             { renderEffectiveDateTimeHeader() }
@@ -627,11 +644,11 @@ function ObservationsTable(props){
 ObservationsTable.propTypes = {
   observations: PropTypes.array,
   query: PropTypes.object,
-  barcodes: PropTypes.bool,
+  
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  hideCheckboxes: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideCategory: PropTypes.bool,
@@ -645,6 +662,7 @@ ObservationsTable.propTypes = {
   hideCode: PropTypes.bool,
   hideDevices: PropTypes.bool,
   hideComparator: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
 
   hideNumerator: PropTypes.bool,
   hideDenominator: PropTypes.bool,
@@ -656,8 +674,6 @@ ObservationsTable.propTypes = {
   enteredInError: PropTypes.bool,
   multiline: PropTypes.bool,
   multiComponentValues: PropTypes.bool,
-
-  hideBarcode: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,

@@ -115,10 +115,10 @@ flattenDiagnosticReport = function(report, internalDateFormat){
 
   if(get(report, 'category.text')){
     result.category = get(report, 'category.text');
-  } else if(get(report, 'category.coding[0].display')){
-    result.category = get(report, 'category.coding[0].display');
+  } else if(get(report, 'category[0].coding[0].display')){
+    result.category = get(report, 'category[0].coding[0].display');
   } else {
-    result.category = get(report, 'category.coding[0].code');
+    result.category = get(report, 'category[0].coding[0].code');
   }
 
   if(get(report, 'code.text')){
@@ -151,8 +151,7 @@ function DiagnosticReportsTable(props){
   let { 
     children, 
 
-    data,
-    conditions,
+    diagnosticReports,
     query,
     paginationLimit,
     disablePagination,
@@ -162,12 +161,14 @@ function DiagnosticReportsTable(props){
     onMetaClick,
     onRemoveRecord,
     onActionButtonClick,
-    showActionButton,
+    hideActionButton,
+    hideActionIcons,
     actionButtonLabel,
   
     rowsPerPage,
     dateFormat,
     showMinutes,
+    fhirVersion,
 
     ...otherProps 
   } = props;
@@ -183,14 +184,14 @@ function DiagnosticReportsTable(props){
   };
 
   function renderToggleHeader(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -233,6 +234,18 @@ function DiagnosticReportsTable(props){
     if (!props.hideSubjects) {
       return (
         <TableCell className='name'>Subject</TableCell>
+      );
+    }
+  }
+  function renderSubjectReference(subjectReference){
+    if (!props.hideSubjectReference) {
+      return (<TableCell className='subjectReference'>{ subjectReference }</TableCell>);
+    }
+  }
+  function renderSubjectReferenceHeader(){
+    if (!props.hideSubjectReference) {
+      return (
+        <TableCell className='subjectReference'>Subject Reference</TableCell>
       );
     }
   }
@@ -417,18 +430,19 @@ function DiagnosticReportsTable(props){
   } else {
     for (var i = 0; i < diagnosticReportsToRender.length; i++) {
       tableRows.push(
-        <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, encountersToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+        <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, diagnosticReportsToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
           { renderToggle() }
-          { renderActionIcons(encountersToRender[i]) }
-          { renderSubject(encountersToRender[i].subjectDisplay)}
-          { renderStatus(encountersToRender[i].status)}
-          { renderIssuedDate(encountersToRender[i].issued)}  
-          { renderPerformer(encountersToRender[i].performerDisplay)}  
-          { renderCategory(encountersToRender[i].category)}  
-          { renderCode(encountersToRender[i].reportCodeDisplay)}  
+          { renderActionIcons(diagnosticReportsToRender[i]) }
+          { renderSubject(diagnosticReportsToRender[i].subjectDisplay)}
+          { renderSubjectReference(diagnosticReportsToRender[i].subjectReference)}
+          { renderStatus(diagnosticReportsToRender[i].status)}
+          { renderIssuedDate(diagnosticReportsToRender[i].issued)}  
+          { renderPerformer(diagnosticReportsToRender[i].performerDisplay)}  
+          { renderCategory(diagnosticReportsToRender[i].category)}  
+          { renderCode(diagnosticReportsToRender[i].reportCodeDisplay)}  
           { renderIdentifierHeader(diagnosticReportsToRender[i].identifier)}
-          { renderBarcode(encountersToRender[i]._id)}
-          { renderActionButton(encountersToRender[i]) }
+          { renderBarcode(diagnosticReportsToRender[i].id)}
+          { renderActionButton(diagnosticReportsToRender[i]) }
         </TableRow>
       );
     }
@@ -441,6 +455,7 @@ function DiagnosticReportsTable(props){
             { renderToggleHeader() }
             { renderActionIconsHeader() }
             { renderSubjectHeader() }
+            { renderSubjectReferenceHeader() }
             { renderStatusHeader() }
             { renderIssuedDateHeader() }
             { renderPerformerHeader() }
@@ -464,11 +479,12 @@ function DiagnosticReportsTable(props){
 
 
 DiagnosticReportsTable.propTypes = {
-  disagnosticReports: PropTypes.array,
+  fhirVersion: PropTypes.string,
+  diagnosticReports: PropTypes.array,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  hideCheckboxes: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideCategory: PropTypes.bool,

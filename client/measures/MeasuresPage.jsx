@@ -1,6 +1,5 @@
 import { 
   CssBaseline,
-  Grid, 
   Container,
   Divider,
   Card,
@@ -10,7 +9,8 @@ import {
   Tab, 
   Tabs,
   Typography,
-  Box
+  Box,
+  Grid
 } from '@material-ui/core';
 import styled from 'styled-components';
 
@@ -31,8 +31,10 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 Session.setDefault('measurePageTabIndex', 0);
 Session.setDefault('measureSearchFilter', '');
 Session.setDefault('selectedMeasureId', false);
+Session.setDefault('selectedMeasure', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('measuresArray', []);
+Session.setDefault('MeasurePage.onePageLayout', true)
 
 // Global Theming 
   // This is necessary for the Material UI component render layer
@@ -148,15 +150,19 @@ export class MeasuresPage extends React.Component {
       measureSearchFilter: Session.get('measureSearchFilter'),
       fhirVersion: Session.get('fhirVersion'),
       selectedMeasureId: Session.get("selectedMeasureId"),
-      selectedMeasure: false,
+      selectedMeasure: Session.get("selectedMeasure"),
       selected: [],
       measures: [],
       query: {},
       options: {
         limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
       },
-      tabIndex: Session.get('measurePageTabIndex')
+      tabIndex: Session.get('measurePageTabIndex'),
+      onePageLayout: true
     };
+
+    data.onePageLayout = Session.get('MeasurePage.onePageLayout');
+
 
     // if(Session.get('measuresTableQuery')){
     //   data.query = Session.get('measuresTableQuery')
@@ -192,12 +198,6 @@ export class MeasuresPage extends React.Component {
     Session.set('measurePageTabIndex', index);
   }
   handleActive(index){
-  }
-  // this could be a mixin
-  onNewTab(){
-    console.log("onNewTab; we should clear things...");
-
-    Session.set('selectedMeasureId', false);
   }
   onCancelUpsertMeasure(context){
     Session.set('measurePageTabIndex', 1);
@@ -280,9 +280,12 @@ export class MeasuresPage extends React.Component {
     } 
     Session.set('measurePageTabIndex', 1);
   }
-  onTableRowClick(measureId){
-    Session.set('selectedMeasureId', measureId);
-    Session.set('selectedPatient', Measures.findOne({_id: measureId}));
+  handleRowClick(measureId, foo, bar){
+    console.log('handleRowClick', measureId)
+    let measure = Measures.findOne({id: measureId});
+
+    Session.set('selectedMeasureId', get(measure, 'id'));
+    Session.set('selectedMeasure', measure);
   }
   onTableCellClick(id){
     Session.set('measuresUpsert', false);
@@ -339,102 +342,92 @@ export class MeasuresPage extends React.Component {
       headerHeight = 148;
     }
 
-    return (
-      <PageCanvas id="measuresPage" headerHeight={headerHeight}>
-        <MuiThemeProvider theme={muiTheme} >
+    let layoutContents;
+    if(this.data.onePageLayout){
+      layoutContents = <StyledCard height="auto">
+        <CardHeader title={this.data.measuresCount + " Measures"} />
+        <CardContent>
+
+          <MeasuresTable 
+            measures={ this.data.measures }
+            hideCheckbox={true} 
+            hideActionIcons={true}
+            hideIdentifier={true} 
+            hideTitle={false} 
+            hideDescription={false} 
+            hideApprovalDate={false}
+            hideLastReviewed={false}
+            hideVersion={false}
+            hideStatus={false}
+            hideAuthor={true}
+            hidePublisher={false}
+            hideReviewer={false}
+            hideEditor={false}
+            hideEndorser={false}
+            hideType={false}
+            hideRiskAdjustment={true}
+            hideRateAggregation={true}
+            hideScoring={false}
+            paginationLimit={10}     
+            />
+          </CardContent>
+        </StyledCard>
+    } else {
+      layoutContents = <Grid container spacing={3}>
+        <Grid item lg={6}>
           <StyledCard height="auto">
             <CardHeader title={this.data.measuresCount + " Measures"} />
             <CardContent>
-
               <MeasuresTable 
-                hideIdentifier={true} 
-                hideCheckboxes={true} 
-                hideSubjects={false}
-                noDataMessagePadding={100}
-                actionButtonLabel="Send"
                 measures={ this.data.measures }
-                paginationLimit={10}
-                hideSubjects={true}
-                hideClassCode={false}
-                hideReasonCode={false}
-                hideReason={false}
-                hideHistory={false}
+                hideIdentifier={true} 
+                hideCheckbox={true} 
+                hideApprovalDate={false}
+                hideLastReviewed={false}
+                hideVersion={false}
+                hideStatus={false}
+                hidePublisher={true}
+                hideReviewer={true}
+                hideScoring={true}
+                hideEndorser={true}
+                paginationLimit={10}            
+                hideActionIcons={true}
+                onRowClick={this.handleRowClick.bind(this) }
+                count={this.data.measuresCount}
                 />
-
-              {/* <Tabs value={this.data.tabIndex} onChange={handleChange.bind(this)} aria-label="simple tabs example">
-                <Tab label="History" />
-                <Tab label="New" />
-              </Tabs>
-              <TabPanel value={this.data.tabIndex} index={0}>
-                
-              </TabPanel>
-              <TabPanel value={this.data.tabIndex} index={1}>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto">
+            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureId }</h1>
+            {/* <CardHeader title={this.data.selectedMeasureId } className="helveticas barcode" /> */}
+            <CardContent>
+              <CardContent>
                 <MeasureDetail 
-                  id='newMeasure' 
+                  id='measureDetails' 
                   displayDatePicker={true} 
                   displayBarcodes={false}
-                  showHints={true}
-                  onInsert={ this.onInsert }
                   measure={ this.data.selectedMeasure }
                   measureId={ this.data.selectedMeasureId } 
-                  onDelete={ this.onDeleteMeasure }
-                  onUpsert={ this.onUpsertMeasure }
-                  onCancel={ this.onCancelUpsertMeasure } 
-                  />
-              </TabPanel> */}
-
-                {/* <Tabs id="measuresPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-                  <Tab className="newMeasureTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0} >
-                    <MeasureDetail 
-                      id='newMeasure' 
-                      displayDatePicker={true} 
-                      displayBarcodes={false}
-                      showHints={true}
-                      onInsert={ this.onInsert }
-                      measure={ this.data.selectedMeasure }
-                      measureId={ this.data.selectedMeasureId } 
-
-                      onDelete={ this.onDeleteMeasure }
-                      onUpsert={ this.onUpsertMeasure }
-                      onCancel={ this.onCancelUpsertMeasure } 
-
-                      />
-                  </Tab>
-                  <Tab className="measureListTab" label='Measures' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                    <MeasuresTable 
-                      hideIdentifier={true} 
-                      hideSubjects={false}
-                      noDataMessagePadding={100}
-                      measures={ this.data.measures }
-                      paginationLimit={ this.data.pagnationLimit }
-                      appWidth={ Session.get('appWidth') }
-                      actionButtonLabel="Send"
-                      onRowClick={ this.onTableRowClick }
-                      onCellClick={ this.onTableCellClick }
-                      onActionButtonClick={this.tableActionButtonClick}
-                      onRemoveRecord={ this.onDeleteMeasure }
-                      query={this.data.measuresTableQuery}
-                      />
-                  </Tab>
-                  <Tab className="measureDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                    <MeasureDetail 
-                      id='measureDetails' 
-                      displayDatePicker={true} 
-                      displayBarcodes={false}
-                      measure={ this.data.selectedMeasure }
-                      measureId={ this.data.selectedMeasureId } 
-                      showMeasureInputs={true}
-                      showHints={false}
-                      onInsert={ this.onInsert }
-
-                      onDelete={ this.onDeleteMeasure }
-                      onUpsert={ this.onUpsertMeasure }
-                      onCancel={ this.onCancelUpsertMeasure } 
-                  />
-                  </Tab>
-                </Tabs> */}
+                  showMeasureInputs={true}
+                  showHints={false}
+                  // onInsert={ this.onInsert }
+                  // onDelete={ this.onDeleteMeasure }
+                  // onUpsert={ this.onUpsertMeasure }
+                  // onCancel={ this.onCancelUpsertMeasure } 
+                />
               </CardContent>
-            </StyledCard>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+      </Grid>
+    }
+
+    return (
+      <PageCanvas id="measuresPage" headerHeight={headerHeight}>
+        <MuiThemeProvider theme={muiTheme} >
+          { layoutContents }
         </MuiThemeProvider>
       </PageCanvas>
     );

@@ -168,9 +168,9 @@ function MedicationStatementsTable(props){
 
   let { 
     children, 
+    fhirVersion,
 
-    data,
-    medicatoinStatements,
+    medicationStatements,
     query,
     paginationLimit,
     disablePagination,
@@ -557,7 +557,8 @@ function MedicationStatementsTable(props){
 
 
 MedicationStatementsTable.propTypes = {
-  data: PropTypes.array,
+  fhirVersion: PropTypes.string,
+
   medicationStatements: PropTypes.array,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,

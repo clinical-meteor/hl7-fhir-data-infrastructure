@@ -201,15 +201,15 @@ export class ConditionsPage extends React.Component {
     return (
       <PageCanvas id="conditionsPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+          <StyledCard height="auto" scrollable={true} margin={20} >
           <CardHeader title={ this.data.conditionsCount + " Conditions"} />
               <CardContent>
 
                 <ConditionsTable 
                   conditions={this.data.conditions}
-                  noDataMessagePadding={100}
                   count={this.data.conditionsCount}  
                   autoColumns={true}
+                  displayBarcode={true}
                 />
               </CardContent>
           </StyledCard>

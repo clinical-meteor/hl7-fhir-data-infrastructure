@@ -186,6 +186,8 @@ export class MedicationOrdersPage extends React.Component {
                 rowsPerPage={20}
                 hideBarcodes={true}
                 hidePatient={true}
+                hideActionIcons={false}
+                hideCheckbox={true}
                 count={this.data.medicationOrdersCount}
               />
 

@@ -192,7 +192,10 @@ export class DiagnosticReportsPage extends React.Component {
               <DiagnosticReportsTable 
                 diagnosticReports={this.data.diagnosticReports}
                 count={this.data.diagnosticReportCount}
-                fhirVersion={ this.data.fhirVersion }/>
+                fhirVersion={ this.data.fhirVersion }
+                hideCheckbox={true}
+                hideActionIcons={true}
+              />
               {/* <Tabs id="diagnosticReportsPageTabs" value={ this.data.tabIndex} onChange={ this.handleTabChange.bind(this) }>
                 <Tab id='reportHistoryTab' label='History' value={0} />
                 <Tab id="viewReportTab" label='Report' value={1} />

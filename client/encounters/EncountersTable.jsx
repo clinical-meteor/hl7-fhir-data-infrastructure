@@ -58,6 +58,7 @@ let styles = {
 flattenEncounter = function(encounter, internalDateFormat){
   let result = {
     _id: '',
+    id: '',
     meta: '',
     subject: '',
     subjectId: '',
@@ -77,7 +78,8 @@ flattenEncounter = function(encounter, internalDateFormat){
     internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
   }
 
-  result._id =  get(encounter, 'id') ? get(encounter, 'id') : get(encounter, '_id');
+  result._id =  get(encounter, '_id');
+  result.id =  get(encounter, 'id');
 
   if(get(encounter, 'subject')){
     if(get(encounter, 'subject.display', '')){
@@ -538,7 +540,6 @@ function EncountersTable(props){
 
   if(encountersToRender.length === 0){
     logger.trace('EncountersTable:  No encounters to render.');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < encountersToRender.length; i++) {
       if(props.multiline){
@@ -557,7 +558,7 @@ function EncountersTable(props){
             { renderStartDate(encountersToRender[i].periodStart)}
             { renderEndDate(encountersToRender[i].periodEnd)}
             { renderDuration(encountersToRender[i].duration)}
-            { renderBarcode(encountersToRender[i]._id)}
+            { renderBarcode(encountersToRender[i].id)}
             { renderActionButton(encountersToRender[i]) }
           </TableRow>
         );    
@@ -577,7 +578,7 @@ function EncountersTable(props){
             { renderStartDate(encountersToRender[i].periodStart)}
             { renderEndDate(encountersToRender[i].periodEnd)}
             { renderDuration(encountersToRender[i].duration)}
-            { renderBarcode(encountersToRender[i]._id)}
+            { renderBarcode(encountersToRender[i].id)}
             { renderActionButton(encountersToRender[i]) }
           </TableRow>
         );    

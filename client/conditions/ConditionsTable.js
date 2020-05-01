@@ -24,7 +24,7 @@ let set = _.set;
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import FhirDehydrator from '../../lib/FhirDehydrator';
+import FhirDehydrator, { flattenCondition } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -63,93 +63,93 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenCondition = function(condition, internalDateFormat){
-  let result = {
-    _id: '',
-    id: '',
-    meta: '',
-    identifier: '',
-    clinicalStatus: '',
-    patientDisplay: '',
-    patientReference: '',
-    asserterDisplay: '',
-    verificationStatus: '',
-    severity: '',
-    snomedCode: '',
-    snomedDisplay: '',
-    evidenceDisplay: '',
-    barcode: '',
-    onsetDateTime: '',
-    abatementDateTime: ''
-  };
+// flattenCondition = function(condition, internalDateFormat){
+//   let result = {
+//     _id: '',
+//     id: '',
+//     meta: '',
+//     identifier: '',
+//     clinicalStatus: '',
+//     patientDisplay: '',
+//     patientReference: '',
+//     asserterDisplay: '',
+//     verificationStatus: '',
+//     severity: '',
+//     snomedCode: '',
+//     snomedDisplay: '',
+//     evidenceDisplay: '',
+//     barcode: '',
+//     onsetDateTime: '',
+//     abatementDateTime: ''
+//   };
 
-  if(!internalDateFormat){
-    internalDateFormat = "YYYY-MM-DD";
-  }
+//   if(!internalDateFormat){
+//     internalDateFormat = "YYYY-MM-DD";
+//   }
 
-  result._id =  get(condition, 'id') ? get(condition, 'id') : get(condition, '_id');
-  result.id = get(condition, 'id', '');
-  result.identifier = get(condition, 'identifier[0].value', '');
+//   result._id =  get(condition, 'id') ? get(condition, 'id') : get(condition, '_id');
+//   result.id = get(condition, 'id', '');
+//   result.identifier = get(condition, 'identifier[0].value', '');
 
-  if(get(condition, 'patient')){
-    result.patientDisplay = get(condition, 'patient.display', '');
-    result.patientReference = get(condition, 'patient.reference', '');
-  } else if (get(condition, 'subject')){
-    result.patientDisplay = get(condition, 'subject.display', '');
-    result.patientReference = get(condition, 'subject.reference', '');
-  }
-  result.asserterDisplay = get(condition, 'asserter.display', '');
-
-
-  if(get(condition, 'clinicalStatus.coding[0].code')){
-    result.clinicalStatus = get(condition, 'clinicalStatus.coding[0].code', '');  //R4
-  } else {
-    result.clinicalStatus = get(condition, 'clinicalStatus', '');                 // DSTU2
-  }
-
-  if(get(condition, 'verificationStatus.coding[0].code')){
-    result.verificationStatus = get(condition, 'verificationStatus.coding[0].code', '');  // R4
-  } else {
-    result.verificationStatus = get(condition, 'verificationStatus', '');                 // DSTU2
-  }
-
-  result.snomedCode = get(condition, 'code.coding[0].code', '');
-  result.snomedDisplay = get(condition, 'code.coding[0].display', '');
-
-  result.evidenceDisplay = get(condition, 'evidence[0].detail[0].display', '');
-  result.barcode = get(condition, '_id', '');
-  result.severity = get(condition, 'severity.text', '');
-
-  result.onsetDateTime = moment(get(condition, 'onsetDateTime', '')).format("YYYY-MM-DD");
-  result.abatementDateTime = moment(get(condition, 'abatementDateTime', '')).format("YYYY-MM-DD");
-
-  // let momentStart = moment(get(encounter, 'period.start', ''))
-  // if(get(encounter, 'period.start')){
-  //   momentStart = moment(get(encounter, 'period.start', ''))
-  // } else if(get(encounter, 'performedPeriod.start')){
-  //   momentStart = moment(get(encounter, 'performedPeriod.start', ''))
-  // }
-  // if(momentStart){
-  //   result.periodStart = momentStart.format(internalDateFormat);
-  // } 
+//   if(get(condition, 'patient')){
+//     result.patientDisplay = get(condition, 'patient.display', '');
+//     result.patientReference = get(condition, 'patient.reference', '');
+//   } else if (get(condition, 'subject')){
+//     result.patientDisplay = get(condition, 'subject.display', '');
+//     result.patientReference = get(condition, 'subject.reference', '');
+//   }
+//   result.asserterDisplay = get(condition, 'asserter.display', '');
 
 
-  // let momentEnd;
-  // if(get(encounter, 'period.end')){
-  //   momentEnd = moment(get(encounter, 'period.end', ''))
-  // } else if(get(encounter, 'performedPeriod.end')){
-  //   momentEnd = moment(get(encounter, 'performedPeriod.end', ''))
-  // }
-  // if(momentEnd){
-  //   result.periodEnd = momentEnd.format(internalDateFormat);
-  // } 
+//   if(get(condition, 'clinicalStatus.coding[0].code')){
+//     result.clinicalStatus = get(condition, 'clinicalStatus.coding[0].code', '');  //R4
+//   } else {
+//     result.clinicalStatus = get(condition, 'clinicalStatus', '');                 // DSTU2
+//   }
 
-  // if(momentStart && momentEnd){
-  //   result.duration = Math.abs(momentStart.diff(momentEnd, 'minutes', true))
-  // }
+//   if(get(condition, 'verificationStatus.coding[0].code')){
+//     result.verificationStatus = get(condition, 'verificationStatus.coding[0].code', '');  // R4
+//   } else {
+//     result.verificationStatus = get(condition, 'verificationStatus', '');                 // DSTU2
+//   }
 
-  return result;
-}
+//   result.snomedCode = get(condition, 'code.coding[0].code', '');
+//   result.snomedDisplay = get(condition, 'code.coding[0].display', '');
+
+//   result.evidenceDisplay = get(condition, 'evidence[0].detail[0].display', '');
+//   result.barcode = get(condition, '_id', '');
+//   result.severity = get(condition, 'severity.text', '');
+
+//   result.onsetDateTime = moment(get(condition, 'onsetDateTime', '')).format("YYYY-MM-DD");
+//   result.abatementDateTime = moment(get(condition, 'abatementDateTime', '')).format("YYYY-MM-DD");
+
+//   // let momentStart = moment(get(encounter, 'period.start', ''))
+//   // if(get(encounter, 'period.start')){
+//   //   momentStart = moment(get(encounter, 'period.start', ''))
+//   // } else if(get(encounter, 'performedPeriod.start')){
+//   //   momentStart = moment(get(encounter, 'performedPeriod.start', ''))
+//   // }
+//   // if(momentStart){
+//   //   result.periodStart = momentStart.format(internalDateFormat);
+//   // } 
+
+
+//   // let momentEnd;
+//   // if(get(encounter, 'period.end')){
+//   //   momentEnd = moment(get(encounter, 'period.end', ''))
+//   // } else if(get(encounter, 'performedPeriod.end')){
+//   //   momentEnd = moment(get(encounter, 'performedPeriod.end', ''))
+//   // }
+//   // if(momentEnd){
+//   //   result.periodEnd = momentEnd.format(internalDateFormat);
+//   // } 
+
+//   // if(momentStart && momentEnd){
+//   //   result.duration = Math.abs(momentStart.diff(momentEnd, 'minutes', true))
+//   // }
+
+//   return result;
+// }
 
 
 //===========================================================================
@@ -279,7 +279,7 @@ function ConditionsTable(props){
       }
       
       let flattenedCollection = conditions.map(function(record){
-        return FhirDehydrator.dehydrateCondition(record, "YYYY-MM-DD");
+        return flattenCondition(record, "YYYY-MM-DD");
       });      
   
       flattenedCollection.forEach(function(row){
@@ -639,7 +639,6 @@ function ConditionsTable(props){
   }
   if(conditionsToRender.length === 0){
     logger.trace('ConditionsTable: No conditions to render.');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < conditionsToRender.length; i++) {
       if(get(conditionsToRender[i], 'modifierExtension[0]')){
