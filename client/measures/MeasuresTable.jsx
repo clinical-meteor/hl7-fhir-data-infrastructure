@@ -151,6 +151,8 @@ function MeasuresTable(props){
     children, 
 
     measures,
+    selectedMeasureId,
+
     query,
     paginationLimit,
     disablePagination,
@@ -198,10 +200,10 @@ function MeasuresTable(props){
   // ------------------------------------------------------------------------
   // Helper Functions
 
-  function handleRowClick(_id){
-    console.log('Clicking row ' + _id)
+  function handleRowClick(id){
+    console.log('Clicking row ' + id)
     if(props.onRowClick){
-      props.onRowClick(_id);
+      props.onRowClick(id);
     }
   }
 
@@ -622,8 +624,20 @@ function MeasuresTable(props){
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < measuresToRender.length; i++) {
+
+      let selected = false;
+      if(measuresToRender[i].id === selectedMeasureId){
+        selected = true;
+      }
       tableRows.push(
-        <TableRow className="measureRow" key={i} onClick={ handleRowClick.bind(this, measuresToRender[i]._id)} hover={true} style={{cursor: 'pointer', height: '52px'}}>
+        <TableRow 
+          className="measureRow" 
+          key={i} 
+          onClick={ handleRowClick.bind(this, measuresToRender[i]._id)} 
+          hover={true} 
+          style={{cursor: 'pointer', height: '52px'}} 
+          selected={selected}
+        >
           { renderToggle() }
           { renderActionIcons(measuresToRender[i]) }
           { renderTitle(measuresToRender[i].title) }          
@@ -692,6 +706,8 @@ function MeasuresTable(props){
 MeasuresTable.propTypes = {
   barcodes: PropTypes.bool,
   measures: PropTypes.array,
+  selectedMeasureId: PropTypes.string,
+
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   showMinutes: PropTypes.bool,
@@ -750,6 +766,7 @@ MeasuresTable.defaultProps = {
   hideContext: true,
   hidePopulationCount: false,
   hideBarcode: true,
+  selectedMeasureId: false,
   rowsPerPage: 5
 }
 

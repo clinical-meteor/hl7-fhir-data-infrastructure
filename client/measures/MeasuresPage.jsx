@@ -1,13 +1,10 @@
 import { 
-  CssBaseline,
   Container,
   Divider,
   Card,
   CardHeader,
   CardContent,
   Button,
-  Tab, 
-  Tabs,
   Typography,
   Box,
   Grid
@@ -184,11 +181,6 @@ export class MeasuresPage extends React.Component {
     data.measures = Measures.find(data.query, data.options).fetch();
     data.measuresCount = Measures.find(data.query, data.options).count();
 
-
-    // data.style = Glass.blur(data.style);
-    // data.style.appbar = Glass.darkroom(data.style.appbar);
-    // data.style.tab = Glass.darkroom(data.style.tab);
-
     // console.log("MeasuresPage[data]", data);
     return data;
   }
@@ -281,7 +273,7 @@ export class MeasuresPage extends React.Component {
     Session.set('measurePageTabIndex', 1);
   }
   handleRowClick(measureId, foo, bar){
-    console.log('handleRowClick', measureId)
+    console.log('MeasuresPage.handleRowClick', measureId)
     let measure = Measures.findOne({id: measureId});
 
     Session.set('selectedMeasureId', get(measure, 'id'));
@@ -380,6 +372,7 @@ export class MeasuresPage extends React.Component {
             <CardContent>
               <MeasuresTable 
                 measures={ this.data.measures }
+                selectedMeasureId={ this.data.selectedMeasureId }
                 hideIdentifier={true} 
                 hideCheckbox={true} 
                 hideApprovalDate={false}
@@ -399,7 +392,7 @@ export class MeasuresPage extends React.Component {
           </StyledCard>
         </Grid>
         <Grid item lg={4}>
-          <StyledCard height="auto">
+          <StyledCard height="auto" scrollable>
             <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureId }</h1>
             {/* <CardHeader title={this.data.selectedMeasureId } className="helveticas barcode" /> */}
             <CardContent>

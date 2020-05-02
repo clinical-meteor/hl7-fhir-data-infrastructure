@@ -1,21 +1,19 @@
 import { 
-  CssBaseline,
-  Grid, 
   Container,
   Divider,
   Card,
   CardHeader,
   CardContent,
   Button,
-  Tab, 
-  Tabs,
   Typography,
-  Box
+  Box,
+  Grid
 } from '@material-ui/core';
 import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
+
 import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
@@ -30,9 +28,12 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 Session.setDefault('measureReportPageTabIndex', 0);
 Session.setDefault('measureReportSearchFilter', '');
-Session.setDefault('selectedMeasureReportId', false);
+Session.setDefault('selectedMeasureReport', false);
+Session.setDefault('selectedMeasureReportId', '');
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('measureReportsArray', []);
+
+Session.setDefault('MeasureReportsPage.onePageLayout', true)
 
 // Global Theming 
   // This is necessary for the Material UI component render layer
@@ -148,15 +149,18 @@ export class MeasureReportsPage extends React.Component {
       measureReportSearchFilter: Session.get('measureReportSearchFilter'),
       fhirVersion: Session.get('fhirVersion'),
       selectedMeasureReportId: Session.get("selectedMeasureReportId"),
-      selectedMeasureReport: false,
+      selectedMeasureReport: Session.get("selectedMeasureReport"),
       selected: [],
       measureReports: [],
       query: {},
       options: {
         limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
       },
-      tabIndex: Session.get('measureReportPageTabIndex')
+      tabIndex: Session.get('measureReportPageTabIndex'),
+      onePageLayout: true
     };
+
+    data.onePageLayout = Session.get('MeasureReportsPage.onePageLayout');
 
     // if(Session.get('measureReportsTableQuery')){
     //   data.query = Session.get('measureReportsTableQuery')
@@ -178,27 +182,11 @@ export class MeasureReportsPage extends React.Component {
     data.measureReports = MeasureReports.find(data.query, data.options).fetch();
     data.measureReportsCount = MeasureReports.find(data.query, data.options).count();
 
-
-    // data.style = Glass.blur(data.style);
-    // data.style.appbar = Glass.darkroom(data.style.appbar);
-    // data.style.tab = Glass.darkroom(data.style.tab);
-
     // console.log("MeasureReportsPage[data]", data);
     return data;
   }
 
-  // this could be a mixin
-  handleTabChange(index){
-    Session.set('measureReportPageTabIndex', index);
-  }
-  handleActive(index){
-  }
-  // this could be a mixin
-  onNewTab(){
-    console.log("onNewTab; we should clear things...");
 
-    Session.set('selectedMeasureReportId', false);
-  }
   onCancelUpsertMeasureReport(context){
     Session.set('measureReportPageTabIndex', 1);
   }
@@ -280,9 +268,9 @@ export class MeasureReportsPage extends React.Component {
     } 
     Session.set('measureReportPageTabIndex', 1);
   }
-  onTableRowClick(measureReportId){
-    Session.set('selectedMeasureReportId', measureReportId);
-    Session.set('selectedPatient', MeasureReports.findOne({_id: measureReportId}));
+  onTableRowClick(selectedMeasureReportId){
+    Session.set('selectedMeasureReportId', selectedMeasureReportId);
+    Session.set('selectedMeasureReport', MeasureReports.findOne({id: selectedMeasureReportId}));
   }
   onTableCellClick(id){
     Session.set('measureReportsUpsert', false);
@@ -327,6 +315,14 @@ export class MeasureReportsPage extends React.Component {
   onCancel(){
     Session.set('measureReportPageTabIndex', 1);
   } 
+  handleRowClick(measureReportId){
+    console.log('MeasureReportsPage.handleRowClick', measureReportId)
+    let measureReport = MeasureReports.findOne({id: measureReportId});
+
+    Session.set('selectedMeasureReportId', get(measureReport, 'id'));
+    Session.set('selectedMeasureReport', measureReport);
+  }
+
   render() {
     // console.log('MeasureReportsPage.data', this.data)
 
@@ -339,102 +335,84 @@ export class MeasureReportsPage extends React.Component {
       headerHeight = 148;
     }
 
+    let layoutContents;
+    if(this.data.onePageLayout){
+      layoutContents = <StyledCard height="auto">
+        <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
+        <CardContent>
+          <MeasureReportsTable 
+            hideIdentifier={true} 
+            hideCheckboxes={true} 
+            hideSubjects={false}
+            noDataMessagePadding={100}
+            actionButtonLabel="Send"
+            measureReports={ this.data.measureReports }
+            count={ this.data.measureReportsCount }
+            paginationLimit={10}
+            hideSubjects={true}
+            hideClassCode={false}
+            hideReasonCode={false}
+            hideReason={false}
+            hideHistory={false}
+            />
+          </CardContent>
+        </StyledCard>
+    } else {
+      layoutContents = <Grid container spacing={3}>
+      <Grid item lg={6}>
+        <StyledCard height="auto">
+          <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
+          <CardContent>
+            <MeasureReportsTable 
+              hideIdentifier={true} 
+              hideCheckboxes={true} 
+              hideSubjects={false}
+              noDataMessagePadding={100}
+              actionButtonLabel="Send"
+              measureReports={ this.data.measureReports }
+              count={ this.data.measureReportsCount }
+              selectedMeasureReportId={ this.data.selectedMeasureReportId }
+              paginationLimit={10}
+              hideSubjects={true}
+              hideClassCode={false}
+              hideReasonCode={false}
+              hideReason={false}
+              hideHistory={false}
+              onRowClick={this.handleRowClick.bind(this) }
+              />
+          </CardContent>
+        </StyledCard>
+      </Grid>
+      <Grid item lg={4}>
+        <StyledCard height="auto" scrollable>
+          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureReportId }</h1>
+          <CardContent>
+            <CardContent>
+              <MeasureReportDetail 
+                id='measureReportDetails' 
+                displayDatePicker={true} 
+                displayBarcodes={false}
+                measureReport={ this.data.selectedMeasureReport }
+                measureReportId={ this.data.selectedMeasureReportId } 
+                showMeasureReportInputs={true}
+                showHints={false}
+                // onInsert={ this.onInsert }
+                // onDelete={ this.onDeleteMeasureReport }
+                // onUpsert={ this.onUpsertMeasureReport }
+                // onCancel={ this.onCancelUpsertMeasureReport } 
+              />
+              
+            </CardContent>
+          </CardContent>
+        </StyledCard>
+      </Grid>
+    </Grid>
+    }
+
     return (
       <PageCanvas id="measureReportsPage" headerHeight={headerHeight}>
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto">
-            <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
-            <CardContent>
-              <MeasureReportsTable 
-                  hideIdentifier={true} 
-                  hideCheckboxes={true} 
-                  hideSubjects={false}
-                  noDataMessagePadding={100}
-                  actionButtonLabel="Send"
-                  measureReports={ this.data.measureReports }
-                  count={ this.data.measureReportsCount }
-                  paginationLimit={10}
-                  hideSubjects={true}
-                  hideClassCode={false}
-                  hideReasonCode={false}
-                  hideReason={false}
-                  hideHistory={false}
-                  />
-
-              {/* <Tabs value={this.data.tabIndex} onChange={handleChange.bind(this)} aria-label="simple tabs example">
-                <Tab label="History" />
-                <Tab label="New" />
-              </Tabs>
-              <TabPanel value={this.data.tabIndex} index={0}>
-                
-              </TabPanel>
-              <TabPanel value={this.data.tabIndex} index={1}>
-                <MeasureReportDetail 
-                  id='newMeasureReport' 
-                  displayDatePicker={true} 
-                  displayBarcodes={false}
-                  showHints={true}
-                  // onInsert={ this.onInsert }
-                  // measureReport={ this.data.selectedMeasureReport }
-                  // measureReportId={ this.data.selectedMeasureReportId } 
-                  // onDelete={ this.onDeleteMeasureReport }
-                  // onUpsert={ this.onUpsertMeasureReport }
-                  // onCancel={ this.onCancelUpsertMeasureReport } 
-                  />
-              </TabPanel> */}
-
-                {/* <Tabs id="measureReportsPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-                  <Tab className="newMeasureReportTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0} >
-                    <MeasureReportDetail 
-                      id='newMeasureReport' 
-                      displayDatePicker={true} 
-                      displayBarcodes={false}
-                      showHints={true}
-                      onInsert={ this.onInsert }
-                      measureReport={ this.data.selectedMeasureReport }
-                      measureReportId={ this.data.selectedMeasureReportId } 
-
-                      onDelete={ this.onDeleteMeasureReport }
-                      onUpsert={ this.onUpsertMeasureReport }
-                      onCancel={ this.onCancelUpsertMeasureReport } 
-
-                      />
-                  </Tab>
-                  <Tab className="measureReportListTab" label='MeasureReports' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                    <MeasureReportsTable 
-                      hideIdentifier={true} 
-                      hideSubjects={false}
-                      noDataMessagePadding={100}
-                      measureReports={ this.data.measureReports }
-                      paginationLimit={ this.data.pagnationLimit }
-                      appWidth={ Session.get('appWidth') }
-                      actionButtonLabel="Send"
-                      onRowClick={ this.onTableRowClick }
-                      onCellClick={ this.onTableCellClick }
-                      onActionButtonClick={this.tableActionButtonClick}
-                      onRemoveRecord={ this.onDeleteMeasureReport }
-                      query={this.data.measureReportsTableQuery}
-                      />
-                  </Tab>
-                  <Tab className="measureReportDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                    <MeasureReportDetail 
-                      id='measureReportDetails' 
-                      displayDatePicker={true} 
-                      displayBarcodes={false}
-                      measureReport={ this.data.selectedMeasureReport }
-                      measureReportId={ this.data.selectedMeasureReportId } 
-                      showMeasureReportInputs={true}
-                      showHints={false}
-                      onInsert={ this.onInsert }
-
-                      onDelete={ this.onDeleteMeasureReport }
-                      onUpsert={ this.onUpsertMeasureReport }
-                      onCancel={ this.onCancelUpsertMeasureReport } 
-                  />
-                  </Tab>
-                </Tabs> */}
-              </CardContent>
-            </StyledCard>
+          { layoutContents }
         </MuiThemeProvider>
       </PageCanvas>
     );

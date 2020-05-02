@@ -2,15 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
-  CssBaseline,
-  Grid, 
-  Container,
-  Divider,
-  Card,
-  CardHeader,
-  CardContent,
-  Tab, 
-  Tabs,
   Table,
   TableBody,
   TableCell,
@@ -93,7 +84,7 @@ flattenMeasureReport = function(measureReport, measuresCursor, internalDateForma
   result.identifier = get(measureReport, 'identifier[0].value', '');
   result.type = get(measureReport, 'type', '');
 
-  result.measureUrl = FhirUtilities.pluckReferenceId(get(measureReport, 'measure')); 
+  result.measureUrl = FhirUtilities.pluckReferenceId(get(measureReport, 'measure', '')); 
 
   if(measuresCursor && result.measureUrl){
     let measure = measuresCursor.findOne({id: result.measureUrl});
@@ -139,7 +130,8 @@ function MeasureReportsTable(props){
 
   let { 
     children, 
-    locations,
+    measureReports,
+    selectedMeasureReportId,
     showMinutes,
 
     hideCheckboxes,
@@ -160,6 +152,12 @@ function MeasureReportsTable(props){
     measuresCursor,
     measureShorthand,
 
+    onRowClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    showActionButton,
+    actionButtonLabel,
+
     query,
     paginationLimit,
     disablePagination,
@@ -172,8 +170,11 @@ function MeasureReportsTable(props){
   // Helper Functions
 
 
-  function rowClick(id){
-
+  function handleRowClick(_id){
+    console.log('Clicking row ' + _id)
+    if(props.onRowClick){
+      props.onRowClick(_id);
+    }
   }
 
   function removeRecord(_id){
@@ -446,7 +447,6 @@ function MeasureReportsTable(props){
   }
 
   
-  
 
 
   //---------------------------------------------------------------------
@@ -511,8 +511,13 @@ function MeasureReportsTable(props){
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < measureReportsToRender.length; i++) {
+      let selected = false;
+      if(measureReportsToRender[i].id === selectedMeasureReportId){
+        selected = true;
+      }
+
       tableRows.push(
-        <TableRow className="measureReportRow" key={i} onClick={ rowClick.bind(measureReportsToRender[i]._id)} >            
+        <TableRow className="measureReportRow" key={i} onClick={ handleRowClick.bind(this, measureReportsToRender[i]._id)} hover={true} style={{cursor: 'pointer', height: '52px'}} selected={selected} >            
           { renderToggle() }
           { renderActionIcons(measureReportsToRender[i]) }
           { renderIdentifier(measureReportsToRender[i].identifier)}
@@ -572,6 +577,7 @@ function MeasureReportsTable(props){
 MeasureReportsTable.propTypes = {
   barcodes: PropTypes.bool,
   measureReports: PropTypes.array,
+  selectedMeasureReportId: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   rowsPerPage: PropTypes.number,
@@ -622,7 +628,8 @@ MeasureReportsTable.defaultProps = {
   hideMeasureScore: false,
   hideStratificationCount: true,
   hideActionIcons: true,
-  measureShorthand: false
+  measureShorthand: false,
+  selectedMeasureReportId: false
 }
 
 export default MeasureReportsTable; 

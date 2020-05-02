@@ -3,9 +3,7 @@ import {
   Container,
   Button,
   Typography,
-  TextField,
   DatePicker,
-  Box,
   FormControl,
   InputLabel,
   Input,
@@ -40,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   input: {
     marginBottom: '20px'
   },
+  compactInput: {
+    marginBottom: '10px'
+  },
   label: {
     paddingBottom: '10px'
   }
@@ -63,24 +64,173 @@ function MeasureDetail(props){
 
 
 
-  function renderDatePicker(displayDatePicker, effectiveDateTime){
-    //console.log('renderDatePicker', displayDatePicker, effectiveDateTime)
-    if(typeof effectiveDateTime === "string"){
-      effectiveDateTime = moment(effectiveDateTime);
-    }
-  }
-  function setHint(text){
-    if(props.showHints !== false){
-      return text;
-    } else {
-      return '';
-    }
-  }
+  let renderElements = [];
+  let groups = get(measure, 'group');
+
+  if(Array.isArray(groups)){
+    groups.forEach(function(group){
+      renderElements.push(<Grid item xs={3}>
+        <FormControl style={{width: '100%', marginTop: '20px'}}>
+          <InputAdornment className={classes.label}>Group Code</InputAdornment>
+          <Input
+            id="groupCodeInput"
+            name="groupCodeInput"
+            className={classes.input}       
+            value={get(group, 'code.text')}
+            fullWidth              
+          />       
+        </FormControl>   
+      </Grid>)
+      renderElements.push(<Grid item xs={9}>
+        <FormControl style={{width: '100%', marginTop: '20px'}}>
+          <InputAdornment className={classes.label}>Group Description</InputAdornment>
+          <Input
+            id="groupDescriptionInput"
+            name="groupDescriptionInput"
+            className={classes.input}       
+            value={get(group, 'description')}
+            fullWidth              
+          />       
+        </FormControl>     
+      </Grid>)
+
+      let populations = get(group, 'population');
+      if(Array.isArray(populations)){
+        populations.forEach(function(subPopulation){
+          renderElements.push(<Grid item xs={3}>
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Population Code</InputAdornment>
+              <Input
+                id={"populationCodeInput-" + get(subPopulation, 'id')}
+                name={"populationCodeInput-" + get(subPopulation, 'id')}
+                className={classes.input}       
+                value={get(subPopulation, 'code.text')}
+                fullWidth              
+              />       
+            </FormControl>   
+          </Grid>)
+          renderElements.push(<Grid item xs={9}>
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Population Description</InputAdornment>
+              <Input
+                id={"populationCodeInput-" + get(subPopulation, 'id')}
+                name={"populationCodeInput-" + get(subPopulation, 'id')}
+                className={classes.input}       
+                value={get(subPopulation, 'description')}
+                fullWidth              
+              />       
+            </FormControl>   
+          </Grid>)
+
+          // renderElements.push(<Grid item xs={3} style={{paddingLeft: '40px', borderLeft: '2px double lightgray'}}>
+          //   <FormControl style={{width: '100%', marginTop: '20px'}}>
+          //     <InputAdornment className={classes.label}>Population Code</InputAdornment>
+          //     <Input
+          //       id={"populationCodeInput-" + get(subPopulation, 'id')}
+          //       name={"populationCodeInput-" + get(subPopulation, 'id')}
+          //       className={classes.input}       
+          //       value={get(subPopulation, 'code.text')}
+          //       fullWidth              
+          //     />       
+          //   </FormControl>   
+          // </Grid>)
+          // renderElements.push(<Grid item xs={9}>
+          //   <FormControl style={{width: '100%', marginTop: '20px'}}>
+          //     <InputAdornment className={classes.label}>Population Description</InputAdornment>
+          //     <Input
+          //       id={"populationCodeInput-" + get(subPopulation, 'id')}
+          //       name={"populationCodeInput-" + get(subPopulation, 'id')}
+          //       className={classes.input}       
+          //       value={get(subPopulation, 'description')}
+          //       fullWidth              
+          //     />       
+          //   </FormControl>   
+          // </Grid>)
 
 
-  let inputStyle = {
-    marginTop: '20px'
+          renderElements.push(<Grid item xs={3} style={{paddingLeft: '40px'}}>
+            <FormControl style={{width: '100%', marginTop: '10px'}}>
+              <InputLabel className={classes.label}>Criteria Name</InputLabel>
+              <Input
+                id={"populationCodeInput-" + get(subPopulation, 'id')}
+                name={"populationCodeInput-" + get(subPopulation, 'id')}
+                className={classes.compactInput}       
+                value={get(subPopulation, 'criteria.name')}
+                fullWidth              
+              />       
+            </FormControl>   
+            </Grid>)
+          renderElements.push(<Grid item xs={3} >
+            <FormControl style={{width: '100%', marginTop: '10px'}}>
+              <InputLabel className={classes.label}>Criteria Language</InputLabel>
+              <Input
+                id={"populationCodeInput-" + get(subPopulation, 'id')}
+                name={"populationCodeInput-" + get(subPopulation, 'id')}
+                className={classes.compactInput}       
+                value={get(subPopulation, 'criteria.language')}
+                fullWidth              
+              />       
+            </FormControl>   
+            </Grid>)
+
+          renderElements.push(<Grid item xs={6}>
+            <FormControl style={{width: '100%', marginTop: '10px'}}>
+              <InputLabel className={classes.label}>Criteria Description</InputLabel>
+              <Input
+                id={"populationCodeInput-" + get(subPopulation, 'id')}
+                name={"populationCodeInput-" + get(subPopulation, 'id')}
+                className={classes.compactInput}       
+                value={get(subPopulation, 'criteria.description')}
+                fullWidth              
+              />       
+            </FormControl>   
+            </Grid>)
+
+          renderElements.push(<Grid item xs={12} style={{paddingLeft: '40px', marginTop: '0px'}} >
+            <FormControl style={{width: '100%', marginTop: '10px'}}>
+              <InputLabel className={classes.label}>Criteria Expression</InputLabel>
+              <Input
+                id={"populationCodeInput-" + get(subPopulation, 'id')}
+                name={"populationCodeInput-" + get(subPopulation, 'id')}
+                className={classes.compactInput}       
+                value={get(subPopulation, 'criteria.expression')}
+                fullWidth              
+              />       
+            </FormControl>   
+            </Grid>)
+
+          renderElements.push(<Grid item xs={12} style={{paddingLeft: '40px', marginTop: '0px'}}>
+            <FormControl style={{width: '100%', marginTop: '10px'}}>
+              <InputLabel className={classes.label}>Criteria URL</InputLabel>
+              <Input
+                id={"criteriaUrl-" + get(subPopulation, 'id')}
+                name={"criteriaUrl-" + get(subPopulation, 'id')}
+                className={classes.compactInput}       
+                value={get(subPopulation, 'criteria.reference')}
+                fullWidth              
+              />       
+            </FormControl>   
+            </Grid>)
+
+
+        })
+      }
+    })    
   }
+
+  let approvedOnDate = '';
+  if(get(measure, 'approvedDate')){
+    approvedOnDate = moment(get(measure, 'approvedDate')).format("YYYY-MM-DD")
+  }
+  let lastEditedDate = '';
+  if(get(measure, 'date')){
+    lastEditedDate = moment(get(measure, 'date')).format("YYYY-MM-DD")
+  }
+  let lastReviewDate = '';
+  if(get(measure, 'lastReviewDate')){
+    lastReviewDate = moment(get(measure, 'lastReviewDate')).format("YYYY-MM-DD")
+  }
+
 
   return(
     <div className='MeasureDetails'>
@@ -211,7 +361,7 @@ function MeasureDetail(props){
                 name="editedDateInput"
                 className={classes.input}
                 placeholder="YYYY-MM-DD"              
-                value={moment(get(measure, 'date')).format("YYYY-MM-DD")}
+                value={lastEditedDate}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
@@ -223,7 +373,7 @@ function MeasureDetail(props){
                 name="reviewedDateInput"
                 className={classes.input}
                 placeholder="YYYY-MM-DD"              
-                value={moment(get(measure, 'lastReviewDate')).format("YYYY-MM-DD")}
+                value={lastReviewDate}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
@@ -235,13 +385,46 @@ function MeasureDetail(props){
                 name="approvedDateInput"
                 className={classes.input}
                 placeholder="YYYY-MM-DD"                   
-                value={moment(get(measure, 'approvedDate')).format("YYYY-MM-DD")}
+                value={approvedOnDate}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
             </FormControl>     
                    
           </Grid>
+          <Grid item xs={3}></Grid>
+
+          <Grid item xs={3}>
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Scoring</InputAdornment>
+              <Input
+                id="scoringInput"
+                name="scoringInput"
+                className={classes.input}              
+                value={get(measure, 'scoring.text')}
+                fullWidth              
+              />       
+            </FormControl>        
+          </Grid>
+          <Grid item xs={3}>
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Type</InputAdornment>
+              <Input
+                id="typeInput"
+                name="typeInput"
+                className={classes.input}
+                value={get(measure, 'type[0].text')}
+                fullWidth              
+              />          
+            </FormControl>   
+          </Grid>
+          <Grid item xs={6}>
+
+          </Grid>
+
+
+          { renderElements }
+          
         </Grid>
     </div>
   );
