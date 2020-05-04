@@ -114,7 +114,9 @@ export class MedicationsPage extends React.Component {
                   id='medicationDetails'
                   fhirVersion={ this.data.fhirVersion }
                   medication={ this.data.selectedMedication }
-                  medicationId={ this.data.selectedMedicationId } />  
+                  medicationId={ this.data.selectedMedicationId }
+                  hideCode={false} 
+                  />  
               </TabPanel>              
             </CardContent>
           </StyledCard>

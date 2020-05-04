@@ -197,7 +197,7 @@ export class MeasureReportsPage extends React.Component {
         Bert.alert(error.reason, 'danger');
       }
       if (result) {
-        Session.set('selectedMeasureReportId', false);
+        Session.set('selectedMeasureReportId', '');
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: context.state.measureReportId});
         Bert.alert('MeasureReport removed!', 'success');
       }
@@ -242,7 +242,7 @@ export class MeasureReportsPage extends React.Component {
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: context.state.measureReportId});
-            Session.set('selectedMeasureReportId', false);
+            Session.set('selectedMeasureReportId', '');
             Session.set('measureReportPageTabIndex', 1);
             Bert.alert('MeasureReport added!', 'success');
           }
@@ -260,7 +260,7 @@ export class MeasureReportsPage extends React.Component {
           if (result) {
             HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: context.state.measureReportId});
             Session.set('measureReportPageTabIndex', 1);
-            Session.set('selectedMeasureReportId', false);
+            Session.set('selectedMeasureReportId', '');
             Bert.alert('MeasureReport added!', 'success');
           }
         });
@@ -298,18 +298,18 @@ export class MeasureReportsPage extends React.Component {
     });
   }
   onInsert(measureReportId){
-    Session.set('selectedMeasureReportId', false);
+    Session.set('selectedMeasureReportId', '');
     Session.set('measureReportPageTabIndex', 1);
     HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: measureReportId});
   }
   onUpdate(measureReportId){
-    Session.set('selectedMeasureReportId', false);
+    Session.set('selectedMeasureReportId', '');
     Session.set('measureReportPageTabIndex', 1);
     HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: measureReportId});
   }
   onRemove(measureReportId){
     Session.set('measureReportPageTabIndex', 1);
-    Session.set('selectedMeasureReportId', false);
+    Session.set('selectedMeasureReportId', '');
     HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: measureReportId});
   }
   onCancel(){

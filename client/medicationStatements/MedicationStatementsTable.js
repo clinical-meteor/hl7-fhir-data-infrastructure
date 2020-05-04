@@ -67,12 +67,13 @@ let styles = {
 // FLATTENING / MAPPING
 
 
-flattenMedicationStatement = function(statement, fhirVersion){
+flattenMedicationStatement = function(statement, fhirVersion, medicationsCursor){
   console.log('flattenMedicationStatement', statement)
 
   var result = {
     '_id': statement._id,
     'status': '',
+    'asNeeded': false,
     'category': '',
     'medication': '',
     'medicationReference': '',
@@ -89,6 +90,7 @@ flattenMedicationStatement = function(statement, fhirVersion){
     'reasonCodeDisplay': '',
     'reasonReference': '',
     'dosage': '',
+    'rxnorm': ''
   };
 
   if(get(statement, 'patient')){
@@ -98,9 +100,9 @@ flattenMedicationStatement = function(statement, fhirVersion){
   }
 
   if(get(statement, 'patient')){
-    result.subjectReference = get(statement, 'patient.reference');
+    result.subjectReference = FhirUtilities.pluckReferenceId(get(statement, 'patient.reference'));
   } else if(get(statement, 'subject')){
-    result.subjectReference = get(statement, 'subject.reference');
+    result.subjectReference = FhirUtilities.pluckReferenceId(get(statement, 'subject.reference'));
   }
   
   // DSTU2
@@ -110,8 +112,8 @@ flattenMedicationStatement = function(statement, fhirVersion){
     result.reasonCode = get(statement, 'reasonForUseCodeableConcept.coding[0].code');
     result.reasonCodeDisplay = get(statement, 'reasonForUseCodeableConcept.coding[0].display');
     result.identifier = get(statement, 'identifier[0].value');
-    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD");
-    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD");
+    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD hh:mm A");
+    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD hh:mm A");
     result.informationSource = get(statement, 'supportingInformation[0].display');
     result.reasonCodeDisplay = get(statement, 'reasonForUseCodeableConcept.coding[0].display');  
   }
@@ -123,8 +125,8 @@ flattenMedicationStatement = function(statement, fhirVersion){
     result.medicationCodeDisplay = get(statement, 'medicationCodeableConcept.coding[0].display');
     result.medicationCode = get(statement, 'medicationCodeableConcept.coding[0].code');
     result.identifier = get(statement, 'identifier[0].value');
-    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD");
-    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD");
+    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD hh:mm A");
+    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD hh:mm A");
     result.informationSource = get(statement, 'informationSource.display');
     result.taken = get(statement, 'taken');
     result.reasonCodeDisplay = get(statement, 'reasonCode[0].coding[0].display');  
@@ -133,13 +135,25 @@ flattenMedicationStatement = function(statement, fhirVersion){
   // R4
   if(["v4.0.1", "R4"].includes(fhirVersion)){
     result.status = get(statement, 'status');
-    result.medicationReference = get(statement, 'medicationReference.reference');
-    result.medicationDisplay = get(statement, 'medicationReference.display');
+    result.asNeeded = get(statement, 'dosage[0].asNeeded');
+    result.medicationReference = FhirUtilities.pluckReferenceId(get(statement, 'medicationReference.reference'));
+
+    if(get(statement, 'medicationReference.display')){
+      result.medicationDisplay = get(statement, 'medicationReference.display');
+    } else if(medicationsCursor && result.medicationReference){
+
+      let medicationId = FhirUtilities.pluckReferenceId(get(statement, 'medicationReference.reference'));
+      let medication = medicationsCursor.findOne({id: medicationId});
+      if(get(medication, 'code.text')){
+        result.medicationDisplay = get(medication, 'code.text');
+        result.rxnorm = get(medication, 'code.coding[0].code');
+      }
+    }
     result.medicationCodeDisplay = get(statement, 'medicationCodeableConcept.coding[0].display');
     result.medicationCode = get(statement, 'medicationCodeableConcept.coding[0].code');
     result.identifier = get(statement, 'identifier[0].value');
-    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD");
-    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD");
+    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD hh:mm A");
+    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD hh:mm A");
     result.informationSource = get(statement, 'informationSource.display');
     result.reasonReference = get(statement, 'reasonReference[0].reference');  
     result.category = get(statement, 'category.text');  
@@ -148,10 +162,15 @@ flattenMedicationStatement = function(statement, fhirVersion){
     } else {
       result.reasonCodeDisplay = get(statement, 'reasonCode[0].coding[0].display');  
     }
+
+    if(get(statement, 'dosage[0].asNeededBoolean')){
+      result.dosage = 'As needed.'
+    } else if (get(statement, 'dosage[0]')){      
+      result.dosage = get(statement, 'dosage[0].doseAndRate[0].doseQuantity.value') + ' dose @ ' + get(statement, 'dosage[0].timing.repeat.frequency') + 'x per ' + get(statement, 'dosage[0].timing.repeat.period') + get(statement, 'dosage[0].timing.repeat.periodUnit');      
+    }
   }
 
-
-
+  logger.debug('flattenedMedicationStatement', result)
   return result;
 }
 
@@ -175,7 +194,7 @@ function MedicationStatementsTable(props){
     paginationLimit,
     disablePagination,
 
-    displayCheckboxes,
+    displayCheckbox,
     displayActionIcons,
     displayIdentifier,
     displaySubjectName,
@@ -190,6 +209,10 @@ function MedicationStatementsTable(props){
     displayCategory,
     displayReasonCodeDisplay,
     displayReason,
+    displayAsNeeded,
+    displayDosage,
+    displayRxNorm,
+    displayBarcode,
   
     onCellClick,
     onRowClick,
@@ -204,6 +227,8 @@ function MedicationStatementsTable(props){
     showMinutes,
     displayEnteredInError,
 
+    medicationsCursor,
+
     ...otherProps 
   } = props;
 
@@ -213,7 +238,6 @@ function MedicationStatementsTable(props){
   let rows = [];
   const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
 
   let paginationCount = 101;
   if(props.count){
@@ -267,14 +291,14 @@ function MedicationStatementsTable(props){
   // Render Functions
 
   function renderCheckboxHeader(){
-    if (props.displayCheckboxes) {
+    if (props.displayCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(patientId ){
-    if (props.displayCheckboxes) {
+    if (props.displayCheckbox) {
       return (
         <TableCell className="toggle">
           <Checkbox
@@ -365,6 +389,20 @@ function MedicationStatementsTable(props){
       );
     }
   } 
+  function renderRxNormHeader(){
+    if (props.displayRxNorm) {
+      return (
+        <TableCell className='rxnorm'>RxNorm Code</TableCell>
+      );
+    }
+  }
+  function renderRxNorm(rxnorm ){
+    if (props.displayRxNorm) {
+      return (
+        <TableCell className='rxnorm'>{ rxnorm }</TableCell>
+      );
+    }
+  } 
 
   function renderSubjectNameHeader(){
     if (props.displaySubjectName) {
@@ -391,7 +429,7 @@ function MedicationStatementsTable(props){
     if (props.displaySubjectReference) {
       return (
         <TableCell className='subjectReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
-          { FhirUtilities.pluckReferenceId(subjectReference) }
+          { subjectReference }
         </TableCell>
       );
     }
@@ -399,7 +437,7 @@ function MedicationStatementsTable(props){
   function renderMedicationReferenceHeader(){
     if (props.displayMedicationReference) {
       return (
-        <TableCell className='medicationReference'>Medication</TableCell>
+        <TableCell className='medicationReference'>Medication Reference</TableCell>
       );
     }
   }
@@ -407,7 +445,23 @@ function MedicationStatementsTable(props){
     if (props.displayMedicationReference) {
       return (
         <TableCell className='medicationReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
-          { FhirUtilities.pluckReferenceId(medicationReference) }
+          { medicationReference }
+        </TableCell>
+      );
+    }
+  }
+  function renderMedicationDisplayHeader(){
+    if (props.displayMedicationDisplay) {
+      return (
+        <TableCell className='medicationReference'>Medication</TableCell>
+      );
+    }
+  }
+  function renderMedicationDisplay(medicationDisplay ){
+    if (props.displayMedicationDisplay) {
+      return (
+        <TableCell className='medicationDisplay'>
+          { medicationDisplay }
         </TableCell>
       );
     }
@@ -423,6 +477,48 @@ function MedicationStatementsTable(props){
     if (props.displayEffectiveDate) {
       return (
         <TableCell className='effectiveDate'>{ moment(effectiveDate).format('YYYY-MM-DD') }</TableCell>
+      );
+    }
+  }
+  function renderStatus(status){
+    if (props.displayStatus) {
+      return (
+        <TableCell><span className="status">{status}</span></TableCell>
+      );
+    }
+  }
+  function renderStatusHeader(){
+    if (props.displayStatus) {
+      return (
+        <TableCell>Status</TableCell>
+      );
+    }
+  }
+  function renderAsNeeded(asNeeded){
+    if (props.displayAsNeeded) {
+      return (
+        <TableCell><span className="asNeeded">{asNeeded}</span></TableCell>
+      );
+    }
+  }
+  function renderAsNeededHeader(){
+    if (props.displayAsNeeded) {
+      return (
+        <TableCell>As Needed</TableCell>
+      );
+    }
+  }
+  function renderDosage(dosage){
+    if (props.displayDosage) {
+      return (
+        <TableCell><span className="dosage">{dosage}</span></TableCell>
+      );
+    }
+  }
+  function renderDosageHeader(){
+    if (props.displayDosage) {
+      return (
+        <TableCell>Dosage</TableCell>
       );
     }
   }
@@ -485,7 +581,7 @@ function MedicationStatementsTable(props){
 
       props.medicationStatements.forEach(function(medicationStatement){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          medicationStatementsToRender.push(flattenMedicationStatement(medicationStatement, "R4"));
+          medicationStatementsToRender.push(flattenMedicationStatement(medicationStatement, "R4", medicationsCursor));
         }
         count++;
       });  
@@ -508,14 +604,19 @@ function MedicationStatementsTable(props){
         <TableRow className="medicationStatementRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, medicationStatementsToRender[i]._id)} hover={true} >            
           { renderCheckbox() }
           { renderActionIcons(medicationStatementsToRender[i]) }
-          { renderIdentifier(medicationStatementsToRender.identifier ) }
+          { renderIdentifier(medicationStatementsToRender[i].identifier ) }
+          { renderStatus(medicationStatementsToRender[i].status ) }
+          { renderAsNeeded(medicationStatementsToRender[i].asNeeded ) }
           { renderSubjectName(medicationStatementsToRender[i].subjectDisplay ) } 
           { renderSubjectReference(medicationStatementsToRender[i].subjectReference ) }   
-          { renderCategory(medicationStatementsToRender.category ) }
+          { renderCategory(medicationStatementsToRender[i].category ) }
+          { renderRxNorm(medicationStatementsToRender[i].rxnorm ) }   
           { renderMedicationReference(medicationStatementsToRender[i].medicationReference ) }   
+          { renderMedicationDisplay(medicationStatementsToRender[i].medicationDisplay ) }   
           { renderSource(medicationStatementsToRender[i].informationSource) }
           { renderReason(medicationStatementsToRender[i].reasonCodeDisplay) }
           { renderEffectiveDate( medicationStatementsToRender[i].dateAsserted) }
+          { renderDosage(medicationStatementsToRender[i].dosage ) }
           { renderBarcode(medicationStatementsToRender[i]._id)}
           { renderActionButton(medicationStatementsToRender[i]) }
         </TableRow>
@@ -535,13 +636,18 @@ function MedicationStatementsTable(props){
             { renderCheckboxHeader() } 
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
+            { renderStatusHeader() }            
+            { renderAsNeededHeader() }            
             { renderSubjectNameHeader() }
             { renderSubjectReferenceHeader() }
             { renderCategoryHeader() }
+            { renderRxNormHeader() }
             { renderMedicationReferenceHeader() }
+            { renderMedicationDisplayHeader() } 
             { renderSourceHeader() }
             { renderReasonHeader() }
             { renderEffectiveDateHeader() }     
+            { renderDosageHeader() }
             { renderBarcodeHeader() }
             { renderActionButtonHeader() }
           </TableRow>
@@ -564,9 +670,10 @@ MedicationStatementsTable.propTypes = {
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  displayCheckboxes: PropTypes.bool,
+  displayCheckbox: PropTypes.bool,
   displayActionIcons: PropTypes.bool,
   displayIdentifier: PropTypes.bool,
+  displayAsNeeded: PropTypes.bool,
   displaySubjectName: PropTypes.bool,
   displaySubjectReference: PropTypes.bool,
   displayStatus: PropTypes.bool,
@@ -579,6 +686,9 @@ MedicationStatementsTable.propTypes = {
   displayCategory: PropTypes.bool,
   displayReasonCodeDisplay: PropTypes.bool,
   displayReason: PropTypes.bool,
+  displayDosage: PropTypes.bool,
+  displayBarcode: PropTypes.bool,
+  displayRxNorm: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -592,15 +702,33 @@ MedicationStatementsTable.propTypes = {
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   displayEnteredInError: PropTypes.bool,
-  count: PropTypes.number
+  count: PropTypes.number,
+
+  medicationsCursor: PropTypes.object
 };
 
 MedicationStatementsTable.defaultProps = {
-  displayReason: true,
+  displaySubjectName: false,
   displaySubjectReference: true,
-  rowsPerPage: 5
+  displayCheckbox: false,
+  displayActionIcons: false,
+  displayAsNeeded: false,
+  displayStatus: true,
+  displayMedicationReference: true,
+  displayMedicationDisplay: true,
+  displayMedicationCode: true, 
+  displayMedicationCodeDisplay: true,
+  displayEffectiveDate: true,
+  displayDateAsserted: true,
+  displayCategory: false,
+  displayReason: true,
+  displayReasonCodeDisplay: true,
+  displayBarcode: true,
+  displayDosage: true,
+  displayRxNorm: true,
+  rowsPerPage: 5,
+  fhirVersion: "R4"
 }
-
 
 
 export default MedicationStatementsTable;

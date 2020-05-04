@@ -27,7 +27,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 Session.setDefault('measurePageTabIndex', 0);
 Session.setDefault('measureSearchFilter', '');
-Session.setDefault('selectedMeasureId', false);
+Session.setDefault('selectedMeasureId', '');
 Session.setDefault('selectedMeasure', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('measuresArray', []);
@@ -305,18 +305,18 @@ export class MeasuresPage extends React.Component {
     });
   }
   onInsert(measureId){
-    Session.set('selectedMeasureId', false);
+    Session.set('selectedMeasureId', '');
     Session.set('measurePageTabIndex', 1);
     HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: measureId});
   }
   onUpdate(measureId){
-    Session.set('selectedMeasureId', false);
+    Session.set('selectedMeasureId', '');
     Session.set('measurePageTabIndex', 1);
     HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: measureId});
   }
   onRemove(measureId){
     Session.set('measurePageTabIndex', 1);
-    Session.set('selectedMeasureId', false);
+    Session.set('selectedMeasureId', '');
     HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: measureId});
   }
   onCancel(){

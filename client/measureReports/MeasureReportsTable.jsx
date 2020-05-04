@@ -17,7 +17,8 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-import FhirUtilities from '../../lib/FhirUtilities';
+import { FhirUtilities } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { flattenMeasureReport } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -55,68 +56,81 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenMeasureReport = function(measureReport, measuresCursor, internalDateFormat, measureShorthand){
-  let result = {
-    _id: '',
-    id: '',
-    meta: '',
-    identifier: '',
-    type: '',
-    measureUrl: '',
-    measureTitle: '',
-    date: '',
-    reporter: '',
-    periodStart: '',
-    periodEnd: '',
-    groupCode: '',
-    populationCode: '',
-    populationCount: '',
-    measureScore: '',
-    stratifierCount: ''
-  };
+// flattenMeasureReport = function(measureReport, measuresCursor, internalDateFormat, measureShorthand){
+//   let result = {
+//     _id: '',
+//     id: '',
+//     meta: '',
+//     identifier: '',
+//     type: '',
+//     measureUrl: '',
+//     measureTitle: '',
+//     date: '',
+//     reporter: '',
+//     periodStart: '',
+//     periodEnd: '',
+//     groupCode: '',
+//     populationCode: '',
+//     populationCount: '',
+//     measureScore: '',
+//     stratifierCount: '',
+//     numerator: '',
+//     denominator: ''
+//   };
 
-  if(!internalDateFormat){
-    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-  }
+//   if(!internalDateFormat){
+//     internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
+//   }
 
-  result._id =  get(measureReport, 'id') ? get(measureReport, 'id') : get(measureReport, '_id');
-  result.id = get(measureReport, 'id', '');
-  result.identifier = get(measureReport, 'identifier[0].value', '');
-  result.type = get(measureReport, 'type', '');
+//   result._id =  get(measureReport, 'id') ? get(measureReport, 'id') : get(measureReport, '_id');
+//   result.id = get(measureReport, 'id', '');
+//   result.identifier = get(measureReport, 'identifier[0].value', '');
+//   result.type = get(measureReport, 'type', '');
 
-  result.measureUrl = FhirUtilities.pluckReferenceId(get(measureReport, 'measure', '')); 
+//   result.measureUrl = get(measureReport, 'measure', ''); 
 
-  if(measuresCursor && result.measureUrl){
-    let measure = measuresCursor.findOne({id: result.measureUrl});
-    if(measureShorthand){
-      result.measureTitle = get(measure, 'id');
-    } else {
-      result.measureTitle = get(measure, 'title');
-    }
-  }
+//   if(measuresCursor && result.measureUrl){
+//     let measure = measuresCursor.findOne({id: FhirUtilities.pluckReferenceId(result.measureUrl)});
+//     if(measureShorthand){
+//       result.measureTitle = get(measure, 'id');
+//     } else {
+//       result.measureTitle = get(measure, 'title');
+//     }
+//   }
 
-  result.date = moment(get(measureReport, 'date', '')).format(internalDateFormat);
-  if(get(measureReport, 'reporter.display', '')){
-    result.reporter = get(measureReport, 'reporter.display', '');
-  } else {
-    result.reporter = get(measureReport, 'reporter.reference', '');
-  }
+//   result.date = moment(get(measureReport, 'date', '')).format(internalDateFormat);
+//   if(get(measureReport, 'reporter.display', '')){
+//     result.reporter = get(measureReport, 'reporter.display', '');
+//   } else {
+//     result.reporter = get(measureReport, 'reporter.reference', '');
+//   }
 
-  result.periodStart = moment(get(measureReport, 'period.start', '')).format(internalDateFormat);
-  result.periodEnd = moment(get(measureReport, 'period.end', '')).format(internalDateFormat);
+//   result.periodStart = moment(get(measureReport, 'period.start', '')).format(internalDateFormat);
+//   result.periodEnd = moment(get(measureReport, 'period.end', '')).format(internalDateFormat);
 
-  result.groupCode = get(measureReport, 'group[0].coding[0].code', '');
-  result.populationCode = get(measureReport, 'group[0].population[0].coding[0].code', '');
-  result.populationCount = get(measureReport, 'group[0].population[0].count', '');
+//   result.groupCode = get(measureReport, 'group[0].coding[0].code', '');
+//   result.populationCode = get(measureReport, 'group[0].population[0].coding[0].code', '');
+//   result.populationCount = get(measureReport, 'group[0].population[0].count', '');
 
-  result.measureScore = get(measureReport, 'group[0].measureScore.value', '');
+//   if(get(measureReport, 'group[0].population')){
+//     let population = get(measureReport, 'group[0].population');
+//     population.forEach(function(pop){
+//       if(get(pop, 'code.text') === "numerator"){
+//         result.numerator = get(pop, 'count');
+//       }
+//       if(get(pop, 'code.text') === "denominator"){
+//         result.denominator = get(pop, 'count');        
+//       }
+//     })
+//   }
 
+//   result.measureScore = get(measureReport, 'group[0].measureScore.value', '');
 
-  let stratifierArray = get(measureReport, 'group[0].stratifier', []);
-  result.stratifierCount = stratifierArray.length;
+//   let stratifierArray = get(measureReport, 'group[0].stratifier', []);
+//   result.stratifierCount = stratifierArray.length;
 
-  return result;
-}
+//   return result;
+// }
 
 
 
@@ -151,6 +165,9 @@ function MeasureReportsTable(props){
     hideActionIcons,
     measuresCursor,
     measureShorthand,
+    hideNumerator,
+    hideDenominator,
+    hideBarcode,
 
     onRowClick,
     onRemoveRecord,
@@ -313,7 +330,7 @@ function MeasureReportsTable(props){
   function renderDateHeader(){
     if (!props.hideDate) {
       return (
-        <TableCell className='date' style={{minWidth: '120px'}}>Date</TableCell>
+        <TableCell className='date' style={{minWidth: '120px'}}>Report Date</TableCell>
       );
     }
   }
@@ -341,7 +358,7 @@ function MeasureReportsTable(props){
   function renderPeriodStartHeader(){
     if (!props.hidePeriodStart) {
       return (
-        <TableCell className='periodStart'>Start</TableCell>
+        <TableCell className='periodStart'>Start Date</TableCell>
       );
     }
   }
@@ -355,7 +372,7 @@ function MeasureReportsTable(props){
   function renderPeriodEndHeader(){
     if (!props.hidePeriodEnd) {
       return (
-        <TableCell className='periodEnd'>End</TableCell>
+        <TableCell className='periodEnd'>End Date</TableCell>
       );
     }
   }
@@ -415,6 +432,34 @@ function MeasureReportsTable(props){
       );
     }
   }
+  function renderNumerator(numerator){
+    if (!props.hideNumerator) {
+      return (
+        <TableCell className='numerator'>{ numerator }</TableCell>
+      );
+    }
+  }
+  function renderNumeratorHeader(){
+    if (!props.hideNumerator) {
+      return (
+        <TableCell className='numerator'>Numerator</TableCell>
+      );
+    }
+  }
+  function renderDenominator(denominator){
+    if (!props.hideDenominator) {
+      return (
+        <TableCell className='denominator'>{ denominator }</TableCell>
+      );
+    }
+  }
+  function renderDenominatorHeader(){
+    if (!props.hideDenominator) {
+      return (
+        <TableCell className='denominator'>Denominator</TableCell>
+      );
+    }
+  }
   function renderStratificationCount(stratificationCount){
     if (!props.hideStratificationCount) {
       return (
@@ -432,14 +477,14 @@ function MeasureReportsTable(props){
   
 
   function renderBarcode(id){
-    if (!props.hideIdentifier) {
+    if (!props.hideBarcode) {
       return (
         <TableCell><span className="barcode">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideIdentifier) {
+    if (!props.hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
@@ -532,10 +577,12 @@ function MeasureReportsTable(props){
           { renderGroupCode(measureReportsToRender[i].groupCode) }
           { renderPopulationCode(measureReportsToRender[i].populationCode) }
           { renderPopulationCount(measureReportsToRender[i].populationCount) }
+          { renderNumerator(measureReportsToRender[i].numerator) }
+          { renderDenominator(measureReportsToRender[i].denominator) }
           { renderMeasureScore(measureReportsToRender[i].measureScore) }
           { renderStratificationCount(measureReportsToRender[i].stratificationCount) }          
           
-          { renderBarcode(measureReportsToRender[i]._id)}
+          { renderBarcode(measureReportsToRender[i].id)}
         </TableRow>
       );    
     }
@@ -560,6 +607,8 @@ function MeasureReportsTable(props){
             { renderGroupCodeHeader() }
             { renderPopulationCodeHeader() }
             { renderPopulationCountHeader() }
+            { renderNumeratorHeader() }
+            { renderDenominatorHeader() }
             { renderMeasureScoreHeader() }
             { renderStratificationCountHeader() }    
             { renderBarcodeHeader() }
@@ -586,6 +635,7 @@ MeasureReportsTable.propTypes = {
   hideCheckboxes: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideTypeCode: PropTypes.bool,
+  hideMeasureTitle: PropTypes.bool,
   hideMeasureUrl: PropTypes.bool,
   hideDate: PropTypes.bool,
   hideReporter: PropTypes.bool,
@@ -597,6 +647,7 @@ MeasureReportsTable.propTypes = {
   hideMeasureScore: PropTypes.bool,
   hideStratificationCount: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -616,7 +667,7 @@ MeasureReportsTable.defaultProps = {
   hideIdentifier: true,
   hideStatus: true,
   hideTypeCode: true,
-  hideMeasureTitle: false,
+  hideMeasureTitle: true,
   hideMeasureUrl: true,
   hideDate: false,
   hideReporter: false,
@@ -629,7 +680,10 @@ MeasureReportsTable.defaultProps = {
   hideStratificationCount: true,
   hideActionIcons: true,
   measureShorthand: false,
-  selectedMeasureReportId: false
+  hideNumerator: false,
+  hideDenominator: false,
+  hideBarcode: false,
+  selectedMeasureReportId: ''
 }
 
 export default MeasureReportsTable; 

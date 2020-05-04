@@ -106,68 +106,6 @@ flattenMedication = function(medication, internalDateFormat, fhirVersion){
   }
 
   return result;
-
-
-  // let result = {
-  //   _id: '',
-  //   id: '',
-  //   meta: '',
-  //   identifier: '',
-  //   clinicalStatus: '',
-  //   patientDisplay: '',
-  //   patientReference: '',
-  //   asserterDisplay: '',
-  //   verificationStatus: '',
-  //   severity: '',
-  //   snomedCode: '',
-  //   snomedDisplay: '',
-  //   evidenceDisplay: '',
-  //   barcode: '',
-  //   onsetDateTime: '',
-  //   abatementDateTime: ''
-  // };
-
-  // if(!internalDateFormat){
-  //   internalDateFormat = "YYYY-MM-DD";
-  // }
-
-  // result._id =  get(medication, 'id') ? get(medication, 'id') : get(medication, '_id');
-  // result.id = get(medication, 'id', '');
-  // result.identifier = get(medication, 'identifier[0].value', '');
-
-  // if(get(medication, 'patient')){
-  //   result.patientDisplay = get(medication, 'patient.display', '');
-  //   result.patientReference = get(medication, 'patient.reference', '');
-  // } else if (get(medication, 'subject')){
-  //   result.patientDisplay = get(medication, 'subject.display', '');
-  //   result.patientReference = get(medication, 'subject.reference', '');
-  // }
-  // result.asserterDisplay = get(medication, 'asserter.display', '');
-
-
-  // if(get(medication, 'clinicalStatus.coding[0].code')){
-  //   result.clinicalStatus = get(medication, 'clinicalStatus.coding[0].code', '');  //R4
-  // } else {
-  //   result.clinicalStatus = get(medication, 'clinicalStatus', '');                 // DSTU2
-  // }
-
-  // if(get(medication, 'verificationStatus.coding[0].code')){
-  //   result.verificationStatus = get(medication, 'verificationStatus.coding[0].code', '');  // R4
-  // } else {
-  //   result.verificationStatus = get(medication, 'verificationStatus', '');                 // DSTU2
-  // }
-
-  // result.snomedCode = get(medication, 'code.coding[0].code', '');
-  // result.snomedDisplay = get(medication, 'code.coding[0].display', '');
-
-  // result.evidenceDisplay = get(medication, 'evidence[0].detail[0].display', '');
-  // result.barcode = get(medication, '_id', '');
-  // result.severity = get(medication, 'severity.text', '');
-
-  // result.onsetDateTime = moment(get(medication, 'onsetDateTime', '')).format("YYYY-MM-DD");
-  // result.abatementDateTime = moment(get(medication, 'abatementDateTime', '')).format("YYYY-MM-DD");
-
-  // return result;
 }
 
 //===========================================================================

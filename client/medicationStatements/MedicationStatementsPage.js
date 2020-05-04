@@ -115,6 +115,8 @@ export class MedicationStatementsPage extends React.Component {
                 fhirVersion={ this.data.fhirVersion } 
                 medicationStatements={this.data.medicationStatements} 
                 count={this.data.medicationStatementsCount}
+                rowsPerPage={20}
+                medicationsCursor={Medications}
               />
               {/* <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
                 <Tab label="History" value={0} />

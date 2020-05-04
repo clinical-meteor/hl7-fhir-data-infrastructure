@@ -18,6 +18,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
+import { flattenMeasure } from '../../lib/FhirDehydrator';
+
 
 //===========================================================================
 // THEMING
@@ -54,87 +56,75 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenMeasure = function(measure, internalDateFormat){
-  let result = {
-    _id: '',
-    meta: '',
-    identifier: '',
-    publisher: '',
-    status: '',
-    title: '',
-    date: '',
-    approvalDate: '',
-    lastReviewDate: '',
-    lastEdited: '',
-    author: '',
-    reviewer: '',
-    endorser: '',
-    scoring: '',
-    type: '',
-    riskAdjustment: '',
-    rateAggregation: '',
-    supplementalDataCount: '',
-    context: '', 
-    version: ''
-  };
+// flattenMeasure = function(measure, internalDateFormat){
+//   let result = {
+//     _id: '',
+//     meta: '',
+//     identifier: '',
+//     publisher: '',
+//     status: '',
+//     title: '',
+//     date: '',
+//     approvalDate: '',
+//     lastReviewDate: '',
+//     lastEdited: '',
+//     author: '',
+//     reviewer: '',
+//     endorser: '',
+//     scoring: '',
+//     type: '',
+//     riskAdjustment: '',
+//     rateAggregation: '',
+//     supplementalDataCount: '',
+//     context: '', 
+//     version: ''
+//   };
 
-  if(!internalDateFormat){
-    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-  }
+//   if(!internalDateFormat){
+//     internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
+//   }
 
-  result._id =  get(measure, 'id') ? get(measure, 'id') : get(measure, '_id');
-  result.id = get(measure, 'id', '');
-  result.identifier = get(measure, 'identifier[0].value', '');
+//   result._id =  get(measure, 'id') ? get(measure, 'id') : get(measure, '_id');
+//   result.id = get(measure, 'id', '');
+//   result.identifier = get(measure, 'identifier[0].value', '');
 
-  if(get(measure, 'lastReviewDate')){
-    result.lastReviewDate = moment(get(measure, 'lastReviewDate', '')).format(internalDateFormat);
-  }
-  if(get(measure, 'approvalDate')){
-    result.approvalDate = moment(get(measure, 'approvalDate', '')).format(internalDateFormat);
-  }
-  if(get(measure, 'date')){
-    result.lastEdited = moment(get(measure, 'date', '')).format(internalDateFormat);
-  }
+//   if(get(measure, 'lastReviewDate')){
+//     result.lastReviewDate = moment(get(measure, 'lastReviewDate', '')).format(internalDateFormat);
+//   }
+//   if(get(measure, 'approvalDate')){
+//     result.approvalDate = moment(get(measure, 'approvalDate', '')).format(internalDateFormat);
+//   }
+//   if(get(measure, 'date')){
+//     result.lastEdited = moment(get(measure, 'date', '')).format(internalDateFormat);
+//   }
 
-  result.publisher = get(measure, 'publisher', '');
-  result.title = get(measure, 'title', '');
-  result.description = get(measure, 'description', '');
-  result.status = get(measure, 'status', '');
-  result.version = get(measure, 'version', '');
+//   result.publisher = get(measure, 'publisher', '');
+//   result.title = get(measure, 'title', '');
+//   result.description = get(measure, 'description', '');
+//   result.status = get(measure, 'status', '');
+//   result.version = get(measure, 'version', '');
 
-  result.context = get(measure, 'useContext[0].valueCodeableConcept.text', '');
+//   result.context = get(measure, 'useContext[0].valueCodeableConcept.text', '');
 
-  // if(get(measure, 'author.display')){
-  //   result.author = get(measure, 'author.display', '');
-  // } else {
-  //   result.author = FhirUtilities.pluckReferenceId(get(measure, 'author.reference'));
-  // }
+//   result.editor = get(measure, 'editor[0].name', '');
+//   result.reviewer = get(measure, 'reviewer[0].name', '');
+//   result.endorser = get(measure, 'endorser[0].name', '');
 
-  // if(get(measure, 'reviewer.display')){
-  //   result.reviewer = get(measure, 'reviewer.display', '');
-  // } else {
-  //   result.reviewer = FhirUtilities.pluckReferenceId(get(measure, 'reviewer.reference'));
-  // }
+//   result.scoring = get(measure, 'scoring.coding[0].display', '');
+//   result.type = get(measure, 'type[0].coding[0].display', '');
 
-  result.editor = get(measure, 'editor[0].name', '');
-  result.reviewer = get(measure, 'reviewer[0].name', '');
-  result.endorser = get(measure, 'endorser[0].name', '');
-
-  result.scoring = get(measure, 'scoring.coding[0].display', '');
-  result.type = get(measure, 'type[0].coding[0].display', '');
-
-  result.riskAdjustment = get(measure, 'riskAdjustment', '');
-  result.rateAggregation = get(measure, 'rateAggregation', '');
+//   result.riskAdjustment = get(measure, 'riskAdjustment', '');
+//   result.rateAggregation = get(measure, 'rateAggregation', '');
   
-  let supplementalData = get(measure, 'supplementalData', []);
-  result.supplementalDataCount = supplementalData.length;
+//   let supplementalData = get(measure, 'supplementalData', []);
+//   result.supplementalDataCount = supplementalData.length;
 
-  let cohorts = get(measure, 'group[0].population', []);
-  result.cohortCount = cohorts.length;
+//   let cohorts = get(measure, 'group[0].population', []);
+//   result.cohortCount = cohorts.length;
 
 
-  return result;
-}
+//   return result;
+// }
 
 
 
