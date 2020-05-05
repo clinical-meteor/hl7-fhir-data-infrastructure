@@ -210,6 +210,7 @@ export class ConditionsPage extends React.Component {
                   count={this.data.conditionsCount}  
                   autoColumns={true}
                   displayBarcode={true}
+                  rowsPerPage={20}
                 />
               </CardContent>
           </StyledCard>
