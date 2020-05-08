@@ -27,6 +27,8 @@ import { get } from 'lodash';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
 
 //=============================================================================================================================================
 // Session Variables
@@ -169,10 +171,7 @@ export class DevicesPage extends React.Component {
   render() {
     if(process.env.NODE_ENV === "test") console.log('In DevicesPage render');
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
     
     return (
       <PageCanvas id="devicesPage" headerHeight={headerHeight} >

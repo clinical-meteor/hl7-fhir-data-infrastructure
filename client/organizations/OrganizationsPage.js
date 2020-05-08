@@ -20,7 +20,8 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 
 import OrganizationDetail from './OrganizationDetail';
-import OrganizationTable from './OrganizationsTable';
+import OrganizationsTable from './OrganizationsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
@@ -109,29 +110,11 @@ const muiTheme = createMuiTheme({
 Session.setDefault('organizationPageTabIndex', 1); 
 Session.setDefault('organizationSearchFilter', ''); 
 Session.setDefault('selectedOrganizationId', false);
+Session.setDefault('selectedOrganization', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
-
-//=============================================================================================================================================
-// TABS
+Session.setDefault('OrganizationsPage.onePageLayout', true)
 
 
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 
 //=============================================================================================================================================
@@ -153,61 +136,104 @@ export class OrganizationsPage extends React.Component {
       tabIndex: Session.get('organizationPageTabIndex'),
       organizationSearchFilter: Session.get('organizationSearchFilter'),
       selectedOrganizationId: Session.get('selectedOrganizationId'),
+      selectedOrganization: Session.get('selectedOrganization'),
       fhirVersion: Session.get('fhirVersion'),
-      selectedOrganization: false
+      selectedOrganization: false,
+      onePageLayout: true,
+      organizations: [],
+      organizationsCount: 0
     };
 
-    if (Session.get('selectedOrganizationId')){
-      data.selectedOrganization = Organizations.findOne({_id: Session.get('selectedOrganizationId')});
-    } else {
-      data.selectedDevice = false;
-    }
+    data.organizations = Organizations.find().fetch();
+    data.organizationsCount = Organizations.find().count();
+
+
+    data.onePageLayout = Session.get('OrganizationsPage.onePageLayout');
+    data.selectedOrganization = Session.get('selectedOrganization');
+
+    // if (Session.get('selectedOrganizationId')){
+    //   data.selectedOrganization = Organizations.findOne({_id: Session.get('selectedOrganizationId')});
+    // } else {
+    //   data.selectedOrganization = false;
+    // }
 
     if(process.env.NODE_ENV === "test") console.log("OrganizationsPage[data]", data);
     return data;
   }
 
-  handleTabChange(index){
-    Session.set('organizationPageTabIndex', index);
-  }
 
-  onNewTab(){
-    Session.set('selectedOrganizationId', false);
-    Session.set('organizationUpsert', false);
+  handleRowClick(organizationId){
+    console.log('OrganizationsPage.handleRowClick', organizationId)
+    let organization = Organizations.findOne({id: organizationId});
+
+    Session.set('selectedOrganizationId', get(organization, 'id'));
+    Session.set('selectedOrganization', Organizations.findOne({id: get(organization, 'id')}));
   }
 
   render() {
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
+
+    let layoutContents;
+    if(this.data.onePageLayout){
+      layoutContents = <Grid container>
+        <StyledCard height="auto" margin={20} >
+        <CardHeader title={this.data.organizationsCount + " Organizations"} />
+        <CardContent>
+          <OrganizationsTable          
+            organizations={this.data.organizations}
+            count={this.data.organizationsCount}
+            selectedOrganizationId={ this.data.selectedOrganizationId }
+            onRowClick={this.handleRowClick.bind(this) }
+            hideCheckbox={true}
+            hideBarcode={false}
+            size="small"
+          />                                
+          </CardContent>
+        </StyledCard>
+      </Grid>
+    } else {
+      layoutContents = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} >
+            <CardHeader title={this.data.organizationsCount + " Organizations"} />
+            <CardContent>
+              <OrganizationsTable
+                organizations={this.data.organizations}
+                count={this.data.organizationsCount}
+                hideCheckbox={true}
+                hideBarcode={true}
+                hidePhone={true}
+                hideEmail={true}
+                hideActionIcons={true}
+                selectedOrganizationId={ this.data.selectedOrganizationId }
+                onRowClick={this.handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("small") }
+                size="small"
+              />              
+            </CardContent>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedOrganizationId }</h1>
+            <CardContent>
+              <CardContent>
+                <OrganizationDetail 
+                  organizationId={this.data.selectedOrganizationId}
+                  organization={this.data.selectedOrganization}
+                />
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+      </Grid>
     }
     
     return (
       <PageCanvas id="organizationsPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
-            <CardHeader
-              title="Organizations"
-            />
-            <CardContent>
-              <Tabs id="organizationsPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}> 
-                {/* <Tab className="newOrganizationTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0} >
-                  <OrganizationDetail 
-                    id='newOrganization' />
-                </Tab> */}
-                <Tab className="organizationListTab" label='Organizations' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                  <OrganizationTable />
-                </Tab>
-                <Tab className="organizationDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                  {/* <OrganizationDetail 
-                    id='organizationDetails' 
-                    organization={ this.data.selectedOrganization }
-                    organizationId={ this.data.selectedOrganizationId } />   */}
-                </Tab>
-              </Tabs>
-            </CardContent>
-          </StyledCard>
+          { layoutContents }
         </MuiThemeProvider>
       </PageCanvas>
     );

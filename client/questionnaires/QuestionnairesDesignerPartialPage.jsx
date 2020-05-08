@@ -430,8 +430,8 @@ export class QuestionnairesPage extends React.Component {
       <PageCanvas id="questionnairesPage" headerHeight={headerHeight}>
         <MuiThemeProvider theme={muiTheme} >
           <Grid container>
-            <Grid item md={6}>
-              <StyledCard height="auto" margin={20}>
+            <Grid item md={4} marins={20} style={{position: 'sticky', top: '0px'}}>
+              <StyledCard height="auto" margins={20}>
                 <CardHeader
                   title="Questionnaires"
                 />
@@ -444,11 +444,100 @@ export class QuestionnairesPage extends React.Component {
                 />
               </StyledCard>
             </Grid>
-            <Grid item md={5} style={{position: 'sticky', top: '0px', margin: '20px'}}>
+            <Grid item md={4}>
+              <CardHeader 
+                title='Add Questions' 
+                />
+
+              <StyledCard margins={20}>
+                <CardHeader subtitle='Basic Question' />
+                <CardContent>
+                  <TextField
+                    hintText="Lorem ipsum?"
+                    errorText="Question text as it should be displayed."
+                    type='text'
+                    value={ get(this, 'data.questionnaireDesignerCurrentQuestion.text') }
+                    onChange={ this.updateQuestionText.bind(this) }
+                    fullWidth />
+                  <br />
+                  <TextField
+                    errorText="Multiplicity"
+                    defaultValue={1}
+                    type='number'
+                    />
+                </CardContent>
+                <CardActions>
+                  <Button id='multilineButton' primary={ this.data.isMultiline } >Multiline</Button>
+                  <Button id='numericalButton' primary={ this.data.isNumber } >Numerical</Button>
+                  <Button id='addQuestionButton' onClick={ this.addQuestion.bind(this)} style={{float: 'right'}} >Add</Button>
+                  <Button id='saveQuestionButton' onClick={ this.saveQuestion.bind(this, this.data.activeQuestionLinkId)} style={{float: 'right'}} >Save</Button>
+                </CardActions>
+              </StyledCard>
+              <DynamicSpacer />
+
+              <StyledCard margins={20}>
+                <CardHeader subtitle='Multiple Choice Question' />
+                <CardContent>
+                  <TextField
+                    id='multipleChoiceQuestionTitle'
+                    hintText="Lorem ipsum...."
+                    errorText="Multiple Choice Question"
+                    type='text'
+                    fullWidth />
+                  <TextField
+                    hintText="Multiple Choice"
+                    errorText="New Choice"
+                    type='text'
+                    style={{paddingLeft: '20px'}}
+                    fullWidth />
+                    <DynamicSpacer />
+                  <Button onClick={this.addChoice} style={{margin: '20px'}}>Add Choice</Button>
+                </CardContent>
+                <CardActions>
+                  <Button id='addMultipleChoice'>Add</Button>
+                </CardActions>
+              </StyledCard>
+              <DynamicSpacer />
+              
+
+              <StyledCard margins={20}>
+                <CardHeader subtitle='Question Response' />
+                <CardContent>
+                  <Checkbox
+                    label="Response Behavior"
+                    toggled={ this.data.isActive }
+                  />
+                </CardContent>
+                <CardActions>
+                  <Button id='addMultipleChoice'>Add</Button>
+                </CardActions>
+              </StyledCard>
+              <DynamicSpacer />
+
+              <StyledCard margins={20}>
+                <CardHeader subtitle='Display' />
+                <CardContent>
+                  <TextField
+                    id='linkUrl'
+                    hintText="http://bit.ly/12345"
+                    errorText="Link URL"
+                    type='text'
+                    style={{paddingLeft: '20px'}}
+                    fullWidth />
+                </CardContent>
+                <CardActions>
+                  <Button id='addMultipleChoice'>Add</Button>
+                </CardActions>
+              </StyledCard>
+              <DynamicSpacer />
+
+
+            </Grid>
+            <Grid item md={4} style={{position: 'sticky', top: '0px'}}>
               <CardHeader 
                 title='Preview' 
                 />
-              <StyledCard margin={20}>
+              <StyledCard margins={20}>
                 <CardContent>
                   <TextField
                     hintText="Questionnaire - My Custom Name"
@@ -466,7 +555,7 @@ export class QuestionnairesPage extends React.Component {
               </StyledCard>
               <DynamicSpacer />
 
-              <StyledCard margin={20}>
+              <StyledCard margins={20}>
                 <CardContent>
                   <QuestionnaireDetail id='questionnaireDetails' currentQuestionnaire={this.data.currentQuestionnaire} />
                 </CardContent>

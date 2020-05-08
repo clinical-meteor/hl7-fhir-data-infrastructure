@@ -1,13 +1,12 @@
-import { CardActions, CardText, CardTitle, RaisedButton, TextField } from 'material-ui';
 import React, {Component} from 'react';
 import {render} from 'react-dom';
+
 import {
   SortableContainer,
   SortableElement,
   arrayMove,
 } from 'react-sortable-hoc';
  
-
 
 const SortableItem = SortableElement(({value}) => <li style={{listStyleType: 'none'}}>
     SortableItem

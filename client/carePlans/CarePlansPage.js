@@ -15,6 +15,8 @@ import { Session } from 'meteor/session';
 import CarePlanDetail from './CarePlanDetail';
 import CarePlansTable from './CarePlansTable';
 
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
 import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
@@ -80,10 +82,7 @@ export class CarePlansPage extends React.Component {
     if(process.env.NODE_ENV === "test") console.log('In CarePlansPage render');
 
 
-    let headerHeight = 84;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader')){
-      headerHeight = 148;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     return (
       <PageCanvas id='carePlansPage' headerHeight={headerHeight} >

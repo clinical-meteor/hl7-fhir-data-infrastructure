@@ -1,22 +1,27 @@
 import { 
-  CardActions, 
-  CardText, 
-  CardTitle, 
-  RaisedButton, 
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
   List,
   ListItem,
-  TextField 
-} from 'material-ui';
-import { get, uniq, compact } from 'lodash';
-import {render} from 'react-dom';
+  ListItemIcon,
+  ListItemText
+} from '@material-ui/core';
 
-import { Bert } from 'meteor/clinical:alert';
+
+import { get, uniq, compact } from 'lodash';
+
 import React, {Component} from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
 
-import { Questionnaires } from '../lib/Questionnaires';
+import { Questionnaires } from '../../lib/schemas/Questionnaires';
+
 import { Session } from 'meteor/session';
 import {
   SortableContainer,
@@ -29,10 +34,13 @@ let defaultQuestionnaire = {
   "resourceType" : "Questionnaire"
 };
 
-import { IoIosRemoveCircleOutline, IoIosRemoveCircle  } from 'react-icons/io';
-import { FaGripLines  } from 'react-icons/fa';
+
+import { Icon } from 'react-icons-kit'
+import { ic_reorder } from 'react-icons-kit/md/ic_reorder'
 
 
+//===========================================================================
+// THEMING
 
 let sortableItemStyle = {
   fontSize: '18px', 
@@ -110,9 +118,9 @@ function ListItemSwitch({value, isSorting, linkId}){
     console.log('ListItemSwitch.linkId', linkId)
 
     if(isSorting){
-      rightIcon = <FaGripLines style={{top: '15px', right: '15px'}} />;
+      rightIcon = <Icon icon={ic_reorder} style={{top: '15px', right: '15px'}} />;
     } else {
-      rightIcon = <IoIosRemoveCircleOutline style={{top: '15px', right: '15px'}} onClick={ removeItemFromQuestionnaire.bind(this, linkId) } />;
+      rightIcon = <Icon icon={ic_reorder} style={{top: '15px', right: '15px'}} onClick={ removeItemFromQuestionnaire.bind(this, linkId) } />;
     }
     
 
@@ -176,42 +184,6 @@ function ListItemSwitch({value, isSorting, linkId}){
 }
 const SortableItem = SortableElement(ListItemSwitch);
 
-// const SortableItem = SortableElement(function(value){
-//   let result;
-//   switch (value) {
-//     case 'choice':
-//       result = <li style={{padding: '5px', backgroundColor: 'cornflowerblue', borderRadius: '3px'}}>
-//         <p>{value}</p>
-//       </li>
-//       break;
-//     case 'update':
-//       result = <li style={{padding: '5px', backgroundColor: 'yellow', borderRadius: '3px'}}>
-//         <p>{value}</p>
-//       </li>
-//       break;
-//     case 'display':
-//       result = <li style={{padding: '5px', backgroundColor: 'pink', borderRadius: '3px'}}>
-//         <p>{value}</p>
-//       </li>
-//       break;
-//     case 'decimal':
-//       result = <li style={{padding: '5px', backgroundColor: 'lavender', borderRadius: '3px'}}>
-//         <p>{value}</p>
-//       </li>
-//       break;
-//     case 'response':
-//       result = <li style={{padding: '5px', backgroundColor: 'lightgray', borderRadius: '3px'}}>
-//         <p>{value}</p>
-//       </li>
-//       break;  
-//     default:
-//       result = <li style={sortableItemStyle}>
-//         <p>{value}</p>
-//       </li>
-//       break;
-//   }  
-//   return result;
-// });
 
 const SortableList = SortableContainer(({items, isSorting}) => {
   return (
@@ -242,29 +214,6 @@ const SortableList = SortableContainer(({items, isSorting}) => {
 });
 
 
-
-// export class SortableQuestionnaire extends React.Component {
-//     constructor(props) {
-//         super(props);
-//     }
-//     state = {
-//         items: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6'],
-//     };
-//     componentDidMount() {
-//       if(this.props.items){
-//         this.setState({items: this.props.items});
-//       }
-//     };
-//     onSortEnd = ({oldIndex, newIndex}) => {
-//         this.setState(({items}) => ({
-//           items: arrayMove(items, oldIndex, newIndex),
-//         }));
-//     };
-//     render() {
-//         console.log('SortableQuestionnaire', this.state)
-//         return <SortableList items={this.state.items} onSortEnd={this.onSortEnd} />;
-//     }
-// }
 
 
 Session.setDefault('questionnaireUpsert', false);
@@ -376,13 +325,13 @@ export class QuestionnaireDetail extends React.Component {
     if (questionnaireId) {
       return (
         <div>
-          <RaisedButton id='saveQuestionnaireButton' className='saveQuestionnaireButton' label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} />
-          <RaisedButton label="Delete" onClick={this.handleDeleteButton.bind(this)} />
+          <Button id='saveQuestionnaireButton' className='saveQuestionnaireButton' primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} >Save</Button>
+          <Button onClick={this.handleDeleteButton.bind(this)} >Delete</Button>
         </div>
       );
     } else {
       return(
-        <RaisedButton id='saveQuestionnaireButton'  className='saveQuestionnaireButton' label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} />
+        <Button id='saveQuestionnaireButton' className='saveQuestionnaireButton' primary={true} onClick={this.handleSaveButton.bind(this)} >Save</Button>
       );
     }
   }
@@ -410,7 +359,7 @@ export class QuestionnaireDetail extends React.Component {
       Questionnaires.update({_id: Session.get('selectedQuestionnaire')}, {$set: questionnaireUpdate }, function(error, result){
         if (error) {
           if(process.env.NODE_ENV === "test") console.log("Questionnaires.insert[error]", error);
-          Bert.alert(error.reason, 'danger');
+          // Bert.alert(error.reason, 'danger');
         }
         if (result) {
           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Questionnaires", recordId: Session.get('selectedQuestionnaire')});
@@ -418,7 +367,7 @@ export class QuestionnaireDetail extends React.Component {
           Session.set('questionnaireUpsert', false);
           Session.set('selectedQuestionnaire', false);
           Session.set('questionnairePageTabIndex', 1);
-          Bert.alert('Questionnaire added!', 'success');
+          // Bert.alert('Questionnaire added!', 'success');
         }
       });
     } else {
@@ -427,14 +376,14 @@ export class QuestionnaireDetail extends React.Component {
       Questionnaires.insert(questionnaireUpdate, function(error, result) {
         if (error) {
           if(process.env.NODE_ENV === "test")  console.log('Questionnaires.insert[error]', error);
-          Bert.alert(error.reason, 'danger');
+          // Bert.alert(error.reason, 'danger');
         }
         if (result) {
           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Questionnaires", recordId: result});
           Session.set('questionnairePageTabIndex', 1);
           Session.set('selectedQuestionnaire', false);
           Session.set('questionnaireUpsert', false);
-          Bert.alert('Questionnaire added!', 'success');
+          // Bert.alert('Questionnaire added!', 'success');
         }
       });
     }
@@ -448,7 +397,7 @@ export class QuestionnaireDetail extends React.Component {
     Questionnaires.remove({_id: Session.get('selectedQuestionnaire')}, function(error, result){
       if (error) {
         if(process.env.NODE_ENV === "test") console.log('Questionnaires.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
+        // Bert.alert(error.reason, 'danger');
       }
       if (result) {
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Questionnaires", recordId: Session.get('selectedQuestionnaire')});
@@ -456,7 +405,7 @@ export class QuestionnaireDetail extends React.Component {
         Session.set('questionnaireUpsert', false);
         Session.set('questionnairePageTabIndex', 1);
         Session.set('selectedQuestionnaire', false);
-        Bert.alert('Questionnaire removed!', 'success');
+        // Bert.alert('Questionnaire removed!', 'success');
       }
     });
   }

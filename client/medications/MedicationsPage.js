@@ -15,6 +15,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import MedicationDetail from './MedicationDetail';
 import MedicationsTable from './MedicationsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 // import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';

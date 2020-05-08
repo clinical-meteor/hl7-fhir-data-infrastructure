@@ -16,6 +16,7 @@ import {
 
 import MedicationRequestDetail from './MedicationRequestDetail';
 import MedicationRequestsTable from './MedicationRequestsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -170,10 +171,7 @@ export class MedicationRequestsPage extends React.Component {
   render() {
     if(process.env.NODE_ENV === "test") console.log('In MedicationRequestsPage render');
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     return (
       <PageCanvas id="medicationRequestsPage" headerHeight={headerHeight} >

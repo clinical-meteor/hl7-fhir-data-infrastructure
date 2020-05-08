@@ -19,6 +19,7 @@ import { Session } from 'meteor/session';
 
 import ProcedureDetail from './ProcedureDetail';
 import ProceduresTable from './ProceduresTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
@@ -172,10 +173,7 @@ export class ProceduresPage extends React.Component {
   render() {
     if(process.env.NODE_ENV === "test") console.log('In ProceduresPage render');
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     let proceduresTitle = this.data.proceduresCount + " Procedures";
 

@@ -22,6 +22,7 @@ let set = _.set;
 
 
 import FhirUtilities from '../../lib/FhirUtilities';
+import { flattenOrganization } from '../../lib/FhirDehydrator';
 
 
 
@@ -61,7 +62,7 @@ let styles = {
   //===========================================================================
   // FLATTENING / MAPPING
 
-  flattenOrganization = function(organization, internalDateFormat){
+  flattenOrganization = function(organization){
     let result = {
       _id: '',
       id: '',
@@ -115,11 +116,12 @@ function OrganizationsTable(props){
 
     data,
     organizations,
+    selectedOrganizationId,
     query,
     paginationLimit,
     disablePagination,
   
-    hideCheckboxes,
+    hideCheckbox,
     hideActionIcons,
     hideIdentifier,
     hideName,
@@ -142,7 +144,7 @@ function OrganizationsTable(props){
     rowsPerPage,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
+    size,
 
     ...otherProps 
   } = props;
@@ -190,8 +192,11 @@ function OrganizationsTable(props){
   function removeRecord(_id){
     console.log('removeRecord')
   }
-  function rowClick(id){
-    console.log('rowClick')
+  function handleRowClick(id){
+    console.log('handleRowClick')
+    if(typeof props.onRowClick === "function"){
+      props.onRowClick(id);
+    }
   }
   function handleActionButtonClick(){
     console.log('handleActionButtonClick')
@@ -201,14 +206,14 @@ function OrganizationsTable(props){
   // Column Rendering
 
   function renderCheckboxHeader(){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(patientId ){
-    if (!props.hideCheckboxes) {
+    if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle">
           <Checkbox
@@ -391,15 +396,8 @@ function OrganizationsTable(props){
 
   let tableRows = [];
   let organizationsToRender = [];
-  let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
-    internalDateFormat = "YYYY-MM-DD hh:mm";
-  }
-  if(props.dateFormat){
-    internalDateFormat = props.dateFormat;
-  }
-
+  
   if(props.organizations){
     if(props.organizations.length > 0){     
       let count = 0;    
@@ -421,12 +419,16 @@ function OrganizationsTable(props){
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < organizationsToRender.length; i++) {
+      let selected = false;
+      if(organizationsToRender[i].id === selectedOrganizationId){
+        selected = true;
+      }
       if(get(organizationsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
       logger.trace('organizationsToRender[i]', organizationsToRender[i])
       tableRows.push(
-        <TableRow className="organizationRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, organizationsToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+        <TableRow className="organizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, organizationsToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
           { renderCheckbox() }
           { renderActionIcons(organizationsToRender[i]) }
           { renderIdentifier(organizationsToRender[i].identifier ) }
@@ -452,7 +454,7 @@ function OrganizationsTable(props){
 
   return(
     <div>
-      <Table className='organizationsTable' size="small" aria-label="a dense table" { ...otherProps }>
+      <Table className='organizationsTable' size={size} aria-label="a size table" { ...otherProps }>
         <TableHead>
           <TableRow>
             { renderCheckboxHeader() } 
@@ -462,6 +464,7 @@ function OrganizationsTable(props){
             { renderNameHeader() }
             { renderPhoneHeader() }
             { renderEmailHeader() }
+            { renderAddressLineHeader() }
             { renderCityHeader() }
             { renderStateHeader() }
             { renderPostalCodeHeader() }
@@ -488,7 +491,7 @@ OrganizationsTable.propTypes = {
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  hideCheckboxes:  PropTypes.bool,
+  hideCheckbox:  PropTypes.bool,
   hideActionIcons:  PropTypes.bool,
   hideIdentifier:  PropTypes.bool,
   hideName:  PropTypes.bool,
@@ -511,228 +514,17 @@ OrganizationsTable.propTypes = {
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  displayEnteredInError: PropTypes.bool
+  size: PropTypes.bool
 };
 
 OrganizationsTable.defaultProps = {
   hideName: false,
   hideActionButton: true,
+  hideCheckbox: true,
   hideBarcode: true,
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  size: 'small'
 }
 
 export default OrganizationsTable;
 
-
-
-//===========================================================================
-// MAIN COMPONENT  
-
-
-
-
-
-// export class OrganizationsTable extends React.Component {
-//   getMeteorData() {
-//     let data = {
-//       style: {
-//         opacity: Session.get('globalOpacity'),
-//         block: {
-//           maxWidth: 250
-//         }
-//       },
-//       selected: [],
-//       organizations: Organizations.find().map(function(organization){
-//         let result = {
-//           _id: '',
-//           name: '',
-//           identifier: '',
-//           phone: '',
-//           email: '',
-//           text: '',
-//           city: '',
-//           state: '',
-//           postalCode: ''
-//         };
-
-//         result._id = get(organization, '_id');
-//         result.name = get(organization, 'name')
-//         result.identifier = get(organization, 'identifier[0].value', '')
-    
-
-//         //----------------------------------------------------------------
-//         // TODO REFACTOR:  ContactPoint
-//         // totally want to extract this
-
-//         let telecomArray = get(organization, 'telecom', []);
-//         telecomArray.forEach(function(telecomRecord){
-//           if(get(telecomRecord, 'system') === 'phone'){
-//             result.phone = get(telecomRecord, 'value');
-//           }
-//           if(get(telecomRecord, 'system') === 'email'){
-//             result.email = get(telecomRecord, 'value');
-//           }
-//         })
-
-//         //----------------------------------------------------------------
-    
-//         result.text = get(organization, 'address[0].text')
-//         result.city = get(organization, 'address[0].city')
-//         result.state = get(organization, 'address[0].state')
-//         result.postalCode = get(organization, 'address[0].postalCode')
-
-//         return result;
-//       })
-//     };
-
-//     if(process.env.NODE_ENV === "test") console.log("OrganizationsTable[data]", data);
-
-//     return data;
-//   }
-//   handleChange(row, key, value) {
-//     const source = this.state.source;
-//     source[row][key] = value;
-//     this.setState({source});
-//   }
-
-//   handleSelect(selected) {
-//     this.setState({selected});
-//   }
-
-//   rowClick(id){
-//     Session.set('organizationUpsert', false);
-//     Session.set('selectedOrganizationId', id);
-//     Session.set('organizationPageTabIndex', 2);
-//   }
-//   renderIdentifier(identifier){
-//     if (!props.hideIdentifier) {
-//       return (
-//         <TableCell className="identifier hidden-on-phone">{ identifier }</TableCell>
-//       );
-//     }
-//   }
-//   renderIdentifierHeader(){
-//     if (!props.hideIdentifier) {
-//       return (
-//         <TableCell className="identifier hidden-on-phone">identifier</TableCell>
-//       );
-//     }
-//   }
-//   renderPhone(phone){
-//     if (!props.hidePhone) {
-//       return (
-//         <TableCell className="phone">{ phone }</TableCell>
-//       );
-//     }
-//   }
-//   renderPhoneHeader(){
-//     if (!props.hidePhone) {
-//       return (
-//         <TableCell className="phone">phone</TableCell>
-//       );
-//     }
-//   }
-//   renderEmail(email){
-//     if (!props.hideEmail) {
-//       return (
-//         <TableCell className="email hidden-on-phone">{ email }</TableCell>
-//       );
-//     }
-//   }
-//   renderEmailHeader(){
-//     if (!props.hideEmail) {
-//       return (
-//         <TableCell className="email hidden-on-phone">email</TableCell>
-//       );
-//     }
-//   }
-//   renderCity(city){
-//     if (!props.hideCity) {
-//       return (
-//         <TableCell className="city ">{ city }</TableCell>
-//       );
-//     }
-//   }
-//   renderCityHeader(){
-//     if (!props.hideCity) {
-//       return (
-//         <TableCell className="city">city</TableCell>
-//       );
-//     }
-//   }
-//   renderState(state){
-//     if (!props.hideState) {
-//       return (
-//         <TableCell className="state">{ state }</TableCell>
-//       );
-//     }
-//   }
-//   renderStateHeader(){
-//     if (!props.hideState) {
-//       return (
-//         <TableCell className="city">city</TableCell>
-//       );
-//     }
-//   }
-//   renderPostalCode(postalCode){
-//     if (!props.hidePostalCode) {
-//       return (
-//         <TableCell className="postalCode hidden-on-phone">{ postalCode }</TableCell>
-//       );
-//     }
-//   }
-//   renderPostalCodeHeader(){
-//     if (!props.hidePostalCode) {
-//       return (
-//         <TableCell className="postalCode hidden-on-phone">postalCode</TableCell>
-//       );
-//     }
-//   }
-  
-//   render () {
-//     let tableRows = [];
-//     for (var i = 0; i < this.data.organizations.length; i++) {
-//       tableRows.push(
-//       <tr className='organizationRow' ref='med-{i}' key={i} style={{cursor: 'pointer'}} onClick={ this.rowClick.bind('this', this.data.organizations[i]._id) }>
-//         <TableCell className="name">{this.data.organizations[i].name}</TableCell>
-//         {this.renderIdentifier(this.data.organizations[i].identifier)}
-//         {this.renderPhone(this.data.organizations[i].phone)}
-//         {this.renderEmail(this.data.organizations[i].email)}
-//         {this.renderCity(this.data.organizations[i].city)}
-//         {this.renderState(this.data.organizations[i].state)}
-//         {this.renderPostalCode(this.data.organizations[i].postalCode)}
-//       </tr>);
-//     }
-
-
-//     return(
-//       <Table id="organizationsTable" ref='organizationsTable' hover >
-//         <TableCellead>
-//           <tr>
-//             <TableCell className="name">name</TableCell>
-//             {this.renderIdentifierHeader() }
-//             {this.renderPhoneHeader() }
-//             {this.renderEmailHeader() }
-//             {this.renderCityHeader() }
-//             {this.renderStateHeader() }
-//             {this.renderPostalCodeHeader() }
-//           </tr>
-//         </thead>
-//         <tbody>
-//           { tableRows }
-//         </tbody>
-//       </Table>
-//     );
-//   }
-// }
-
-// OrganizationsTable.propTypes = {
-//   id: PropTypes.string,
-//   fhirVersion: PropTypes.string,
-//   hideIdentifier: PropTypes.bool,
-//   hidePhone: PropTypes.bool,
-//   hideEmail: PropTypes.bool,
-//   hideCity: PropTypes.bool,
-//   hideState: PropTypes.bool,
-//   hidePostalCode: PropTypes.bool
-// };

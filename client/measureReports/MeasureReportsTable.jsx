@@ -21,6 +21,7 @@ import { FhirUtilities } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 import { flattenMeasureReport } from '../../lib/FhirDehydrator';
 
 
+
 //===========================================================================
 // THEMING
 
@@ -179,6 +180,8 @@ function MeasureReportsTable(props){
     paginationLimit,
     disablePagination,
     rowsPerPage,
+
+    count,
 
     ...otherProps 
   } = props;
@@ -358,7 +361,7 @@ function MeasureReportsTable(props){
   function renderPeriodStartHeader(){
     if (!props.hidePeriodStart) {
       return (
-        <TableCell className='periodStart'>Start Date</TableCell>
+        <TableCell className='periodStart' style={{width: '140px'}}>Start Date</TableCell>
       );
     }
   }
@@ -372,7 +375,7 @@ function MeasureReportsTable(props){
   function renderPeriodEndHeader(){
     if (!props.hidePeriodEnd) {
       return (
-        <TableCell className='periodEnd'>End Date</TableCell>
+        <TableCell className='periodEnd' style={{width: '140px'}}>End Date</TableCell>
       );
     }
   }
@@ -658,7 +661,9 @@ MeasureReportsTable.propTypes = {
   showActionButton: PropTypes.bool,
 
   measuresCursor: PropTypes.object,
-  measureShorthand: PropTypes.bool
+  measureShorthand: PropTypes.bool,
+
+  count: PropTypes.number
 };
 MeasureReportsTable.defaultProps = {
   rowsPerPage: 5,

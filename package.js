@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.4.16',
+  version: '6.4.17',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -32,7 +32,9 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
+  api.addFiles('lib/schemas/ExplanationOfBenefit.js', ['client', 'server']);
   api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Lists.js', ['client', 'server']);
   api.addFiles('lib/schemas/Locations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
   api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
@@ -45,6 +47,10 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
   api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
   api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Questionnaires.js', ['client', 'server']);
+  api.addFiles('lib/schemas/QuestionnaireResponses.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
+  api.addFiles('lib/schemas/ValueSets.js', ['client', 'server']);
 
   api.export('AllergyIntolerance');
   api.export('AllergyIntolerances');
@@ -55,7 +61,7 @@ Package.onUse(function (api) {
   api.export('BundleSchema');
 
   api.export('CarePlans');
-  api.export('CarePlanss');
+  api.export('CarePlans');
   api.export('CarePlansSchema');
 
   api.export('Composition');
@@ -78,9 +84,17 @@ Package.onUse(function (api) {
   api.export('Encounters');
   api.export('EncounterSchema');
 
+  api.export('ExplanationOfBenefit');
+  api.export('ExplanationOfBenefits');
+  api.export('ExplanationOfBenefitSchema');
+
   api.export('Immunization');
   api.export('Immunizations');
   api.export('ImmunizationSchema');
+
+  api.export('List');
+  api.export('Lists');
+  api.export('ListSchema');
 
   api.export('Location');
   api.export('Locations');
@@ -131,8 +145,28 @@ Package.onUse(function (api) {
   api.export('Procedures');
   api.export('ProcedureSchema');
 
+  api.export('Questionnaire');
+  api.export('Questionnaires');
+  api.export('QuestionnaireSchema');
+
+  api.export('QuestionnaireResponse');
+  api.export('QuestionnaireResponses');
+  api.export('QuestionnaireResponseSchema');
+
+  api.export('Task');
+  api.export('Tasks');
+  api.export('TaskSchema');
+
+  api.export('ValueSet');
+  api.export('ValueSets');
+  api.export('ValueSetSchema');
+
   api.export('BaseModel');
 
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
   api.mainModule('index.jsx', 'client');
 });
+
+Npm.depends({
+  "react-sortable-hoc": "1.11.0"
+})

@@ -5,6 +5,8 @@ import { Glass, GlassCard, FullPageCanvas, DynamicSpacer } from 'meteor/clinical
 
 import CommunicationDetail from './CommunicationDetail';
 import CommunicationTable from './CommunicationTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
@@ -68,9 +70,12 @@ export class CommunicationsPage extends React.Component {
   }
 
   render() {
+
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
+
     return (
       <div id="communicationsPage">
-        <FullPageCanvas>
+        <FullPageCanvas headerHeight={headerHeight} >
           <CommunicationDetail 
             id='newCommunication' />
           {/* <DynamicSpacer /> */}

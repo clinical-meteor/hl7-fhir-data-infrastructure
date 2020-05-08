@@ -36,9 +36,17 @@ import EncountersPage from './client/encounters/EncountersPage';
 import EncountersTable from './client/encounters/EncountersTable';
 import EncounterDetail from './client/encounters/EncounterDetail';
 
+import ExplanationOfBenefitsPage from './client/explanationOfBenefits/ExplanationOfBenefitsPage';
+import ExplanationOfBenefitsTable from './client/explanationOfBenefits/ExplanationOfBenefitsTable';
+import ExplanationOfBenefitDetail from './client/explanationOfBenefits/ExplanationOfBenefitDetail';
+
 import ImmunizationsPage from './client/immunizations/ImmunizationsPage';
 import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
 import ImmunizationDetail from './client/immunizations/ImmunizationDetail';
+
+import ListsPage from './client/lists/ListsPage';
+import ListsTable from './client/lists/ListsTable';
+import ListDetail from './client/lists/ListDetail';
 
 import LocationsTable from './client/locations/LocationsTable';
 import LocationsPage from './client/locations/LocationsPage';
@@ -85,6 +93,22 @@ import ProceduresPage from './client/procedures/ProceduresPage';
 import ProceduresTable from './client/procedures/ProceduresTable';
 import ProcedureDetail from './client/procedures/ProcedureDetail';
 
+import QuestionnairesPage from './client/questionnaires/QuestionnairesPage';
+import QuestionnairesTable from './client/questionnaires/QuestionnairesTable';
+import QuestionnaireDetail from './client/questionnaires/QuestionnaireDetail';
+
+import QuestionnaireResponsesPage from './client/questionnaireResponses/QuestionnaireResponsesPage';
+import QuestionnaireResponsesTable from './client/questionnaireResponses/QuestionnaireResponsesTable';
+import QuestionnaireResponseDetail from './client/questionnaireResponses/QuestionnaireResponseDetail';
+
+import TasksPage from './client/tasks/TasksPage';
+import TasksTable from './client/tasks/TasksTable';
+import TaskDetail from './client/tasks/TaskDetail';
+
+import ValueSetsPage from './client/valuesets/ValueSetsPage';
+import ValueSetsTable from './client/valuesets/ValueSetsTable';
+import ValueSetDetail from './client/valuesets/ValueSetDetail';
+
 import DynamicSpacer from './ui/DynamicSpacer';
 
 
@@ -129,6 +153,11 @@ let DynamicRoutes = [{
   'component': EncountersPage,
   'requireAuth': true
 }, {
+  'name': 'ExplanationOfBenefitsPage',
+  'path': '/explanation-of-benefits',
+  'component': ExplanationOfBenefitsPage,
+  'requireAuth': true
+}, {
   'name': 'ImmunizationsPage',
   'path': '/immunizations',
   'component': ImmunizationsPage,
@@ -137,6 +166,11 @@ let DynamicRoutes = [{
   'name': 'LocationsPage',
   'path': '/locations',
   'component': LocationsPage,
+  'requireAuth': true
+}, {
+  'name': 'ListsPage',
+  'path': '/lists',
+  'component': ListsPage,
   'requireAuth': true
 }, {
   'name': 'MeasuresPage',
@@ -188,6 +222,26 @@ let DynamicRoutes = [{
   'path': '/procedures',
   'component': ProceduresPage,
   'requireAuth': true
+}, {
+  'name': 'QuestionnairesPage',
+  'path': '/questionnaires',
+  'component': QuestionnairesPage,
+  'requireAuth': true
+}, {
+  'name': 'QuestionnaireResponsesPage',
+  'path': '/questionnaire-responses',
+  'component': QuestionnaireResponsesPage,
+  'requireAuth': true
+}, {
+  'name': 'TasksPage',
+  'path': '/tasks',
+  'component': TasksPage,
+  'requireAuth': true
+}, {
+  'name': 'ValueSetsPage',
+  'path': '/valuesets',
+  'component': ValueSetsPage,
+  'requireAuth': true
 } ];
 
 let SidebarElements = [{
@@ -225,6 +279,11 @@ let SidebarElements = [{
   'href': '/encounters',
   'iconName': 'ic_transfer_within_a_station'
 }, {
+  'primaryText': 'Explanation Of Benefits',
+  'to': '/explanation-of-benefits',
+  'href': '/explanation-of-benefits',
+  'iconName': 'notepad'
+}, {
   'primaryText': 'Immunizations',
   'to': '/immunizations',
   'href': '/immunizations',
@@ -234,6 +293,11 @@ let SidebarElements = [{
   'to': '/locations',
   'href': '/locations',
   'iconName': 'location' 
+}, {
+  'primaryText': 'Lists',
+  'to': '/lists',
+  'href': '/lists',
+  'iconName': 'notepad' 
 }, {
   'primaryText': 'Measures',
   'to': '/measures',
@@ -284,6 +348,26 @@ let SidebarElements = [{
   'to': '/procedures',
   'href': '/procedures',
   'iconName': 'bath'
+}, {
+  'primaryText': 'Questionnaires',
+  'to': '/questionnaires',
+  'href': '/questionnaires',
+  'iconName': 'notepad'
+}, {
+  'primaryText': 'Questionnaire Responses',
+  'to': '/questionnaire-responses',
+  'href': '/questionnaire-responses',
+  'iconName': 'notepad'
+}, {
+  'primaryText': 'Tasks',
+  'to': '/tasks',
+  'href': '/tasks',
+  'iconName': 'notepad'
+}, {
+  'primaryText': 'Value Sets',
+  'to': '/valuesets',
+  'href': '/valuesets',
+  'iconName': 'notepad'
 }];
   
 let AdminSidebarElements = [{
@@ -395,9 +479,17 @@ export {
   EncountersTable,
   EncounterDetail,
 
+  ExplanationOfBenefitsPage,
+  ExplanationOfBenefitsTable,
+  ExplanationOfBenefitDetail,
+
   ImmunizationsPage,
   ImmunizationsTable,
   ImmunizationDetail,
+
+  ListsPage,
+  ListsTable,
+  ListDetail,
 
   LocationsTable,
   LocationPage,
@@ -443,6 +535,22 @@ export {
   ProceduresPage,
   ProceduresTable,
   ProcedureDetail,
+
+  QuestionnairesPage,
+  QuestionnairesTable,
+  QuestionnaireDetail,
+
+  QuestionnaireResponsesPage,
+  QuestionnaireResponsesTable,
+  QuestionnaireResponseDetail,
+
+  TasksPage,
+  TasksTable,
+  TaskDetail,
+
+  ValueSetsPage,
+  ValueSetsTable,
+  ValueSetDetail,
 
   FhirDehydrator,
   FhirUtilities,

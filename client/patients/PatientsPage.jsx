@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 
 
 import { PatientTable, PatientDetail, PageCanvas, StyledCard } from 'material-fhir-ui';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
@@ -332,10 +333,7 @@ export class PatientsPage extends React.Component {
 
     const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 25);
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     return (
       <PageCanvas id="patientsPageClass" headerHeight={headerHeight} >

@@ -22,6 +22,7 @@ import ReactMixin  from 'react-mixin';
 
 import EncounterDetail from './EncounterDetail';
 import EncountersTable from './EncountersTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
@@ -331,10 +332,7 @@ export class EncountersPage extends React.Component {
 
     const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     let encountersCount = this.data.encounters.length;
 

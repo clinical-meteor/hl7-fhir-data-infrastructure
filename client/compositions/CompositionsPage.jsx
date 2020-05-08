@@ -22,6 +22,8 @@ import ReactMixin  from 'react-mixin';
 
 import CompositionDetail from './CompositionDetail';
 import CompositionsTable from './CompositionsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import { get, cloneDeep } from 'lodash';
@@ -332,6 +334,8 @@ export class CompositionsPage extends React.Component {
     function handleChange(event, newValue) {
       Session.set('compositionPageTabIndex', newValue)
     }
+
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     return (
       <div id="compositionsPage" style={{paddingLeft: '100px', paddingRight: '100px', paddingBottom: '100px'}}>

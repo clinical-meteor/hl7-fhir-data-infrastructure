@@ -17,6 +17,7 @@ import { PageCanvas, StyledCard } from 'material-fhir-ui';
 
 import ImmunizationDetail from './ImmunizationDetail';
 import ImmunizationsTable from './ImmunizationsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Session } from 'meteor/session';
 
@@ -95,10 +96,7 @@ export class ImmunizationsPage extends React.Component {
   render() {
     if(process.env.NODE_ENV === "test") console.log('ImmunizationsPage.render()', this.data);
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
     
     return (
       <PageCanvas id='immunizationsPage' headerHeight={headerHeight} >

@@ -3,6 +3,8 @@ import { GlassCard, Glass, FullPageCanvas } from 'meteor/clinical:glass-ui';
 
 import ConsentDetail from './ConsentDetail';
 import ConsentTable from './ConsentTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
@@ -133,7 +135,8 @@ export class ConsentsPage extends React.Component {
       />,
     ];
 
-    
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
+
     return (
       <div id="consentsPage">
         <FullPageCanvas>

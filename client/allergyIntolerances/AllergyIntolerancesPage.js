@@ -24,6 +24,9 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import AllergyIntoleranceDetail from './AllergyIntoleranceDetail';
 import AllergyIntolerancesTable from './AllergyIntolerancesTable';
+
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
@@ -99,10 +102,7 @@ export class AllergyIntolerancesPage extends React.Component {
   render() {
     if(process.env.NODE_ENV === "test") console.log('In AllergyIntolerancesPage render');
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader')){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     return (
       <div id='allergyIntolerancesPage'>

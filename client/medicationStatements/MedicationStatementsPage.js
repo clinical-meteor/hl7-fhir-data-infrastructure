@@ -16,6 +16,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import MedicationStatementDetail from './MedicationStatementDetail';
 import MedicationStatementsTable from './MedicationStatementsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -118,22 +119,15 @@ export class MedicationStatementsPage extends React.Component {
                 rowsPerPage={20}
                 medicationsCursor={Medications}
               />
-              {/* <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
-                <Tab label="History" value={0} />
-                <Tab label="New" value={1} />
-              </Tabs>
-              <TabPanel >
-                <MedicationStatementsTable fhirVersion={ this.data.fhirVersion } />
-              </TabPanel >
-              <TabPanel >
-                <MedicationStatementDetail 
-                    id='medicationStatementDetails'
-                    fhirVersion={ this.data.fhirVersion }
-                    medicationStatement={ this.data.selectedMedicationStatement }
-                    medicationStatementId={ this.data.selectedMedicationStatementId } 
-                    showDatePicker={true} 
-                  />
-              </TabPanel > */}
+
+              {/* <MedicationStatementDetail 
+                id='medicationStatementDetails'
+                fhirVersion={ this.data.fhirVersion }
+                medicationStatement={ this.data.selectedMedicationStatement }
+                medicationStatementId={ this.data.selectedMedicationStatementId } 
+                showDatePicker={true} 
+              /> */}
+
             </CardContent>
         </StyledCard>        
       </PageCanvas>

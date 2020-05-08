@@ -18,6 +18,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import DiagnosticReportDetail from './DiagnosticReportDetail';
 import DiagnosticReportsTable from './DiagnosticReportsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -178,10 +179,7 @@ export class DiagnosticReportsPage extends React.Component {
   render() {
     if(process.env.NODE_ENV === "test") console.log('In DiagnosticReportsPage render');
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     return (
       <PageCanvas id="measuresPage" headerHeight={headerHeight}>

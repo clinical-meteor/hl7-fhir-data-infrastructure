@@ -17,8 +17,8 @@ import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import MeasureDetail from './MeasureDetail';
-import MeasuresTable from './MeasuresTable';
+import TaskDetail from './TaskDetail';
+import TasksTable from './TasksTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
@@ -27,13 +27,15 @@ import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-Session.setDefault('measurePageTabIndex', 0);
-Session.setDefault('measureSearchFilter', '');
-Session.setDefault('selectedMeasureId', '');
-Session.setDefault('selectedMeasure', false);
+import { Tasks } from '../../lib/schemas/Tasks';
+
+Session.setDefault('taskPageTabIndex', 0);
+Session.setDefault('taskSearchFilter', '');
+Session.setDefault('selectedTaskId', '');
+Session.setDefault('selectedTask', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
-Session.setDefault('measuresArray', []);
-Session.setDefault('MeasuresPage.onePageLayout', true)
+Session.setDefault('tasksArray', []);
+Session.setDefault('TasksPage.onePageLayout', true)
 
 // Global Theming 
   // This is necessary for the Material UI component render layer
@@ -135,168 +137,168 @@ function TabPanel(props) {
 
 
 
-export class MeasuresPage extends React.Component {
+export class TasksPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      measureId: false,
-      measure: {}
+      taskId: false,
+      task: {}
     }
   }
   getMeteorData() {
     let data = {
-      tabIndex: Session.get('measurePageTabIndex'),
-      measureSearchFilter: Session.get('measureSearchFilter'),
+      tabIndex: Session.get('taskPageTabIndex'),
+      taskSearchFilter: Session.get('taskSearchFilter'),
       fhirVersion: Session.get('fhirVersion'),
-      selectedMeasureId: Session.get("selectedMeasureId"),
-      selectedMeasure: Session.get("selectedMeasure"),
+      selectedTaskId: Session.get("selectedTaskId"),
+      selectedTask: Session.get("selectedTask"),
       selected: [],
-      measures: [],
+      tasks: [],
       query: {},
       options: {
         limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
       },
-      tabIndex: Session.get('measurePageTabIndex'),
+      tabIndex: Session.get('taskPageTabIndex'),
       onePageLayout: true
     };
 
-    data.onePageLayout = Session.get('MeasuresPage.onePageLayout');
+    data.onePageLayout = Session.get('TasksPage.onePageLayout');
 
 
-    // if(Session.get('measuresTableQuery')){
-    //   data.query = Session.get('measuresTableQuery')
+    // if(Session.get('tasksTableQuery')){
+    //   data.query = Session.get('tasksTableQuery')
     // }
 
-    // if (Session.get('selectedMeasureId')){
-    //   data.selectedMeasure = Measures.findOne({_id: Session.get('selectedMeasureId')});
-    //   this.state.measure = Measures.findOne({_id: Session.get('selectedMeasureId')});
-    //   this.state.measureId = Session.get('selectedMeasureId');
+    // if (Session.get('selectedTaskId')){
+    //   data.selectedTask = Tasks.findOne({_id: Session.get('selectedTaskId')});
+    //   this.state.task = Tasks.findOne({_id: Session.get('selectedTaskId')});
+    //   this.state.taskId = Session.get('selectedTaskId');
     // } else {
-    //   data.selectedMeasure = false;
-    //   this.state.measureId = false;
-    //   this.state.measure = {};
+    //   data.selectedTask = false;
+    //   this.state.taskId = false;
+    //   this.state.task = {};
     // }
 
-    console.log('MeasuresPage.data.query', data.query)
-    console.log('MeasuresPage.data.options', data.options)
+    console.log('TasksPage.data.query', data.query)
+    console.log('TasksPage.data.options', data.options)
 
-    data.measures = Measures.find(data.query, data.options).fetch();
-    data.measuresCount = Measures.find(data.query, data.options).count();
+    data.tasks = Tasks.find(data.query, data.options).fetch();
+    data.tasksCount = Tasks.find(data.query, data.options).count();
 
-    // console.log("MeasuresPage[data]", data);
+    // console.log("TasksPage[data]", data);
     return data;
   }
 
   // this could be a mixin
   handleTabChange(index){
-    Session.set('measurePageTabIndex', index);
+    Session.set('taskPageTabIndex', index);
   }
   handleActive(index){
   }
-  onCancelUpsertMeasure(context){
-    Session.set('measurePageTabIndex', 1);
+  onCancelUpsertTask(context){
+    Session.set('taskPageTabIndex', 1);
   }
-  onDeleteMeasure(context){
-    Measures._collection.remove({_id: get(context, 'state.measureId')}, function(error, result){
+  onDeleteTask(context){
+    Tasks._collection.remove({_id: get(context, 'state.taskId')}, function(error, result){
       if (error) {
-        if(process.env.NODE_ENV === "test") console.log('Measures.insert[error]', error);
+        if(process.env.NODE_ENV === "test") console.log('Tasks.insert[error]', error);
         Bert.alert(error.reason, 'danger');
       }
       if (result) {
-        Session.set('selectedMeasureId', false);
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: context.state.measureId});
-        Bert.alert('Measure removed!', 'success');
+        Session.set('selectedTaskId', false);
+        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
+        Bert.alert('Task removed!', 'success');
       }
     });
-    Session.set('measurePageTabIndex', 1);
+    Session.set('taskPageTabIndex', 1);
   }
-  onUpsertMeasure(context){
+  onUpsertTask(context){
     //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new Measure...', context.state)
+    console.log('Saving a new Task...', context.state)
 
-    if(get(context, 'state.measure')){
+    if(get(context, 'state.task')){
       let self = context;
-      let fhirMeasureData = Object.assign({}, get(context, 'state.measure'));
+      let fhirTaskData = Object.assign({}, get(context, 'state.task'));
   
-      // if(process.env.NODE_ENV === "test") console.log('fhirMeasureData', fhirMeasureData);
+      // if(process.env.NODE_ENV === "test") console.log('fhirTaskData', fhirTaskData);
   
-      let measureValidator = MeasureSchema.newContext();
-      // console.log('measureValidator', measureValidator)
-      measureValidator.validate(fhirMeasureData)
+      let taskValidator = TaskSchema.newContext();
+      // console.log('taskValidator', taskValidator)
+      taskValidator.validate(fhirTaskData)
   
       if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', measureValidator.isValid())
-        console.log('ValidationErrors: ', measureValidator.validationErrors());
+        console.log('IsValid: ', taskValidator.isValid())
+        console.log('ValidationErrors: ', taskValidator.validationErrors());
   
       }
   
       console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.measureId')) {
+      if (get(context, 'state.taskId')) {
         if(process.env.NODE_ENV === "development") {
-          console.log("Updating measure...");
+          console.log("Updating task...");
         }
 
-        delete fhirMeasureData._id;
+        delete fhirTaskData._id;
   
         // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirMeasureData.resourceType = 'Measure';
+        fhirTaskData.resourceType = 'Task';
   
-        Measures._collection.update({_id: get(context, 'state.measureId')}, {$set: fhirMeasureData }, function(error, result){
+        Tasks._collection.update({_id: get(context, 'state.taskId')}, {$set: fhirTaskData }, function(error, result){
           if (error) {
-            if(process.env.NODE_ENV === "test") console.log("Measures.insert[error]", error);
+            if(process.env.NODE_ENV === "test") console.log("Tasks.insert[error]", error);
             Bert.alert(error.reason, 'danger');
           }
           if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: context.state.measureId});
-            Session.set('selectedMeasureId', false);
-            Session.set('measurePageTabIndex', 1);
-            Bert.alert('Measure added!', 'success');
+            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
+            Session.set('selectedTaskId', false);
+            Session.set('taskPageTabIndex', 1);
+            Bert.alert('Task added!', 'success');
           }
         });
       } else {
         // if(process.env.NODE_ENV === "test") 
-        console.log("Creating a new measure...", fhirMeasureData);
+        console.log("Creating a new task...", fhirTaskData);
   
-        fhirMeasureData.effectiveDateTime = new Date();
-        Measures._collection.insert(fhirMeasureData, function(error, result) {
+        fhirTaskData.effectiveDateTime = new Date();
+        Tasks._collection.insert(fhirTaskData, function(error, result) {
           if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('Measures.insert[error]', error);
+            if(process.env.NODE_ENV === "test")  console.log('Tasks.insert[error]', error);
             Bert.alert(error.reason, 'danger');
           }
           if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: context.state.measureId});
-            Session.set('measurePageTabIndex', 1);
-            Session.set('selectedMeasureId', false);
-            Bert.alert('Measure added!', 'success');
+            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
+            Session.set('taskPageTabIndex', 1);
+            Session.set('selectedTaskId', false);
+            Bert.alert('Task added!', 'success');
           }
         });
       }
     } 
-    Session.set('measurePageTabIndex', 1);
+    Session.set('taskPageTabIndex', 1);
   }
-  handleRowClick(measureId, foo, bar){
-    console.log('MeasuresPage.handleRowClick', measureId)
-    let measure = Measures.findOne({id: measureId});
+  handleRowClick(taskId, foo, bar){
+    console.log('TasksPage.handleRowClick', taskId)
+    let task = Tasks.findOne({id: taskId});
 
-    Session.set('selectedMeasureId', get(measure, 'id'));
-    Session.set('selectedMeasure', measure);
+    Session.set('selectedTaskId', get(task, 'id'));
+    Session.set('selectedTask', task);
   }
   onTableCellClick(id){
-    Session.set('measuresUpsert', false);
-    Session.set('selectedMeasureId', id);
-    Session.set('measurePageTabIndex', 2);
+    Session.set('tasksUpsert', false);
+    Session.set('selectedTaskId', id);
+    Session.set('taskPageTabIndex', 2);
   }
   tableActionButtonClick(_id){
-    let measure = Measures.findOne({_id: _id});
+    let task = Tasks.findOne({_id: _id});
 
-    // console.log("MeasuresTable.onSend()", measure);
+    // console.log("TasksTable.onSend()", task);
 
     var httpEndpoint = "http://localhost:8080";
     if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
       httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
     }
-    HTTP.post(httpEndpoint + '/Measure', {
-      data: measure
+    HTTP.post(httpEndpoint + '/Task', {
+      data: task
     }, function(error, result){
       if (error) {
         console.log("error", error);
@@ -306,29 +308,29 @@ export class MeasuresPage extends React.Component {
       }
     });
   }
-  onInsert(measureId){
-    Session.set('selectedMeasureId', '');
-    Session.set('measurePageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: measureId});
+  onInsert(taskId){
+    Session.set('selectedTaskId', '');
+    Session.set('taskPageTabIndex', 1);
+    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
   }
-  onUpdate(measureId){
-    Session.set('selectedMeasureId', '');
-    Session.set('measurePageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: measureId});
+  onUpdate(taskId){
+    Session.set('selectedTaskId', '');
+    Session.set('taskPageTabIndex', 1);
+    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
   }
-  onRemove(measureId){
-    Session.set('measurePageTabIndex', 1);
-    Session.set('selectedMeasureId', '');
-    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: measureId});
+  onRemove(taskId){
+    Session.set('taskPageTabIndex', 1);
+    Session.set('selectedTaskId', '');
+    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
   }
   onCancel(){
-    Session.set('measurePageTabIndex', 1);
+    Session.set('taskPageTabIndex', 1);
   } 
   render() {
-    // console.log('MeasuresPage.data', this.data)
+    // console.log('TasksPage.data', this.data)
 
     function handleChange(event, newValue) {
-      Session.set('measurePageTabIndex', newValue)
+      Session.set('taskPageTabIndex', newValue)
     }
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
@@ -336,11 +338,11 @@ export class MeasuresPage extends React.Component {
     let layoutContents;
     if(this.data.onePageLayout){
       layoutContents = <StyledCard height="auto" margin={20} >
-        <CardHeader title={this.data.measuresCount + " Measures"} />
+        <CardHeader title={this.data.tasksCount + " Tasks"} />
         <CardContent>
 
-          <MeasuresTable 
-            measures={ this.data.measures }
+          <TasksTable 
+            tasks={ this.data.tasks }
             hideCheckbox={true} 
             hideActionIcons={true}
             hideIdentifier={true} 
@@ -367,11 +369,11 @@ export class MeasuresPage extends React.Component {
       layoutContents = <Grid container spacing={3}>
         <Grid item lg={6}>
           <StyledCard height="auto" margin={20} >
-            <CardHeader title={this.data.measuresCount + " Measures"} />
+            <CardHeader title={this.data.tasksCount + " Tasks"} />
             <CardContent>
-              <MeasuresTable 
-                measures={ this.data.measures }
-                selectedMeasureId={ this.data.selectedMeasureId }
+              <TasksTable 
+                tasks={ this.data.tasks }
+                selectedTaskId={ this.data.selectedTaskId }
                 hideIdentifier={true} 
                 hideCheckbox={true} 
                 hideApprovalDate={false}
@@ -385,29 +387,29 @@ export class MeasuresPage extends React.Component {
                 paginationLimit={10}            
                 hideActionIcons={true}
                 onRowClick={this.handleRowClick.bind(this) }
-                count={this.data.measuresCount}
+                count={this.data.tasksCount}
                 />
             </CardContent>
           </StyledCard>
         </Grid>
         <Grid item lg={4}>
           <StyledCard height="auto" margin={20} scrollable>
-            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureId }</h1>
-            {/* <CardHeader title={this.data.selectedMeasureId } className="helveticas barcode" /> */}
+            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedTaskId }</h1>
+            {/* <CardHeader title={this.data.selectedTaskId } className="helveticas barcode" /> */}
             <CardContent>
               <CardContent>
-                <MeasureDetail 
-                  id='measureDetails' 
+                <TaskDetail 
+                  id='taskDetails' 
                   displayDatePicker={true} 
                   displayBarcodes={false}
-                  measure={ this.data.selectedMeasure }
-                  measureId={ this.data.selectedMeasureId } 
-                  showMeasureInputs={true}
+                  task={ this.data.selectedTask }
+                  taskId={ this.data.selectedTaskId } 
+                  showTaskInputs={true}
                   showHints={false}
                   // onInsert={ this.onInsert }
-                  // onDelete={ this.onDeleteMeasure }
-                  // onUpsert={ this.onUpsertMeasure }
-                  // onCancel={ this.onCancelUpsertMeasure } 
+                  // onDelete={ this.onDeleteTask }
+                  // onUpsert={ this.onUpsertTask }
+                  // onCancel={ this.onCancelUpsertTask } 
                 />
               </CardContent>
             </CardContent>
@@ -417,7 +419,7 @@ export class MeasuresPage extends React.Component {
     }
 
     return (
-      <PageCanvas id="measuresPage" headerHeight={headerHeight}>
+      <PageCanvas id="tasksPage" headerHeight={headerHeight}>
         <MuiThemeProvider theme={muiTheme} >
           { layoutContents }
         </MuiThemeProvider>
@@ -426,5 +428,5 @@ export class MeasuresPage extends React.Component {
   }
 }
 
-ReactMixin(MeasuresPage.prototype, ReactMeteorData);
-export default MeasuresPage;
+ReactMixin(TasksPage.prototype, ReactMeteorData);
+export default TasksPage;

@@ -121,31 +121,32 @@ function MeasureReportDetail(props){
       let populations = get(group, 'population');
       if(Array.isArray(populations)){
         populations.forEach(function(subPopulation){
-          renderElements.push(<Grid item xs={9}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Population Code</InputAdornment>
-              <Input
-                id={"populationCodeInput-" + get(subPopulation, 'id')}
-                name={"populationCodeInput-" + get(subPopulation, 'id')}
-                className={classes.input}       
-                value={get(subPopulation, 'code.text')}
-                fullWidth              
-              />       
-            </FormControl>   
-          </Grid>)
-          renderElements.push(<Grid item xs={3}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Count</InputAdornment>
-              <Input
-                id={"populationCodeInput-" + get(subPopulation, 'id')}
-                name={"populationCodeInput-" + get(subPopulation, 'id')}
-                className={classes.input}       
-                value={get(subPopulation, 'count')}
-                fullWidth              
-              />       
-            </FormControl>   
-          </Grid>)
-
+          if(props.showPopulationCode){
+            renderElements.push(<Grid item xs={9}>
+              <FormControl style={{width: '100%', marginTop: '20px'}}>
+                <InputAdornment className={classes.label}>Population Code</InputAdornment>
+                <Input
+                  id={"populationCodeInput-" + get(subPopulation, 'id')}
+                  name={"populationCodeInput-" + get(subPopulation, 'id')}
+                  className={classes.input}       
+                  value={get(subPopulation, 'code.text')}
+                  fullWidth              
+                />       
+              </FormControl>   
+            </Grid>)
+            renderElements.push(<Grid item xs={3}>
+              <FormControl style={{width: '100%', marginTop: '20px'}}>
+                <InputAdornment className={classes.label}>Count</InputAdornment>
+                <Input
+                  id={"populationCodeInput-" + get(subPopulation, 'id')}
+                  name={"populationCodeInput-" + get(subPopulation, 'id')}
+                  className={classes.input}       
+                  value={get(subPopulation, 'count')}
+                  fullWidth              
+                />       
+              </FormControl>   
+            </Grid>)
+          }
         })
       }
     })    
@@ -164,6 +165,8 @@ function MeasureReportDetail(props){
   if(get(measureReport, 'period.end')){
     periodEnd = moment(get(measureReport, 'period.end')).format("YYYY-MM-DD")
   }
+
+
   return(
     <div className='MeasureReportDetails'>
       <Grid container spacing={3}>
@@ -288,10 +291,14 @@ MeasureReportDetail.propTypes = {
   measureReport: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   showPatientInputs: PropTypes.bool,
   showHints: PropTypes.bool,
+  showPopulationCode: PropTypes.bool,
   onInsert: PropTypes.func,
   onUpsert: PropTypes.func,
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
+MeasureReportDetail.defaultProps = {
+  showPopulationCode: true
+}
 
 export default MeasureReportDetail;

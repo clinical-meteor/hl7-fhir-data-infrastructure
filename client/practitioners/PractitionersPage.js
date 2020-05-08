@@ -17,6 +17,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import PractitionerDetail  from './PractitionerDetail';
 import PractitionersTable  from './PractitionersTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import PropTypes from 'prop-types';
 

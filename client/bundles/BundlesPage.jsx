@@ -30,6 +30,8 @@ import { Session } from 'meteor/session';
 import BundleDetail from './BundleDetail';
 import BundleTable from './BundleTable';
 
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
 
 
 //=============================================================================================================================================
@@ -220,10 +222,7 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 
 function BundlesPage(props){
 
-  let headerHeight = 64;
-  if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-    headerHeight = 128;
-  }
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
 
   return(
     <PageCanvas id="bundlesPage" headerHeight={headerHeight} >

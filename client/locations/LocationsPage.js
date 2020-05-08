@@ -15,6 +15,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import LocationDetail from './LocationDetail';
 import LocationsTable from './LocationsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -176,10 +177,7 @@ export class LocationsPage extends React.Component {
     var self = this;
     var markers = [];
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
     const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
           
     return (

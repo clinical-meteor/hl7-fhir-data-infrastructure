@@ -1,15 +1,12 @@
-import { CardActions, CardText, RaisedButton, TextField } from 'material-ui';
+import { CardActions, CardContent, Button, TextField } from '@material-ui/core';
 import { get, find } from 'lodash';
 
-import { Bert } from 'meteor/clinical:alert';
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
 import { Session } from 'meteor/session';
 import { copyFileSync } from 'fs';
-
-
 
 
 Session.setDefault('questionnaireResponseUpsert', false);
@@ -57,16 +54,15 @@ export class QuestionnaireResponseDetail extends React.Component {
         name={ get(item, 'linkId') + '_name'}
         value={ get(item, 'answer[0].valueCoding.code', '')}
         floatingLabelText={ get(item, 'text') + '_key'}
-        //onChange={ this.changeState.bind(this, 'name')}
         fullWidth
       />)        
   })
     
     return (
       <div id={this.props.id} key={this.props.id} className="questionnaireResponseDetail">
-        <CardText>
+        <CardContent>
           { inputs }
-        </CardText>
+        </CardContent>
         <CardActions>
           { this.determineButtons(this.data.questionnaireResponseId) }
         </CardActions>
@@ -77,13 +73,13 @@ export class QuestionnaireResponseDetail extends React.Component {
     if (questionnaireResponseId) {
       return (
         <div>
-          <RaisedButton id='saveQuestionnaireResponseButton' className='saveQuestionnaireResponseButton' label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} />
-          <RaisedButton label="Delete" onClick={this.handleDeleteButton.bind(this)} />
+          <Button id='saveQuestionnaireResponseButton' className='saveQuestionnaireResponseButton' primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} >Save</Button>
+          <Button onClick={this.handleDeleteButton.bind(this)} >Delete</Button>
         </div>
       );
     } else {
       return(
-        <RaisedButton id='saveQuestionnaireResponseButton'  className='saveQuestionnaireResponseButton' label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} />
+        <Button id='saveQuestionnaireResponseButton'  className='saveQuestionnaireResponseButton' primary={true} onClick={this.handleSaveButton.bind(this)} >Save</Button>
       );
     }
   }
@@ -115,7 +111,7 @@ export class QuestionnaireResponseDetail extends React.Component {
       QuestionnaireResponses.update({_id: Session.get('selectedQuestionnaireResponse')}, {$set: questionnaireResponseUpdate }, function(error, result){
         if (error) {
           if(process.env.NODE_ENV === "test") console.log("QuestionnaireResponses.insert[error]", error);
-          Bert.alert(error.reason, 'danger');
+          //Bert.alert(error.reason, 'danger');
         }
         if (result) {
           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "QuestionnaireResponses", recordId: Session.get('selectedQuestionnaireResponse')});
@@ -123,7 +119,7 @@ export class QuestionnaireResponseDetail extends React.Component {
           Session.set('questionnaireResponseUpsert', false);
           Session.set('selectedQuestionnaireResponse', false);
           Session.set('questionnaireResponsePageTabIndex', 1);
-          Bert.alert('QuestionnaireResponse added!', 'success');
+          //Bert.alert('QuestionnaireResponse added!', 'success');
         }
       });
     } else {
@@ -132,14 +128,14 @@ export class QuestionnaireResponseDetail extends React.Component {
       QuestionnaireResponses.insert(questionnaireResponseUpdate, function(error, result) {
         if (error) {
           if(process.env.NODE_ENV === "test")  console.log('QuestionnaireResponses.insert[error]', error);
-          Bert.alert(error.reason, 'danger');
+          //Bert.alert(error.reason, 'danger');
         }
         if (result) {
           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "QuestionnaireResponses", recordId: result});
           Session.set('questionnaireResponsePageTabIndex', 1);
           Session.set('selectedQuestionnaireResponse', false);
           Session.set('questionnaireResponseUpsert', false);
-          Bert.alert('QuestionnaireResponse added!', 'success');
+          //Bert.alert('QuestionnaireResponse added!', 'success');
         }
       });
     }
@@ -153,7 +149,7 @@ export class QuestionnaireResponseDetail extends React.Component {
     QuestionnaireResponses.remove({_id: Session.get('selectedQuestionnaireResponse')}, function(error, result){
       if (error) {
         if(process.env.NODE_ENV === "test") console.log('QuestionnaireResponses.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
+        //Bert.alert(error.reason, 'danger');
       }
       if (result) {
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "QuestionnaireResponses", recordId: Session.get('selectedQuestionnaireResponse')});
@@ -161,7 +157,7 @@ export class QuestionnaireResponseDetail extends React.Component {
         Session.set('questionnaireResponseUpsert', false);
         Session.set('questionnaireResponsePageTabIndex', 1);
         Session.set('selectedQuestionnaireResponse', false);
-        Bert.alert('QuestionnaireResponse removed!', 'success');
+        //Bert.alert('QuestionnaireResponse removed!', 'success');
       }
     });
   }

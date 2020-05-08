@@ -20,11 +20,17 @@ import ReactMixin  from 'react-mixin';
 
 import MeasureReportDetail from './MeasureReportDetail';
 import MeasureReportsTable from './MeasureReportsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
+
+//=============================================================================================================================================
+// Session Variables
 
 Session.setDefault('measureReportPageTabIndex', 0);
 Session.setDefault('measureReportSearchFilter', '');
@@ -35,7 +41,10 @@ Session.setDefault('measureReportsArray', []);
 
 Session.setDefault('MeasureReportsPage.onePageLayout', true)
 
-// Global Theming 
+
+//=============================================================================================================================================
+// Global Theming  
+
   // This is necessary for the Material UI component render layer
   let theme = {
     primaryColor: "rgb(108, 183, 110)",
@@ -104,33 +113,6 @@ Session.setDefault('MeasureReportsPage.onePageLayout', true)
     }
   });
 
-// const StyledCard = styled(Card)`
-//   background: ` + theme.paperColor + `;
-//   border-radius: 3px;
-//   border: 0;
-//   color: ` + theme.paperTextColor + `;
-//   height: 48px;
-//   padding: 0 30px;
-//   box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
-// `;
-
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 
 
@@ -162,19 +144,6 @@ export class MeasureReportsPage extends React.Component {
 
     data.onePageLayout = Session.get('MeasureReportsPage.onePageLayout');
 
-    // if(Session.get('measureReportsTableQuery')){
-    //   data.query = Session.get('measureReportsTableQuery')
-    // }
-
-    // if (Session.get('selectedMeasureReportId')){
-    //   data.selectedMeasureReport = MeasureReports.findOne({_id: Session.get('selectedMeasureReportId')});
-    //   this.state.measureReport = MeasureReports.findOne({_id: Session.get('selectedMeasureReportId')});
-    //   this.state.measureReportId = Session.get('selectedMeasureReportId');
-    // } else {
-    //   data.selectedMeasureReport = false;
-    //   this.state.measureReportId = false;
-    //   this.state.measureReport = {};
-    // }
 
     console.log('MeasureReportsPage.data.query', data.query)
     console.log('MeasureReportsPage.data.options', data.options)
@@ -188,7 +157,7 @@ export class MeasureReportsPage extends React.Component {
 
 
   onCancelUpsertMeasureReport(context){
-    Session.set('measureReportPageTabIndex', 1);
+
   }
   onDeleteMeasureReport(context){
     MeasureReports._collection.remove({_id: get(context, 'state.measureReportId')}, function(error, result){
@@ -202,7 +171,7 @@ export class MeasureReportsPage extends React.Component {
         Bert.alert('MeasureReport removed!', 'success');
       }
     });
-    Session.set('measureReportPageTabIndex', 1);
+    
   }
   onUpsertMeasureReport(context){
     //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
@@ -211,17 +180,13 @@ export class MeasureReportsPage extends React.Component {
     if(get(context, 'state.measureReport')){
       let self = context;
       let fhirMeasureReportData = Object.assign({}, get(context, 'state.measureReport'));
-  
-      // if(process.env.NODE_ENV === "test") console.log('fhirMeasureReportData', fhirMeasureReportData);
-  
+    
       let measureReportValidator = MeasureReportSchema.newContext();
-      // console.log('measureReportValidator', measureReportValidator)
       measureReportValidator.validate(fhirMeasureReportData)
   
       if(process.env.NODE_ENV === "development"){
         console.log('IsValid: ', measureReportValidator.isValid())
         console.log('ValidationErrors: ', measureReportValidator.validationErrors());
-  
       }
   
       console.log('Checking context.state again...', context.state)
@@ -242,7 +207,6 @@ export class MeasureReportsPage extends React.Component {
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: context.state.measureReportId});
-            Session.set('selectedMeasureReportId', '');
             Session.set('measureReportPageTabIndex', 1);
             Bert.alert('MeasureReport added!', 'success');
           }
@@ -259,44 +223,15 @@ export class MeasureReportsPage extends React.Component {
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: context.state.measureReportId});
-            Session.set('measureReportPageTabIndex', 1);
             Session.set('selectedMeasureReportId', '');
             Bert.alert('MeasureReport added!', 'success');
           }
         });
       }
     } 
-    Session.set('measureReportPageTabIndex', 1);
   }
-  onTableRowClick(selectedMeasureReportId){
-    Session.set('selectedMeasureReportId', selectedMeasureReportId);
-    Session.set('selectedMeasureReport', MeasureReports.findOne({id: selectedMeasureReportId}));
-  }
-  onTableCellClick(id){
-    Session.set('measureReportsUpsert', false);
-    Session.set('selectedMeasureReportId', id);
-    Session.set('measureReportPageTabIndex', 2);
-  }
-  tableActionButtonClick(_id){
-    let measureReport = MeasureReports.findOne({_id: _id});
 
-    // console.log("MeasureReportsTable.onSend()", measureReport);
 
-    var httpEndpoint = "http://localhost:8080";
-    if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
-      httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
-    }
-    HTTP.post(httpEndpoint + '/MeasureReport', {
-      data: measureReport
-    }, function(error, result){
-      if (error) {
-        console.log("error", error);
-      }
-      if (result) {
-        console.log("result", result);
-      }
-    });
-  }
   onInsert(measureReportId){
     Session.set('selectedMeasureReportId', '');
     Session.set('measureReportPageTabIndex', 1);
@@ -330,14 +265,11 @@ export class MeasureReportsPage extends React.Component {
       Session.set('measureReportPageTabIndex', newValue)
     }
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 148;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     let layoutContents;
     if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto">
+      layoutContents = <StyledCard height="auto" margin={20} >
         <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
         <CardContent>
           <MeasureReportsTable 
@@ -354,13 +286,14 @@ export class MeasureReportsPage extends React.Component {
             hideReasonCode={false}
             hideReason={false}
             hideHistory={false}
+            rowsPerPage={ LayoutHelpers.calcTableRows() }
             />
           </CardContent>
         </StyledCard>
     } else {
       layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
-        <StyledCard height="auto">
+        <StyledCard height="auto" margin={20} >
           <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
           <CardContent>
             <MeasureReportsTable 
@@ -378,13 +311,17 @@ export class MeasureReportsPage extends React.Component {
               hideReasonCode={false}
               hideReason={false}
               hideHistory={false}
+              hideBarcode={true}
+              hideNumerator={true}
+              hideDenominator={true}
               onRowClick={this.handleRowClick.bind(this) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("normal", window.innerHeight) }
               />
           </CardContent>
         </StyledCard>
       </Grid>
       <Grid item lg={4}>
-        <StyledCard height="auto" scrollable>
+        <StyledCard height="auto" margin={20}  scrollable>
           <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureReportId }</h1>
           <CardContent>
             <CardContent>
@@ -396,6 +333,7 @@ export class MeasureReportsPage extends React.Component {
                 measureReportId={ this.data.selectedMeasureReportId } 
                 showMeasureReportInputs={true}
                 showHints={false}
+                showPopulationCode={false}
                 // onInsert={ this.onInsert }
                 // onDelete={ this.onDeleteMeasureReport }
                 // onUpsert={ this.onUpsertMeasureReport }

@@ -21,6 +21,7 @@ import ReactMixin  from 'react-mixin';
 
 import ObservationDetail from './ObservationDetail';
 import ObservationsTable from './ObservationsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { get } from 'lodash';
 

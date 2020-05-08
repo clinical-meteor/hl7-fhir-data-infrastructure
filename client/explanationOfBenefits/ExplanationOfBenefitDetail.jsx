@@ -50,14 +50,14 @@ const useStyles = makeStyles(theme => ({
 
 
 
-function MeasureDetail(props){
+function ExplanationOfBenefitDetail(props){
 
   let classes = useStyles();
 
 
   let { 
     children, 
-    measure,
+    explanationOfBenefit,
     ...otherProps 
   } = props;
 
@@ -65,7 +65,7 @@ function MeasureDetail(props){
 
 
   let renderElements = [];
-  let groups = get(measure, 'group');
+  let groups = get(explanationOfBenefit, 'group');
 
   if(Array.isArray(groups)){
     groups.forEach(function(group){
@@ -219,21 +219,21 @@ function MeasureDetail(props){
   }
 
   let approvedOnDate = '';
-  if(get(measure, 'approvedDate')){
-    approvedOnDate = moment(get(measure, 'approvedDate')).format("YYYY-MM-DD")
+  if(get(explanationOfBenefit, 'approvedDate')){
+    approvedOnDate = moment(get(explanationOfBenefit, 'approvedDate')).format("YYYY-MM-DD")
   }
   let lastEditedDate = '';
-  if(get(measure, 'date')){
-    lastEditedDate = moment(get(measure, 'date')).format("YYYY-MM-DD")
+  if(get(explanationOfBenefit, 'date')){
+    lastEditedDate = moment(get(explanationOfBenefit, 'date')).format("YYYY-MM-DD")
   }
   let lastReviewDate = '';
-  if(get(measure, 'lastReviewDate')){
-    lastReviewDate = moment(get(measure, 'lastReviewDate')).format("YYYY-MM-DD")
+  if(get(explanationOfBenefit, 'lastReviewDate')){
+    lastReviewDate = moment(get(explanationOfBenefit, 'lastReviewDate')).format("YYYY-MM-DD")
   }
 
 
   return(
-    <div className='MeasureDetails'>
+    <div className='ExplanationOfBenefitDetails'>
 
         <Grid container spacing={3}>
           <Grid item xs={6}>
@@ -244,7 +244,7 @@ function MeasureDetail(props){
                 name="titleInput"
                 className={classes.input}
                 placeholder="Lorem ipsum."              
-                value={get(measure, 'title')}
+                value={get(explanationOfBenefit, 'title')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />       
@@ -255,7 +255,7 @@ function MeasureDetail(props){
                 id="publisherInput"
                 name="publisherInput"
                 className={classes.input}
-                value={get(measure, 'publisher')}
+                value={get(explanationOfBenefit, 'publisher')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />       
@@ -269,7 +269,7 @@ function MeasureDetail(props){
                 name="versionInput"
                 className={classes.input}
                 placeholder="2020.2"              
-                value={get(measure, 'version')}
+                value={get(explanationOfBenefit, 'version')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />          
@@ -281,7 +281,7 @@ function MeasureDetail(props){
                 name="identifierInput"
                 className={classes.input}
                 placeholder="XYZ.1"              
-                value={get(measure, 'identifier[0].value')}
+                value={get(explanationOfBenefit, 'identifier[0].value')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
@@ -295,7 +295,7 @@ function MeasureDetail(props){
                 name="statusInput"
                 className={classes.input}
                 placeholder="active"              
-                value={get(measure, 'status')}
+                value={get(explanationOfBenefit, 'status')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />    
@@ -310,7 +310,7 @@ function MeasureDetail(props){
                 name="descriptionInput"
                 className={classes.input}
                 placeholder="Lorem ipsum."              
-                value={get(measure, 'description')}
+                value={get(explanationOfBenefit, 'description')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth           
                 multiline   
@@ -325,7 +325,7 @@ function MeasureDetail(props){
                 id="editorInput"
                 name="editorInput"
                 className={classes.input}            
-                value={get(measure, 'editor[0].name')}
+                value={get(explanationOfBenefit, 'editor[0].name')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
@@ -336,7 +336,7 @@ function MeasureDetail(props){
                 id="reviewerInput"
                 name="reviewerInput"
                 className={classes.input}
-                value={get(measure, 'reviewer[0].name')}
+                value={get(explanationOfBenefit, 'reviewer[0].name')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
@@ -347,7 +347,7 @@ function MeasureDetail(props){
                 id="endorserInput"
                 name="endorserInput"
                 className={classes.input}         
-                value={get(measure, 'endorser[0].name')}
+                value={get(explanationOfBenefit, 'endorser[0].name')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
@@ -401,7 +401,7 @@ function MeasureDetail(props){
                 id="scoringInput"
                 name="scoringInput"
                 className={classes.input}              
-                value={get(measure, 'scoring.text')}
+                value={get(explanationOfBenefit, 'scoring.text')}
                 fullWidth              
               />       
             </FormControl>        
@@ -413,7 +413,7 @@ function MeasureDetail(props){
                 id="typeInput"
                 name="typeInput"
                 className={classes.input}
-                value={get(measure, 'type[0].text')}
+                value={get(explanationOfBenefit, 'type[0].text')}
                 fullWidth              
               />          
             </FormControl>   
@@ -430,11 +430,11 @@ function MeasureDetail(props){
   );
 }
 
-MeasureDetail.propTypes = {
+ExplanationOfBenefitDetail.propTypes = {
   id: PropTypes.string,
   fhirVersion: PropTypes.string,
-  measureId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-  measure: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  explanationOfBenefitId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  explanationOfBenefit: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   showPatientInputs: PropTypes.bool,
   showHints: PropTypes.bool,
   onInsert: PropTypes.func,
@@ -442,5 +442,5 @@ MeasureDetail.propTypes = {
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
-ReactMixin(MeasureDetail.prototype, ReactMeteorData);
-export default MeasureDetail;
+ReactMixin(ExplanationOfBenefitDetail.prototype, ReactMeteorData);
+export default ExplanationOfBenefitDetail;

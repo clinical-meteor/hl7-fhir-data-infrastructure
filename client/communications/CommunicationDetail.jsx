@@ -1,6 +1,5 @@
 import { get } from 'lodash';
 
-import { Bert } from 'meteor/clinical:alert';
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
@@ -258,14 +257,14 @@ export class CommunicationDetail extends React.Component {
       Communications.update({_id: Session.get('selectedCommunication')}, {$set: communicationUpdate }, function(error, result){
         if (error) {
           if(process.env.NODE_ENV === "test") console.log("Communications.insert[error]", error);
-          Bert.alert(error.reason, 'danger');
+          //Bert.alert(error.reason, 'danger');
         }
         if (result) {
           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Communications", recordId: Session.get('selectedCommunication')});
           Session.set('communicationUpdate', defaultCommunication);
           Session.set('communicationUpsert', defaultCommunication);
           Session.set('communicationPageTabIndex', 1);
-          Bert.alert('Communication added!', 'success');
+          //Bert.alert('Communication added!', 'success');
         }
       });
     } else {
@@ -274,14 +273,14 @@ export class CommunicationDetail extends React.Component {
       Communications.insert(communicationUpdate, function(error, result) {
         if (error) {
           if(process.env.NODE_ENV === "test")  console.log('Communications.insert[error]', error);
-          Bert.alert(error.reason, 'danger');
+          //Bert.alert(error.reason, 'danger');
         }
         if (result) {
           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Communications", recordId: result});
           Session.set('communicationPageTabIndex', 1);
           Session.set('selectedCommunication', false);
           Session.set('communicationUpsert', false);
-          Bert.alert('Communication added!', 'success');
+          //Bert.alert('Communication added!', 'success');
         }
       });
     }
@@ -295,14 +294,14 @@ export class CommunicationDetail extends React.Component {
     Communications.remove({_id: Session.get('selectedCommunication')}, function(error, result){
       if (error) {
         if(process.env.NODE_ENV === "test") console.log('Communications.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
+        //Bert.alert(error.reason, 'danger');
       }
       if (result) {
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Communications", recordId: Session.get('selectedCommunication')});
         Session.set('communicationUpdate', defaultCommunication);
         Session.set('communicationUpsert', defaultCommunication);
         Session.set('communicationPageTabIndex', 1);
-        Bert.alert('Communication removed!', 'success');
+        //Bert.alert('Communication removed!', 'success');
       }
     });
   }

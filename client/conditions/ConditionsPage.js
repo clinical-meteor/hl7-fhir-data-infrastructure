@@ -24,6 +24,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import ConditionDetail from './ConditionDetail';
 import ConditionsTable from './ConditionsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { get } from 'lodash';
 
@@ -193,10 +194,7 @@ export class ConditionsPage extends React.Component {
   render() {
     if(get(Meteor, 'settings.public.logging') === "debug") console.log('In ConditionsPage render');
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
     
     return (
       <PageCanvas id="conditionsPage" headerHeight={headerHeight} >
