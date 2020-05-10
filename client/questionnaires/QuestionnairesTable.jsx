@@ -87,25 +87,30 @@ function QuestionnaireTable(props){
 
   function removeRecord(_id){
     console.log('Remove questionnaire ', _id)
-    if(this.props.onRemoveRecord){
-      this.props.onRemoveRecord(_id);
+    if(props.onRemoveRecord){
+      props.onRemoveRecord(_id);
     }
   }
   function onActionButtonClick(id){
-    if(typeof this.props.onActionButtonClick === "function"){
-      this.props.onActionButtonClick(id);
+    if(typeof props.onActionButtonClick === "function"){
+      props.onActionButtonClick(id);
     }
   }
   function cellClick(id){
-    if(typeof this.props.onCellClick === "function"){
-      this.props.onCellClick(id);
+    if(typeof props.onCellClick === "function"){
+      props.onCellClick(id);
     }
   }
 
   function onMetaClick(patient){
     let self = this;
-    if(this.props.onMetaClick){
-      this.props.onMetaClick(self, patient);
+    if(typeof props.onMetaClick === "function"){
+      props.onMetaClick(self, patient);
+    }
+  }
+  function selectQuestionnaireRow(questionnaireId){
+    if(typeof props.onRowClick === "function"){
+      props.onRowClick(questionnaireId);
     }
   }
 
@@ -230,14 +235,14 @@ function QuestionnaireTable(props){
   } else {
     for (var i = 0; i < questionnairesToRender.length; i++) {
       tableRows.push(
-        <TableRow key={i} className="questionnaireRow" style={{cursor: "pointer"}} onClick={this.selectQuestionnaireRow.bind(this, questionnairesToRender[i].id )} hover={true} >
+        <TableRow key={i} className="questionnaireRow" style={{cursor: "pointer"}} onClick={ selectQuestionnaireRow.bind(this, questionnairesToRender[i].id )} hover={true} >
           { renderToggle(questionnairesToRender[i]) }
           { renderActionIcons(questionnairesToRender[i]) }
           { renderIdentifier(questionnairesToRender[i]) }
-          <TableCell className='title' onClick={ rowClick.bind('this', questionnairesToRender[i]._id)} style={data.style.cell}>{questionnairesToRender[i].title }</TableCell>
-          <TableCell className='status' onClick={ rowClick.bind('this', questionnairesToRender[i]._id)} style={data.style.cell}>{questionnairesToRender[i].status }</TableCell>
-          <TableCell className='date' onClick={ rowClick.bind('this', questionnairesToRender[i]._id)} style={{minWidth: '100px', paddingTop: '16px'}}>{questionnairesToRender[i].date }</TableCell>
-          <TableCell className='items' onClick={ rowClick.bind('this', questionnairesToRender[i]._id)} style={data.style.cell}>{questionnairesToRender[i].items }</TableCell>
+          <TableCell className='title' >{questionnairesToRender[i].title }</TableCell>
+          <TableCell className='status' >{questionnairesToRender[i].status }</TableCell>
+          <TableCell className='date' style={{minWidth: '140px'}}>{questionnairesToRender[i].date }</TableCell>
+          <TableCell className='items' >{questionnairesToRender[i].items }</TableCell>
           { renderBarcode(questionnairesToRender[i].id) }
         </TableRow>
       );
@@ -258,7 +263,7 @@ function QuestionnaireTable(props){
               <TableCell className='status'>Status</TableCell>
               <TableCell className='date' style={{minWidth: '140px'}}>Date</TableCell>
               <TableCell className='items'>Items</TableCell>
-              { renderIdentifierHeader() }
+            { renderBarcodeHeader() }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -271,107 +276,11 @@ function QuestionnaireTable(props){
 
 
 
-// export class QuestionnaireTable extends React.Component {
-//   constructor(props) {
-//     super(props);
-//   }
-//   getMeteorData() {
-
-//     if(this.props.data){
-//       // console.log('this.props.data', this.props.data);
-
-//       if(this.props.data.length > 0){              
-//         this.props.data.forEach(function(questionnaire){
-//           data.questionnaires.push(flattenQuestionnaire(questionnaire));
-//         });  
-//       }
-//     } else {
-//       data.questionnaires = Questionnaires.find().map(function(questionnaire){
-//         return flattenQuestionnaire(questionnaire);
-//       });
-//     }
-
-
-//     console.log("QuestionnaireTable[data]", data);
-//     return data;
-//   }
-
-//   rowClick(id){
-//     Session.set('questionnairesUpsert', false);
-//     Session.set('selectedQuestionnaire', id);
-//     // Session.set('questionnairePageTabIndex', 2);
-//   }
-
-//   renderSendButtonHeader(){
-//     if (this.props.showSendButton === true) {
-//       return (
-//         <th className='sendButton' style={this.data.style.hideOnPhone}></th>
-//       );
-//     }
-//   }
-//   renderSendButton(questionnaire, avatarStyle){
-//     if (this.props.showSendButton === true) {
-//       return (
-//         <td className='sendButton' style={this.data.style.hideOnPhone}>
-//           <Button onClick={this.onSend.bind('this', this.data.questionnaires[i]._id)}>Send</Button>
-//         </td>
-//       );
-//     }
-//   }
-//   onSend(id){
-//     let questionnaire = Questionnaires.findOne({_id: id});
-
-//     console.log("QuestionnaireTable.onSend()", questionnaire);
-
-//     var httpEndpoint = "http://localhost:8080";
-//     if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
-//       httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
-//     }
-//     HTTP.post(httpEndpoint + '/Questionnaire', {
-//       data: questionnaire
-//     }, function(error, result){
-//       if (error) {
-//         console.log("error", error);
-//       }
-//       if (result) {
-//         console.log("result", result);
-//       }
-//     });
-//   }
-//   selectQuestionnaireRow(questionnaireId){
-//     if(typeof(this.props.onRowClick) === "function"){
-//       this.props.onRowClick(questionnaireId);
-//     }
-//   }
-//   renderCheckboxHeader(){
-//     if (!this.props.hideCheckbox) {
-//       return (
-//         <th className="toggle"></th>
-//       );
-//     }
-//   }
-//   onRowChecked(questionnaire, event, toggle){
-//     console.log('onRowChecked', questionnaire, toggle);
-//     let newStatus = 'draft';
-
-//     if(toggle){
-//       newStatus = 'active';
-//     } else {
-//       newStatus = 'draft';
-//     }
-
-//     Questionnaires._collection.update({_id: questionnaire._id}, {$set: {
-//       'status': newStatus
-//     }}, function(error, result){
-//       if(error){
-//         console.error('Questionnaire Error', error);
-//       }
-//     });
-//   }
-// }
 
 QuestionnaireTable.propTypes = {
   data: PropTypes.array,
+  questionnaires: PropTypes.array,
+  selectedQuestionnaireId: PropTypes.string,
   fhirVersion: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,

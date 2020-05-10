@@ -207,22 +207,30 @@ export class ExplanationOfBenefitsPage extends React.Component {
             explanationOfBenefits={ this.data.explanationOfBenefits }
             hideCheckbox={true} 
             hideActionIcons={true}
-            hideIdentifier={true} 
-            hideTitle={false} 
-            hideDescription={false} 
-            hideApprovalDate={false}
-            hideLastReviewed={false}
-            hideVersion={false}
             hideStatus={false}
-            hideAuthor={true}
-            hidePublisher={false}
-            hideReviewer={false}
-            hideEditor={false}
-            hideEndorser={false}
-            hideType={false}
-            hideRiskAdjustment={true}
-            hideRateAggregation={true}
-            hideScoring={false}
+            hideIdentifier={false}    
+            hideType={true}
+            hideSubtype={false}
+            hideUse={false}
+            hidePatientDisplay={true}
+            hidePatientReference={false}
+            hideBillableStart={false}
+            hideBillableEnd={false}
+            hideCreated={false}
+            hideInsurerDisplay={true}
+            hideInsurerReference={false}
+            hideProviderDisplay={true}
+            hideProviderReference={false}
+            hidePayeeType={true}
+            hidePayeeDisplay={true}
+            hidePayeeReference={false}
+            hideOutcome={false}
+            hidePaymentType={true}
+            hidePaymentAmount={true}
+            hidePaymentDate={true}
+            hideBarcode={false}
+            count={this.data.explanationOfBenefitsCount}
+        
             paginationLimit={10}     
             />
           </CardContent>
@@ -236,17 +244,30 @@ export class ExplanationOfBenefitsPage extends React.Component {
               <ExplanationOfBenefitsTable 
                 explanationOfBenefits={ this.data.explanationOfBenefits }
                 selectedExplanationOfBenefitId={ this.data.selectedExplanationOfBenefitId }
-                hideIdentifier={true} 
-                hideCheckbox={true} 
-                hideApprovalDate={false}
-                hideLastReviewed={false}
-                hideVersion={false}
                 hideStatus={false}
-                hidePublisher={true}
-                hideReviewer={true}
-                hideScoring={true}
-                hideEndorser={true}
-                paginationLimit={10}            
+                hideIdentifier={false}    
+                hideType={true}
+                hideSubtype={false}
+                hideUse={false}
+                hidePatientDisplay={true}
+                hidePatientReference={false}
+                hideBillableStart={true}
+                hideBillableEnd={true}
+                hideCreated={false}
+                hideInsurerDisplay={true}
+                hideInsurerReference={false}
+                hideProviderDisplay={true}
+                hideProviderReference={false}
+                hidePayeeType={true}
+                hidePayeeDisplay={true}
+                hidePayeeReference={false}
+                hideOutcome={false}
+                hidePaymentType={true}
+                hidePaymentAmount={true}
+                hidePaymentDate={true}
+                hideBarcode={true}
+                count={this.data.explanationOfBenefitsCount}
+                    
                 hideActionIcons={true}
                 onRowClick={this.handleRowClick.bind(this) }
                 count={this.data.explanationOfBenefitsCount}
@@ -257,7 +278,6 @@ export class ExplanationOfBenefitsPage extends React.Component {
         <Grid item lg={4}>
           <StyledCard height="auto" margin={20} scrollable>
             <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedExplanationOfBenefitId }</h1>
-            {/* <CardHeader title={this.data.selectedExplanationOfBenefitId } className="helveticas barcode" /> */}
             <CardContent>
               <CardContent>
                 <ExplanationOfBenefitDetail 
@@ -268,10 +288,6 @@ export class ExplanationOfBenefitsPage extends React.Component {
                   explanationOfBenefitId={ this.data.selectedExplanationOfBenefitId } 
                   showexplanationOfBenefitInputs={true}
                   showHints={false}
-                  // onInsert={ this.onInsert }
-                  // onDelete={ this.onDeleteexplanationOfBenefit }
-                  // onUpsert={ this.onUpsertexplanationOfBenefit }
-                  // onCancel={ this.onCancelUpsertexplanationOfBenefit } 
                 />
               </CardContent>
             </CardContent>

@@ -315,10 +315,11 @@ function ValueSetDetail(props){
                 fullWidth           
                 multiline   
               />
-            </FormControl>
-                             
+            </FormControl>                             
           </Grid>
-          <Grid item xs={6} style={{paddingLeft: '40px'}}>
+
+
+          {/* <Grid item xs={6} style={{paddingLeft: '40px'}}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
               <InputAdornment className={classes.label}>Editor</InputAdornment>
               <Input
@@ -420,7 +421,7 @@ function ValueSetDetail(props){
           </Grid>
           <Grid item xs={6}>
 
-          </Grid>
+          </Grid> */}
 
 
           { renderElements }

@@ -104,17 +104,6 @@ Session.setDefault('MeasuresPage.onePageLayout', true)
     }
   });
 
-// const StyledCard = styled(Card)`
-//   background: ` + theme.paperColor + `;
-//   border-radius: 3px;
-//   border: 0;
-//   color: ` + theme.paperTextColor + `;
-//   height: 48px;
-//   padding: 0 30px;
-//   box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
-// `;
-
-
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -131,8 +120,6 @@ function TabPanel(props) {
     </Typography>
   );
 }
-
-
 
 
 export class MeasuresPage extends React.Component {
@@ -161,21 +148,6 @@ export class MeasuresPage extends React.Component {
     };
 
     data.onePageLayout = Session.get('MeasuresPage.onePageLayout');
-
-
-    // if(Session.get('measuresTableQuery')){
-    //   data.query = Session.get('measuresTableQuery')
-    // }
-
-    // if (Session.get('selectedMeasureId')){
-    //   data.selectedMeasure = Measures.findOne({_id: Session.get('selectedMeasureId')});
-    //   this.state.measure = Measures.findOne({_id: Session.get('selectedMeasureId')});
-    //   this.state.measureId = Session.get('selectedMeasureId');
-    // } else {
-    //   data.selectedMeasure = false;
-    //   this.state.measureId = false;
-    //   this.state.measure = {};
-    // }
 
     console.log('MeasuresPage.data.query', data.query)
     console.log('MeasuresPage.data.options', data.options)
@@ -211,17 +183,14 @@ export class MeasuresPage extends React.Component {
     Session.set('measurePageTabIndex', 1);
   }
   onUpsertMeasure(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
     console.log('Saving a new Measure...', context.state)
 
     if(get(context, 'state.measure')){
       let self = context;
       let fhirMeasureData = Object.assign({}, get(context, 'state.measure'));
   
-      // if(process.env.NODE_ENV === "test") console.log('fhirMeasureData', fhirMeasureData);
-  
       let measureValidator = MeasureSchema.newContext();
-      // console.log('measureValidator', measureValidator)
+  
       measureValidator.validate(fhirMeasureData)
   
       if(process.env.NODE_ENV === "development"){

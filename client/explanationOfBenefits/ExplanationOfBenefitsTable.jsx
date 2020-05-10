@@ -55,78 +55,97 @@ let styles = {
 
 //===========================================================================
 // FLATTENING / MAPPING
+getLength = function(field){
+  if(Array.isArray(field)){
+    return field.length;
+  } else {
+    return 0;
+  }
+}
 
-// flattenExplanationOfBenefit = function(explanationOfBenefit, internalDateFormat){
-//   let result = {
-//     _id: '',
-//     meta: '',
-//     identifier: '',
-//     publisher: '',
-//     status: '',
-//     title: '',
-//     date: '',
-//     approvalDate: '',
-//     lastReviewDate: '',
-//     lastEdited: '',
-//     author: '',
-//     reviewer: '',
-//     endorser: '',
-//     scoring: '',
-//     type: '',
-//     riskAdjustment: '',
-//     rateAggregation: '',
-//     supplementalDataCount: '',
-//     context: '', 
-//     version: ''
-//   };
+flattenExplanationOfBenefit = function(explanationOfBenefit, internalDateFormat){
+  let result = {
+    _id: '',
+    meta: '',
+    identifier: '',
+    status: '',
+    type: '',
+    use: '',
+    patientDisplay: '',
+    patientReference: '',
+    billableStart: '',
+    billableEnd: '',
+    created: '',
+    insurerDisplay: '',
+    insurerReference: '',
+    providerDisplay: '',
+    providerReference: '',
+    payeeType: '',
+    payeeDisplay: '',
+    payeeReference: '',
+    outcome: '',
+    paymentType: '',
+    paymentAmount: '',
+    paymentDate: '',
+    relatedClaimsCount: 0,
+    careTeamMembersCount: 0,
+    supportingInfoCount: 0,
+    diagnosisCount: 0,
+    procedureCount: 0,
+    insuranceCount: 0,
+    accidentCount: 0,
+    itemCount: 0,
+    addItemCount: 0,
+    detailCount: 0,
+    processNoteCount: 0,
+    benefitBalance: 0
+  };
 
-//   if(!internalDateFormat){
-//     internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-//   }
+  if(!internalDateFormat){
+    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
+  }
 
-//   result._id =  get(explanationOfBenefit, 'id') ? get(explanationOfBenefit, 'id') : get(explanationOfBenefit, '_id');
-//   result.id = get(explanationOfBenefit, 'id', '');
-//   result.identifier = get(explanationOfBenefit, 'identifier[0].value', '');
+  result._id =  get(explanationOfBenefit, 'id') ? get(explanationOfBenefit, 'id') : get(explanationOfBenefit, '_id');
+  result.id = get(explanationOfBenefit, 'id', '');
+  result.identifier = get(explanationOfBenefit, 'identifier[0].value', '');
 
-//   if(get(explanationOfBenefit, 'lastReviewDate')){
-//     result.lastReviewDate = moment(get(explanationOfBenefit, 'lastReviewDate', '')).format(internalDateFormat);
-//   }
-//   if(get(explanationOfBenefit, 'approvalDate')){
-//     result.approvalDate = moment(get(explanationOfBenefit, 'approvalDate', '')).format(internalDateFormat);
-//   }
-//   if(get(explanationOfBenefit, 'date')){
-//     result.lastEdited = moment(get(explanationOfBenefit, 'date', '')).format(internalDateFormat);
-//   }
+  result.status = get(explanationOfBenefit, 'status', '');
+  result.type = get(explanationOfBenefit, 'type.text', '');
+  result.use = get(explanationOfBenefit, 'use', '');
+  result.patientDisplay = get(explanationOfBenefit, 'patient.display', '');
+  result.patientReference = get(explanationOfBenefit, 'patient.reference', '');
+  result.billableStart = moment(get(explanationOfBenefit, 'billablePeriod.start', '')).format("YYYY-MM-DD");
+  result.billableEnd = moment(get(explanationOfBenefit, 'billablePeriod.end', '')).format("YYYY-MM-DD");
+  result.created = moment(get(explanationOfBenefit, 'created', '')).format("YYYY-MM-DD");
+  result.insurerDisplay = get(explanationOfBenefit, 'insurer.display', '');
+  result.insurerReference = get(explanationOfBenefit, 'insurer.reference', '');
+  result.providerDisplay = get(explanationOfBenefit, 'provider.display', '');
+  result.providerReference = get(explanationOfBenefit, 'provider.reference', '');
+  result.payeeType = get(explanationOfBenefit, 'payee.type.text', '');
+  result.payeeDisplay = get(explanationOfBenefit, 'payee.party.display', '');
+  result.payeeReference = get(explanationOfBenefit, 'payee.party.reference', '');
+  result.outcome = get(explanationOfBenefit, 'outcome', '');
+  result.paymentType = get(explanationOfBenefit, 'payment.type.text', '');
+  result.paymentAmount = get(explanationOfBenefit, 'payment.amount.value', '');
+  result.paymentDate = moment(get(explanationOfBenefit, 'payment.date', '')).format("YYYY-MM-DD");
 
-//   result.publisher = get(explanationOfBenefit, 'publisher', '');
-//   result.title = get(explanationOfBenefit, 'title', '');
-//   result.description = get(explanationOfBenefit, 'description', '');
-//   result.status = get(explanationOfBenefit, 'status', '');
-//   result.version = get(explanationOfBenefit, 'version', '');
+  result.relatedClaimsCount = getLength(explanationOfBenefit.related);
+  result.careTeamMembersCount = getLength(explanationOfBenefit.careTeam);
+  result.supportingInfoCount = getLength(explanationOfBenefit.supportingInfo);
+  result.diagnosisCount = getLength(explanationOfBenefit.diagnosis);
+  result.procedureCount = getLength(explanationOfBenefit.procedures);
+  result.insuranceCount = getLength(explanationOfBenefit.insurance);
+  result.accidentCount = getLength(explanationOfBenefit.accident);
+  result.itemCount = getLength(explanationOfBenefit.item);
+  result.addItemCount = getLength(explanationOfBenefit.addItem);
+  result.detailCount = getLength(explanationOfBenefit.detailCount);
+  result.processNoteCount = getLength(explanationOfBenefit.processNote);
+  result.benefitBalance = getLength(explanationOfBenefit.benefit);
 
-//   result.context = get(explanationOfBenefit, 'useContext[0].valueCodeableConcept.text', '');
+  console.log('ExplanationOfBenefitsTable.flattenExplanationOfBenefit', result)
 
-//   result.editor = get(explanationOfBenefit, 'editor[0].name', '');
-//   result.reviewer = get(explanationOfBenefit, 'reviewer[0].name', '');
-//   result.endorser = get(explanationOfBenefit, 'endorser[0].name', '');
-
-//   result.scoring = get(explanationOfBenefit, 'scoring.coding[0].display', '');
-//   result.type = get(explanationOfBenefit, 'type[0].coding[0].display', '');
-
-//   result.riskAdjustment = get(explanationOfBenefit, 'riskAdjustment', '');
-//   result.rateAggregation = get(explanationOfBenefit, 'rateAggregation', '');
-  
-//   let supplementalData = get(explanationOfBenefit, 'supplementalData', []);
-//   result.supplementalDataCount = supplementalData.length;
-
-//   let cohorts = get(explanationOfBenefit, 'group[0].population', []);
-//   result.cohortCount = cohorts.length;
-
-
-//   return result;
-// }
-
-
+  return result;
+}
 
 
 
@@ -149,25 +168,27 @@ function ExplanationOfBenefitsTable(props){
 
     hideCheckbox,
     hideActionIcons,
-    hideVersion,
     hideStatus,
-    hidePublisher,
-    hideTitle,
-    hideDescription,
-    hideApprovalDate,
-    hideLastEditedDate,
-    hideLastReviewed,
-    hideAuthor,
-    hideEditor,
-    hideReviewer,
-    hideEndorser,
-    hideScoring,
+    hideIdentifier,    
     hideType,
-    hideRiskAdjustment,
-    hideRateAggregation,
-    hideSupplementalData,
-    hideContext,
-    hidePopulationCount,
+    hideSubtype,
+    hideUse,
+    hidePatientDisplay,
+    hidePatientReference,
+    hideBillableStart,
+    hideBillableEnd,
+    hideCreated,
+    hideInsurerDisplay,
+    hideInsurerReference,
+    hideProviderDisplay,
+    hideProviderReference,
+    hidePayeeType,
+    hidePayeeDisplay,
+    hidePayeeReference,
+    hideOutcome,
+    hidePaymentType,
+    hidePaymentAmount,
+    hidePaymentDate,
     hideBarcode,
 
     onCellClick,
@@ -181,7 +202,6 @@ function ExplanationOfBenefitsTable(props){
     rowsPerPage,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
 
     ...otherProps 
   } = props;
@@ -266,20 +286,21 @@ function ExplanationOfBenefitsTable(props){
     }
   } 
 
-  function renderVersion(version){
-    if (!props.hideVersion) {
+  function renderIdentifier(identifier){
+    if (!props.hideIdentifier) {
       return (
-        <TableCell className='version'>{ version }</TableCell>
+        <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   }
-  function renderVersionHeader(){
-    if (!props.hideVersion) {
+  function renderIdentifierHeader(){
+    if (!props.hideIdentifier) {
       return (
-        <TableCell className='version'>Version</TableCell>
+        <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
+
   function renderStatus(status){
     if (!props.hideStatus) {
       return (
@@ -294,159 +315,10 @@ function ExplanationOfBenefitsTable(props){
       );
     }
   }
-  function renderTitle(title){
-    if (!props.hideTitle) {
+  function renderType(type){
+    if (!props.hideType) {
       return (
-        <TableCell className='title'>{ title }</TableCell>
-      );
-    }
-  }
-  function renderTitleHeader(){
-    if (!props.hideTitle) {
-      return (
-        <TableCell className='title'>Title</TableCell>
-      );
-    }
-  }
-  function renderDescription(description){
-    if (!props.hideDescription) {
-      return (
-        <TableCell className='description'>{ description }</TableCell>
-      );
-    }
-  }
-  function renderDescriptionHeader(){
-    if (!props.hideDescription) {
-      return (
-        <TableCell className='description'>Description</TableCell>
-      );
-    }
-  }
-
-  function renderApprovalDate(approvalDate){
-    if (!props.hideApprovalDate) {
-      return (
-        <TableCell className='approvalDate'>{ approvalDate }</TableCell>
-      );
-    }
-  }
-  function renderApprovalDateHeader(){
-    if (!props.hideApprovalDate) {
-      return (
-        <TableCell className='approvalDate' style={{minWidth: '140px'}}>Approval Date</TableCell>
-      );
-    }
-  }
-  function renderLastReviewDate(lastReview){
-    if (!props.hideLastReviewDate) {
-      return (
-        <TableCell className='lastReview'>{ lastReview }</TableCell>
-      );
-    }
-  }
-  function renderLastReviewDateHeader(){
-    if (!props.hideLastReviewDate) {
-      return (
-        <TableCell className='lastReview' style={{minWidth: '140px'}}>Last Review</TableCell>
-      );
-    }
-  }
-  function renderLastEditedDate(lastEdited){
-    if (!props.hideLastEditedDate) {
-      return (
-        <TableCell className='lastEdited'>{ lastEdited }</TableCell>
-      );
-    }
-  }
-  function renderLastEditedDateHeader(){
-    if (!props.hideLastEditedDate) {
-      return (
-        <TableCell className='lastEdited' style={{minWidth: '140px'}}>Last Edited</TableCell>
-      );
-    }
-  }
-
-  function renderAuthor(name){
-    if (!props.hideAuthor) {
-      return (
-        <TableCell className='author'>{ name }</TableCell>
-      );
-    }
-  }
-  function renderAuthorHeader(){
-    if (!props.hideAuthor) {
-      return (
-        <TableCell className='author' style={{minWidth: '140px'}}>Author</TableCell>
-      );
-    }
-  }
-  function renderPublisher(name){
-    if (!props.hidePublisher) {
-      return (
-        <TableCell className='publisher'>{ name }</TableCell>
-      );
-    }
-  }
-  function renderPublisherHeader(){
-    if (!props.hidePublisher) {
-      return (
-        <TableCell className='publisher' style={{minWidth: '200px'}}>Publisher</TableCell>
-      );
-    }
-  }
-  function renderEditor(name){
-    if (!props.hideEditor) {
-      return (
-        <TableCell className='editor'>{ name }</TableCell>
-      );
-    }
-  }
-  function renderEditorHeader(){
-    if (!props.hideEditor) {
-      return (
-        <TableCell className='editor' style={{minWidth: '140px'}}>Editor</TableCell>
-      );
-    }
-  }
-  function renderReviewer(name){
-    if (!props.hideReviewer) {
-      return (
-        <TableCell className='reviewer'>{ name }</TableCell>
-      );
-    }
-  }
-  function renderReviewerHeader(){
-    if (!props.hideReviewer) {
-      return (
-        <TableCell className='reviewer' style={{minWidth: '140px'}}>Reviewer</TableCell>
-      );
-    }
-  }
-  function renderEndorser(name){
-    if (!props.hideEndorser) {
-      return (
-        <TableCell className='endorser'>{ name }</TableCell>
-      );
-    }
-  }
-  function renderEndorserHeader(){
-    if (!props.hideEndorser) {
-      return (
-        <TableCell className='endorser' style={{minWidth: '140px'}}>Endorser</TableCell>
-      );
-    }
-  }
-  function renderScoring(score){
-    if (!props.hideScoring) {
-      return (
-        <TableCell className='scoring' style={{minWidth: '180px'}}>{ score }</TableCell>
-      );
-    }
-  }
-  function renderScoringHeader(){
-    if (!props.hideScoring) {
-      return (
-        <TableCell className='scoring'>Scoring</TableCell>
+        <TableCell className='type'>{ type }</TableCell>
       );
     }
   }
@@ -457,83 +329,252 @@ function ExplanationOfBenefitsTable(props){
       );
     }
   }
-  function renderType(type){
+  function renderUse(use){
     if (!props.hideType) {
       return (
-        <TableCell className='type'>{ type }</TableCell>
+        <TableCell className='use'>{ use }</TableCell>
       );
     }
   }
-  function renderRiskAdjustmentHeader(){
-    if (!props.hideRiskAdjustment) {
+  function renderUseHeader(){
+    if (!props.hideType) {
       return (
-        <TableCell className='riskAdjustment'>Risk Adjustment</TableCell>
+        <TableCell className='use'>Use</TableCell>
       );
     }
   }
-  function renderRiskAdjustment(riskAdjustment){
-    if (!props.hideRiskAdjustment) {
+  function renderPatientDisplay(patientDisplay){
+    if (!props.hidePatientDisplay) {
       return (
-        <TableCell className='riskAdjustment'>{ riskAdjustment }</TableCell>
+        <TableCell className='patientDisplay'>{ patientDisplay }</TableCell>
       );
     }
   }
-  function renderRateAggregationHeader(){
-    if (!props.hideRateAggregation) {
+  function renderPatientDisplayHeader(){
+    if (!props.hidePatientDisplay) {
       return (
-        <TableCell className='rateAggregation'>Rate Aggregation</TableCell>
+        <TableCell className='patientDisplay'>Patient Display</TableCell>
       );
     }
   }
-  function renderRateAggregation(rateAggregation){
-    if (!props.hideRateAggregation) {
+  function renderPatientReference(patientReference){
+    if (!props.hidePatientReference) {
       return (
-        <TableCell className='rateAggregation'>{ rateAggregation }</TableCell>
+        <TableCell className='patientReference'>{ patientReference }</TableCell>
       );
     }
   }
-  function renderSupplementalDataCountHeader(){
-    if (!props.hideSupplementalData) {
+  function renderPatientReferenceHeader(){
+    if (!props.hidePatientReference) {
       return (
-        <TableCell className='rateAggregation'>Rate Aggregation</TableCell>
+        <TableCell className='patientReference'>Patient Reference</TableCell>
       );
     }
   }
-  function renderSupplementalDataCount(rateAggregation){
-    if (!props.hideSupplementalData) {
+
+  function renderBillableStart(billableStart){
+    if (!props.hideBillableStart) {
       return (
-        <TableCell className='rateAggregation'>{ rateAggregation }</TableCell>
+        <TableCell className='billableStart' >{ billableStart }</TableCell>
       );
     }
   }
-  function renderContextHeader(){
-    if (!props.hideContext) {
+  function renderBillableStartHeader(){
+    if (!props.hideBillableStart) {
       return (
-        <TableCell className='context'>Context</TableCell>
+        <TableCell className='billableStart' style={{minWidth: '140px'}}>Billable Start</TableCell>
       );
     }
   }
-  function renderContext(context){
-    if (!props.hideContext) {
+  function renderBillableEnd(billableEnd){
+    if (!props.hideBillableEnd) {
       return (
-        <TableCell className='context'>{ context }</TableCell>
+        <TableCell className='billableEnd'>{ billableEnd }</TableCell>
       );
     }
   }
-  function renderPopulationCountHeader(){
-    if (!props.hidePopulationCount) {
+  function renderBillableEndHeader(){
+    if (!props.hideBillableEnd) {
       return (
-        <TableCell className='cohortCount'>Populations</TableCell>
+        <TableCell className='billableEnd' style={{minWidth: '140px'}}>Billable End</TableCell>
       );
     }
   }
-  function renderPopulationCount(cohortCount){
-    if (!props.hidePopulationCount) {
+  function renderCreated(created){
+    if (!props.hideCreated) {
       return (
-        <TableCell className='cohortCount'>{ cohortCount }</TableCell>
+        <TableCell className='created'>{ created }</TableCell>
       );
     }
   }
+  function renderCreatedHeader(){
+    if (!props.hideCreated) {
+      return (
+        <TableCell className='created'>Created</TableCell>
+      );
+    }
+  }
+  
+  function renderInsurerDisplay(insurerDisplay){
+    if (!props.hideInsurerDisplay) {
+      return (
+        <TableCell className='insurerDisplay'>{ insurerDisplay }</TableCell>
+      );
+    }
+  }
+  function renderInsurerDisplayHeader(){
+    if (!props.hideInsurerDisplay) {
+      return (
+        <TableCell className='insurerDisplay'>Insurer Display</TableCell>
+      );
+    }
+  }
+  function renderInsurerReference(insurerReference){
+    if (!props.hideInsurerReference) {
+      return (
+        <TableCell className='insurerReference'>{ insurerReference }</TableCell>
+      );
+    }
+  }
+  function renderInsurerReferenceHeader(){
+    if (!props.hideInsurerReference) {
+      return (
+        <TableCell className='insurerReference'>Insurer Reference</TableCell>
+      );
+    }
+  }
+  function renderProviderDisplay(providerDisplay){
+    if (!props.hideProviderDisplay) {
+      return (
+        <TableCell className='providerDisplay'>{ providerDisplay }</TableCell>
+      );
+    }
+  }
+  function renderProviderDisplayHeader(){
+    if (!props.hideProviderDisplay) {
+      return (
+        <TableCell className='providerDisplay'>Provider Display</TableCell>
+      );
+    }
+  }
+  function renderProviderReference(providerReference){
+    if (!props.hideProviderReference) {
+      return (
+        <TableCell className='providerReference'>{ providerReference }</TableCell>
+      );
+    }
+  }
+  function renderProviderReferenceHeader(){
+    if (!props.hideProviderReference) {
+      return (
+        <TableCell className='providerReference'>Provider Reference</TableCell>
+      );
+    }
+  }
+  function renderPayeeDisplay(payeeDisplay){
+    if (!props.hidePayeeDisplay) {
+      return (
+        <TableCell className='payeeDisplay'>{ payeeDisplay }</TableCell>
+      );
+    }
+  }
+  function renderPayeeDisplayHeader(){
+    if (!props.hidePayeeDisplay) {
+      return (
+        <TableCell className='payeeDisplay'>Payee Display</TableCell>
+      );
+    }
+  }
+  function renderPayeeReference(payeeReference){
+    if (!props.hidePayeeReference) {
+      return (
+        <TableCell className='payeeReference'>{ payeeReference }</TableCell>
+      );
+    }
+  }
+  function renderPayeeReferenceHeader(){
+    if (!props.hidePayeeReference) {
+      return (
+        <TableCell className='payeeReference'>Payee Reference</TableCell>
+      );
+    }
+  }
+  function renderPayeeType(payeeType){
+    if (!props.hidePayeeType) {
+      return (
+        <TableCell className='payeeType'>{ payeeType }</TableCell>
+      );
+    }
+  }
+  function renderPayeeTypeHeader(){
+    if (!props.hidePayeeType) {
+      return (
+        <TableCell className='payeeType'>Payee Type</TableCell>
+      );
+    }
+  }
+
+
+  function renderOutcome(outcome){
+    if (!props.hideOutcome) {
+      return (
+        <TableCell className='outcome'>{ outcome }</TableCell>
+      );
+    }
+  }
+  function renderOutcomeHeader(){
+    if (!props.hideOutcome) {
+      return (
+        <TableCell className='outcome'>Payee Type</TableCell>
+      );
+    }
+  }
+
+
+  function renderPaymentType(paymentType){
+    if (!props.hidePaymentType) {
+      return (
+        <TableCell className='paymentType'>{ paymentType }</TableCell>
+      );
+    }
+  }
+  function renderPaymentTypeHeader(){
+    if (!props.hidePaymentType) {
+      return (
+        <TableCell className='paymentType'>Payment Type</TableCell>
+      );
+    }
+  }
+  function renderPaymentAmount(paymentAmount){
+    if (!props.hidePaymentAmount) {
+      return (
+        <TableCell className='paymentAmount'>{ paymentAmount }</TableCell>
+      );
+    }
+  }
+  function renderPaymentAmountHeader(){
+    if (!props.hidePaymentAmount) {
+      return (
+        <TableCell className='paymentAmount'>Payment Amount</TableCell>
+      );
+    }
+  }
+  function renderPaymentDate(paymentDate){
+    if (!props.hidePaymentDate) {
+      return (
+        <TableCell className='paymentDate'>{ paymentDate }</TableCell>
+      );
+    }
+  }
+  function renderPaymentDateHeader(){
+    if (!props.hidePaymentDate) {
+      return (
+        <TableCell className='paymentDate'>Payment Date</TableCell>
+      );
+    }
+  }
+
+  
 
   function renderBarcode(id){
     if (!props.hideBarcode) {
@@ -630,25 +671,30 @@ function ExplanationOfBenefitsTable(props){
         >
           { renderToggle() }
           { renderActionIcons(explanationOfBenefitsToRender[i]) }
-          { renderTitle(explanationOfBenefitsToRender[i].title) }          
-          { renderDescription(explanationOfBenefitsToRender[i].description) }          
-          { renderVersion(explanationOfBenefitsToRender[i].version) }
-          { renderPublisher(explanationOfBenefitsToRender[i].publisher) }
+
+          { renderCreated(explanationOfBenefitsToRender[i].created) }
+          { renderIdentifier(explanationOfBenefitsToRender[i].identifier) }          
+          
           { renderStatus(explanationOfBenefitsToRender[i].status) }
-          { renderAuthor(explanationOfBenefitsToRender[i].author) }
-          { renderEditor(explanationOfBenefitsToRender[i].editor) }
-          { renderLastEditedDate(explanationOfBenefitsToRender[i].lastEdited) }                    
-          { renderReviewer(explanationOfBenefitsToRender[i].reviewer) }
-          { renderLastReviewDate(explanationOfBenefitsToRender[i].lastReviewDate) }                    
-          { renderEndorser(explanationOfBenefitsToRender[i].endorser) }
-          { renderApprovalDate(explanationOfBenefitsToRender[i].approvalDate) }
-          { renderScoring(explanationOfBenefitsToRender[i].scoring) }
-          { renderType(explanationOfBenefitsToRender[i].type) }
-          { renderRiskAdjustment(explanationOfBenefitsToRender[i].riskAdjustment) }
-          { renderRateAggregation(explanationOfBenefitsToRender[i].rateAggregation) }
-          { renderSupplementalDataCount(explanationOfBenefitsToRender[i].supplementalDataCount) }
-          { renderContext(explanationOfBenefitsToRender[i].context) }
-          { renderPopulationCount(explanationOfBenefitsToRender[i].cohortCount) }
+          { renderType(explanationOfBenefitsToRender[i].type) }          
+          { renderUse(explanationOfBenefitsToRender[i].use) }
+          { renderPatientDisplay(explanationOfBenefitsToRender[i].patientDisplay) }
+          { renderPatientReference(explanationOfBenefitsToRender[i].patientReference) }
+          { renderBillableStart(explanationOfBenefitsToRender[i].billableStart) }
+          { renderBillableEnd(explanationOfBenefitsToRender[i].billableEnd) }
+          { renderInsurerDisplay(explanationOfBenefitsToRender[i].insurerDisplay) }
+          { renderInsurerReference(explanationOfBenefitsToRender[i].insurerReference) }
+          { renderProviderDisplay(explanationOfBenefitsToRender[i].providerDisplay) }
+          { renderProviderReference(explanationOfBenefitsToRender[i].providerReference) }
+          { renderPayeeType(explanationOfBenefitsToRender[i].payeeType) }
+          { renderPayeeDisplay(explanationOfBenefitsToRender[i].payeeDisplay) }
+          { renderPayeeReference(explanationOfBenefitsToRender[i].payeeReference) }
+          { renderOutcome(explanationOfBenefitsToRender[i].outcome) }
+          { renderPaymentType(explanationOfBenefitsToRender[i].paymentType) }
+          { renderPaymentAmount(explanationOfBenefitsToRender[i].paymentAmount) }
+          { renderPaymentDate(explanationOfBenefitsToRender[i].paymentDate) }
+          {/* { renderCounts(explanationOfBenefitsToRender[i]) } */}
+
           { renderBarcode(explanationOfBenefitsToRender[i].id)}
         </TableRow>
       );       
@@ -662,25 +708,30 @@ function ExplanationOfBenefitsTable(props){
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
-            { renderTitleHeader() }
-            { renderDescriptionHeader() }
-            { renderVersionHeader() }
-            { renderPublisherHeader() }
+
+            { renderCreatedHeader() }
+            { renderIdentifierHeader() }
+
             { renderStatusHeader() }
-            { renderAuthorHeader() }
-            { renderEditorHeader() }
-            { renderLastEditedDateHeader() }
-            { renderReviewerHeader() }
-            { renderLastReviewDateHeader() }
-            { renderEndorserHeader() }
-            { renderApprovalDateHeader() }
-            { renderScoringHeader() }
             { renderTypeHeader() }
-            { renderRiskAdjustmentHeader() }
-            { renderRateAggregationHeader() }
-            { renderSupplementalDataCountHeader() }
-            { renderContextHeader() }
-            { renderPopulationCountHeader() }
+            { renderUseHeader() }
+            { renderPatientDisplayHeader() }
+            { renderPatientReferenceHeader() }
+            { renderBillableStartHeader() }
+            { renderBillableEndHeader() }
+            { renderInsurerDisplayHeader() }
+            { renderInsurerReferenceHeader() }
+            { renderProviderDisplayHeader() }
+            { renderProviderReferenceHeader() }
+            { renderPayeeTypeHeader() }
+            { renderPayeeDisplayHeader() }
+            { renderPayeeReferenceHeader() }
+            { renderOutcomeHeader() }
+            { renderPaymentTypeHeader() }
+            { renderPaymentAmountHeader() }
+            { renderPaymentDateHeader() }
+            {/* { renderCountsHeader() } */}
+            
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -694,7 +745,6 @@ function ExplanationOfBenefitsTable(props){
 }
 
 ExplanationOfBenefitsTable.propTypes = {
-  barcodes: PropTypes.bool,
   explanationOfBenefits: PropTypes.array,
   selectedExplanationOfBenefitId: PropTypes.string,
 
@@ -704,26 +754,28 @@ ExplanationOfBenefitsTable.propTypes = {
 
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
-  hideApprovalDate: PropTypes.bool,
-  hideVersion: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
   hideStatus: PropTypes.bool,
-  hideTitle: PropTypes.bool,
-  hideDescription: PropTypes.bool,
-  hideLastEditedDate: PropTypes.bool,
-  hideLastReviewed: PropTypes.bool,
-  hidePublisher: PropTypes.bool,
-  hideAuthor: PropTypes.bool,
-  hideEditor: PropTypes.bool,
-  hideReviewer: PropTypes.bool,
-  hideEndorser: PropTypes.bool,
-  hideScoring: PropTypes.bool,
   hideType: PropTypes.bool,
-  hideRiskAdjustment: PropTypes.bool,
-  hideRateAggregation: PropTypes.bool,
-  hideSupplementalData: PropTypes.bool,
-  hideContext: PropTypes.bool,
-  hidePopulationCount: PropTypes.bool,
-  hideBarcode: PropTypes.bool,
+  hideSubtype: PropTypes.bool,
+  hideUse: PropTypes.bool,
+  hidePatientDisplay: PropTypes.bool,
+  hidePatientReference: PropTypes.bool,
+  hideBillableStart: PropTypes.bool,
+  hideBillableEnd: PropTypes.bool,
+  hideCreated: PropTypes.bool,
+  hideInsurerDisplay: PropTypes.bool,
+  hideInsurerReference: PropTypes.bool,
+  hideProviderDisplay: PropTypes.bool,
+  hideProviderReference: PropTypes.bool,
+  hidePayeeType: PropTypes.bool,
+  hidePayeeDisplay: PropTypes.bool,
+  hidePayeeReference: PropTypes.bool,
+  hideOutcome: PropTypes.bool,
+  hidePaymentType: PropTypes.bool,
+  hidePaymentAmount: PropTypes.bool,
+  hidePaymentDate: PropTypes.bool,
+  hideBarcode: PropTypes.bool,  
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -735,27 +787,29 @@ ExplanationOfBenefitsTable.propTypes = {
 ExplanationOfBenefitsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
-  showMinutes: false,
-  hideVersion: false,
+  hideIdentifier: true,
   hideStatus: false,
-  hideTitle: false,
-  hideApprovalDate: false,
-  hideDescription: true,
-  hideLastEditedDate: false,
-  hideLastReviewed: false,
-  hidePublisher: false,
-  hideAuthor: true,
-  hideEditor: false,
-  hideReviewer: false,
-  hideEndorser: false,
-  hideScoring: true,
-  hideType: true,
-  hideRiskAdjustment: true,
-  hideRateAggregation: true,
-  hideSupplementalData: true,
-  hideContext: true,
-  hidePopulationCount: false,
-  hideBarcode: true,
+  hideType: false,
+  hideSubtype: true,
+  hideUse: false,
+  hidePatientDisplay: false,
+  hidePatientReference: false,
+  hideBillableStart: true,
+  hideBillableEnd: true,
+  hideCreated: false,
+  hideInsurerDisplay: false,
+  hideInsurerReference: true,
+  hideProviderDisplay: false,
+  hideProviderReference: true,
+  hidePayeeType: false,
+  hidePayeeDisplay: false,
+  hidePayeeReference: true,
+  hideOutcome: false,
+  hidePaymentType: false,
+  hidePaymentAmount: false,
+  hidePaymentDate: false,
+  hideCounts: false,  
+  hideBarcode: false,  
   selectedExplanationOfBenefitId: false,
   rowsPerPage: 5
 }

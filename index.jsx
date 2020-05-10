@@ -95,7 +95,8 @@ import ProcedureDetail from './client/procedures/ProcedureDetail';
 
 import QuestionnairesPage from './client/questionnaires/QuestionnairesPage';
 import QuestionnairesTable from './client/questionnaires/QuestionnairesTable';
-import QuestionnaireDetail from './client/questionnaires/QuestionnaireDetail';
+import QuestionnaireDetailSortable from './client/questionnaires/QuestionnaireDetailSortable';
+import QuestionnaireDetailExpansionPanels from './client/questionnaires/QuestionnaireDetailExpansionPanels';
 
 import QuestionnaireResponsesPage from './client/questionnaireResponses/QuestionnaireResponsesPage';
 import QuestionnaireResponsesTable from './client/questionnaireResponses/QuestionnaireResponsesTable';
@@ -538,7 +539,8 @@ export {
 
   QuestionnairesPage,
   QuestionnairesTable,
-  QuestionnaireDetail,
+  QuestionnaireDetailSortable,
+  QuestionnaireDetailExpansionPanels,
 
   QuestionnaireResponsesPage,
   QuestionnaireResponsesTable,

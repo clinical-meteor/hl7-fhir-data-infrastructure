@@ -15,20 +15,30 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import { DynamicSpacer } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
-import QuestionnaireDetail from './QuestionnaireDetail';
+import QuestionnaireDetailExpansionPanels from './QuestionnaireDetailExpansionPanels';
 import QuestionnairesTable from './QuestionnairesTable';
 import SortableQuestionnaire from './SortableQuestionnaire';
 import LayoutHelpers from '../../lib/LayoutHelpers';
+
+import { 
+  FormControl,
+  InputLabel,
+  Input,
+  InputAdornment,
+  FormControlLabel,
+} from '@material-ui/core';
+
 
 import PropTypes from 'prop-types';
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
-import { get } from 'lodash';
+
 import { Session } from 'meteor/session';
 import { Random } from 'meteor/random';
 
-
+import moment from 'moment';
+import { get } from 'lodash';
 
 let defaultQuestionnaire = {
   index: 2,
@@ -60,7 +70,7 @@ Session.setDefault('enableCurrentQuestionnaire', false);
 Session.setDefault('activeQuestionnaireName', 'bar');
 Session.setDefault('activeQuestionLinkId', false);
 
-
+Session.setDefault('selectedQuestionnaireId', '')
 
 //===============================================================================================================
 // Global Theming 
@@ -137,6 +147,33 @@ const muiTheme = createMuiTheme({
 });
 
 
+//===============================================================================================================
+// Classes Styles Theming 
+
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  },
+  input: {
+    marginBottom: '20px'
+  },
+  compactInput: {
+    marginBottom: '10px'
+  },
+  label: {
+    paddingBottom: '10px'
+  }
+}));
+
+
+
 // =========================================================================================================
 // Main Component
 
@@ -155,7 +192,7 @@ export class QuestionnairesPage extends React.Component {
       questionnaireSearchFilter: '',
       currentQuestionnaire: null,
       questionnaireId: false,
-      //sortableItems: ['Lorem ipsum?', 'Ipsum foo?', 'Dolar set et?'],
+      sortableItems: [],
       enabled: Session.get('enableCurrentQuestionnaire'),
       chatbotInstalled: false,
       questionnaireName: '',
@@ -165,46 +202,52 @@ export class QuestionnairesPage extends React.Component {
       isNumber: false,
       isSorting: Session.get('questionnaireIsSorting'),
       activeQuestionLinkId: Session.get('activeQuestionLinkId'),
-      onePageLayout: true
+      onePageLayout: true,
+      questionnaires: Questionnaires.find().fetch(),
+      questionnairesCount: Questionnaires.find().count(), 
+      selectedQuestionnaireId: Session.get('selectedQuestionnaireId'),
+      selectedQuestionnaire: Session.get('selectedQuestionnaire')
     };
 
-    if (Session.get('questionnaireFormData')) {
-      data.questionnaire = Session.get('questionnaireFormData');
-    }
+    // if (Session.get('questionnaireFormData')) {
+    //   data.questionnaire = Session.get('questionnaireFormData');
+    // }
     if (Session.get('questionnaireSearchFilter')) {
       data.questionnaireSearchFilter = Session.get('questionnaireSearchFilter');
     }
-    if (Session.get("selectedQuestionnaire")) {
-      console.log("data.questionnaireId", Session.get('data.questionnaireId'));
 
-        data.currentQuestionnaire = Questionnaires.findOne({_id: Session.get('selectedQuestionnaire')});
-        console.log("data.currentQuestionnaire", data.currentQuestionnaire);
-
-        // if (get(data, 'selectedQuestionnaire.item')) {
-        //   data.sortableItems = [];
-        //   data.currentQuestionnaire.item.forEach(function(item){
-        //     console.log('item', item)
-        //     data.sortableItems.push(get(item, 'text'));              
-        //   });
-        // }
-
-        if(get(data, 'currentQuestionnaire.status') === "active"){
-          data.isActive = true;
-        } else {
-          data.isActive = false;
+    if (get(data, 'selectedQuestionnaire')) {
+      if (get(data, 'selectedQuestionnaire.item')) {
+        
+        if(Array.isArray(data.selectedQuestionnaire.item)){
+          let count = 0;
+          data.selectedQuestionnaire.item.forEach(function(item){
+            data.sortableItems.push({
+              linkId: count,
+              text: get(item, 'text')
+            });              
+            count++;
+          });  
         }
+      }
 
-        if(get(data, 'currentQuestionnaire.title')){
-          data.questionnaireName = get(data, 'currentQuestionnaire.title');
-        } else {
-          data.questionnaireName = '';
-        }
+      if(get(data, 'selectedQuestionnaire.status') === "active"){
+        data.isActive = true;
+      } else {
+        data.isActive = false;
+      }
+
+      // if(get(data, 'selectedQuestionnaire.title')){
+      //   data.questionnaireName = get(data, 'selectedQuestionnaire.title');
+      // } else {
+      //   data.questionnaireName = '';
+      // }
     }
 
     if(Session.get('activeQuestionLinkId')){
       console.log('ActiveQuestionLinkId was updated. Checking if it exists in the current questionnaire items.')
-      if (Array.isArray(get(data, 'currentQuestionnaire.item'))) {
-        data.currentQuestionnaire.item.forEach(function(item){
+      if (Array.isArray(get(data, 'selectedQuestionnaire.item'))) {
+        data.selectedQuestionnaire.item.forEach(function(item){
           if(Session.equals('activeQuestionLinkId', get(item, 'linkId', ''))){      
             console.log('Found.  Updating the question being edited.')
             data.questionnaireDesignerCurrentQuestion = item;
@@ -213,10 +256,10 @@ export class QuestionnairesPage extends React.Component {
       } 
     } 
 
-    if (Session.get('questionnaireDesignerCurrentQuestion')) {
-      console.log('Selected question not found.  Using dirty state.')
-      data.questionnaireDesignerCurrentQuestion = Session.get('questionnaireDesignerCurrentQuestion');
-    }
+    // if (Session.get('questionnaireDesignerCurrentQuestion')) {
+    //   console.log('Selected question not found.  Using dirty state.')
+    //   data.questionnaireDesignerCurrentQuestion = Session.get('questionnaireDesignerCurrentQuestion');
+    // }
 
     console.log("QuestionnairesPage[data]", data);
     return data;
@@ -229,25 +272,25 @@ export class QuestionnairesPage extends React.Component {
       Session.set('questionnaireIsSorting', true);
     }    
   }
-  toggleActiveStatus(event, newValue){
-    //Session.toggle('enableCurrentQuestionnaire');
-    console.log('toggleActiveStatus', event, newValue)
-    console.log('toggleActiveStatus currentQuestionnaire id', get(this, 'data.currentQuestionnaire._id'))
+  // toggleActiveStatus(event, newValue){
+  //   //Session.toggle('enableCurrentQuestionnaire');
+  //   console.log('toggleActiveStatus', event, newValue)
+  //   console.log('toggleActiveStatus currentQuestionnaire id', get(this, 'data.currentQuestionnaire._id'))
 
-    let currentStatus =  get(this, 'data.currentQuestionnaire.status');
+  //   let currentStatus =  get(this, 'data.currentQuestionnaire.status');
 
-    console.log('currentStatus', currentStatus)
+  //   console.log('currentStatus', currentStatus)
 
-    if(currentStatus === 'inactive'){
-      Questionnaires.update({_id: get(this, 'data.currentQuestionnaire._id')}, {$set: {
-        'status': 'active'
-      }});
-    } else if (currentStatus === 'active'){
-      Questionnaires.update({_id: get(this, 'data.currentQuestionnaire._id')}, {$set: {
-        'status': 'inactive'
-      }});
-    }
-  }
+  //   if(currentStatus === 'inactive'){
+  //     Questionnaires.update({_id: get(this, 'data.currentQuestionnaire._id')}, {$set: {
+  //       'status': 'active'
+  //     }});
+  //   } else if (currentStatus === 'active'){
+  //     Questionnaires.update({_id: get(this, 'data.currentQuestionnaire._id')}, {$set: {
+  //       'status': 'inactive'
+  //     }});
+  //   }
+  // }
 
   handleTabChange(index){
     Session.set('questionnairePageTabIndex', index);
@@ -414,17 +457,37 @@ export class QuestionnairesPage extends React.Component {
     }
   }
   render() {
-    console.log('React.version: ' + React.version);
+    // let classes = useStyles();
+    let classes = {
+      button: {
+        background: theme.background,
+        border: 0,
+        borderRadius: 3,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+        color: theme.buttonText,
+        height: 48,
+        padding: '0 30px',
+      },
+      input: {
+        marginBottom: '20px'
+      },
+      compactInput: {
+        marginBottom: '10px'
+      },
+      label: {
+        paddingBottom: '10px'
+      }
+    }
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
 
-    let isActiveLabel = 'Active';
+    // let isActiveLabel = 'Active';
 
-    if(this.data.isActive){
-      isActiveLabel = 'Active';
-    } else {
-      isActiveLabel = 'Inactive';
-    }
+    // if(this.data.isActive){
+    //   isActiveLabel = 'Active';
+    // } else {
+    //   isActiveLabel = 'Inactive';
+    // }
 
     return (
       <PageCanvas id="questionnairesPage" headerHeight={headerHeight}>
@@ -433,44 +496,104 @@ export class QuestionnairesPage extends React.Component {
             <Grid item md={6}>
               <StyledCard height="auto" margin={20}>
                 <CardHeader
-                  title="Questionnaires"
+                  title={this.data.questionnairesCount + " Questionnaires"}
                 />
                 <QuestionnairesTable 
-                  hideCheckboxes={true}
+                  questionnaires={ this.data.questionnaires }
+                  hideCheckbox={true}
+                  hideActionIcons={true}
                   hideIdentifier={true}
                   onRemoveRecord={function(questionnaireId){
                     Questionnaires.remove({_id: questionnaireId})
                   }}
+                  onRowClick={function(questionnaireId){
+                    console.log('Clicked on a row.  Questionnaire Id: ' + questionnaireId)
+                    Session.set('selectedQuestionnaireId', questionnaireId)
+                    Session.set('selectedQuestionnaire', Questionnaires.findOne({id: questionnaireId}))
+                  }}
+                  hideCheckbox={true}                  
                 />
               </StyledCard>
             </Grid>
             <Grid item md={5} style={{position: 'sticky', top: '0px', margin: '20px'}}>
-              <CardHeader 
-                title='Preview' 
-                />
+                <h1 className="barcode helveticas">{this.data.selectedQuestionnaireId}</h1>
               <StyledCard margin={20}>
                 <CardContent>
-                  <TextField
-                    hintText="Questionnaire - My Custom Name"
-                    errorText="Please enter a title for your questionnaire."
-                    type='text'
-                    value={ get(this, 'data.questionnaireName') }
-                    onChange={ this.changeText.bind(this, 'name')}
-                    fullWidth />
-                    <br />
+                  <FormControl style={{width: '100%', marginTop: '20px'}}>
+                    <InputAdornment 
+                      style={classes.label}
+                    >Questionnaire Title</InputAdornment>
+                    <Input
+                      id="publisherInput"
+                      name="publisherInput"
+                      style={classes.input}
+                      value={ get(this, 'data.selectedQuestionnaire.title', '') }
+                      onChange={ this.changeText.bind(this, 'title')}
+                      fullWidth              
+                    />       
+                  </FormControl>    
+                  <Grid container>
+                    <Grid item md={6}>
+                      <FormControl style={{width: '100%', marginTop: '20px'}}>
+                        <InputAdornment 
+                          style={classes.label}
+                        >Identifier</InputAdornment>
+                        <Input
+                          id="identifierInput"
+                          name="identifierInput"
+                          style={classes.input}
+                          value={ get(this, 'data.selectedQuestionnaire.identifier.value', '') }
+                          fullWidth              
+                        />       
+                      </FormControl>    
+                    </Grid>
+                    <Grid item md={3}>
+                      <FormControl style={{width: '100%', marginTop: '20px'}}>
+                        <InputAdornment 
+                          style={classes.label}
+                        >Date</InputAdornment>
+                        <Input
+                          id="dateInput"
+                          name="dateInput"
+                          style={classes.input}
+                          value={ moment(get(this, 'data.selectedQuestionnaire.date', '')).format("YYYY-MM-DD") }
+                          fullWidth              
+                        />       
+                      </FormControl>    
+                    </Grid>
+                    <Grid item md={3}>
+                      <FormControl style={{width: '100%', marginTop: '20px'}}>
+                        <InputAdornment 
+                          style={classes.label}
+                        >Status</InputAdornment>
+                        <Input
+                          id="statusInput"
+                          name="statusInput"
+                          style={classes.input}
+                          value={ get(this, 'data.selectedQuestionnaire.status', '') }
+                          fullWidth              
+                        />       
+                      </FormControl>    
+                    </Grid>
+                  </Grid>
                 </CardContent>
-                <CardActions>
+                {/* <CardActions>
                   <Button id='isActiveButton' onClick={this.toggleActiveStatus.bind(this)} primary={ this.data.isActive } >{isActiveLabel}</Button>
                   <Button id='isSortingButton' onClick={this.toggleSortStatus.bind(this)} primary={ this.data.isSorting } >Sort</Button>
-                </CardActions>
+                </CardActions> */}
               </StyledCard>
               <DynamicSpacer />
 
-              <StyledCard margin={20}>
+              <QuestionnaireDetailExpansionPanels 
+                id='questionnaireDetails' 
+                selectedQuestionnaire={this.data.selectedQuestionnaire} 
+                selectedQuestionnaireId={this.data.selectedQuestionnaireId}
+                />
+
+              {/* <StyledCard margin={20}>
                 <CardContent>
-                  <QuestionnaireDetail id='questionnaireDetails' currentQuestionnaire={this.data.currentQuestionnaire} />
                 </CardContent>
-              </StyledCard>
+              </StyledCard> */}
             </Grid>
           </Grid>
         </MuiThemeProvider>         

@@ -236,20 +236,20 @@ function ExplanationOfBenefitDetail(props){
     <div className='ExplanationOfBenefitDetails'>
 
         <Grid container spacing={3}>
-          <Grid item xs={6}>
+          <Grid item xs={3}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
               <InputAdornment className={classes.label}>Title</InputAdornment>
               <Input
-                id="titleInput"
-                name="titleInput"
+                id="identifierInput"
+                name="identifierInput"
                 className={classes.input}
-                placeholder="Lorem ipsum."              
-                value={get(explanationOfBenefit, 'title')}
+                placeholder="1234567890"              
+                value={get(explanationOfBenefit, 'identifier[0].value')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />       
             </FormControl>   
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
+            {/* <FormControl style={{width: '100%', marginTop: '20px'}}>
               <InputAdornment className={classes.label}>Publisher</InputAdornment>
               <Input
                 id="publisherInput"
@@ -259,22 +259,22 @@ function ExplanationOfBenefitDetail(props){
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />       
-            </FormControl>      
+            </FormControl>       */}
           </Grid>
           <Grid item xs={3}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Version</InputAdornment>
+              <InputAdornment className={classes.label}>Created</InputAdornment>
               <Input
-                id="versionInput"
-                name="versionInput"
+                id="createdInput"
+                name="createdInput"
                 className={classes.input}
-                placeholder="2020.2"              
-                value={get(explanationOfBenefit, 'version')}
+                placeholder="YYYY-MM-DD"              
+                value={moment(get(explanationOfBenefit, 'created')).format("YYYY-MM-DD")}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />          
             </FormControl>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
+            {/* <FormControl style={{width: '100%', marginTop: '20px'}}>
               <InputAdornment className={classes.label}>Identifier</InputAdornment>
               <Input
                 id="identifierInput"
@@ -282,10 +282,9 @@ function ExplanationOfBenefitDetail(props){
                 className={classes.input}
                 placeholder="XYZ.1"              
                 value={get(explanationOfBenefit, 'identifier[0].value')}
-                //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
-            </FormControl>     
+            </FormControl>      */}
           </Grid>
           <Grid item xs={3}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
@@ -301,16 +300,30 @@ function ExplanationOfBenefitDetail(props){
               />    
             </FormControl>
           </Grid>
+          <Grid item xs={3}>
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Outcome</InputAdornment>
+              <Input
+                id="statusInput"
+                name="statusInput"
+                className={classes.input}
+                placeholder="active"              
+                value={get(explanationOfBenefit, 'outcome')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />    
+            </FormControl>
+          </Grid>
 
           <Grid item xs={12}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Description</InputAdornment>
+              <InputAdornment className={classes.label}>Disposition</InputAdornment>
               <Input
                 id="descriptionInput"
                 name="descriptionInput"
                 className={classes.input}
                 placeholder="Lorem ipsum."              
-                value={get(explanationOfBenefit, 'description')}
+                value={get(explanationOfBenefit, 'disposition')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth           
                 multiline   
@@ -320,72 +333,159 @@ function ExplanationOfBenefitDetail(props){
           </Grid>
           <Grid item xs={6} style={{paddingLeft: '40px'}}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Editor</InputAdornment>
+              <InputAdornment className={classes.label}>Patient</InputAdornment>
               <Input
-                id="editorInput"
-                name="editorInput"
+                id="patientDisplayInput"
+                name="patientDisplayInput"
                 className={classes.input}            
-                value={get(explanationOfBenefit, 'editor[0].name')}
+                value={get(explanationOfBenefit, 'patient.display')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
             </FormControl>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Reviewer</InputAdornment>
+              <InputAdornment className={classes.label}>Insurer</InputAdornment>
               <Input
-                id="reviewerInput"
-                name="reviewerInput"
+                id="insurerDisplayInput"
+                name="insurerDisplayInput"
                 className={classes.input}
-                value={get(explanationOfBenefit, 'reviewer[0].name')}
+                value={get(explanationOfBenefit, 'insurer.display')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
             </FormControl>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Endorser</InputAdornment>
+              <InputAdornment className={classes.label}>Provider</InputAdornment>
               <Input
-                id="endorserInput"
-                name="endorserInput"
+                id="providerDisplayInput"
+                name="providerDisplayInput"
                 className={classes.input}         
-                value={get(explanationOfBenefit, 'endorser[0].name')}
+                value={get(explanationOfBenefit, 'provider.display')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />
+            </FormControl>  
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Payee</InputAdornment>
+              <Input
+                id="payeeDisplayInput"
+                name="payeeDisplayInput"
+                className={classes.input}         
+                value={get(explanationOfBenefit, 'payee.party.display')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
             </FormControl>     
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Facility</InputAdornment>
+              <Input
+                id="locationInput"
+                name="locationInput"
+                className={classes.input}         
+                value={get(explanationOfBenefit, 'facility.display')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />
+            </FormControl>     
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Claim</InputAdornment>
+              <Input
+                id="claimInput"
+                name="claimInput"
+                className={classes.input}         
+                value={get(explanationOfBenefit, 'claim.display')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />
+            </FormControl>     
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Claim Response</InputAdornment>
+              <Input
+                id="claimResponseInput"
+                name="claimResponseInput"
+                className={classes.input}         
+                value={get(explanationOfBenefit, 'claimResponse.display')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />
+            </FormControl>     
+
+
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={6} style={{paddingRight: '40px'}}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Last Edited</InputAdornment>
+              <InputAdornment className={classes.label}>Patient Reference</InputAdornment>
               <Input
-                id="editedDateInput"
-                name="editedDateInput"
+                id="patientReferenceInput"
+                name="patientReferenceInput"
                 className={classes.input}
-                placeholder="YYYY-MM-DD"              
-                value={lastEditedDate}
+                value={get(explanationOfBenefit, 'patient.reference')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
             </FormControl>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Last Reviewed</InputAdornment>
+              <InputAdornment className={classes.label}>Insurer Reference</InputAdornment>
               <Input
-                id="reviewedDateInput"
-                name="reviewedDateInput"
+                id="insurerReferenceInput"
+                name="insurerReferenceInput"
                 className={classes.input}
-                placeholder="YYYY-MM-DD"              
-                value={lastReviewDate}
+                value={get(explanationOfBenefit, 'insurer.reference')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
             </FormControl>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Approved On</InputAdornment>
+              <InputAdornment className={classes.label}>Provider Reference</InputAdornment>
               <Input
-                id="approvedDateInput"
-                name="approvedDateInput"
+                id="providerReferenceInput"
+                name="providerReferenceInput"
                 className={classes.input}
-                placeholder="YYYY-MM-DD"                   
-                value={approvedOnDate}
+                value={get(explanationOfBenefit, 'provider.reference')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />
+            </FormControl>     
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Payee Reference</InputAdornment>
+              <Input
+                id="payeeReferenceInput"
+                name="payeeReferenceInput"
+                className={classes.input}
+                value={get(explanationOfBenefit, 'payee.party.reference')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />
+            </FormControl>    
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Facility Reference</InputAdornment>
+              <Input
+                id="locationInput"
+                name="locationInput"
+                className={classes.input}         
+                value={get(explanationOfBenefit, 'facility.reference')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />
+            </FormControl>     
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Claim Reference</InputAdornment>
+              <Input
+                id="claimInput"
+                name="claimInput"
+                className={classes.input}         
+                value={get(explanationOfBenefit, 'claim.reference')}
+                //onChange={handleFhirEndpointChange}
+                fullWidth              
+              />
+            </FormControl>     
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Claim Response Reference</InputAdornment>
+              <Input
+                id="claimResponseInput"
+                name="claimResponseInput"
+                className={classes.input}         
+                value={get(explanationOfBenefit, 'claimResponse.reference')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />
@@ -396,24 +496,24 @@ function ExplanationOfBenefitDetail(props){
 
           <Grid item xs={3}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Scoring</InputAdornment>
+              <InputAdornment className={classes.label}>Total</InputAdornment>
               <Input
                 id="scoringInput"
                 name="scoringInput"
                 className={classes.input}              
-                value={get(explanationOfBenefit, 'scoring.text')}
+                value={get(explanationOfBenefit, 'total[0].amount.value') + ' ' + get(explanationOfBenefit, 'total[0].amount.currency')}
                 fullWidth              
               />       
             </FormControl>        
           </Grid>
           <Grid item xs={3}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Type</InputAdornment>
+              <InputAdornment className={classes.label}>Category</InputAdornment>
               <Input
                 id="typeInput"
                 name="typeInput"
                 className={classes.input}
-                value={get(explanationOfBenefit, 'type[0].text')}
+                value={get(explanationOfBenefit, 'total.category.coding.code')}
                 fullWidth              
               />          
             </FormControl>   
