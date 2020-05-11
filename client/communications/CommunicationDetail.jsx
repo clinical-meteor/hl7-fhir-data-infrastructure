@@ -1,10 +1,27 @@
-import { get } from 'lodash';
-
 import React from 'react';
+
+import { 
+  Grid, 
+  Container,
+  Button,
+  Typography,
+  DatePicker,
+  FormControl,
+  InputLabel,
+  Input,
+  InputAdornment,
+  FormControlLabel,
+  Checkbox,
+  TextField,
+  Card,
+  CardContent
+} from '@material-ui/core';
+
+import { get } from 'lodash';
+import moment from 'moment';
+
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
-import { CardActions, CardText, Card, TextField, RaisedButton } from 'material-ui';
-import { Grid, Row, Col, Table } from 'react-bootstrap';
 
 import { Session } from 'meteor/session';
 
@@ -76,9 +93,9 @@ export class CommunicationDetail extends React.Component {
   render() {
     return (
       <div id={this.props.id} className="communicationDetail">
-        <CardText>
-            <Row>
-              <Col md={2}>
+        <CardContent>
+            <Grid container>
+              <Grid item md={2}>
                 <TextField
                   id='categoryInput'
                   name='category'
@@ -87,8 +104,8 @@ export class CommunicationDetail extends React.Component {
                   onChange={ this.changeState.bind(this, 'category')}
                   fullWidth
                   /><br/>
-              </Col>
-              <Col md={6}>
+              </Grid>
+              <Grid item md={6}>
                 <TextField
                   id='identifierInput'
                   name='identifier'
@@ -98,10 +115,10 @@ export class CommunicationDetail extends React.Component {
                   floatingLabelFixed={false}
                   fullWidth
                   /><br/>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={4}>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item md={4}>
                 <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
                   <TextField
                     id='subjectInput'
@@ -120,8 +137,8 @@ export class CommunicationDetail extends React.Component {
                     fullWidth
                     /><br/>
                 </Card>
-              </Col>
-              <Col md={4}>
+              </Grid>
+              <Grid item md={4}>
                 <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
                   <TextField
                     id='definitionInput'
@@ -141,8 +158,8 @@ export class CommunicationDetail extends React.Component {
                     /><br/>
                 </Card>
               
-              </Col>
-              <Col md={4}>
+              </Grid>
+              <Grid item md={4}>
                 <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
                   <TextField
                     id='recipientInput'
@@ -162,10 +179,10 @@ export class CommunicationDetail extends React.Component {
                     /><br/>
                 </Card>
                 {/* { this.determineButtons(this.data.communicationId) }   */}
-              </Col>
-            </Row>
+              </Grid>
+            </Grid>
 
-        </CardText>
+        </CardContent>
       </div>
     );
   }

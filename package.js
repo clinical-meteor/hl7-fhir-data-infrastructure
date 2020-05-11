@@ -29,6 +29,8 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
   api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Communications.js', ['client', 'server']);
+  api.addFiles('lib/schemas/CommunicationResponses.js', ['client', 'server']);
   api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
@@ -71,6 +73,14 @@ Package.onUse(function (api) {
   api.export('Condition');
   api.export('Conditions');
   api.export('ConditionSchema');
+
+  api.export('Communication');
+  api.export('Communications');
+  api.export('CommunicationSchema');
+
+  api.export('CommunicationResponse');
+  api.export('CommunicationResponses');
+  api.export('CommunicationResponseSchema');
 
   api.export('Device');
   api.export('Devices');

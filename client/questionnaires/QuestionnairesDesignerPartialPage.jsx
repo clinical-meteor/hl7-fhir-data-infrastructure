@@ -256,7 +256,7 @@ export class QuestionnairesPage extends React.Component {
     
   }
   onNewTab(){
-    Session.set('selectedQuestionnaire', false);
+    Session.set('selectedQuestionnaire', null);
     Session.set('questionnaireUpsert', false);
   }
   addChoice(){

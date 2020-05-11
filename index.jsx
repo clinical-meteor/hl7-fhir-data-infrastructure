@@ -24,6 +24,14 @@ import ConditionsPage from './client/conditions/ConditionsPage';
 import ConditionsTable from './client/conditions/ConditionsTable';
 import ConditionDetail from './client/conditions/ConditionDetail';
 
+import CommunicationsPage from './client/communications/CommunicationsPage';
+import CommunicationsTable from './client/communications/CommunicationsTable';
+import CommunicationDetail from './client/communications/CommunicationDetail';
+
+import CommunicationResponsesPage from './client/communicationResponses/CommunicationResponsesPage';
+import CommunicationResponsesTable from './client/communicationResponses/CommunicationResponsesTable';
+import CommunicationResponseDetail from './client/communicationResponses/CommunicationResponseDetail';
+
 import DevicesPage from './client/devices/DevicesPage';
 import DevicesTable from './client/devices/DevicesTable';
 import DeviceDetail from './client/devices/DeviceDetail';
@@ -142,6 +150,16 @@ let DynamicRoutes = [{
   'name': 'ConditionsPage',
   'path': '/conditions',
   'component': ConditionsPage,
+  'requireAuth': true
+}, {
+  'name': 'CommunicationsPage',
+  'path': '/communications',
+  'component': CommunicationsPage,
+  'requireAuth': true
+}, {
+  'name': 'CommunicationResponsesPage',
+  'path': '/communication-responses',
+  'component': CommunicationResponsesPage,
   'requireAuth': true
 }, {
   'name': 'DiagnosticReportsPage',
@@ -265,6 +283,16 @@ let SidebarElements = [{
   'href': '/conditions',
   'iconName': 'heartbeat'  
 }, {
+  'primaryText': 'Communications',
+  'to': '/communications',
+  'href': '/communications',
+  'iconName': 'envelopeO'  
+}, {
+  'primaryText': 'Communication Responses',
+  'to': '/communication-responses',
+  'href': '/communication-responses',
+  'iconName': 'envelopeO'  
+}, {
   'primaryText': 'Devices',
   'to': '/devices',
   'href': '/devices',
@@ -353,12 +381,12 @@ let SidebarElements = [{
   'primaryText': 'Questionnaires',
   'to': '/questionnaires',
   'href': '/questionnaires',
-  'iconName': 'notepad'
+  'iconName': 'ic_question_answer'
 }, {
   'primaryText': 'Questionnaire Responses',
   'to': '/questionnaire-responses',
   'href': '/questionnaire-responses',
-  'iconName': 'notepad'
+  'iconName': 'ic_question_answer'
 }, {
   'primaryText': 'Tasks',
   'to': '/tasks',
@@ -467,6 +495,14 @@ export {
   ConditionsPage,
   ConditionsTable,
   ConditionDetail,
+
+  CommunicationsPage,
+  CommunicationsTable,
+  CommunicationDetail,
+
+  CommunicationResponsesPage,
+  CommunicationResponsesTable,
+  CommunicationResponseDetail,
 
   DevicesPage,
   DevicesTable,

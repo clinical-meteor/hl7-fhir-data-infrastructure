@@ -1,18 +1,30 @@
-import { CardText, CardTitle } from 'material-ui/Card';
-import { Tab, Tabs } from 'material-ui/Tabs';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import { Glass, GlassCard, FullPageCanvas, DynamicSpacer } from 'meteor/clinical:glass-ui';
+import { 
+  Container,
+  Divider,
+  Card,
+  CardHeader,
+  CardContent,
+  Button,
+  Typography,
+  Box,
+  Grid
+} from '@material-ui/core';
+
+import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import CommunicationDetail from './CommunicationDetail';
-import CommunicationTable from './CommunicationTable';
+import CommunicationsTable from './CommunicationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
 import { Session } from 'meteor/session';
-import PropTypes from 'prop-types';
+import moment from 'moment';
+
 
 let defaultCommunication = {
   index: 2,
@@ -52,10 +64,6 @@ export class CommunicationsPage extends React.Component {
       data.currentCommunication = Session.get("selectedCommunication");
     }
 
-    data.style = Glass.blur(data.style);
-    data.style.appbar = Glass.darkroom(data.style.appbar);
-    data.style.tab = Glass.darkroom(data.style.tab);
-
     if(process.env.NODE_ENV === "test") console.log("CommunicationsPage[data]", data);
     return data;
   }
@@ -75,17 +83,16 @@ export class CommunicationsPage extends React.Component {
 
     return (
       <div id="communicationsPage">
-        <FullPageCanvas headerHeight={headerHeight} >
-          <CommunicationDetail 
-            id='newCommunication' />
-          {/* <DynamicSpacer /> */}
+        <PageCanvas headerHeight={headerHeight} >
+          {/* <CommunicationDetail 
+            id='newCommunication' />  */}
 
-          <GlassCard height="auto" style={{margin: '16px'}}>
-            <CardTitle
+          <StyledCard height="auto" margin={20} >
+            <CardHeader
               title="Communication Log"
             />
-            <CardText>
-              <CommunicationTable 
+            <CardContent>
+              <CommunicationsTable 
                 showBarcodes={true} 
                 hideIdentifier={true}
                 onRemoveRecord={function(recordId){
@@ -93,9 +100,9 @@ export class CommunicationsPage extends React.Component {
                 }}
                 actionButtonLabel="Enroll"
               />
-            </CardText>
-          </GlassCard>
-        </FullPageCanvas>
+            </CardContent>
+          </StyledCard>
+        </PageCanvas>
       </div>
     );
   }

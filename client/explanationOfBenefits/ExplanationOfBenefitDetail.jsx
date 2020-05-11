@@ -238,13 +238,13 @@ function ExplanationOfBenefitDetail(props){
         <Grid container spacing={3}>
           <Grid item xs={3}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Title</InputAdornment>
+              <InputAdornment className={classes.label}>Use</InputAdornment>
               <Input
                 id="identifierInput"
                 name="identifierInput"
                 className={classes.input}
-                placeholder="1234567890"              
-                value={get(explanationOfBenefit, 'identifier[0].value')}
+                placeholder="claim"              
+                value={get(explanationOfBenefit, 'use')}
                 //onChange={handleFhirEndpointChange}
                 fullWidth              
               />       

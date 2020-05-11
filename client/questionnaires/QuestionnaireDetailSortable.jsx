@@ -314,7 +314,7 @@ function QuestionnaireDetailSortable(props){
   //       if (result) {
   //         HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Questionnaires", recordId: Session.get('selectedQuestionnaire')});
   //         Session.set('questionnaireUpsert', false);
-  //         Session.set('selectedQuestionnaire', false);
+  
   //         Session.set('questionnairePageTabIndex', 1);
   //       }
   //     });
@@ -328,7 +328,7 @@ function QuestionnaireDetailSortable(props){
   //       if (result) {
   //         HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Questionnaires", recordId: result});
   //         Session.set('questionnairePageTabIndex', 1);
-  //         Session.set('selectedQuestionnaire', false);
+
   //         Session.set('questionnaireUpsert', false);
   //       }
   //     });
@@ -350,7 +350,7 @@ function QuestionnaireDetailSortable(props){
   //       // Session.set('questionnaireUpdate', defaultQuestionnaire);
   //       Session.set('questionnaireUpsert', false);
   //       Session.set('questionnairePageTabIndex', 1);
-  //       Session.set('selectedQuestionnaire', false);
+
   //       // Bert.alert('Questionnaire removed!', 'success');
   //     }
   //   });

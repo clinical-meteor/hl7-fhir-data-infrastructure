@@ -64,7 +64,7 @@ let sortableItemStyle = {
 // ====================================================================================================================
 // Session Variables  
 Session.setDefault('questionnaireUpsert', false);
-Session.setDefault('selectedQuestionnaire', false);
+Session.setDefault('selectedQuestionnaire', null);
 Session.setDefault('sortableItems', []);
 
 
@@ -191,7 +191,8 @@ QuestionnaireDetailExpansionPanels.defaultProps = {
   }, {
     text: 'Sample Item 6',
     linkId: 6
-  }]
+  }],
+  selectedQuestionnaire: null
 }
 
 export default QuestionnaireDetailExpansionPanels;

@@ -298,10 +298,6 @@ export class QuestionnairesPage extends React.Component {
   selectLanguage(){
     
   }
-  onNewTab(){
-    Session.set('selectedQuestionnaire', false);
-    Session.set('questionnaireUpsert', false);
-  }
   addChoice(){
     console.log('addChoice')
   }
