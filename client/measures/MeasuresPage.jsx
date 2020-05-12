@@ -175,7 +175,7 @@ export class MeasuresPage extends React.Component {
         Bert.alert(error.reason, 'danger');
       }
       if (result) {
-        Session.set('selectedMeasureId', false);
+        Session.set('selectedMeasureId', '');
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: context.state.measureId});
         Bert.alert('Measure removed!', 'success');
       }
@@ -217,7 +217,7 @@ export class MeasuresPage extends React.Component {
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: context.state.measureId});
-            Session.set('selectedMeasureId', false);
+            Session.set('selectedMeasureId', '');
             Session.set('measurePageTabIndex', 1);
             Bert.alert('Measure added!', 'success');
           }
@@ -235,7 +235,7 @@ export class MeasuresPage extends React.Component {
           if (result) {
             HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Measures", recordId: context.state.measureId});
             Session.set('measurePageTabIndex', 1);
-            Session.set('selectedMeasureId', false);
+            Session.set('selectedMeasureId', '');
             Bert.alert('Measure added!', 'success');
           }
         });

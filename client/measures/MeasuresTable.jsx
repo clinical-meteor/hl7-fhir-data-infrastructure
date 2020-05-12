@@ -756,7 +756,7 @@ MeasuresTable.defaultProps = {
   hideContext: true,
   hidePopulationCount: false,
   hideBarcode: true,
-  selectedMeasureId: false,
+  selectedMeasureId: '',
   rowsPerPage: 5
 }
 
