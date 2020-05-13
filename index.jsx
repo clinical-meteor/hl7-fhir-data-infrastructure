@@ -28,6 +28,10 @@ import CommunicationsPage from './client/communications/CommunicationsPage';
 import CommunicationsTable from './client/communications/CommunicationsTable';
 import CommunicationDetail from './client/communications/CommunicationDetail';
 
+import CommunicationRequestsPage from './client/communicationRequests/CommunicationRequestsPage';
+import CommunicationRequestsTable from './client/communicationRequests/CommunicationRequestsTable';
+import CommunicationRequestDetail from './client/communicationRequests/CommunicationRequestDetail';
+
 import CommunicationResponsesPage from './client/communicationResponses/CommunicationResponsesPage';
 import CommunicationResponsesTable from './client/communicationResponses/CommunicationResponsesTable';
 import CommunicationResponseDetail from './client/communicationResponses/CommunicationResponseDetail';
@@ -82,6 +86,10 @@ import MedicationRequestDetail from './client/medicationRequests/MedicationReque
 import MedicationStatementsPage from './client/medicationStatements/MedicationStatementsPage';
 import MedicationStatementsTable from './client/medicationStatements/MedicationStatementsTable';
 import MedicationStatementDetail from './client/medicationStatements/MedicationStatementDetail';
+
+import MessageHeadersPage from './client/messageHeaders/MessageHeadersPage';
+import MessageHeadersTable from './client/messageHeaders/MessageHeadersTable';
+import MessageHeaderDetail from './client/messageHeaders/MessageHeaderDetail';
 
 import ObservationsPage from './client/observations/ObservationsPage';
 import ObservationsTable from './client/observations/ObservationsTable';
@@ -157,6 +165,11 @@ let DynamicRoutes = [{
   'component': CommunicationsPage,
   'requireAuth': true
 }, {
+  'name': 'CommunicationRequestsPage',
+  'path': '/communication-requests',
+  'component': CommunicationRequestsPage,
+  'requireAuth': true
+}, {
   'name': 'CommunicationResponsesPage',
   'path': '/communication-responses',
   'component': CommunicationResponsesPage,
@@ -215,6 +228,11 @@ let DynamicRoutes = [{
   'name': 'MedicationStatementsPage',
   'path': '/medication-statements',
   'component': MedicationStatementsPage,
+  'requireAuth': true
+}, {
+  'name': 'MessageHeadersPage',
+  'path': '/message-headers',
+  'component': MessageHeadersPage,
   'requireAuth': true
 }, {
   'name': 'ObservationsPage',
@@ -293,6 +311,11 @@ let SidebarElements = [{
   'href': '/communication-responses',
   'iconName': 'envelopeO'  
 }, {
+  'primaryText': 'Communication Requests',
+  'to': '/communication-requests',
+  'href': '/communication-requests',
+  'iconName': 'envelopeO'  
+}, {
   'primaryText': 'Devices',
   'to': '/devices',
   'href': '/devices',
@@ -352,6 +375,11 @@ let SidebarElements = [{
   'to': '/medication-statements',
   'href': '/medication-statements',
   'iconName': 'ic_local_pharmacy'  
+}, {
+  'primaryText': 'Message Headers',
+  'to': '/message-headers',
+  'href': '/message-headers',
+  'iconName': 'envelopeO'  
 }, {
   'primaryText': 'Observations',
   'to': '/observations',
@@ -503,6 +531,10 @@ export {
   CommunicationResponsesPage,
   CommunicationResponsesTable,
   CommunicationResponseDetail,
+
+  CommunicationRequestsPage,
+  CommunicationRequestsTable,
+  CommunicationRequestDetail,
 
   DevicesPage,
   DevicesTable,

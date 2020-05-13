@@ -234,8 +234,14 @@ function QuestionnaireTable(props){
     console.log('No questionnaires to render');
   } else {
     for (var i = 0; i < questionnairesToRender.length; i++) {
+
+      let selected = false;
+      if(questionnairesToRender[i].id === props.selectedQuestionnaireId){
+        selected = true;
+      }
+
       tableRows.push(
-        <TableRow key={i} className="questionnaireRow" style={{cursor: "pointer"}} onClick={ selectQuestionnaireRow.bind(this, questionnairesToRender[i].id )} hover={true} >
+        <TableRow key={i} selected={selected} className="questionnaireRow" style={{cursor: "pointer"}} onClick={ selectQuestionnaireRow.bind(this, questionnairesToRender[i].id )} hover={true} >
           { renderToggle(questionnairesToRender[i]) }
           { renderActionIcons(questionnairesToRender[i]) }
           { renderIdentifier(questionnairesToRender[i]) }

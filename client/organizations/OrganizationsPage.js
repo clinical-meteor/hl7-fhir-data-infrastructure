@@ -209,7 +209,7 @@ export class OrganizationsPage extends React.Component {
                 selectedOrganizationId={ this.data.selectedOrganizationId }
                 onRowClick={this.handleRowClick.bind(this) }
                 rowsPerPage={ LayoutHelpers.calcTableRows("small") }
-                size="small"
+                size="medium"
               />              
             </CardContent>
           </StyledCard>

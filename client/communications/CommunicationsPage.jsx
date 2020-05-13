@@ -93,8 +93,11 @@ export class CommunicationsPage extends React.Component {
             />
             <CardContent>
               <CommunicationsTable 
-                showBarcodes={true} 
+                
                 hideIdentifier={true}
+                hideCheckbox={true}
+                hideActionIcons={true}
+                hideBarcode={false} 
                 onRemoveRecord={function(recordId){
                   Communications.remove({_id: recordId})
                 }}

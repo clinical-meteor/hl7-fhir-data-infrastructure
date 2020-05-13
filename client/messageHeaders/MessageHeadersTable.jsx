@@ -18,7 +18,7 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenList } from '../../lib/FhirDehydrator';
+import { flattenMessageHeader } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -56,55 +56,55 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenList = function(list, internalDateFormat){
+flattenMessageHeader = function(messageHeader, internalDateFormat){
   let result = {
     _id: '',
     meta: '',
     identifier: '',
-    title: '',
     status: '',
-    itemCount: 0
+    date: '',
+    destination: '',
+    focus: '',
+    eventCoding: ''
   };
 
   if(!internalDateFormat){
     internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
   }
 
-  result._id =  get(list, 'id') ? get(list, 'id') : get(list, '_id');
-  result.id = get(list, 'id', '');
-  result.identifier = get(list, 'identifier[0].value', '');
+  result._id =  get(messageHeader, 'id') ? get(messageHeader, 'id') : get(messageHeader, '_id');
+  result.id = get(messageHeader, 'id', '');
+  result.identifier = get(messageHeader, 'identifier[0].value', '');
 
-  if(get(list, 'lastReviewDate')){
-    result.lastReviewDate = moment(get(list, 'lastReviewDate', '')).format(internalDateFormat);
+  result.destination = get(messageHeader, 'destination[0].endpoint', '');
+  result.focus = get(messageHeader, 'focus[0].display', '');
+  result.eventCoding = get(messageHeader, 'eventCoding.display', '');
+
+  if(get(messageHeader, 'date')){
+    result.date = moment(get(messageHeader, 'date', '')).format(internalDateFormat);
   }
 
-  result.publisher = get(list, 'publisher', '');
-  result.title = get(list, 'title', '');
-  result.description = get(list, 'description', '');
-  result.status = get(list, 'status', '');
-  result.version = get(list, 'version', '');
-
-  if(Array.isArray(get(list, 'item'))){
-    result.itemCount = list.item.length;
-  }
+  result.status = get(messageHeader, 'status', '');
 
   return result;
 }
 
 
 
-function ListsTable(props){
-  logger.info('Rendering the ListsTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ListsTable');
-  logger.data('ListsTable.props', {data: props}, {source: "ListsTable.jsx"});
+
+
+function MessageHeadersTable(props){
+  logger.info('Rendering the MessageHeadersTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.MessageHeadersTable');
+  logger.data('MessageHeadersTable.props', {data: props}, {source: "MessageHeadersTable.jsx"});
 
   const classes = useStyles();
 
   let { 
     children, 
 
-    lists,
-    selectedListId,
+    messageHeaders,
+    selectedMessageHeaderId,
 
     query,
     paginationLimit,
@@ -112,9 +112,9 @@ function ListsTable(props){
 
     hideCheckbox,
     hideActionIcons,
-    hideStatus,
-    hideTitle,
-    hideItemCount,
+    hideDestination,
+    hideFocus,
+    hideEventCoding,    
     hideBarcode,
 
     onCellClick,
@@ -145,7 +145,7 @@ function ListsTable(props){
   }
 
   function removeRecord(_id){
-    console.log('Remove list ', _id)
+    console.log('Remove messageHeader ', _id)
     if(props.onRemoveRecord){
       props.onRemoveRecord(_id);
     }
@@ -155,7 +155,17 @@ function ListsTable(props){
       props.onActionButtonClick(id);
     }
   }
-
+  function cellClick(id){
+    if(typeof props.onCellClick === "function"){
+      props.onCellClick(id);
+    }
+  }
+  function handleMetaClick(patient){
+    let self = this;
+    if(props.onMetaClick){
+      props.onMetaClick(self, patient);
+    }
+  }
 
   // ------------------------------------------------------------------------
   // Column Rendering
@@ -171,9 +181,9 @@ function ListsTable(props){
     if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
-            {/* <Checkbox
+            <Checkbox
               defaultChecked={true}
-            /> */}
+            />
         </TableCell>
       );
     }
@@ -185,7 +195,7 @@ function ListsTable(props){
       );
     }
   }
-  function renderActionIcons(list ){
+  function renderActionIcons(messageHeader ){
     if (!props.hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
@@ -196,67 +206,83 @@ function ListsTable(props){
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          {/* <FaTags style={iconStyle} onClick={ onMetaClick.bind(list)} />
-          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(list._id)} />   */}
+          {/* <FaTags style={iconStyle} onClick={ onMetaClick.bind(messageHeader)} />
+          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(messageHeader._id)} />   */}
         </TableCell>
       );
     }
   } 
 
-  function renderVersion(version){
-    if (!props.hideVersion) {
+  
+
+  function renderApprovalDate(approvalDate){
+    if (!props.hideApprovalDate) {
       return (
-        <TableCell className='version'>{ version }</TableCell>
+        <TableCell className='approvalDate'>{ approvalDate }</TableCell>
       );
     }
   }
-  function renderVersionHeader(){
-    if (!props.hideVersion) {
+  function renderApprovalDateHeader(){
+    if (!props.hideApprovalDate) {
       return (
-        <TableCell className='version'>Version</TableCell>
+        <TableCell className='approvalDate' style={{minWidth: '140px'}}>Approval Date</TableCell>
       );
     }
   }
+  
   function renderStatus(status){
     if (!props.hideStatus) {
       return (
-        <TableCell className='status'>{ status }</TableCell>
+        <TableCell><span className="status">{status}</span></TableCell>
       );
     }
   }
   function renderStatusHeader(){
     if (!props.hideStatus) {
       return (
-        <TableCell className='status'>Status</TableCell>
+        <TableCell>Status</TableCell>
       );
     }
   }
-  function renderTitle(title){
-    if (!props.hideTitle) {
+  function renderDestination(destination){
+    if (!props.hideDestination) {
       return (
-        <TableCell className='title'>{ title }</TableCell>
+        <TableCell><span className="destination">{destination}</span></TableCell>
       );
     }
   }
-  function renderTitleHeader(){
-    if (!props.hideTitle) {
+  function renderDestinationHeader(){
+    if (!props.hideDestination) {
       return (
-        <TableCell className='title'>Title</TableCell>
+        <TableCell>Destination</TableCell>
       );
     }
   }
-  
-  function renderItemCountHeader(){
-    if (!props.hideItemCount) {
+  function renderFocus(focus){
+    if (!props.hideFocus) {
       return (
-        <TableCell className='itemCount'>Populations</TableCell>
+        <TableCell><span className="focus">{focus}</span></TableCell>
       );
     }
   }
-  function renderItemCount(itemCount){
-    if (!props.hideItemCount) {
+  function renderFocusHeader(){
+    if (!props.hideFocus) {
       return (
-        <TableCell className='itemCount'>{ itemCount }</TableCell>
+        <TableCell>Focus</TableCell>
+      );
+    }
+  }
+  function renderEventCoding(eventCoding){
+    if (!props.hideEventCoding) {
+      return (
+        <TableCell><span className="eventCoding">{eventCoding}</span></TableCell>
+      );
+    }
+  }
+  function renderEventCodingHeader(){
+    if (!props.hideEventCoding) {
+      return (
+        <TableCell>Event Coding</TableCell>
       );
     }
   }
@@ -316,7 +342,7 @@ function ListsTable(props){
 
 
   let tableRows = [];
-  let listsToRender = [];
+  let messageHeadersToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
   if(props.showMinutes){
@@ -327,39 +353,40 @@ function ListsTable(props){
   }
 
 
-  if(props.lists){
-    if(props.lists.length > 0){              
-      props.lists.forEach(function(list){
-        listsToRender.push(flattenList(list, internalDateFormat));
+  if(props.messageHeaders){
+    if(props.messageHeaders.length > 0){              
+      props.messageHeaders.forEach(function(messageHeader){
+        messageHeadersToRender.push(flattenMessageHeader(messageHeader, internalDateFormat));
       });  
     }
   }
 
-  if(listsToRender.length === 0){
-    console.log('No lists to render');
+  if(messageHeadersToRender.length === 0){
+    console.log('No messageHeaders to render');
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
-    for (var i = 0; i < listsToRender.length; i++) {
+    for (var i = 0; i < messageHeadersToRender.length; i++) {
 
       let selected = false;
-      if(listsToRender[i].id === selectedListId){
+      if(messageHeadersToRender[i].id === selectedMessageHeaderId){
         selected = true;
       }
       tableRows.push(
         <TableRow 
-          className="listRow" 
+          className="messageHeaderRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, listsToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, messageHeadersToRender[i]._id)} 
           hover={true} 
           style={{cursor: 'pointer', height: '52px'}} 
           selected={selected}
         >
           { renderToggle() }
-          { renderActionIcons(listsToRender[i]) }
-          { renderTitle(listsToRender[i].title) }          
-          { renderStatus(listsToRender[i].status) }
-          { renderItemCount(listsToRender[i].itemCount) }
-          { renderBarcode(listsToRender[i].id)}
+          { renderActionIcons(messageHeadersToRender[i]) }
+          { renderStatus(messageHeadersToRender[i].status) }
+          { renderDestination(messageHeadersToRender[i].destination) }
+          { renderFocus(messageHeadersToRender[i].focus) }
+          { renderEventCoding(messageHeadersToRender[i].eventCoding) }
+          { renderBarcode(messageHeadersToRender[i].id)}
         </TableRow>
       );       
     }
@@ -372,9 +399,10 @@ function ListsTable(props){
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
-            { renderTitleHeader() }
             { renderStatusHeader() }
-            { renderItemCountHeader() }
+            { renderDestinationHeader() }
+            { renderFocusHeader() }
+            { renderEventCodingHeader() }
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -387,10 +415,10 @@ function ListsTable(props){
   );
 }
 
-ListsTable.propTypes = {
+MessageHeadersTable.propTypes = {
   barcodes: PropTypes.bool,
-  lists: PropTypes.array,
-  selectedListId: PropTypes.string,
+  messageHeaders: PropTypes.array,
+  selectedMessageHeaderId: PropTypes.string,
 
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
@@ -398,11 +426,9 @@ ListsTable.propTypes = {
 
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
-  hideApprovalDate: PropTypes.bool,
-  hideVersion: PropTypes.bool,
-  hideStatus: PropTypes.bool,
-  hideTitle: PropTypes.bool,
-  hideItemCount: PropTypes.bool,
+  hideDestination: PropTypes.bool,
+  hideFocus: PropTypes.bool,
+  hideEventCoding: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
   onCellClick: PropTypes.func,
@@ -412,15 +438,16 @@ ListsTable.propTypes = {
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string
 };
-ListsTable.defaultProps = {
+MessageHeadersTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
-  hideStatus: false,
-  hideTitle: false,
-  hideItemCount: false,
-  hideBarcode: true,
-  selectedListId: '',
+  showMinutes: false,
+  hideDestination: false,
+  hideFocus: false,
+  hideEventCoding: false,
+  hideBarcode: false,
+  selectedMessageHeaderId: '',
   rowsPerPage: 5
 }
 
-export default ListsTable; 
+export default MessageHeadersTable; 

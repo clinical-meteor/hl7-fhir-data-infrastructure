@@ -303,7 +303,8 @@ export class ObservationsPage extends React.Component {
                 onCellClick={ this.onTableCellClick }
                 onActionButtonClick={this.tableActionButtonClick}
                 onRemoveRecord={ this.onDeleteObservation }
-                />
+                tableRowSize="medium"
+              />
 
               {/* <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
                 <Tab label="History" value={0} />

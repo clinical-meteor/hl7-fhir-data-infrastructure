@@ -58,27 +58,35 @@ let styles = {
 flattenQuestionnaireResponse = function(questionnaireResponse){
   let result = {
     _id: questionnaireResponse._id,
+    id: '',
     title: '',
     identifier: '',
     questionnaire: '',
     status: '',
-    subject: '',
+    subjectDisplay: '',
+    subjectReference: '',
+    sourceDisplay: '',
+    sourceReference: '',
     encounter: '',
     author: '',
     date: '',
-    count: '0'
+    count: 0
   };
 
 
   // there's an off-by-1 error between momment() and Date() that we want
   // to account for when converting back to a string
   result.date = moment(questionnaireResponse.authored).add(1, 'days').format("YYYY-MM-DD HH:mm")
-  result.questionnaire = get(questionnaireResponse, 'questionnaire.reference', '');
+  result.questionnaire = get(questionnaireResponse, 'questionnaire', '');
   result.encounter = get(questionnaireResponse, 'encounter.reference', '');
-  result.subject = get(questionnaireResponse, 'subject.display', '');
+  result.subjectDisplay = get(questionnaireResponse, 'subject.display', '');
+  result.subjectReference = get(questionnaireResponse, 'subject.reference', '');
+  result.sourceDisplay = get(questionnaireResponse, 'source.display', '');
+  result.sourceReference = get(questionnaireResponse, 'source.reference', '');
   result.author = get(questionnaireResponse, 'author.display', '');
-  result.identifier = get(questionnaireResponse, 'identifier[0].value', '');
+  result.identifier = get(questionnaireResponse, 'identifier.value', '');
   result.status = get(questionnaireResponse, 'status', '');
+  result.id = get(questionnaireResponse, 'id', '');
 
   let items = get(questionnaireResponse, 'item', []);
 
@@ -142,9 +150,9 @@ function QuestionnaireResponsesTable(props){
     if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
-            {/* <Checkbox
+            <Checkbox
               defaultChecked={true}
-            /> */}
+            />
         </TableCell>
       );
     }
@@ -173,6 +181,20 @@ function QuestionnaireResponsesTable(props){
       );
     }
   } 
+  function renderStatus(status){
+    if (!props.hideStatus) {
+      return (
+        <TableCell className='status'>{ status }</TableCell>
+      );
+    }
+  }
+  function renderStatusHeader(){
+    if (!props.hideStatus) {
+      return (
+        <TableCell className='status'>Status</TableCell>
+      );
+    }
+  }
   function renderIdentifier(identifier){
     if (!props.hideIdentifier) {
       return (
@@ -184,6 +206,76 @@ function QuestionnaireResponsesTable(props){
     if (!props.hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
+      );
+    }
+  }
+  function renderSubjectDisplay(subjectDisplay){
+    if (!props.hideSubjectDisplay) {
+      return (
+        <TableCell className='subjectDisplay'>{ subjectDisplay }</TableCell>
+      );
+    }
+  }
+  function renderSubjectDisplayHeader(){
+    if (!props.hideSubjectDisplay) {
+      return (
+        <TableCell className='subjectDisplay'>Subject</TableCell>
+      );
+    }
+  }
+  function renderSubjectReference(subjectReference){
+    if (!props.hideSubjectReference) {
+      return (
+        <TableCell className='subjectReference'>{ subjectReference }</TableCell>
+      );
+    }
+  }
+  function renderSubjectReferenceHeader(){
+    if (!props.hideSubjectReference) {
+      return (
+        <TableCell className='subjectReference'>Reference</TableCell>
+      );
+    }
+  }
+  function renderSourceReference(sourceReference){
+    if (!props.hideSourceReference) {
+      return (
+        <TableCell className='sourceReference'>{ sourceReference }</TableCell>
+      );
+    }
+  }
+  function renderSourceReferenceHeader(){
+    if (!props.hideSourceReference) {
+      return (
+        <TableCell className='sourceReference'>Source Reference</TableCell>
+      );
+    }
+  }
+  function renderSourceDisplay(sourceDisplay){
+    if (!props.hideSourceDisplay) {
+      return (
+        <TableCell className='sourceDisplay'>{ sourceDisplay }</TableCell>
+      );
+    }
+  }
+  function renderSourceDisplayHeader(){
+    if (!props.hideSourceDisplay) {
+      return (
+        <TableCell className='sourceDisplay'>Source Display</TableCell>
+      );
+    }
+  }
+  function renderQuestionnaire(questionnaireUrl){
+    if (!props.hideQuestionnaire) {
+      return (
+        <TableCell className='questionnaireUrl'>{ questionnaireUrl }</TableCell>
+      );
+    }
+  }
+  function renderQuestionnaireHeader(){
+    if (!props.hideQuestionnaire) {
+      return (
+        <TableCell className='questionnaireUrl'>Questionnaire</TableCell>
       );
     }
   }
@@ -239,7 +331,7 @@ function QuestionnaireResponsesTable(props){
   if(props.questionnaireResponses){
     if(props.questionnaireResponses.length > 0){              
       props.questionnaireResponses.forEach(function(questionnaireResponse){
-        questionnaireResponsesToRender.push(flattenQuestionnaireResponse(questionnaireResponse, internalDateFormat));
+        responsesToRender.push(flattenQuestionnaireResponse(questionnaireResponse, internalDateFormat));
       });  
     }
   }
@@ -252,18 +344,16 @@ function QuestionnaireResponsesTable(props){
   } else {
     for (var i = 0; i < responsesToRender.length; i++) {
       tableRows.push(
-        <TableRow key={i} className="patientRow" style={{cursor: "pointer"}} onClick={this.onRowClick.bind(this, responsesToRender[i]._id )} >
+        <TableRow key={i} className="patientRow" style={{cursor: "pointer"}} onClick={ onRowClick.bind(this, responsesToRender[i]._id )} hover={true} >
           { renderToggle(responsesToRender[i]) }
           { renderActionIcons(responsesToRender[i]) }
-
-          {/* <td className='identifier' onClick={ rowClick.bind(this, responsesToRender[i]._id)} style={data.style.cell}>{responsesToRender[i].identifier }</td> */}
-          {/* <td className='title' onClick={ rowClick.bind(this, responsesToRender[i]._id)} style={data.style.cell}>{responsesToRender[i].title }</td> */}
-          <TableCell className='questionnaire' onClick={ onCellClick.bind(this, responsesToRender[i]._id)} style={data.style.cell}>{responsesToRender[i].questionnaire }</TableCell>
-          <TableCell className='subject' onClick={ onCellClick.bind(this, responsesToRender[i]._id)} style={data.style.cell}>{responsesToRender[i].subject }</TableCell>
-          <TableCell className='status' onClick={ onCellClick.bind(this, responsesToRender[i]._id)} style={data.style.cell}>{responsesToRender[i].status }</TableCell>
-          <TableCell className='date' onClick={ onCellClick.bind(this, responsesToRender[i]._id)} style={{minWidth: '100px', paddingTop: '16px'}}>{responsesToRender[i].date }</TableCell>
-          <TableCell className='count' onClick={ onCellClick.bind(this, responsesToRender[i]._id)} style={data.style.cell}>{responsesToRender[i].count }</TableCell>
-          { renderIdentifier(responsesToRender[i]) }
+          { renderIdentifier(responsesToRender[i].identifier) }
+          { renderStatus(responsesToRender[i].status) }
+          { renderQuestionnaire(responsesToRender[i].questionnaire) }
+          { renderSubjectDisplay(responsesToRender[i].subjectDisplay) }
+          { renderSubjectReference(responsesToRender[i].subjectReference) }
+          { renderSourceReference(responsesToRender[i].sourceReference) }          
+          { renderBarcode(responsesToRender[i].id) }
         </TableRow>
       );
     }
@@ -273,23 +363,18 @@ function QuestionnaireResponsesTable(props){
 
   return(
     <div>
-      <Table id='questionnaireResponsesTable' hover >
+      <Table id='questionnaireResponsesTable' >
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
-
-            {/* <th className='identifier'>Identifier</th> */}
-            {/* <th className='title'>Title</th> */}
-            {/* <th className='author'>Author</th> */}
-            {/* <th className='encounter'>Encounter</th> */}
-
-            <TableCell className='questionnaire'>Questionnaire</TableCell>
-            <TableCell className='subject'>Subject</TableCell>
-            <TableCell className='status'>Status</TableCell>
-            <TableCell className='date' style={{minWidth: '140px'}}>Date</TableCell>
-            <TableCell className='count'>Count</TableCell>
             { renderIdentifierHeader() }
+            { renderStatusHeader() }
+            { renderQuestionnaireHeader() }
+            { renderSubjectDisplayHeader() }
+            { renderSubjectReferenceHeader() }
+            { renderSourceReferenceHeader() }
+            { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
@@ -309,16 +394,38 @@ QuestionnaireResponsesTable.propTypes = {
   query: PropTypes.object,
   sort: PropTypes.string,
   paginationLimit: PropTypes.number,
-  hideIdentifier: PropTypes.bool,
+
   hideCheckbox: PropTypes.bool,
-  hideBarcodes: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+  hideSourceDisplay: PropTypes.bool,
+  hideSourceReference: PropTypes.bool,
+  hideSubjectDisplay: PropTypes.bool,
+  hideSubjectReference: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   onCheck: PropTypes.func,
-  actionButtonLabel: PropTypes.string
+  actionButtonLabel: PropTypes.string,
+
+  rowsPerPage: PropTypes.number,
+  tableRowSize: PropTypes.string
 };
+
+QuestionnaireResponsesTable.defaultTypes = {
+  hideCheckbox: true,
+  hideIdentifier: false,
+  hideSubjectDisplay: true,
+  hideSubjectReference: false,
+  hideSourceDisplay: false,
+  hideSourceReference: false,
+  hideBarcode: false,
+  hideActionIcons: true
+}
+
+
 export default QuestionnaireResponsesTable;

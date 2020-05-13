@@ -197,6 +197,7 @@ export class ProceduresPage extends React.Component {
                   showMinutes={true}
                   hideBarcode={false}
                   hideCheckboxes={true}
+                  tableRowSize="medium"
                   />
                 {/* <Tabs id="proceduresPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
                 <Tab className='newProcedureTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>

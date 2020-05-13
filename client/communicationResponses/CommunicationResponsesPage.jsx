@@ -51,7 +51,9 @@ export class CommunicationResponsesPage extends React.Component {
       tabIndex: Session.get('communicationResponsePageTabIndex'),
       communicationResponse: defaultCommunicationResponse,
       communicationResponseSearchFilter: '',
-      currentCommunicationResponse: null
+      currentCommunicationResponse: null,
+      communicationResponses: CommunicationResponses.find().fetch(),
+      communicationResponsesCount: CommunicationResponses.find().count()
     };
 
     if (Session.get('communicationResponseFormData')) {
@@ -95,6 +97,8 @@ export class CommunicationResponsesPage extends React.Component {
               <CommunicationResponsesTable 
                 showBarcodes={true} 
                 hideIdentifier={true}
+                communicationResponses={this.data.communicationResponses}
+                count={this.data.communicationResponsesCounts}
                 onRemoveRecord={function(recordId){
                   CommunicationResponses.remove({_id: recordId})
                 }}

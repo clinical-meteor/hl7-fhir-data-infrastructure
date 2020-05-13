@@ -233,6 +233,31 @@ export class CommunicationResponsesTable extends React.Component {
         <TableCell className={classNames}>{ get(questionnaire, 'identifier[0].value') }</TableCell>       );
     }
   }
+  renderActionButtonHeader(){
+    if (!this.props.hideActionButton) {
+      return (
+        <TableCell className="actionButton">Action</TableCell>
+      );
+    }
+  }
+  renderActionButton(questionnaireId ){
+    if (!this.props.hideActionButton) {
+      let actionButtonLabel = "Send";
+      if(this.props.actionButtonLabel){
+        actionButtonLabel = this.props.actionButtonLabel;
+      }
+
+      return (
+        <TableCell className="actionButton">
+          <Button color="primary" onClick={handeActionButtonClick.bind(this, questionnaireId)}>{actionButtonLabel}</Button>
+        </TableCell>       );
+    }
+  }
+  handleActionButtonClick(id){
+    if(typeof this.props.onActionButtonClick === "function"){
+      this.props.onActionButtonClick(id)
+    }
+  }
   onSend(id){
       let communicationResponse = CommunicationResponses.findOne({_id: id});
     
@@ -313,6 +338,7 @@ export class CommunicationResponsesTable extends React.Component {
             <Button primary={false} onClick={ this.sendCommunicationResponse.bind(this, this.data.communicationResponses[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
           </TableCell>
           { this.renderIdentifier(this.data.communicationResponses[i]) }
+          { this.renderActionButton(this.data.communicationResponses[i].id) }
         </TableRow>
       );
     }
@@ -334,6 +360,7 @@ export class CommunicationResponsesTable extends React.Component {
             <TableCell className='sent' style={{minWidth: '100px'}}>Sent</TableCell>
             <TableCell className='actionButton' style={{minWidth: '100px'}}>Action</TableCell>
             { this.renderIdentifierHeader() }
+            { this.renderActionButtonHeader() }
           </TableRow>
         </TableHead>
         <TableBody>

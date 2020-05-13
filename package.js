@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.4.17',
+  version: '6.4.18',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -30,6 +30,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Communications.js', ['client', 'server']);
+  api.addFiles('lib/schemas/CommunicationRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/CommunicationResponses.js', ['client', 'server']);
   api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
@@ -44,6 +45,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
   api.addFiles('lib/schemas/MedicationRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
+  api.addFiles('lib/schemas/MessageHeaders.js', ['client', 'server']);
   api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Organizations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
@@ -77,6 +79,10 @@ Package.onUse(function (api) {
   api.export('Communication');
   api.export('Communications');
   api.export('CommunicationSchema');
+
+  api.export('CommunicationRequest');
+  api.export('CommunicationRequests');
+  api.export('CommunicationRequestSchema');
 
   api.export('CommunicationResponse');
   api.export('CommunicationResponses');
@@ -134,6 +140,10 @@ Package.onUse(function (api) {
   api.export('MedicationStatement');
   api.export('MedicationStatements');
   api.export('MedicationStatementSchema');
+
+  api.export('MessageHeader');
+  api.export('MessageHeaders');
+  api.export('MessageHeaderSchema');
 
   api.export('Observation');
   api.export('Observations');

@@ -205,7 +205,7 @@ export class TasksPage extends React.Component {
         Bert.alert(error.reason, 'danger');
       }
       if (result) {
-        Session.set('selectedTaskId', false);
+        Session.set('selectedTaskId', '');
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
         Bert.alert('Task removed!', 'success');
       }
@@ -250,7 +250,7 @@ export class TasksPage extends React.Component {
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
-            Session.set('selectedTaskId', false);
+            Session.set('selectedTaskId', '');
             Session.set('taskPageTabIndex', 1);
             Bert.alert('Task added!', 'success');
           }
@@ -268,7 +268,7 @@ export class TasksPage extends React.Component {
           if (result) {
             HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
             Session.set('taskPageTabIndex', 1);
-            Session.set('selectedTaskId', false);
+            Session.set('selectedTaskId', '');
             Bert.alert('Task added!', 'success');
           }
         });
@@ -343,7 +343,7 @@ export class TasksPage extends React.Component {
 
           <TasksTable 
             tasks={ this.data.tasks }
-            hideCheckbox={true} 
+            hideCheckbox={false} 
             hideActionIcons={true}
             hideIdentifier={true} 
             hideTitle={false} 
@@ -361,6 +361,7 @@ export class TasksPage extends React.Component {
             hideRiskAdjustment={true}
             hideRateAggregation={true}
             hideScoring={false}
+            hideBarcode={false}
             paginationLimit={10}     
             />
           </CardContent>
@@ -375,17 +376,9 @@ export class TasksPage extends React.Component {
                 tasks={ this.data.tasks }
                 selectedTaskId={ this.data.selectedTaskId }
                 hideIdentifier={true} 
-                hideCheckbox={true} 
-                hideApprovalDate={false}
-                hideLastReviewed={false}
-                hideVersion={false}
-                hideStatus={false}
-                hidePublisher={true}
-                hideReviewer={true}
-                hideScoring={true}
-                hideEndorser={true}
-                paginationLimit={10}            
+                hideCheckbox={false}
                 hideActionIcons={true}
+                hideBarcode={true}
                 onRowClick={this.handleRowClick.bind(this) }
                 count={this.data.tasksCount}
                 />
@@ -400,6 +393,7 @@ export class TasksPage extends React.Component {
               <CardContent>
                 <TaskDetail 
                   id='taskDetails' 
+                  
                   displayDatePicker={true} 
                   displayBarcodes={false}
                   task={ this.data.selectedTask }

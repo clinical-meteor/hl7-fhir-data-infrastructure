@@ -197,6 +197,7 @@ function ConditionsTable(props){
   
     autoColumns,
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
     displayEnteredInError,
@@ -675,7 +676,7 @@ function ConditionsTable(props){
 
   return(
     <div>
-      <Table className='conditionsTable' size="small" aria-label="a dense table" { ...otherProps }>
+      <Table className='conditionsTable' size={tableRowSize} aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
             { renderCheckboxHeader() } 
@@ -741,7 +742,8 @@ ConditionsTable.propTypes = {
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   displayEnteredInError: PropTypes.bool,
-  count: PropTypes.number
+  count: PropTypes.number,
+  tableRowSize: PropTypes.string
 };
 
 ConditionsTable.defaultProps = {
@@ -762,7 +764,8 @@ ConditionsTable.defaultProps = {
   displayBarcode: false,
   disablePagination: false,
   autoColumns: true,
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  tableRowSize: "normal"  // small | normal
 }
 
 export default ConditionsTable;

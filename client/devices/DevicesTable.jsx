@@ -64,11 +64,12 @@ flattenDevice = function(device, internalDateFormat){
     id: '',
     meta: '',
     identifier: '',
-    deviceType: '',
+    deviceName: '',
     deviceModel: '',
     manufacturer: '',
     serialNumber: '',
-    costOfOwnership: ''
+    costOfOwnership: '',
+    status: ''
   };
 
   if(!internalDateFormat){
@@ -79,11 +80,13 @@ flattenDevice = function(device, internalDateFormat){
   result.id = get(device, 'id', '');
   result.identifier = get(device, 'identifier[0].value', '');
 
-  result.deviceType = get(device, 'type.text', '');
+  result.status = get(device, 'status', '');
+  result.deviceName = get(device, 'type.text', '');
   result.deviceModel = get(device, 'model', '');
   result.manufacturer = get(device, 'manufacturer', '');
   result.serialNumber = get(device, 'identifier[0].value', '');
   result.note = get(device, 'note[0].text', '');
+  
 
   return result;
 }
@@ -105,7 +108,8 @@ function DevicesTable(props){
     paginationLimit,
     disablePagination,
   
-    displayCheckboxes,
+    displayCheckbox,
+    displayIdentifier,
     displayMake,
     displayModel,
     displayManufacturer,
@@ -120,6 +124,7 @@ function DevicesTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
     displayEnteredInError,
@@ -178,14 +183,14 @@ function DevicesTable(props){
   // Column Rendering 
 
   function renderCheckboxHeader(){
-    if (props.displayCheckboxes) {
+    if (props.displayCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(patientId ){
-    if (props.displayCheckboxes) {
+    if (props.displayCheckbox) {
       return (
         <TableCell className="toggle">
           <Checkbox
@@ -307,12 +312,14 @@ function DevicesTable(props){
       logger.trace('devicesToRender[i]', devicesToRender[i])
       tableRows.push(
         <TableRow className="deviceRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, devicesToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
-          <TableCell className='deviceType'>{this.data.devices[i].type.text }</TableCell>
-          <TableCell className='manufacturer'>{this.data.devices[i].manufacturer }</TableCell>
-          <TableCell className='deviceModel'>{this.data.devices[i].model }</TableCell>
-          <TableCell className='serialNumber'>{this.data.devices[i].identifier[0] ? this.data.devices[i].identifier[0].value :  '' }</TableCell>
-          <TableCell className="costOfOwnership">{ (this.data.devices[i].note && this.data.devices[i].note[0]) ? this.data.devices[i].note[0].text : '' }</TableCell>
-          { renderBarcode(devicesToRender[i]._id)}
+          { renderCheckbox() }  
+          { renderActionIcons() }
+          { renderIdentifier() }
+          <TableCell className='deviceName'>{ get(devicesToRender[i], 'status') }</TableCell>
+          <TableCell className='deviceName'>{ get(devicesToRender[i], 'device[0].name') }</TableCell>
+          <TableCell className='manufacturer'>{devicesToRender[i].manufacturer }</TableCell>
+          <TableCell className='deviceModel'>{devicesToRender[i].model }</TableCell>
+          { renderBarcode(devicesToRender[i].id)}
           { renderActionButton(devicesToRender[i]) }
         </TableRow>
       );    
@@ -326,17 +333,16 @@ function DevicesTable(props){
 
   return(
     <div>
-      <Table className='devicesTable' size="small" aria-label="a dense table" { ...otherProps }>
+      <Table className='devicesTable' size={tableRowSize} aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
             { renderCheckboxHeader() }  
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
-            <TableCell className='deviceType'>Type</TableCell>
+            <TableCell className='status'>Status</TableCell>
+            <TableCell className='deviceName'>Name</TableCell>
             <TableCell className='manufacturer'>Manufacturer</TableCell>
             <TableCell className='deviceModel'>Model</TableCell>
-            <TableCell className='serialNumber'>Serial Number</TableCell>
-            <TableCell className='costOfOwnership'>Notes</TableCell>
             { renderBarcodeHeader() }
             { renderActionButtonHeader() }
           </TableRow>
@@ -352,61 +358,6 @@ function DevicesTable(props){
 }
 
 
-// export default class DevicesTable extends React.Component {
-
-//   getMeteorData() {
-//     let data = {
-//       style: {},
-//       selected: [],
-//       devices: Devices.find().fetch()
-//     }
-
-//     if(process.env.NODE_ENV === "test") console.log("DevicesTable[data]", data);
-//     return data;
-//   };
-
-
-//   rowClick(id){
-//     // Session.set('devicesUpsert', false);
-//     // Session.set('selectedDeviceId', id);
-//     // Session.set('devicePageTabIndex', 2);
-//   };
-//   render () {
-//     let tableRows = [];
-//     for (var i = 0; i < this.data.devices.length; i++) {
-//       tableRows.push(
-//         <tr key={i} className="deviceRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.devices[i]._id)} >
-
-//           <td className='deviceType'>{this.data.devices[i].type.text }</td>
-//           <td className='manufacturer'>{this.data.devices[i].manufacturer }</td>
-//           <td className='deviceModel'>{this.data.devices[i].model }</td>
-//           <td className='serialNumber'>{this.data.devices[i].identifier[0] ? this.data.devices[i].identifier[0].value :  '' }</td>
-//           <td className="costOfOwnership">{ (this.data.devices[i].note && this.data.devices[i].note[0]) ? this.data.devices[i].note[0].text : '' }</td>
-//           <td><span className="barcode">{ this.data.devices[i]._id }</span></td>
-//         </tr>
-//       );
-//     }
-
-//     return(
-//       <Table id='devicesTable' hover >
-//         <thead>
-//           <tr>
-//             <th className='deviceType'>type</th>
-//             <th className='manufacturer'>manufacturer</th>
-//             <th className='deviceModel'>model</th>
-//             <th className='serialNumber'>serial number</th>
-//             <th className='costOfOwnership'>cost ($/year)</th>
-//             <th>_id</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           { tableRows }
-//         </tbody>
-//       </Table>
-//     );
-//   }
-// }
-
 
 
 DevicesTable.propTypes = {
@@ -416,7 +367,8 @@ DevicesTable.propTypes = {
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  displayCheckboxes: PropTypes.bool,
+  displayCheckbox: PropTypes.bool,
+  displayIdentifier: PropTypes.bool,
   displayMake: PropTypes.bool,
   displayModel: PropTypes.bool,
   displayManufacturer: PropTypes.bool,
@@ -431,18 +383,21 @@ DevicesTable.propTypes = {
   actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,
+  tableRowSize: PropTypes.string,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   displayEnteredInError: PropTypes.bool
 };
 
 DevicesTable.defaultProps = {
-  displayCheckboxes: false,
+  displayCheckbox: false,
+  displayIdentifier: true,
   displayMake: true,
   displayModel: true,
   displayManufacturer: true,
   displaySerialNumber: true,
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  tableRowSize: 'medium'
 }
 
 export default DevicesTable;

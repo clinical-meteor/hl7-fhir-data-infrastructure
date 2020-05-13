@@ -216,6 +216,7 @@ function ObservationsTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
     count,
@@ -613,7 +614,7 @@ function ObservationsTable(props){
   
   return(
     <div>
-      <Table id="observationsTable" size="small" aria-label="a dense table" { ...otherProps }>
+      <Table id="observationsTable" size={tableRowSize} aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow key='tableHeader'>
             { renderToggleHeader() }
@@ -685,6 +686,7 @@ ObservationsTable.propTypes = {
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
+  tableRowSize: PropTypes.string,
 
   count: PropTypes.number
 };
@@ -697,7 +699,8 @@ ObservationsTable.defaultProps = {
   denominatorLabel: "Diastolic",
   numeratorCode: "8480-6",
   denominatorCode: "8462-4",
-  multiComponentValues: false
+  multiComponentValues: false,
+  tableRowSize: 'small'
 }
 
 

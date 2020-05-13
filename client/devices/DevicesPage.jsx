@@ -147,7 +147,9 @@ export class DevicesPage extends React.Component {
       deviceSearchFilter: Session.get('deviceSearchFilter'),
       currentDeviceId: Session.get('selectedDeviceId'),
       fhirVersion: Session.get('fhirVersion'),
-      selectedDevice: false
+      selectedDevice: false,
+      devices: Devices.find().fetch(),
+      deviceCount: Devices.find().count()
     };
 
     if (Session.get('selectedDeviceId')){
@@ -179,26 +181,15 @@ export class DevicesPage extends React.Component {
           <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
             <CardHeader title='Devices' />
             <CardContent>
-              {/* <Tabs id="devicesPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-               <Tab className='newDeviceTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
-                 <DeviceDetail 
-                  id='newDevice'
-                  fhirVersion={ this.data.fhirVersion }
-                  device={ this.data.selectedDevice }
-                  deviceId={ this.data.currentDeviceId } 
-                  />  
-               </Tab>
-               <Tab className="deviceListTab" label='Devices' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                <DevicesTable />
-               </Tab>
-               <Tab className="deviceDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                 <DeviceDetail 
-                  id='deviceDetails' 
-                  fhirVersion={ this.data.fhirVersion }
-                  device={ this.data.selectedDevice }
-                  deviceId={ this.data.currentDeviceId } />  
-               </Tab>
-             </Tabs> */}
+              <DevicesTable 
+                devices={this.data.devices}
+                count={this.data.devicesCount}
+              />
+              {/* <DeviceDetail 
+              id='deviceDetails' 
+              fhirVersion={ this.data.fhirVersion }
+              device={ this.data.selectedDevice }
+              deviceId={ this.data.currentDeviceId } />   */}
             </CardContent>
         </StyledCard>
         </MuiThemeProvider>

@@ -137,14 +137,14 @@ export class CommunicationsTable extends React.Component {
     Session.set('communicationPageTabIndex', 2);
   }
   renderCheckboxHeader(){
-    if (!this.props.hideCheckboxes) {
+    if (!this.props.hideCheckbox) {
       return (
         <TableCell className="toggle">Checkbox</TableCell>
       );
     }
   }
   renderCheckbox(communication){
-    if (!this.props.hideCheckboxes) {
+    if (!this.props.hideCheckbox) {
       let toggleValue = false;
       if(get(communication, 'status') === "active"){
         toggleValue = true;
@@ -299,6 +299,7 @@ export class CommunicationsTable extends React.Component {
         <TableRow key={i} className="communicationRow" style={{cursor: "pointer"}} hover={true}>
           { this.renderCheckbox(this.data.communications[i]) }
           { this.renderActionIcons(this.data.communications[i]) }
+          { this.renderIdentifier(this.data.communications[i]) }
           <TableCell className='subject' onClick={ this.rowClick.bind('this', this.data.communications[i]._id)} style={this.data.style.cell}>{this.data.communications[i].subject }</TableCell>
           <TableCell className='recipient' onClick={ this.rowClick.bind('this', this.data.communications[i]._id)} style={this.data.style.cell}>{this.data.communications[i].recipient }</TableCell>
           <TableCell className='telecom' onClick={ this.rowClick.bind('this', this.data.communications[i]._id)} style={this.data.style.cell}>{this.data.communications[i].telecom }</TableCell>
@@ -308,9 +309,8 @@ export class CommunicationsTable extends React.Component {
           <TableCell className='status' onClick={ this.rowClick.bind('this', this.data.communications[i]._id)} style={ this.data.style.statusCell }>{this.data.communications[i].status }</TableCell>
           <TableCell className='sent' style={this.data.style.cell}>{ this.data.communications[i].sent }</TableCell>
           <TableCell className='actionButton' onClick={ this.rowClick.bind('this', this.data.communications[i]._id)} style={this.data.style.cell}>
-            <Button primary={false} onClick={ this.sendCommunication.bind(this, this.data.communications[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
+            <Button color="primary" onClick={ this.sendCommunication.bind(this, this.data.communications[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
           </TableCell>
-          { this.renderIdentifier(this.data.communications[i]) }
         </TableRow>
       );
     }
@@ -322,6 +322,7 @@ export class CommunicationsTable extends React.Component {
           <TableRow>
             { this.renderCheckboxHeader() }
             { this.renderActionIconsHeader() }
+            { this.renderIdentifierHeader() }
             <TableCell className='subject'>Subject</TableCell>
             <TableCell className='recipient'>Recipient</TableCell>
             <TableCell className='telecom'>Telecom</TableCell>
@@ -331,7 +332,6 @@ export class CommunicationsTable extends React.Component {
             <TableCell className='status' style={this.data.style.hideOnPhone}>Status</TableCell>
             <TableCell className='sent' style={{minWidth: '100px'}}>Sent</TableCell>
             <TableCell className='actionButton' style={{minWidth: '100px'}}>Action</TableCell>
-            { this.renderIdentifierHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
@@ -349,8 +349,8 @@ CommunicationsTable.propTypes = {
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   hideIdentifier: PropTypes.bool,
-  hideCheckboxes: PropTypes.bool,
-  hideBarcodes: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,

@@ -57,7 +57,7 @@ let defaultCommunicationResponse = {
 Session.setDefault('communicationResponseUpsert', false);
 Session.setDefault('selectedCommunicationResponse', false);
 
-export class CommunicationResponseResponseDetail extends React.Component {
+export class CommunicationResponseDetail extends React.Component {
   getMeteorData() {
     let data = {
       communicationResponseId: false,
@@ -86,7 +86,7 @@ export class CommunicationResponseResponseDetail extends React.Component {
       }
     }
 
-    if(process.env.NODE_ENV === "test") console.log("CommunicationResponseResponseDetail[data]", data);
+    if(process.env.NODE_ENV === "test") console.log("CommunicationResponseDetail[data]", data);
     return data;
   }
 
@@ -325,6 +325,6 @@ export class CommunicationResponseResponseDetail extends React.Component {
 }
 
 
-ReactMixin(CommunicationResponseResponseDetail.prototype, ReactMeteorData);
+ReactMixin(CommunicationResponseDetail.prototype, ReactMeteorData);
 
-export default CommunicationResponseResponseDetail;
+export default CommunicationResponseDetail;

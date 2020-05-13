@@ -27,7 +27,7 @@ Session.setDefault('questionnaireResponseFormData', null);
 Session.setDefault('questionnaireResponseSearchFilter', '');
 Session.setDefault('selectedQuestionnaireResponse', null);
 Session.setDefault('selectedQuestionnaireResponseId', '');
-
+Session.setDefault('QuestionnaireResponsesPage.onePageLayout', false)
 
 //===============================================================================================================
 // Global Theming 
@@ -117,7 +117,9 @@ export class QuestionnaireResponsesPage extends React.Component {
       questionnaireResponseSearchFilter: '',
       currentQuestionnaireResponse: null,
       onePageLayout: true,
-      responsesCount: QuestionnaireResponses.find().count()
+      responses: QuestionnaireResponses.find().fetch(),
+      responsesCount: QuestionnaireResponses.find().count(),
+      onePageLayout: Session.get('QuestionnaireResponsesPage.onePageLayout')
     };
 
     if (Session.get('questionnaireResponseSearchFilter')) {
@@ -181,8 +183,12 @@ export class QuestionnaireResponsesPage extends React.Component {
         <CardContent>
 
           <QuestionnaireResponsesTable 
-            showBarcodes={true} 
-            showAvatars={true} 
+            questionnaireResponses={this.data.responses}
+            count={this.data.responsesCount}
+            hideActionIcons={true}
+            hideCheckbox={true}
+            hideBarcodes={false} 
+            hideIdentifier={false}
             onCellClick={function(responseId){
               console.log('responseId', responseId)
               Session.set('selectedQuestionnaireResponse', responseId)
@@ -199,11 +205,15 @@ export class QuestionnaireResponsesPage extends React.Component {
       layoutContents = <Grid container spacing={3}>
         <Grid item lg={6}>
           <StyledCard height="auto" margin={20} >
-            <CardHeader title={this.data.listsCount + " Lists"} />
+            <CardHeader title={this.data.responsesCount + " Responses"} />
             <CardContent>
               <QuestionnaireResponsesTable 
-                showBarcodes={true} 
-                showAvatars={true} 
+                questionnaireResponses={this.data.responses}
+                count={this.data.responsesCount}
+                hideActionIcons={true}
+                hideCheckbox={true}
+                hideBarcodes={false} 
+                hideIdentifier={false}
                 onCellClick={function(responseId){
                   console.log('responseId', responseId)
                   Session.set('selectedQuestionnaireResponse', responseId)

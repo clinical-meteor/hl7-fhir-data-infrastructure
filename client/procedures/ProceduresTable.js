@@ -154,6 +154,7 @@ function ProceduresTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
     
@@ -540,7 +541,7 @@ function ProceduresTable(props){
 
   return(
     <div>
-      <Table id="proceduresTable" size="small" aria-label="a dense table" { ...otherProps } >
+      <Table id="proceduresTable" size={tableRowSize} aria-label="a dense table" { ...otherProps } >
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
@@ -601,13 +602,15 @@ ProceduresTable.propTypes = {
   actionButtonLabel: PropTypes.string,
 
   rowsPerPageToRender: PropTypes.number,
+  tableRowSize: PropTypes.string,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   count: PropTypes.number
 };
 ProceduresTable.defaultProps = {
   rowsPerPage: 5,
-  hideActionButton: true
+  hideActionButton: true,
+  tableRowSize: 'medium'
 }
 
 export default ProceduresTable;

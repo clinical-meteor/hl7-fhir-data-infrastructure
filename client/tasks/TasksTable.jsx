@@ -7,7 +7,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TablePagination
+  TablePagination,
+  Checkbox
 } from '@material-ui/core';
 
 import TableNoData from 'material-fhir-ui';
@@ -56,75 +57,44 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-// flattenTask = function(task, internalDateFormat){
-//   let result = {
-//     _id: '',
-//     meta: '',
-//     identifier: '',
-//     publisher: '',
-//     status: '',
-//     title: '',
-//     date: '',
-//     approvalDate: '',
-//     lastReviewDate: '',
-//     lastEdited: '',
-//     author: '',
-//     reviewer: '',
-//     endorser: '',
-//     scoring: '',
-//     type: '',
-//     riskAdjustment: '',
-//     rateAggregation: '',
-//     supplementalDataCount: '',
-//     context: '', 
-//     version: ''
-//   };
+flattenTask = function(task, internalDateFormat){
+  let result = {
+    _id: '',
+    meta: '',
+    identifier: '',
+    publisher: '',
+    status: '',
+    title: '',
+    authoredOn: '',
+    focus: '',
+    for: '',
+    intent: '',
+    code: '',
+    requester: ''
+  };
 
-//   if(!internalDateFormat){
-//     internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-//   }
+  if(!internalDateFormat){
+    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
+  }
 
-//   result._id =  get(task, 'id') ? get(task, 'id') : get(task, '_id');
-//   result.id = get(task, 'id', '');
-//   result.identifier = get(task, 'identifier[0].value', '');
+  result._id =  get(task, 'id') ? get(task, 'id') : get(task, '_id');
+  result.id = get(task, 'id', '');
+  result.identifier = get(task, 'identifier[0].value', '');
 
-//   if(get(task, 'lastReviewDate')){
-//     result.lastReviewDate = moment(get(task, 'lastReviewDate', '')).format(internalDateFormat);
-//   }
-//   if(get(task, 'approvalDate')){
-//     result.approvalDate = moment(get(task, 'approvalDate', '')).format(internalDateFormat);
-//   }
-//   if(get(task, 'date')){
-//     result.lastEdited = moment(get(task, 'date', '')).format(internalDateFormat);
-//   }
+  if(get(task, 'authoredOn')){
+    result.authoredOn = moment(get(task, 'authoredOn', '')).format(internalDateFormat);
+  }
 
-//   result.publisher = get(task, 'publisher', '');
-//   result.title = get(task, 'title', '');
-//   result.description = get(task, 'description', '');
-//   result.status = get(task, 'status', '');
-//   result.version = get(task, 'version', '');
+  result.description = get(task, 'description', '');
+  result.status = get(task, 'status', '');
+  result.intent = get(task, 'intent', '');
+  result.focus = get(task, 'focus.display', '');
+  result.for = get(task, 'for.display', '');
+  result.requester = get(task, 'requester.display', '');
+  result.code = get(task, 'code.text', '');
 
-//   result.context = get(task, 'useContext[0].valueCodeableConcept.text', '');
-
-//   result.editor = get(task, 'editor[0].name', '');
-//   result.reviewer = get(task, 'reviewer[0].name', '');
-//   result.endorser = get(task, 'endorser[0].name', '');
-
-//   result.scoring = get(task, 'scoring.coding[0].display', '');
-//   result.type = get(task, 'type[0].coding[0].display', '');
-
-//   result.riskAdjustment = get(task, 'riskAdjustment', '');
-//   result.rateAggregation = get(task, 'rateAggregation', '');
-  
-//   let supplementalData = get(task, 'supplementalData', []);
-//   result.supplementalDataCount = supplementalData.length;
-
-//   let cohorts = get(task, 'group[0].population', []);
-//   result.cohortCount = cohorts.length;
-
-
-//   return result;
-// }
+  return result;
+}
 
 
 
@@ -154,7 +124,7 @@ function TasksTable(props){
     hidePublisher,
     hideTitle,
     hideDescription,
-    hideApprovalDate,
+    hideAuthoredOn,
     hideLastEditedDate,
     hideLastReviewed,
     hideAuthor,
@@ -223,20 +193,20 @@ function TasksTable(props){
   // ------------------------------------------------------------------------
   // Column Rendering
 
-  function renderToggleHeader(){
+  function renderCheckboxHeader(){
     if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
-  function renderToggle(){
+  function renderCheckbox(){
     if (!props.hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
-            {/* <Checkbox
+            <Checkbox
               defaultChecked={true}
-            /> */}
+            />
         </TableCell>
       );
     }
@@ -266,20 +236,6 @@ function TasksTable(props){
     }
   } 
 
-  function renderVersion(version){
-    if (!props.hideVersion) {
-      return (
-        <TableCell className='version'>{ version }</TableCell>
-      );
-    }
-  }
-  function renderVersionHeader(){
-    if (!props.hideVersion) {
-      return (
-        <TableCell className='version'>Version</TableCell>
-      );
-    }
-  }
   function renderStatus(status){
     if (!props.hideStatus) {
       return (
@@ -291,20 +247,6 @@ function TasksTable(props){
     if (!props.hideStatus) {
       return (
         <TableCell className='status'>Status</TableCell>
-      );
-    }
-  }
-  function renderTitle(title){
-    if (!props.hideTitle) {
-      return (
-        <TableCell className='title'>{ title }</TableCell>
-      );
-    }
-  }
-  function renderTitleHeader(){
-    if (!props.hideTitle) {
-      return (
-        <TableCell className='title'>Title</TableCell>
       );
     }
   }
@@ -323,217 +265,92 @@ function TasksTable(props){
     }
   }
 
-  function renderApprovalDate(approvalDate){
-    if (!props.hideApprovalDate) {
+  function renderAuthoredOn(approvalDate){
+    if (!props.hideAuthoredOn) {
       return (
         <TableCell className='approvalDate'>{ approvalDate }</TableCell>
       );
     }
   }
-  function renderApprovalDateHeader(){
-    if (!props.hideApprovalDate) {
+  function renderAuthoredOnHeader(){
+    if (!props.hideAuthoredOn) {
       return (
         <TableCell className='approvalDate' style={{minWidth: '140px'}}>Approval Date</TableCell>
       );
     }
   }
-  function renderLastReviewDate(lastReview){
-    if (!props.hideLastReviewDate) {
+  function renderFocus(focus){
+    if (!props.hideFocus) {
       return (
-        <TableCell className='lastReview'>{ lastReview }</TableCell>
+        <TableCell className='focus'>{ focus }</TableCell>
       );
     }
   }
-  function renderLastReviewDateHeader(){
-    if (!props.hideLastReviewDate) {
+  function renderFocusHeader(){
+    if (!props.hideFocus) {
       return (
-        <TableCell className='lastReview' style={{minWidth: '140px'}}>Last Review</TableCell>
+        <TableCell className='focus'>Focus</TableCell>
       );
     }
   }
-  function renderLastEditedDate(lastEdited){
-    if (!props.hideLastEditedDate) {
+  function renderFor(text){
+    if (!props.hideFor) {
       return (
-        <TableCell className='lastEdited'>{ lastEdited }</TableCell>
+        <TableCell className='for'>{ text }</TableCell>
       );
     }
   }
-  function renderLastEditedDateHeader(){
-    if (!props.hideLastEditedDate) {
+  function renderForHeader(){
+    if (!props.hideFor) {
       return (
-        <TableCell className='lastEdited' style={{minWidth: '140px'}}>Last Edited</TableCell>
+        <TableCell className='for'>For</TableCell>
+      );
+    }
+  }
+  function renderRequestor(requester){
+    if (!props.hideRequestor) {
+      return (
+        <TableCell className='requester'>{ requester }</TableCell>
+      );
+    }
+  }
+  function renderRequestorHeader(){
+    if (!props.hideRequestor) {
+      return (
+        <TableCell className='requester'>Requestor</TableCell>
       );
     }
   }
 
-  function renderAuthor(name){
-    if (!props.hideAuthor) {
+  function renderIntent(intent){
+    if (!props.hideIntent) {
       return (
-        <TableCell className='author'>{ name }</TableCell>
+        <TableCell className='intent'>{ intent }</TableCell>
       );
     }
   }
-  function renderAuthorHeader(){
-    if (!props.hideAuthor) {
+  function renderIntentHeader(){
+    if (!props.hideIntent) {
       return (
-        <TableCell className='author' style={{minWidth: '140px'}}>Author</TableCell>
+        <TableCell className='intent'>Intent</TableCell>
       );
     }
   }
-  function renderPublisher(name){
-    if (!props.hidePublisher) {
+  function renderCode(code){
+    if (!props.hideCode) {
       return (
-        <TableCell className='publisher'>{ name }</TableCell>
+        <TableCell className='code'>{ code }</TableCell>
       );
     }
   }
-  function renderPublisherHeader(){
-    if (!props.hidePublisher) {
+  function renderCodeHeader(){
+    if (!props.hideCode) {
       return (
-        <TableCell className='publisher' style={{minWidth: '200px'}}>Publisher</TableCell>
+        <TableCell className='code'>Code</TableCell>
       );
     }
   }
-  function renderEditor(name){
-    if (!props.hideEditor) {
-      return (
-        <TableCell className='editor'>{ name }</TableCell>
-      );
-    }
-  }
-  function renderEditorHeader(){
-    if (!props.hideEditor) {
-      return (
-        <TableCell className='editor' style={{minWidth: '140px'}}>Editor</TableCell>
-      );
-    }
-  }
-  function renderReviewer(name){
-    if (!props.hideReviewer) {
-      return (
-        <TableCell className='reviewer'>{ name }</TableCell>
-      );
-    }
-  }
-  function renderReviewerHeader(){
-    if (!props.hideReviewer) {
-      return (
-        <TableCell className='reviewer' style={{minWidth: '140px'}}>Reviewer</TableCell>
-      );
-    }
-  }
-  function renderEndorser(name){
-    if (!props.hideEndorser) {
-      return (
-        <TableCell className='endorser'>{ name }</TableCell>
-      );
-    }
-  }
-  function renderEndorserHeader(){
-    if (!props.hideEndorser) {
-      return (
-        <TableCell className='endorser' style={{minWidth: '140px'}}>Endorser</TableCell>
-      );
-    }
-  }
-  function renderScoring(score){
-    if (!props.hideScoring) {
-      return (
-        <TableCell className='scoring' style={{minWidth: '180px'}}>{ score }</TableCell>
-      );
-    }
-  }
-  function renderScoringHeader(){
-    if (!props.hideScoring) {
-      return (
-        <TableCell className='scoring'>Scoring</TableCell>
-      );
-    }
-  }
-  function renderTypeHeader(){
-    if (!props.hideType) {
-      return (
-        <TableCell className='type'>Type</TableCell>
-      );
-    }
-  }
-  function renderType(type){
-    if (!props.hideType) {
-      return (
-        <TableCell className='type'>{ type }</TableCell>
-      );
-    }
-  }
-  function renderRiskAdjustmentHeader(){
-    if (!props.hideRiskAdjustment) {
-      return (
-        <TableCell className='riskAdjustment'>Risk Adjustment</TableCell>
-      );
-    }
-  }
-  function renderRiskAdjustment(riskAdjustment){
-    if (!props.hideRiskAdjustment) {
-      return (
-        <TableCell className='riskAdjustment'>{ riskAdjustment }</TableCell>
-      );
-    }
-  }
-  function renderRateAggregationHeader(){
-    if (!props.hideRateAggregation) {
-      return (
-        <TableCell className='rateAggregation'>Rate Aggregation</TableCell>
-      );
-    }
-  }
-  function renderRateAggregation(rateAggregation){
-    if (!props.hideRateAggregation) {
-      return (
-        <TableCell className='rateAggregation'>{ rateAggregation }</TableCell>
-      );
-    }
-  }
-  function renderSupplementalDataCountHeader(){
-    if (!props.hideSupplementalData) {
-      return (
-        <TableCell className='rateAggregation'>Rate Aggregation</TableCell>
-      );
-    }
-  }
-  function renderSupplementalDataCount(rateAggregation){
-    if (!props.hideSupplementalData) {
-      return (
-        <TableCell className='rateAggregation'>{ rateAggregation }</TableCell>
-      );
-    }
-  }
-  function renderContextHeader(){
-    if (!props.hideContext) {
-      return (
-        <TableCell className='context'>Context</TableCell>
-      );
-    }
-  }
-  function renderContext(context){
-    if (!props.hideContext) {
-      return (
-        <TableCell className='context'>{ context }</TableCell>
-      );
-    }
-  }
-  function renderPopulationCountHeader(){
-    if (!props.hidePopulationCount) {
-      return (
-        <TableCell className='cohortCount'>Populations</TableCell>
-      );
-    }
-  }
-  function renderPopulationCount(cohortCount){
-    if (!props.hidePopulationCount) {
-      return (
-        <TableCell className='cohortCount'>{ cohortCount }</TableCell>
-      );
-    }
-  }
+
 
   function renderBarcode(id){
     if (!props.hideBarcode) {
@@ -628,27 +445,17 @@ function TasksTable(props){
           style={{cursor: 'pointer', height: '52px'}} 
           selected={selected}
         >
-          { renderToggle() }
+          { renderCheckbox() }
           { renderActionIcons(tasksToRender[i]) }
-          { renderTitle(tasksToRender[i].title) }          
-          { renderDescription(tasksToRender[i].description) }          
-          { renderVersion(tasksToRender[i].version) }
-          { renderPublisher(tasksToRender[i].publisher) }
           { renderStatus(tasksToRender[i].status) }
-          { renderAuthor(tasksToRender[i].author) }
-          { renderEditor(tasksToRender[i].editor) }
-          { renderLastEditedDate(tasksToRender[i].lastEdited) }                    
-          { renderReviewer(tasksToRender[i].reviewer) }
-          { renderLastReviewDate(tasksToRender[i].lastReviewDate) }                    
-          { renderEndorser(tasksToRender[i].endorser) }
-          { renderApprovalDate(tasksToRender[i].approvalDate) }
-          { renderScoring(tasksToRender[i].scoring) }
-          { renderType(tasksToRender[i].type) }
-          { renderRiskAdjustment(tasksToRender[i].riskAdjustment) }
-          { renderRateAggregation(tasksToRender[i].rateAggregation) }
-          { renderSupplementalDataCount(tasksToRender[i].supplementalDataCount) }
-          { renderContext(tasksToRender[i].context) }
-          { renderPopulationCount(tasksToRender[i].cohortCount) }
+          { renderDescription(tasksToRender[i].description) }          
+          { renderAuthoredOn(tasksToRender[i].authoredOn) }
+          { renderFocus(tasksToRender[i].focus) }
+          { renderFor(tasksToRender[i].for) }
+          { renderRequestor(tasksToRender[i].requester) }
+          { renderCode(tasksToRender[i].code) }
+          { renderIntent(tasksToRender[i].intent) }
+
           { renderBarcode(tasksToRender[i].id)}
         </TableRow>
       );       
@@ -660,27 +467,16 @@ function TasksTable(props){
       <Table size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            { renderToggleHeader() }
+            { renderCheckboxHeader() }
             { renderActionIconsHeader() }
-            { renderTitleHeader() }
-            { renderDescriptionHeader() }
-            { renderVersionHeader() }
-            { renderPublisherHeader() }
             { renderStatusHeader() }
-            { renderAuthorHeader() }
-            { renderEditorHeader() }
-            { renderLastEditedDateHeader() }
-            { renderReviewerHeader() }
-            { renderLastReviewDateHeader() }
-            { renderEndorserHeader() }
-            { renderApprovalDateHeader() }
-            { renderScoringHeader() }
-            { renderTypeHeader() }
-            { renderRiskAdjustmentHeader() }
-            { renderRateAggregationHeader() }
-            { renderSupplementalDataCountHeader() }
-            { renderContextHeader() }
-            { renderPopulationCountHeader() }
+            { renderDescriptionHeader() }
+            { renderAuthoredOnHeader() }
+            { renderFocusHeader() }
+            { renderFor() }
+            { renderRequestorHeader() }
+            { renderCodeHeader() }
+            { renderIntentHeader() }
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -704,25 +500,14 @@ TasksTable.propTypes = {
 
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
-  hideApprovalDate: PropTypes.bool,
-  hideVersion: PropTypes.bool,
-  hideStatus: PropTypes.bool,
-  hideTitle: PropTypes.bool,
+  hideAuthoredOn: PropTypes.bool,
   hideDescription: PropTypes.bool,
-  hideLastEditedDate: PropTypes.bool,
-  hideLastReviewed: PropTypes.bool,
-  hidePublisher: PropTypes.bool,
-  hideAuthor: PropTypes.bool,
-  hideEditor: PropTypes.bool,
-  hideReviewer: PropTypes.bool,
-  hideEndorser: PropTypes.bool,
-  hideScoring: PropTypes.bool,
-  hideType: PropTypes.bool,
-  hideRiskAdjustment: PropTypes.bool,
-  hideRateAggregation: PropTypes.bool,
-  hideSupplementalData: PropTypes.bool,
-  hideContext: PropTypes.bool,
-  hidePopulationCount: PropTypes.bool,
+  hideFocus: PropTypes.bool,
+  hideFor: PropTypes.bool,
+  hideIntent: PropTypes.bool,
+  hideRequestor: PropTypes.bool,
+  hideStatus: PropTypes.bool,
+  hideCode: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
   onCellClick: PropTypes.func,
@@ -735,28 +520,16 @@ TasksTable.propTypes = {
 TasksTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
-  showMinutes: false,
-  hideVersion: false,
+  hideAuthoredOn: false,
+  hideDescription: false,
+  hideFocus: false,
+  hideFor: false,
+  hideIntent: false,
+  hideRequestor: false,
   hideStatus: false,
-  hideTitle: false,
-  hideApprovalDate: false,
-  hideDescription: true,
-  hideLastEditedDate: false,
-  hideLastReviewed: false,
-  hidePublisher: false,
-  hideAuthor: true,
-  hideEditor: false,
-  hideReviewer: false,
-  hideEndorser: false,
-  hideScoring: true,
-  hideType: true,
-  hideRiskAdjustment: true,
-  hideRateAggregation: true,
-  hideSupplementalData: true,
-  hideContext: true,
-  hidePopulationCount: false,
+  hideCode: false,
   hideBarcode: true,
-  selectedTaskId: false,
+  selectedTaskId: '',
   rowsPerPage: 5
 }
 

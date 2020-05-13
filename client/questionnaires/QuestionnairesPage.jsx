@@ -403,54 +403,9 @@ export class QuestionnairesPage extends React.Component {
     Session.set('questionnaireDesignerCurrentQuestion', newQuestionState);
     console.log('newQuestionState', newQuestionState)
   }
-  saveSortedQuestionnaire(){
-    // Session.set('editedQuestionnaire', {
-    //   questionnaireId: Session.get('selectedQuestionnaire'),
-    //   items: this.state.items
-    // })
+  handleSaveQuestionnaireResponse(){
 
-    let editedQuestionnaire = Session.get('editedQuestionnaire');
-    let currentQuestionnaire = Questionnaires.findOne(get(editedQuestionnaire, 'questionnaireId'));
-
-    let updatedItemArray = [];
-
-    if(editedQuestionnaire){
-      if(Array.isArray(editedQuestionnaire.items)){
-        editedQuestionnaire.items.forEach(function(editedItem){
-          console.log('editedItem', editedItem)
-          
-          currentQuestionnaire.item.forEach(function(currentItem){
-            console.log('currentItem', currentItem)
-            if(editedItem.text === currentItem.text){
-              console.log('found match; pushing')
-              updatedItemArray.push(currentItem);
-            }        
-          });
-        });
-      }
-  
-      console.log('Current  questionnaire item array: ', currentQuestionnaire.item);
-      console.log('Proposed questionnaire item array: ', updatedItemArray);
-  
-      let count = 0;
-      updatedItemArray.forEach(function(item){
-        if(count === 0){
-          item.linkId = 1;
-        } else {
-          item.linkId = Random.id()
-        }
-        count++;
-      })  
-  
-      console.log('Renormalized linkIds: ', updatedItemArray);
-  
-      if(get(editedQuestionnaire, 'questionnaireId')){
-        Questionnaires.update({_id: get(editedQuestionnaire, 'questionnaireId')}, {$set: {
-          item: updatedItemArray
-        }})
-        Session.set('questionnaireIsSorting', false)
-      }      
-    }
+    
   }
   render() {
     // let classes = useStyles();
@@ -496,6 +451,7 @@ export class QuestionnairesPage extends React.Component {
                 />
                 <QuestionnairesTable 
                   questionnaires={ this.data.questionnaires }
+                  selectedQuestionnaireId={this.data.selectedQuestionnaireId}                  
                   hideCheckbox={true}
                   hideActionIcons={true}
                   hideIdentifier={true}
@@ -513,7 +469,7 @@ export class QuestionnairesPage extends React.Component {
             </Grid>
             <Grid item md={5} style={{position: 'sticky', top: '0px', margin: '20px'}}>
                 <h1 className="barcode helveticas">{this.data.selectedQuestionnaireId}</h1>
-              <StyledCard margin={20}>
+              <StyledCard margins={20}>
                 <CardContent>
                   <FormControl style={{width: '100%', marginTop: '20px'}}>
                     <InputAdornment 
@@ -586,10 +542,10 @@ export class QuestionnairesPage extends React.Component {
                 selectedQuestionnaireId={this.data.selectedQuestionnaireId}
                 />
 
-              {/* <StyledCard margin={20}>
-                <CardContent>
-                </CardContent>
-              </StyledCard> */}
+
+              <DynamicSpacer />
+              <Button disabled id='saveAnswersButton' onClick={this.handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response</Button>
+
             </Grid>
           </Grid>
         </MuiThemeProvider>         
