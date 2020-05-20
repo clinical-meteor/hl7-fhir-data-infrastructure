@@ -186,7 +186,7 @@ function QuestionnaireDetailExpansionPanels(props){
     
     console.log('newResponse', newResponse)
     setDraftResponse(newResponse)
-    
+
     Session.set('lastUpdated', new Date())
   }
 
@@ -217,21 +217,21 @@ function QuestionnaireDetailExpansionPanels(props){
 
               let optionIsChecked = false;
 
-              // for each multi-choice question, we need to rescan the answers in our draft response
-              if(Array.isArray(draftResponse.item)){
-                draftResponse.item.forEach(function(draftAnswerItem){
+              // // for each multi-choice question, we need to rescan the answers in our draft response
+              // if(Array.isArray(draftResponse.item)){
+              //   draftResponse.item.forEach(function(draftAnswerItem){
 
-                  // if we find matching link ids
-                  // if(draftAnswerItem.linkId === renderItem.linkId){
-                    // we can then check if an answer has been recorded
-                    if(get(draftAnswerItem, 'answer[0].valueCoding.code') === get(option, 'valueCoding.code')){
+              //     // if we find matching link ids
+              //     // if(draftAnswerItem.linkId === renderItem.linkId){
+              //       // we can then check if an answer has been recorded
+              //       if(get(draftAnswerItem, 'answer[0].valueCoding.code') === get(option, 'valueCoding.code')){
 
-                      // if not, we set it
-                      optionIsChecked = true
-                    } 
-                  // }
-                })
-              }
+              //         // if not, we set it
+              //         optionIsChecked = true
+              //       } 
+              //     // }
+              //   })
+              // }
 
               answerChoices.push(<ListItem style={{paddingLeft: '120px'}} key={'answer-' + index}>
                 <ListItemIcon>

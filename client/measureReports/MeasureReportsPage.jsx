@@ -20,14 +20,13 @@ import ReactMixin  from 'react-mixin';
 
 import MeasureReportDetail from './MeasureReportDetail';
 import MeasureReportsTable from './MeasureReportsTable';
-import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 //=============================================================================================================================================
 // Session Variables
@@ -139,14 +138,13 @@ export class MeasureReportsPage extends React.Component {
         limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
       },
       tabIndex: Session.get('measureReportPageTabIndex'),
-      onePageLayout: true
+      onePageLayout: Session.get('MeasureReportsPage.onePageLayout')
     };
 
-    data.onePageLayout = Session.get('MeasureReportsPage.onePageLayout');
 
 
-    console.log('MeasureReportsPage.data.query', data.query)
-    console.log('MeasureReportsPage.data.options', data.options)
+    // console.log('MeasureReportsPage.data.query', data.query)
+    // console.log('MeasureReportsPage.data.options', data.options)
 
     data.measureReports = MeasureReports.find(data.query, data.options).fetch();
     data.measureReportsCount = MeasureReports.find(data.query, data.options).count();
@@ -252,10 +250,13 @@ export class MeasureReportsPage extends React.Component {
   } 
   handleRowClick(measureReportId){
     console.log('MeasureReportsPage.handleRowClick', measureReportId)
-    let measureReport = MeasureReports.findOne({id: measureReportId});
+    let measureReport = MeasureReports.findOne({_id: measureReportId});
 
-    Session.set('selectedMeasureReportId', get(measureReport, 'id'));
+    Session.set('selectedMeasureReportId', get(measureReport, '_id'));
     Session.set('selectedMeasureReport', measureReport);
+
+    Session.set('currentSelectionId', 'MeasureReport/' + get(measureReport, '_id'));
+    Session.set('currentSelection', measureReport);
   }
 
   render() {
@@ -280,14 +281,17 @@ export class MeasureReportsPage extends React.Component {
             actionButtonLabel="Send"
             measureReports={ this.data.measureReports }
             count={ this.data.measureReportsCount }
+            hideMeasureUrl={false}
             paginationLimit={10}
             hideSubjects={true}
             hideClassCode={false}
             hideReasonCode={false}
             hideReason={false}
             hideHistory={false}
-            rowsPerPage={ LayoutHelpers.calcTableRows() }
-            />
+            onRowClick={this.handleRowClick.bind(this) }
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+            tableRowSize="medium"
+          />
           </CardContent>
         </StyledCard>
     } else {
@@ -306,6 +310,7 @@ export class MeasureReportsPage extends React.Component {
               count={ this.data.measureReportsCount }
               selectedMeasureReportId={ this.data.selectedMeasureReportId }
               paginationLimit={10}
+              hideMeasureUrl={false}
               hideSubjects={true}
               hideClassCode={false}
               hideReasonCode={false}
@@ -315,7 +320,8 @@ export class MeasureReportsPage extends React.Component {
               hideNumerator={true}
               hideDenominator={true}
               onRowClick={this.handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("normal", window.innerHeight) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+              tableRowSize="medium"
               />
           </CardContent>
         </StyledCard>

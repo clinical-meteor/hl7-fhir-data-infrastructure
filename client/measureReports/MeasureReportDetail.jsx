@@ -61,9 +61,12 @@ function MeasureReportDetail(props){
   let { 
     children, 
     measureReport,
+    measureReportId,
     ...otherProps 
   } = props;
 
+
+  console.log('MeasureReportDetail.props', props)
 
 
   function renderDatePicker(displayDatePicker, effectiveDateTime){
@@ -100,7 +103,7 @@ function MeasureReportDetail(props){
             id="groupCodeInput"
             name="groupCodeInput"
             className={classes.input}       
-            value={get(group, 'code.text')}
+            value={get(group, 'code.coding[0].code')}
             fullWidth              
           />       
         </FormControl>   
@@ -298,7 +301,8 @@ MeasureReportDetail.propTypes = {
   onCancel: PropTypes.func
 };
 MeasureReportDetail.defaultProps = {
-  showPopulationCode: true
+  showPopulationCode: true,
+  measureReportId: ''
 }
 
 export default MeasureReportDetail;

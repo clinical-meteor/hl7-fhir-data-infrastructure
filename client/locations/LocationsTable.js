@@ -48,7 +48,7 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenLocation = function(location, simplifiedAddress){
+flattenLocation = function(location, simplifiedAddress, preferredExtensionUrl){
   let result = {
     _id: '',
     id: '',
@@ -62,7 +62,8 @@ flattenLocation = function(location, simplifiedAddress){
     country: '',
     type: '',
     latitude: '',
-    longitude: ''
+    longitude: '',
+    selectedExtension: ''
   };
 
   result.severity = get(location, 'severity.text', '');
@@ -102,6 +103,14 @@ flattenLocation = function(location, simplifiedAddress){
     result.longitude = get(location, 'position.longitude', null);
   }
 
+  if (Array.isArray(get(location, 'extension'))) {
+    location.extension.forEach(function(extension){
+      if(extension.url === preferredExtensionUrl){
+        result.selectedExtension = get(extension, 'valueDecimal', '');
+      }
+    })
+  }
+
   return result;
 }
 
@@ -116,6 +125,8 @@ function LocationsTable(props){
   logger.verbose('clinical:hl7-resource-locations.client.LocationsTable');
   logger.data('LocationsTable.props', {data: props}, {source: "LocationsTable.jsx"});
 
+  console.log('LocationsTable', props)
+
   const classes = useStyles();
 
   let { 
@@ -129,9 +140,11 @@ function LocationsTable(props){
     hideState,
     hidePostalCode,
     hideType,
-  
+    hideExtensions,
+    
     simplifiedAddress,
-
+    extensionUrl,
+    
     query,
     paginationLimit,
     disablePagination,
@@ -301,6 +314,21 @@ function LocationsTable(props){
     }
   }
 
+  function renderExtensionsHeader(){
+    if (!props.hideExtensions) {
+      return (
+        <TableCell className="extensions">Extensions</TableCell>
+      );
+    }
+  }
+  function renderExtensions(extensions){
+    if (!props.hideExtensions) {
+      return (
+        <TableCell className='extensions'>{ extensions }</TableCell>
+      );  
+    }
+  }
+
   //---------------------------------------------------------------------
   // Methods  
 
@@ -321,7 +349,7 @@ function LocationsTable(props){
 
       props.locations.forEach(function(location){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          locationsToRender.push(flattenLocation(location, simplifiedAddress));
+          locationsToRender.push(flattenLocation(location, simplifiedAddress, extensionUrl));
         }
         count++;
       });  
@@ -347,6 +375,7 @@ function LocationsTable(props){
            { renderType(get(locationsToRender[i], "type")) }
            { renderLatitude(get(locationsToRender[i], "latitude")) }
            { renderLongitude(get(locationsToRender[i], "longitude")) }
+           { renderExtensions(get(locationsToRender[i], "selectedExtension")) }
         </TableRow>
       );
     }
@@ -388,6 +417,7 @@ function LocationsTable(props){
             { renderTypeHeader() }
             { renderLatitudeHeader() }
             { renderLongitudeHeader() }
+            { renderExtensionsHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
@@ -414,9 +444,9 @@ LocationsTable.propTypes = {
   hideState: PropTypes.bool,
   hidePostalCode: PropTypes.bool,
   hideType: PropTypes.bool,
-
+  hideExtensions: PropTypes.bool,
   hideLatLng: PropTypes.bool,
-
+  extensionUrl: PropTypes.string,
   simplifiedAddress: PropTypes.bool
 }
 
@@ -428,7 +458,8 @@ LocationsTable.defaultProps = {
   hideState: false,
   hidePostalCode: false,
   hideType: false,
-
+  hideExtensions: true,
+  extensionUrl: '',
   simplifiedAddress: true,
   rowsPerPage: 5
 }

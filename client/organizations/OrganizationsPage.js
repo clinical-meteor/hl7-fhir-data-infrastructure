@@ -120,6 +120,7 @@ Session.setDefault('OrganizationsPage.onePageLayout', true)
 //=============================================================================================================================================
 // MAIN COMPONENT
 
+
 export class OrganizationsPage extends React.Component {
   getMeteorData() {
     let data = {
@@ -141,33 +142,29 @@ export class OrganizationsPage extends React.Component {
       selectedOrganization: false,
       onePageLayout: true,
       organizations: [],
-      organizationsCount: 0
+      organizationsCount: 0,
+      appHeight: Session.get('appHeight')
     };
 
     data.organizations = Organizations.find().fetch();
     data.organizationsCount = Organizations.find().count();
-
-
     data.onePageLayout = Session.get('OrganizationsPage.onePageLayout');
     data.selectedOrganization = Session.get('selectedOrganization');
 
-    // if (Session.get('selectedOrganizationId')){
-    //   data.selectedOrganization = Organizations.findOne({_id: Session.get('selectedOrganizationId')});
-    // } else {
-    //   data.selectedOrganization = false;
-    // }
-
-    if(process.env.NODE_ENV === "test") console.log("OrganizationsPage[data]", data);
+    // logger.debug("OrganizationsPage[data]", data);
     return data;
   }
 
 
   handleRowClick(organizationId){
-    console.log('OrganizationsPage.handleRowClick', organizationId)
+    // logger.info('OrganizationsPage.handleRowClick', organizationId)
     let organization = Organizations.findOne({id: organizationId});
 
     Session.set('selectedOrganizationId', get(organization, 'id'));
     Session.set('selectedOrganization', Organizations.findOne({id: get(organization, 'id')}));
+
+    Session.set('currentSelectionId', 'Organization/' + get(organization, '_id'));
+    Session.set('currentSelection', organization);
   }
 
   render() {
@@ -187,6 +184,8 @@ export class OrganizationsPage extends React.Component {
             onRowClick={this.handleRowClick.bind(this) }
             hideCheckbox={true}
             hideBarcode={false}
+            hideActionIcons={true}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
             size="small"
           />                                
           </CardContent>
@@ -208,7 +207,7 @@ export class OrganizationsPage extends React.Component {
                 hideActionIcons={true}
                 selectedOrganizationId={ this.data.selectedOrganizationId }
                 onRowClick={this.handleRowClick.bind(this) }
-                rowsPerPage={ LayoutHelpers.calcTableRows("small") }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
                 size="medium"
               />              
             </CardContent>

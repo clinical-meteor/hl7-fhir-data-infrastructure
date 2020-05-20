@@ -146,6 +146,7 @@ function MeasuresTable(props){
     query,
     paginationLimit,
     disablePagination,
+    tableRowSize,
 
     hideCheckbox,
     hideActionIcons,
@@ -190,10 +191,10 @@ function MeasuresTable(props){
   // ------------------------------------------------------------------------
   // Helper Functions
 
-  function handleRowClick(id){
-    console.log('Clicking row ' + id)
+  function handleRowClick(_id){
+    // console.log('Clicking row ' + _id)
     if(props.onRowClick){
-      props.onRowClick(id);
+      props.onRowClick(_id);
     }
   }
 
@@ -294,10 +295,24 @@ function MeasuresTable(props){
       );
     }
   }
+  function renderName(name){
+    if (!props.hideName) {
+      return (
+        <TableCell className='name'>{ name }</TableCell>
+      );
+    }
+  }
+  function renderNameHeader(){
+    if (!props.hideName) {
+      return (
+        <TableCell className='name'>Name</TableCell>
+      );
+    }
+  }
   function renderTitle(title){
     if (!props.hideTitle) {
       return (
-        <TableCell className='title'>{ title }</TableCell>
+        <TableCell className='title' style={{minWidth: '360px'}}>{ title }</TableCell>
       );
     }
   }
@@ -405,6 +420,20 @@ function MeasuresTable(props){
     if (!props.hideEditor) {
       return (
         <TableCell className='editor' style={{minWidth: '140px'}}>Editor</TableCell>
+      );
+    }
+  }
+  function renderIdentifier(identifier){
+    if (!props.hideIdentifier) {
+      return (
+        <TableCell className='identifier'>{ identifier }</TableCell>
+      );
+    }
+  }
+  function renderIdentifierHeader(){
+    if (!props.hideIdentifier) {
+      return (
+        <TableCell className='identifier' style={{minWidth: '140px'}}>Identifier</TableCell>
       );
     }
   }
@@ -609,15 +638,27 @@ function MeasuresTable(props){
     }
   }
 
+
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '52px'
+  }
   if(measuresToRender.length === 0){
     console.log('No measures to render');
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < measuresToRender.length; i++) {
 
+
       let selected = false;
       if(measuresToRender[i].id === selectedMeasureId){
         selected = true;
+      }
+      if(get(measuresToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
       }
       tableRows.push(
         <TableRow 
@@ -625,11 +666,13 @@ function MeasuresTable(props){
           key={i} 
           onClick={ handleRowClick.bind(this, measuresToRender[i]._id)} 
           hover={true} 
-          style={{cursor: 'pointer', height: '52px'}} 
+          style={rowStyle} 
           selected={selected}
         >
           { renderToggle() }
           { renderActionIcons(measuresToRender[i]) }
+          { renderIdentifier(measuresToRender[i].identifier) }
+          { renderName(measuresToRender[i].name) }          
           { renderTitle(measuresToRender[i].title) }          
           { renderDescription(measuresToRender[i].description) }          
           { renderVersion(measuresToRender[i].version) }
@@ -662,6 +705,8 @@ function MeasuresTable(props){
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
+            { renderIdentifierHeader() }
+            { renderNameHeader() }
             { renderTitleHeader() }
             { renderDescriptionHeader() }
             { renderVersionHeader() }
@@ -706,6 +751,7 @@ MeasuresTable.propTypes = {
   hideActionIcons: PropTypes.bool,
   hideApprovalDate: PropTypes.bool,
   hideVersion: PropTypes.bool,
+  hideName: PropTypes.bool,
   hideStatus: PropTypes.bool,
   hideTitle: PropTypes.bool,
   hideDescription: PropTypes.bool,
@@ -730,13 +776,15 @@ MeasuresTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  actionButtonLabel: PropTypes.string
+  actionButtonLabel: PropTypes.string,
+  tableRowSize: PropTypes.string
 };
 MeasuresTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   showMinutes: false,
   hideVersion: false,
+  hideName: false,
   hideStatus: false,
   hideTitle: false,
   hideApprovalDate: false,
@@ -757,7 +805,8 @@ MeasuresTable.defaultProps = {
   hidePopulationCount: false,
   hideBarcode: true,
   selectedMeasureId: '',
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  tableRowSize: 'medium'
 }
 
 export default MeasuresTable; 

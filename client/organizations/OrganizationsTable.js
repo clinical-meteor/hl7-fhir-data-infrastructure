@@ -74,7 +74,8 @@ let styles = {
       text: '',
       city: '',
       state: '',
-      postalCode: ''
+      postalCode: '',
+      extension: ''
     };
 
     result._id =  get(organization, 'id') ? get(organization, 'id') : get(organization, '_id');
@@ -90,6 +91,11 @@ let styles = {
     result.state = get(organization, 'address[0].state');
     result.postalCode = get(organization, 'address[0].postalCode');
     result.country = get(organization, 'address[0].country');
+
+    // S.A.N.E.R. Reporting Extensions
+    if(Array.isArray(get(organization, 'extension'))){
+      result.extension = get(organization, 'extension[0].valueQuantity');
+    }
 
     return result;
   }
@@ -140,11 +146,15 @@ function OrganizationsTable(props){
     hideActionButton,
     hideBarcode,
     actionButtonLabel,
+    hideExtensions,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
     size,
+
+    appHeight,
 
     ...otherProps 
   } = props;
@@ -251,14 +261,28 @@ function OrganizationsTable(props){
   function renderIdentifier(identifier){
     if (!props.hideIdentifier) {
       return (
-        <TableCell className="identifier hidden-on-phone">{ identifier }</TableCell>
+        <TableCell className="identifier">{ identifier }</TableCell>
       );
     }
   }
   function renderIdentifierHeader(){
     if (!props.hideIdentifier) {
       return (
-        <TableCell className="identifier hidden-on-phone">Identifier</TableCell>
+        <TableCell className="identifier">Identifier</TableCell>
+      );
+    }
+  }
+  function renderExtensions(extensions){
+    if (!props.hideExtensions) {
+      return (
+        <TableCell className="extensions">{ extensions }</TableCell>
+      );
+    }
+  }
+  function renderExtensionsHeader(){
+    if (!props.hideExtensions) {
+      return (
+        <TableCell className="extensions">Extensions</TableCell>
       );
     }
   }
@@ -443,6 +467,7 @@ function OrganizationsTable(props){
 
           { renderBarcode(organizationsToRender[i]._id)}
           { renderActionButton(organizationsToRender[i]) }
+          { renderExtensions(organizationsToRender[i].extension) }
         </TableRow>
       );    
     }
@@ -454,7 +479,7 @@ function OrganizationsTable(props){
 
   return(
     <div>
-      <Table className='organizationsTable' size={size} aria-label="a size table" { ...otherProps }>
+      <Table className='organizationsTable' size={tableRowSize} aria-label="a size table" { ...otherProps }>
         <TableHead>
           <TableRow>
             { renderCheckboxHeader() } 
@@ -471,6 +496,7 @@ function OrganizationsTable(props){
             
             { renderBarcodeHeader() }
             { renderActionButtonHeader() }
+            { renderExtensionsHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
@@ -510,11 +536,13 @@ OrganizationsTable.propTypes = {
   hideActionButton: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
+  hideExtensions: PropTypes.bool,
 
   rowsPerPage: PropTypes.number,
+  tableRowSize: PropTypes.string,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  size: PropTypes.bool
+  size: PropTypes.string
 };
 
 OrganizationsTable.defaultProps = {
@@ -522,8 +550,9 @@ OrganizationsTable.defaultProps = {
   hideActionButton: true,
   hideCheckbox: true,
   hideBarcode: true,
+  hideExtensions: true,
   rowsPerPage: 5,
-  size: 'small'
+  tableRowSize: 'medium'
 }
 
 export default OrganizationsTable;

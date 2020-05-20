@@ -404,8 +404,119 @@ export class QuestionnairesPage extends React.Component {
     console.log('newQuestionState', newQuestionState)
   }
   handleSaveQuestionnaireResponse(){
+    console.log('Posting questionnaire response to external system...')
 
-    
+    let newQuestionnaireResponse = {
+      "resourceType": "QuestionnaireResponse",
+      "meta": {
+        "versionId": "1",
+        "lastUpdated": "2020-05-12T14:58:42.196+00:00",
+        "profile": [
+          "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|2.7"
+        ]
+      },
+      "questionnaire": "Questionnaire/d2ff1d83-f772-448c-b5df-04b66b5ef0f2",
+      "status": "in-progress",
+      "authored": new Date(),
+      "subject": {
+        "reference": "Patient/" + Random.id(),
+        "type": "Patient"
+      },
+      "item": [{
+        "linkId": "/food",
+        "text": "Food",
+        "item": [{
+          "linkId": "/food/1",
+          "text": "Within the past 12 months, did you worry that your food would run out before you got money to buy more?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }, {
+          "linkId": "/food/2",
+          "text": "Within the past 12 months, did the food you bought just not last and you didn’t have money to get more?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }]
+      }, {
+        "linkId": "/housing/utilities",
+        "text": "Housing/Utilities",
+        "item": [{
+          "linkId": "/housing/utilities/3",
+          "text": "Within the past 12 months, have you ever stayed: outside, in a car, in a tent, in an overnight shelter, or temporarily in someone else’s home (i.e. couch-surfing)?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }, {
+          "linkId": "/housing/utilities/4",
+          "text": "Are you worried about losing your housing?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }, {
+          "linkId": "/housing/utilities/5",
+          "text": "Within the past 12 months, have you been unable to get utilities (heat, electricity) when it was really needed?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }]
+      }, {
+        "linkId": "/transportation",
+        "text": "Transportation",
+        "item": [{
+          "linkId": "/transportation/6",
+          "text": "Within the past 12 months, has a lack of transportation kept you from medical appointments or from doing things needed for daily living?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }]
+      },
+      {
+        "linkId": "/interpersonal safety",
+        "text": "Interpersonal Safety",
+        "item": [{
+          "linkId": "/interpersonal safety/7",
+          "text": "Do you feel physically or emotionally unsafe where you currently live?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }, {
+          "linkId": "/interpersonal safety/8",
+          "text": "Within the past 12 months, have you been hit, slapped, kicked or otherwise physically hurt by anyone?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }]
+      },
+      {
+        "linkId": "/optional: immediate need",
+        "text": "Optional: Immediate Need",
+        "item": [{
+          "linkId": "/optional: immediate need/10",
+          "text": "Are any of your needs urgent? For example, you don’t have food for tonight, you don’t have a place to sleep tonight, you are afraid you will get hurt if you go home today.",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }, {
+          "linkId": "/optional: immediate need/11",
+          "text": "Would you like help with any of the needs that you have identified?",
+          "answer": [{
+            "valueBoolean": Random.choice([true, false])
+          }]
+        }
+      ]}
+    ]}
+
+    Meteor.call('postRelay', 'https://nw-sf-dev-uses0-safr2-safhirapim.azure-api.net/grav/api/QuestionnaireResponse', {
+      payload: newQuestionnaireResponse
+    }, function(error, response){
+      if(error){
+        console.log('error', error)
+      }
+      if(response){
+        console.log('response', response)
+      }
+    })
   }
   render() {
     // let classes = useStyles();
@@ -544,7 +655,7 @@ export class QuestionnairesPage extends React.Component {
 
 
               <DynamicSpacer />
-              <Button disabled id='saveAnswersButton' onClick={this.handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response</Button>
+              <Button id='saveAnswersButton' onClick={this.handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>
 
             </Grid>
           </Grid>

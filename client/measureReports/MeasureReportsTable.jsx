@@ -17,9 +17,9 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-import { FhirUtilities } from 'meteor/clinical:hl7-fhir-data-infrastructure';
-import { flattenMeasureReport } from '../../lib/FhirDehydrator';
+import { FhirUtilities } from '../../lib/FhirUtilities';
 
+import { flattenMeasureReport } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -137,7 +137,7 @@ let styles = {
 
 
 function MeasureReportsTable(props){
-  logger.info('Rendering the MeasureReportsTable');
+  logger.debug('Rendering the MeasureReportsTable');
   logger.verbose('clinical:hl7-resource-encounter.client.MeasureReportsTable');
   logger.data('MeasureReportsTable.props', {data: props}, {source: "MeasureReportsTable.jsx"});
 
@@ -169,6 +169,7 @@ function MeasureReportsTable(props){
     hideNumerator,
     hideDenominator,
     hideBarcode,
+    hideStatus,
 
     onRowClick,
     onRemoveRecord,
@@ -180,6 +181,7 @@ function MeasureReportsTable(props){
     paginationLimit,
     disablePagination,
     rowsPerPage,
+    tableRowSize,
 
     count,
 
@@ -191,7 +193,7 @@ function MeasureReportsTable(props){
 
 
   function handleRowClick(_id){
-    console.log('Clicking row ' + _id)
+    // console.log('Clicking row ' + _id)
     if(props.onRowClick){
       props.onRowClick(_id);
     }
@@ -292,6 +294,20 @@ function MeasureReportsTable(props){
     if (!props.hideType) {
       return (
         <TableCell className='type'>Type</TableCell>
+      );
+    }
+  }
+  function renderStatus(status){
+    if (!props.hideStatus) {
+      return (
+        <TableCell className='status'>{ status }</TableCell>
+      );
+    }
+  }
+  function renderStatusHeader(){
+    if (!props.hideStatus) {
+      return (
+        <TableCell className='status'>Status</TableCell>
       );
     }
   }
@@ -548,12 +564,21 @@ function MeasureReportsTable(props){
 
   if(props.measureReports){
     if(props.measureReports.length > 0){              
+      let count = 0;  
+
       props.measureReports.forEach(function(measureReport){
-        measureReportsToRender.push(flattenMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand));
-      });  
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          measureReportsToRender.push(flattenMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand));
+        }
+        count++;
+      }); 
     }
   }
 
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '52px'
+  }
   if(measureReportsToRender.length === 0){
     logger.trace('MeasureReportsTable:  No measureReports to render.');
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
@@ -563,13 +588,19 @@ function MeasureReportsTable(props){
       if(measureReportsToRender[i].id === selectedMeasureReportId){
         selected = true;
       }
-
+      if(get(measureReportsToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
       tableRows.push(
-        <TableRow className="measureReportRow" key={i} onClick={ handleRowClick.bind(this, measureReportsToRender[i]._id)} hover={true} style={{cursor: 'pointer', height: '52px'}} selected={selected} >            
+        <TableRow className="measureReportRow" key={i} onClick={ handleRowClick.bind(this, measureReportsToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
           { renderToggle() }
           { renderActionIcons(measureReportsToRender[i]) }
           { renderIdentifier(measureReportsToRender[i].identifier)}
           
+          { renderStatus(measureReportsToRender[i].status) }
           { renderType(measureReportsToRender[i].type) }
           { renderDate(measureReportsToRender[i].date) }
           { renderReporter(measureReportsToRender[i].reporter) }
@@ -585,7 +616,7 @@ function MeasureReportsTable(props){
           { renderMeasureScore(measureReportsToRender[i].measureScore) }
           { renderStratificationCount(measureReportsToRender[i].stratificationCount) }          
           
-          { renderBarcode(measureReportsToRender[i].id)}
+          { renderBarcode(measureReportsToRender[i]._id)}
         </TableRow>
       );    
     }
@@ -593,13 +624,14 @@ function MeasureReportsTable(props){
 
   return(
     <div>
-      <Table size="small" aria-label="a dense table">
+      <Table size={tableRowSize} aria-label="a dense table">
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
 
+            { renderStatusHeader() }
             { renderTypeHeader() }
             { renderDateHeader() }
             { renderReporterHeader() }
@@ -637,6 +669,7 @@ MeasureReportsTable.propTypes = {
 
   hideCheckboxes: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
+  hideStatus: PropTypes.bool,
   hideTypeCode: PropTypes.bool,
   hideMeasureTitle: PropTypes.bool,
   hideMeasureUrl: PropTypes.bool,
@@ -663,12 +696,15 @@ MeasureReportsTable.propTypes = {
   measuresCursor: PropTypes.object,
   measureShorthand: PropTypes.bool,
 
-  count: PropTypes.number
+  count: PropTypes.number,
+  tableRowSize: PropTypes.string
 };
 MeasureReportsTable.defaultProps = {
+  tableRowSize: 'medium',
   rowsPerPage: 5,
   showMinutes: false,
   hideCheckboxes: true,
+  hideStatus: false,
   hideIdentifier: true,
   hideStatus: true,
   hideTypeCode: true,

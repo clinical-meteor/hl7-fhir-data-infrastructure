@@ -144,10 +144,8 @@ export class MeasuresPage extends React.Component {
         limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
       },
       tabIndex: Session.get('measurePageTabIndex'),
-      onePageLayout: true
+      onePageLayout: Session.get('MeasuresPage.onePageLayout')
     };
-
-    data.onePageLayout = Session.get('MeasuresPage.onePageLayout');
 
     console.log('MeasuresPage.data.query', data.query)
     console.log('MeasuresPage.data.options', data.options)
@@ -245,10 +243,13 @@ export class MeasuresPage extends React.Component {
   }
   handleRowClick(measureId, foo, bar){
     console.log('MeasuresPage.handleRowClick', measureId)
-    let measure = Measures.findOne({id: measureId});
+    let measure = Measures.findOne({_id: measureId});
 
-    Session.set('selectedMeasureId', get(measure, 'id'));
+    Session.set('selectedMeasureId', get(measure, '_id'));
     Session.set('selectedMeasure', measure);
+
+    Session.set('currentSelectionId', 'Measure/' + get(measure, '_id'));
+    Session.set('currentSelection', measure);
   }
   onTableCellClick(id){
     Session.set('measuresUpsert', false);
@@ -313,6 +314,7 @@ export class MeasuresPage extends React.Component {
             hideCheckbox={true} 
             hideActionIcons={true}
             hideIdentifier={true} 
+            hideName={false} 
             hideTitle={false} 
             hideDescription={false} 
             hideApprovalDate={false}
@@ -329,6 +331,9 @@ export class MeasuresPage extends React.Component {
             hideRateAggregation={true}
             hideScoring={false}
             paginationLimit={10}     
+            onRowClick={this.handleRowClick.bind(this) }
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+            count={this.data.measuresCount}
             />
           </CardContent>
         </StyledCard>
@@ -354,6 +359,7 @@ export class MeasuresPage extends React.Component {
                 paginationLimit={10}            
                 hideActionIcons={true}
                 onRowClick={this.handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
                 count={this.data.measuresCount}
                 />
             </CardContent>
