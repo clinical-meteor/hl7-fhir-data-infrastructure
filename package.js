@@ -21,6 +21,14 @@ Package.onUse(function (api) {
   api.use('matb33:collection-hooks@1.0.1');
   api.use('clinical:hl7-resource-datatypes@4.0.5');
 
+  api.addFiles('lib/FhirUtilities.js', ['client', 'server']);
+  api.addFiles('lib/LayoutHelpers.js', ['client', 'server']);
+  api.addFiles('lib/FhirDehydrator.js', ['client', 'server']);
+
+  api.export('FhirUtilities');
+  api.export('LayoutHelpers');
+  api.export('FhirDehydrator');
+
   // schemas and cursors
   api.addFiles('lib/BaseModel.js', ['client', 'server']);
 

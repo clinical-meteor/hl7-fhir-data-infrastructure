@@ -692,7 +692,7 @@ function MeasuresTable(props){
           { renderSupplementalDataCount(measuresToRender[i].supplementalDataCount) }
           { renderContext(measuresToRender[i].context) }
           { renderPopulationCount(measuresToRender[i].cohortCount) }
-          { renderBarcode(measuresToRender[i].id)}
+          { renderBarcode(measuresToRender[i]._id)}
         </TableRow>
       );       
     }

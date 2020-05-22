@@ -316,7 +316,7 @@ export class MeasuresPage extends React.Component {
             hideIdentifier={true} 
             hideName={false} 
             hideTitle={false} 
-            hideDescription={false} 
+            hideDescription={true} 
             hideApprovalDate={false}
             hideLastReviewed={false}
             hideVersion={false}
@@ -330,6 +330,7 @@ export class MeasuresPage extends React.Component {
             hideRiskAdjustment={true}
             hideRateAggregation={true}
             hideScoring={false}
+            hideBarcode={false}
             paginationLimit={10}     
             onRowClick={this.handleRowClick.bind(this) }
             rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
@@ -358,6 +359,7 @@ export class MeasuresPage extends React.Component {
                 hideEndorser={true}
                 paginationLimit={10}            
                 hideActionIcons={true}
+                hideBarcode={true}
                 onRowClick={this.handleRowClick.bind(this) }
                 rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
                 count={this.data.measuresCount}
