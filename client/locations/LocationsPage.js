@@ -26,6 +26,8 @@ import ReactMixin  from 'react-mixin';
 
 import { get } from 'lodash';
 
+//=============================================================================================================================================
+// Session Variables
 
 Session.setDefault('locationPageTabIndex', 1); 
 Session.setDefault('locationSearchFilter', ''); 
@@ -37,6 +39,8 @@ Session.setDefault('priximityLocations', false);
 
 Session.setDefault('selectedLocationId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
+
+Session.setDefault('LocationsPage.onePageLayout', true)
 
 
 //=============================================================================================================================================
@@ -166,7 +170,8 @@ export class LocationsPage extends React.Component {
       currentLocation: null,
       fhirVersion: Session.get('fhirVersion') ,
       locations: Locations.find().fetch(),
-      locationsCount: Locations.find().count()
+      locationsCount: Locations.find().count(),
+      onePageLayout: Session.get('MeasureReportsPage.onePageLayout')
     };
 
     
@@ -180,22 +185,59 @@ export class LocationsPage extends React.Component {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
-          
-    return (
-      <PageCanvas id="locationsPage" headerHeight={headerHeight} >
-        <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+
+    let layoutContents;
+    if(this.data.onePageLayout){
+      layoutContents = <StyledCard height="auto" scrollable={true} margin={20}  >
+        <CardHeader
+          title="Locations"
+        />
+        <CardContent>
+          <LocationsTable 
+            locations={this.data.locations}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+            tableRowSize="medium"
+            count={this.data.locationsCount}      
+          />
+        </CardContent>
+      </StyledCard>
+    } else {
+      layoutContents = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" scrollable={true} margin={20} >
             <CardHeader
               title="Locations"
             />
             <CardContent>
               <LocationsTable 
                 locations={this.data.locations}
-                rowsPerPage={rowsPerPage}
-                count={this.data.locationsCount}      
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+                // tableRowSize="medium"
+                count={this.data.locationsCount}       
               />
             </CardContent>
           </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20}  scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureReportId }</h1>
+            <CardContent>
+              <CardContent>
+                <LocationDetail 
+
+                />                
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+      </Grid>
+    }
+
+          
+    return (
+      <PageCanvas id="locationsPage" headerHeight={headerHeight} >
+        <MuiThemeProvider theme={muiTheme} >
+          { layoutContents }
         </MuiThemeProvider>
       </PageCanvas>
     );
