@@ -155,6 +155,7 @@ function MeasureReportsTable(props){
     hideMeasureTitle,
     hideMeasureUrl,
     hideDate,
+    hideSubject,
     hideReporter,
     hidePeriodStart,
     hidePeriodEnd,
@@ -166,6 +167,8 @@ function MeasureReportsTable(props){
     hideActionIcons,
     measuresCursor,
     measureShorthand,
+    measureScoreType,
+    measureScoreLabel,
     hideNumerator,
     hideDenominator,
     hideBarcode,
@@ -361,9 +364,23 @@ function MeasureReportsTable(props){
     }
   }
   function renderReporterHeader(){
-    if (!props.hideReporter) {
+    if (!props.hideSubject) {
       return (
         <TableCell className='reporter'>Reporter</TableCell>
+      );
+    }
+  }
+  function renderSubject(subject){
+    if (!props.hideSubject) {
+      return (
+        <TableCell className='subject'>{ subject }</TableCell>
+      );
+    }
+  }
+  function renderSubjectHeader(){
+    if (!props.hideReporter) {
+      return (
+        <TableCell className='subject'>Subject</TableCell>
       );
     }
   }
@@ -446,8 +463,12 @@ function MeasureReportsTable(props){
   }
   function renderMeasureScoreHeader(){
     if (!props.hideMeasureScore) {
+      let columnHeaderText = "Measure Score";
+      if(props.measureScoreLabel){
+        columnHeaderText = props.measureScoreLabel;
+      }
       return (
-        <TableCell className='measureScore'>Measure Score</TableCell>
+      <TableCell className='measureScore'>{columnHeaderText}</TableCell>
       );
     }
   }
@@ -568,7 +589,7 @@ function MeasureReportsTable(props){
 
       props.measureReports.forEach(function(measureReport){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          measureReportsToRender.push(flattenMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand));
+          measureReportsToRender.push(flattenMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand, measureScoreType));
         }
         count++;
       }); 
@@ -604,6 +625,7 @@ function MeasureReportsTable(props){
           { renderType(measureReportsToRender[i].type) }
           { renderDate(measureReportsToRender[i].date) }
           { renderReporter(measureReportsToRender[i].reporter) }
+          { renderSubject(measureReportsToRender[i].subject) }
           { renderMeasureTitle(measureReportsToRender[i].measureTitle)}
           { renderMeasureUrl(measureReportsToRender[i].measureUrl)}
           { renderPeriodStart(measureReportsToRender[i].periodStart) }
@@ -635,6 +657,7 @@ function MeasureReportsTable(props){
             { renderTypeHeader() }
             { renderDateHeader() }
             { renderReporterHeader() }
+            { renderSubjectHeader() }
             { renderMeasureTitleHeader() }
             { renderMeasureUrlHeader() }
             { renderPeriodStartHeader() }
@@ -675,6 +698,7 @@ MeasureReportsTable.propTypes = {
   hideMeasureUrl: PropTypes.bool,
   hideDate: PropTypes.bool,
   hideReporter: PropTypes.bool,
+  hideSubject: PropTypes.bool,
   hidePeriodStart: PropTypes.bool,
   hidePeriodEnd: PropTypes.bool,
   hideGroupCode: PropTypes.bool,
@@ -696,6 +720,9 @@ MeasureReportsTable.propTypes = {
   measuresCursor: PropTypes.object,
   measureShorthand: PropTypes.bool,
 
+  measureScoreLabel: PropTypes.string,
+  measureScoreType: PropTypes.string,
+
   count: PropTypes.number,
   tableRowSize: PropTypes.string
 };
@@ -711,6 +738,7 @@ MeasureReportsTable.defaultProps = {
   hideMeasureTitle: true,
   hideMeasureUrl: true,
   hideDate: false,
+  hideSubject: false,
   hideReporter: false,
   hidePeriodStart: false,
   hidePeriodEnd: false,
@@ -720,10 +748,12 @@ MeasureReportsTable.defaultProps = {
   hideMeasureScore: false,
   hideStratificationCount: true,
   hideActionIcons: true,
-  measureShorthand: false,
   hideNumerator: false,
   hideDenominator: false,
   hideBarcode: false,
+  measureShorthand: false,
+  measureScoreLabel: 'ICU Beds',
+  measureScoreType: 'numICUBeds',
   selectedMeasureReportId: ''
 }
 

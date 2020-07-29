@@ -14,9 +14,7 @@ import {
 } from '@material-ui/core';
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, has, findIndex } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
@@ -49,6 +47,8 @@ let styles = {
 // FLATTENING / MAPPING
 
 flattenLocation = function(location, simplifiedAddress, preferredExtensionUrl){
+  
+
   let result = {
     _id: '',
     id: '',
@@ -104,11 +104,13 @@ flattenLocation = function(location, simplifiedAddress, preferredExtensionUrl){
   }
 
   if (Array.isArray(get(location, 'extension'))) {
-    location.extension.forEach(function(extension){
-      if(extension.url === preferredExtensionUrl){
-        result.selectedExtension = get(extension, 'valueDecimal', '');
-      }
-    })
+
+    let extensionIndex = findIndex(location.extension, {'url': preferredExtensionUrl});
+    console.log('flattenLocation', location, preferredExtensionUrl, extensionIndex);
+
+    if(extensionIndex > -1){
+      result.selectedExtension = location.extension[extensionIndex].valueDecimal.toString();
+    }
   }
 
   return result;
@@ -144,7 +146,8 @@ function LocationsTable(props){
     
     simplifiedAddress,
     extensionUrl,
-    
+    extensionLabel,
+
     query,
     paginationLimit,
     disablePagination,
@@ -317,7 +320,7 @@ function LocationsTable(props){
   function renderExtensionsHeader(){
     if (!props.hideExtensions) {
       return (
-        <TableCell className="extensions">Extensions</TableCell>
+        <TableCell className="extensions">{props.extensionLabel}</TableCell>
       );
     }
   }
@@ -446,8 +449,9 @@ LocationsTable.propTypes = {
   hideType: PropTypes.bool,
   hideExtensions: PropTypes.bool,
   hideLatLng: PropTypes.bool,
+  simplifiedAddress: PropTypes.bool,
   extensionUrl: PropTypes.string,
-  simplifiedAddress: PropTypes.bool
+  extensionLabel: PropTypes.string,
 }
 
 LocationsTable.defaultProps = {
@@ -460,6 +464,7 @@ LocationsTable.defaultProps = {
   hideType: false,
   hideExtensions: true,
   extensionUrl: '',
+  extensionLabel: 'Extension',
   simplifiedAddress: true,
   rowsPerPage: 5
 }
