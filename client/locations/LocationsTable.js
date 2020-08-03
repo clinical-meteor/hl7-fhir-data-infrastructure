@@ -47,7 +47,6 @@ let styles = {
 // FLATTENING / MAPPING
 
 flattenLocation = function(location, simplifiedAddress, preferredExtensionUrl){
-  
 
   let result = {
     _id: '',
@@ -63,7 +62,8 @@ flattenLocation = function(location, simplifiedAddress, preferredExtensionUrl){
     type: '',
     latitude: '',
     longitude: '',
-    selectedExtension: ''
+    selectedExtension: '',
+    distance: ''
   };
 
   result.severity = get(location, 'severity.text', '');
@@ -98,19 +98,31 @@ flattenLocation = function(location, simplifiedAddress, preferredExtensionUrl){
   }
   if (get(location, 'position.latitude')) {
     result.latitude = get(location, 'position.latitude', null);
+  } else if(get(location, '_location.coordinates[1]')){
+    result.latitude = get(location, '_location.coordinates[1]');
   }
   if (get(location, 'position.longitude')) {
     result.longitude = get(location, 'position.longitude', null);
+  } else if(get(location, '_location.coordinates[0]')){
+    result.longitude = get(location, '_location.coordinates[0]');
   }
 
   if (Array.isArray(get(location, 'extension'))) {
 
     let extensionIndex = findIndex(location.extension, {'url': preferredExtensionUrl});
-    console.log('flattenLocation', location, preferredExtensionUrl, extensionIndex);
+    // console.log('flattenLocation', location, preferredExtensionUrl, extensionIndex);
 
     if(extensionIndex > -1){
       result.selectedExtension = location.extension[extensionIndex].valueDecimal.toString();
     }
+  }
+
+  if (Array.isArray(get(location, 'extension'))) {
+    location.extension.forEach(function(extension){
+      if(extension.url === "distance"){
+        result.distance = extension.valueDecimal;
+      }
+    })
   }
 
   return result;
@@ -123,11 +135,11 @@ flattenLocation = function(location, simplifiedAddress, preferredExtensionUrl){
 // Session.setDefault('selectedLocations', []);
 
 function LocationsTable(props){
-  logger.info('Rendering the LocationsTable');
+  logger.debug('Rendering the LocationsTable');
   logger.verbose('clinical:hl7-resource-locations.client.LocationsTable');
   logger.data('LocationsTable.props', {data: props}, {source: "LocationsTable.jsx"});
 
-  console.log('LocationsTable', props)
+  // console.log('LocationsTable', props)
 
   const classes = useStyles();
 
@@ -141,17 +153,26 @@ function LocationsTable(props){
     hideCity,
     hideState,
     hidePostalCode,
+    hideCountry,
     hideType,
     hideExtensions,
-    
+    hideLatitude,
+    hideLongitude,
+    hideLatLng,
+    hideActionIcons,
+
     simplifiedAddress,
     extensionUrl,
     extensionLabel,
+    extensionUnit,
+
+    multiline,
 
     query,
     paginationLimit,
     disablePagination,
     rowsPerPage,
+    count,
 
     ...otherProps 
   } = props;
@@ -183,10 +204,28 @@ function LocationsTable(props){
       );
     }
   }
-  function renderName(name){
+  function renderName(name, address, latitude, longitude){
     if (!props.hideName) {
+      let cellContents = [];
+
+      if(Number.isFinite(latitude)){
+        latitude = latitude.toFixed(6);
+      }
+      if(Number.isFinite(longitude)){
+        longitude = longitude.toFixed(6);
+      }
+
+      if(props.multiline){
+        cellContents.push(<div key='location_name' className="location_name">{name}</div>)
+        cellContents.push(<div key='location_address' className="location_address" style={{color: '#222222'}}>{address}</div>)
+        cellContents.push(<div key='location_latlng' className="location_latlng" style={{color: 'cornflowerblue', fontSize: '80%'}}>{longitude}, {latitude}</div>)
+      } else {
+        cellContents.push(<div key='location_name' className="location_name">{name}</div>)
+      }
       return (
-        <TableCell className='name'>{ name }</TableCell>
+        <TableCell className='name'>
+          { cellContents }   
+        </TableCell>
       );  
     }
   }
@@ -302,6 +341,32 @@ function LocationsTable(props){
       );  
     }
   }
+  function renderLatLngHeader(){
+    if (!props.hideLatLng) {
+      return (
+        <TableCell className="latitude">Distance</TableCell>
+      );
+    }
+  }
+  function renderLatLng(latitude, longitude, distance){
+    if (!props.hideLatLng) {
+      let textStyle = {
+        color: '#bbbbbb'
+      }
+      if(Number.isFinite(latitude)){
+        latitude = latitude.toFixed(6);
+      }
+      if(Number.isFinite(longitude)){
+        longitude = longitude.toFixed(6);
+      }
+      return (
+        <TableCell className='latlng' style={{verticalAlign: 'top'}} >
+          <div>{distance} miles</div>
+          {/* <div style={{color: 'cornflowerblue', fontSize: '80%', marginRight: '10px'}}>{longitude}, {latitude}</div> */}
+        </TableCell>
+      );  
+    }
+  }
   function renderLongitudeHeader(){
     if (!props.hideLongitude) {
       return (
@@ -326,8 +391,14 @@ function LocationsTable(props){
   }
   function renderExtensions(extensions){
     if (!props.hideExtensions) {
+      let cellText = "";
+      if(props.extensionUnit){
+        cellText = extensions + " " + props.extensionUnit;
+      } else {
+        cellText = extensions;
+      }
       return (
-        <TableCell className='extensions'>{ extensions }</TableCell>
+        <TableCell className='extensions'>{ cellText }</TableCell>
       );  
     }
   }
@@ -359,9 +430,11 @@ function LocationsTable(props){
     }
   }
 
+  // console.log('locationsToRender', locationsToRender)
+
 
   if(locationsToRender.length === 0){
-    logger.trace('ConditionsTable: No locations to render.');
+    logger.trace('LocationsTable: No locations to render.');
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < locationsToRender.length; i++) {
@@ -369,7 +442,7 @@ function LocationsTable(props){
       tableRows.push(
         <TableRow className='locationRow' key={i} onClick={ rowClick.bind(this, get(locationsToRender[i], "_id")) } hover={true} style={{height: '42px'}} >
            { renderIdentifier(get(locationsToRender[i], "identifier")) }
-           { renderName(get(locationsToRender[i], "name")) }
+           { renderName(get(locationsToRender[i], "name"), get(locationsToRender[i], "address"), get(locationsToRender[i], "latitude"), get(locationsToRender[i], "longitude")) }
            { renderAddress(get(locationsToRender[i], "address")) }
            { renderCity(get(locationsToRender[i], "city")) }
            { renderState(get(locationsToRender[i], "state")) }
@@ -378,6 +451,7 @@ function LocationsTable(props){
            { renderType(get(locationsToRender[i], "type")) }
            { renderLatitude(get(locationsToRender[i], "latitude")) }
            { renderLongitude(get(locationsToRender[i], "longitude")) }
+           { renderLatLng(get(locationsToRender[i], "latitude"), get(locationsToRender[i], "longitude"), get(locationsToRender[i], "distance")) }
            { renderExtensions(get(locationsToRender[i], "selectedExtension")) }
         </TableRow>
       );
@@ -420,6 +494,7 @@ function LocationsTable(props){
             { renderTypeHeader() }
             { renderLatitudeHeader() }
             { renderLongitudeHeader() }
+            { renderLatLngHeader() }
             { renderExtensionsHeader() }
           </TableRow>
         </TableHead>
@@ -439,6 +514,7 @@ LocationsTable.propTypes = {
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
   rowsPerPage: PropTypes.number,
+  count: PropTypes.number,
 
   hideIdentifier: PropTypes.bool,
   hideName: PropTypes.bool,
@@ -446,12 +522,17 @@ LocationsTable.propTypes = {
   hideCity: PropTypes.bool,
   hideState: PropTypes.bool,
   hidePostalCode: PropTypes.bool,
+  hideCountry: PropTypes.bool,
   hideType: PropTypes.bool,
   hideExtensions: PropTypes.bool,
+  hideLatLng: PropTypes.bool,
+  hideLongitude: PropTypes.bool,
   hideLatLng: PropTypes.bool,
   simplifiedAddress: PropTypes.bool,
   extensionUrl: PropTypes.string,
   extensionLabel: PropTypes.string,
+  extensionUnit: PropTypes.string,
+  multiline: PropTypes.bool
 }
 
 LocationsTable.defaultProps = {
@@ -462,10 +543,15 @@ LocationsTable.defaultProps = {
   hideState: false,
   hidePostalCode: false,
   hideType: false,
+  hideCountry: false,
   hideExtensions: true,
+  hideLongitude: false,
+  hideLatLng: true,
   extensionUrl: '',
   extensionLabel: 'Extension',
+  extensionUnit: '',
   simplifiedAddress: true,
+  multiline: false,
   rowsPerPage: 5
 }
 
