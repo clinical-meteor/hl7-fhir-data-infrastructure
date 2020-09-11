@@ -190,6 +190,33 @@ function QuestionnaireDetailExpansionPanels(props){
     Session.set('lastUpdated', new Date())
   }
 
+
+  function parseQuestion(renderItem){
+    console.log('Parsing questions', renderItem)
+    let answerChoices = [];
+
+    if(Array.isArray(renderItem.answerOption)){
+      // for each answer we render, we are going to need to figure out 
+    // if the answer has been selected
+    renderItem.answerOption.forEach(function(option, index){
+      console.log('QuestionnaireExpansionPanels.answerOptions', option)
+
+      let optionIsChecked = false;
+
+      answerChoices.push(<ListItem style={{paddingLeft: '120px'}} key={'answer-' + index}>
+          <ListItemIcon>
+            <Checkbox name="checkedDateRangeEnabled" checked={optionIsChecked} onChange={handleToggleItem.bind(this, get(renderItem, 'linkId'), get(option, 'valueCoding'))} />
+          </ListItemIcon>
+          <ListItemText>
+            { get(option, 'valueCoding.display') }
+          </ListItemText>
+        </ListItem>);
+      })
+    }
+
+    return answerChoices;
+  }
+
   // Forms with Functional React Components
   // Pros:  React internal state works really well
   // Cons:  FHIR QuestionnaireResponses store answers in arrays
@@ -197,70 +224,61 @@ function QuestionnaireDetailExpansionPanels(props){
   // Kludge: In the meantime, we have this gnarly thing to deal with
 
   // do we have question items to display in expansion panels
-  if(get(selectedQuestionnaire, 'item')){
-    if(Array.isArray(get(selectedQuestionnaire, 'item'))){
-      selectedQuestionnaire.item.forEach(function(renderItem, index){
-        console.log('QuestionnaireExpansionPanels.item', renderItem)
-
+  if(selectedQuestionnaire){
+    if(Array.isArray(selectedQuestionnaire.item)){
+      selectedQuestionnaire.item.forEach(function(renderItem, renderItemIndex){
+        console.log('QuestionnaireExpansionPanels.renderItem', renderItem)
+  
         let answerChoices = [];
-
-        // have we been provided answer options?  
-        // i.e. assuming it's multiple choice, and not a text field or essay 
-        if(get(renderItem, 'answerOption')){
-          if(Array.isArray(get(renderItem, 'answerOption'))){
-            let answerOptions = get(renderItem, 'answerOption');
-
-            // for each answer we render, we are going to need to figure out 
-            // if the answer has been selected
-            answerOptions.forEach(function(option, index){
-              console.log('QuestionnaireExpansionPanels.answerOptions', option)
-
-              let optionIsChecked = false;
-
-              // // for each multi-choice question, we need to rescan the answers in our draft response
-              // if(Array.isArray(draftResponse.item)){
-              //   draftResponse.item.forEach(function(draftAnswerItem){
-
-              //     // if we find matching link ids
-              //     // if(draftAnswerItem.linkId === renderItem.linkId){
-              //       // we can then check if an answer has been recorded
-              //       if(get(draftAnswerItem, 'answer[0].valueCoding.code') === get(option, 'valueCoding.code')){
-
-              //         // if not, we set it
-              //         optionIsChecked = true
-              //       } 
-              //     // }
-              //   })
-              // }
-
-              answerChoices.push(<ListItem style={{paddingLeft: '120px'}} key={'answer-' + index}>
-                <ListItemIcon>
-                  <Checkbox name="checkedDateRangeEnabled" checked={optionIsChecked} onChange={handleToggleItem.bind(this, get(renderItem, 'linkId'), get(option, 'valueCoding'))} />
-                </ListItemIcon>
-                <ListItemText>
-                  { get(option, 'valueCoding.display') }
-                </ListItemText>
-              </ListItem>);
-            })
-          }
-        }
-
-        questionPanels.push(<ExpansionPanel style={styles.expansionPanel} key={'expansionPanel-' + index}>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel-m2-content" id="panel-m2-header" >
-            <Typography className="measure-identifier" style={styles.identifier}>{get(renderItem, 'linkId', index)}</Typography>
-            {/* <Typography id="panel-m2-measure-score" className="measure-score" style={styles.score}>{get(item, 'type')}</Typography>             */}
-            <Typography className="measure-description" style={styles.description}>
-              {get(renderItem, 'text')}
-            </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails className="measure-details" style={{display: 'block'}}>
-            <List>
-              { answerChoices }
-            </List>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>)   
+  
+        
+        // are we starting with section headers or actual questions
+        // looks like we have actual questions
+        if(Array.isArray(renderItem.answerOption)){
+          answerChoices = parseQuestion(renderItem);
+  
+          questionPanels.push(<ExpansionPanel style={styles.expansionPanel} key={'expansionPanel-topLevel-' + renderItemIndex}>
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls={'expansionPanel-topLevel-' + renderItemIndex + "-content"} id={'expansionPanel-topLevel-' + renderItemIndex + "-header"} >
+              <Typography className="measure-identifier" style={styles.identifier}>{get(renderItem, 'linkId', renderItemIndex)}</Typography>
+              {/* <Typography id="panel-m2-measure-score" className="measure-score" style={styles.score}>{get(item, 'type')}</Typography>             */}
+              <Typography className="measure-description" style={styles.description}>
+                {get(renderItem, 'text')}
+              </Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails className="measure-details" style={{display: 'block'}}>
+              <List>
+                { answerChoices }
+              </List>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>)   
+  
+        } else if (Array.isArray(renderItem.item)){
+  
+          // no answers options available, so assume we have section headers
+          renderItem.item.forEach(function(question, questionIndex){
+            console.log('QuestionnaireExpansionPanels.renderItem.question', question)
+            answerChoices = parseQuestion(question);
+  
+              questionPanels.push(<ExpansionPanel style={styles.expansionPanel} key={'expansionPanel-question-' + renderItemIndex + '-' + questionIndex}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls={'expansionPanel-question-' + renderItemIndex + '-' + questionIndex + '-content'} id={'expansionPanel-question-' + renderItemIndex + '-' + questionIndex + '-header'} >
+                  <Typography className="measure-identifier" style={styles.identifier}>{get(question, 'linkId', questionIndex)}</Typography>
+                  {/* <Typography id="panel-m2-measure-score" className="measure-score" style={styles.score}>{get(item, 'type')}</Typography>             */}
+                  <Typography className="measure-description" style={styles.description}>
+                    {get(question, 'text')}
+                  </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails className="measure-details" style={{display: 'block'}}>
+                  <List>
+                    { answerChoices }
+                  </List>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>)  
+          })
+        }        
+  
+        
       });  
-    }
+    }  
   }
 
 

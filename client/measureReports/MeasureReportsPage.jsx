@@ -124,6 +124,7 @@ export class MeasureReportsPage extends React.Component {
       measureReport: {}
     }
   }
+
   getMeteorData() {
     let data = {
       tabIndex: Session.get('measureReportPageTabIndex'),
@@ -134,9 +135,7 @@ export class MeasureReportsPage extends React.Component {
       selected: [],
       measureReports: [],
       query: {},
-      options: {
-        limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
-      },
+      options: {},
       tabIndex: Session.get('measureReportPageTabIndex'),
       onePageLayout: Session.get('MeasureReportsPage.onePageLayout')
     };
@@ -281,6 +280,7 @@ export class MeasureReportsPage extends React.Component {
             actionButtonLabel="Send"
             measureReports={ this.data.measureReports }
             count={ this.data.measureReportsCount }
+            selectedMeasureReportId={ this.data.selectedMeasureReportId }
             hideMeasureUrl={false}
             paginationLimit={10}
             hideSubjects={true}
