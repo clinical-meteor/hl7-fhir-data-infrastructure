@@ -1,4 +1,5 @@
 import BaseModel from './lib/BaseModel';
+import { useTracker, withTracker } from './lib/Tracker';
 
 import FhirUtilities from './lib/FhirUtilities';
 import FhirDehydrator from './lib/FhirDehydrator';
@@ -628,7 +629,10 @@ export {
 
   BaseModel,
 
-  DynamicSpacer
+  DynamicSpacer,
+
+  useTracker, 
+  withTracker
 };
 
 

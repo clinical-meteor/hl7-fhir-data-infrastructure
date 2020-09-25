@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.4.23',
+  version: '6.5.0',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -185,6 +185,9 @@ Package.onUse(function (api) {
   api.export('QuestionnaireResponse');
   api.export('QuestionnaireResponses');
   api.export('QuestionnaireResponseSchema');
+
+  api.export('Substance');
+  api.export('Substances');
 
   api.export('Task');
   api.export('Tasks');
