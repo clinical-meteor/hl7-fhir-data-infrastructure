@@ -25,25 +25,6 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { get } from 'lodash';
 
-//=============================================================================================================================================
-// TABS
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 //=============================================================================================================================================
 // COMPONENT
@@ -118,31 +99,6 @@ export class ObservationsPage extends React.Component {
     console.log("onNewTab; we should clear things...");
 
     Session.set('selectedObservationId', false);
-    // Session.set('observationDetailState', {
-    //   resourceType: 'Observation',
-    //   status: 'preliminary',
-    //   category: {
-    //     text: ''
-    //   },
-    //   effectiveDateTime: '',
-    //   subject: {
-    //     display: '',
-    //     reference: ''
-    //   },
-    //   performer: {
-    //     display: '',
-    //     reference: ''
-    //   },
-    //   device: {
-    //     display: '',
-    //     reference: ''
-    //   },
-    //   valueQuantity: {
-    //     value: '',
-    //     unit: '',
-    //     system: 'http://unitsofmeasure.org'
-    //   }
-    // });
   }
   onCancelUpsertObservation(context){
     Session.set('observationPageTabIndex', 1);
@@ -274,30 +230,25 @@ export class ObservationsPage extends React.Component {
   }
   render() {
     
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader')){
-      headerHeight = 128;
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
     }
+    let cardWidth = window.innerWidth - paddingWidth;
 
     return (
-      <PageCanvas id="observationsPage" headerHeight={headerHeight}>
-        <StyledCard height="auto" scrollable={true} margin={20}  >
+      <PageCanvas id="observationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title={this.data.observationsCount + " Observations"} />
             <CardContent>
               <ObservationsTable 
-                hideCheckbox={true}
-                hideActionIcons={true}
-                hideBarcode={false} 
-                multiline={false}
-                hideSubjects={true}
-                hideDevices={true}
-                multiline={false}                  
-                hideComparator={true}
-                hideValue={false}
-                noDataMessagePadding={100}
+                formFactorLayout={formFactor}
                 observations={ this.data.observations }
                 count={ this.data.observationsCount }
-                rowsPerPage={20}
+                rowsPerPage={25}
                 actionButtonLabel="Send"
                 onRowClick={ this.onTableRowClick }
                 onCellClick={ this.onTableCellClick }
@@ -305,30 +256,6 @@ export class ObservationsPage extends React.Component {
                 onRemoveRecord={ this.onDeleteObservation }
                 tableRowSize="medium"
               />
-
-              {/* <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
-                <Tab label="History" value={0} />
-                <Tab label="New" value={1} />
-              </Tabs>
-              <TabPanel >
-                
-              </TabPanel >
-              <TabPanel >
-                <ObservationDetail 
-                  id='observationDetails' 
-                  displayDatePicker={true} 
-                  displayBarcodes={false}
-                  observation={ this.data.selectedObservation }
-                  observationId={ this.data.selectedObservationId } 
-                  showObservationInputs={true}
-                  showHints={false}
-                  onInsert={ this.onInsert }
-
-                  onDelete={ this.onDeleteObservation }
-                  onUpsert={ this.onUpsertObservation }
-                  onCancel={ this.onCancelUpsertObservation } 
-              />
-              </TabPanel > */}
             </CardContent>            
         </StyledCard>
       </PageCanvas>

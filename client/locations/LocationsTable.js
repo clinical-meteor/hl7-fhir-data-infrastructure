@@ -174,6 +174,8 @@ function LocationsTable(props){
     rowsPerPage,
     count,
 
+    formFactorLayout,
+
     ...otherProps 
   } = props;
 
@@ -532,7 +534,9 @@ LocationsTable.propTypes = {
   extensionUrl: PropTypes.string,
   extensionLabel: PropTypes.string,
   extensionUnit: PropTypes.string,
-  multiline: PropTypes.bool
+  multiline: PropTypes.bool,
+
+  formFactorLayout: PropTypes.string
 }
 
 LocationsTable.defaultProps = {

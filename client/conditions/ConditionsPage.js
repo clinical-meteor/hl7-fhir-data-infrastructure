@@ -195,20 +195,26 @@ export class ConditionsPage extends React.Component {
     if(get(Meteor, 'settings.public.logging') === "debug") console.log('In ConditionsPage render');
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
     
     return (
-      <PageCanvas id="conditionsPage" headerHeight={headerHeight} >
+      <PageCanvas id="conditionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} >
+          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
           <CardHeader title={ this.data.conditionsCount + " Conditions"} />
               <CardContent>
 
                 <ConditionsTable 
                   conditions={this.data.conditions}
                   count={this.data.conditionsCount}  
-                  autoColumns={true}
-                  displayBarcode={true}
-                  rowsPerPage={20}
+                  rowsPerPage={25}
+                  formFactorLayout={formFactor}
                 />
               </CardContent>
           </StyledCard>

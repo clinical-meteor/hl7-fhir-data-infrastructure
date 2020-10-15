@@ -12,7 +12,7 @@ import {
 import PropTypes from 'prop-types';
 
 
-import { PatientTable, PatientDetail, PageCanvas, StyledCard } from 'material-fhir-ui';
+import { PatientsTable, PatientDetail, PageCanvas, StyledCard } from 'material-fhir-ui';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { ReactMeteorData } from 'meteor/react-meteor-data';
@@ -297,7 +297,7 @@ export class PatientsPage extends React.Component {
   tableActionButtonClick(id){
     let patient = Patients.findOne({_id: id});
 
-    console.log("PatientTable.onSend()", patient);
+    console.log("PatientsTable.onSend()", patient);
 
     var httpEndpoint = "http://localhost:8080";
     if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
@@ -334,48 +334,31 @@ export class PatientsPage extends React.Component {
     const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 25);
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+    
 
     return (
-      <PageCanvas id="patientsPageClass" headerHeight={headerHeight} >
+      <PageCanvas id="patientsPageClass" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} >
+          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title="Patients" />
             <CardContent>
-              <PatientTable 
-                hideActionIcons={true}
+              <PatientsTable 
                 noDataMessagePadding={100}
                 patients={ this.data.patients }
                 paginationLimit={ this.pagnationLimit }
                 rowsPerPage={rowsPerPage}
                 count={this.data.patientCount}
                 onRowClick={ this.onTableRowClick }
-                showCounts={true}
                 cursors={this.data.dataCursors}
-                hideIdentifier={true}
-                hideActive={true}
-                hideBarcode={false}                
+                formFactorLayout={formFactor}          
               />   
-
-              {/* <Tabs value={this.state.tabIndex} onChange={ handleTabChange } aria-label="simple tabs example">
-                <Tab label="Directory" />
-                <Tab label="New" />
-              </Tabs>
-              <br />
-              <br />
-              <TabPanel value={this.state.tabIndex} index={0}>
- 
-              </TabPanel>
-              <TabPanel value={this.state.tabIndex} index={1}>
-                <PatientDetail 
-                  id='patientDetails' 
-                  fhirVersion={ this.data.fhirVersion }
-                  patient={ this.data.selectedPatient }
-                  patientId={ this.data.selectedPatientId }
-                  onDelete={ this.onDeletePatient }
-                  onUpsert={ this.onUpsertPatient }
-                  onCancel={ this.onCancelUpsertPatient } 
-                />
-              </TabPanel>   */}
             </CardContent>
           </StyledCard>                
 
@@ -387,6 +370,5 @@ export class PatientsPage extends React.Component {
 
 ReactMixin(PatientsPage.prototype, ReactMeteorData);
 export default PatientsPage;
-
 
 

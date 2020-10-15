@@ -75,6 +75,7 @@ export class PractitionersPage extends React.Component {
       selectedPractitionerId: Session.get('selectedPractitionerId'),
       blockchainData: Session.get('blockchainPractitionerData'),
       fhirVersion: Session.get('fhirVersion'),
+      practitioners: Practitioners.find().fetch(),
       selectedPractitioner: false
     };
 
@@ -108,14 +109,28 @@ export class PractitionersPage extends React.Component {
         <PractitionersTable showBarcodes={false} data={ this.data.blockchainData } />
       </Tab>                 
     }
-    return (
-      <div id="practitionersPage">
-        <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
-          
-              title="Practitioners"
-            />
+
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+
+    return (      
+      <PageCanvas id="practitionersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+            <CardHeader title='Practitioners' />
             <CardContent>
-              <Tabs id="practitionersPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
+              <PractitionersTable 
+                  practitioners={this.data.practitioners}
+                  fhirVersion={this.data.fhirVersion} 
+                  formFactorLayout={formFactor}
+                  showBarcodes={false} />
+
+              {/* <Tabs id="practitionersPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
                 <Tab label="Practitioners" value={0} />
                 <Tab label="New" value={1} />
               </Tabs>
@@ -129,11 +144,11 @@ export class PractitionersPage extends React.Component {
                   id='practitionerDetails' 
                   practitioner={ this.data.selectedPractitioner }
                   practitionerId={ this.data.selectedPractitionerId } />  
-              </TabPanel>              
+              </TabPanel>               */}
             </CardContent>
             { blockchainTab }
          </StyledCard>
-      </div>
+      </PageCanvas>
     );
   }
 }

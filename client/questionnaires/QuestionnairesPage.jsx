@@ -15,7 +15,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import { DynamicSpacer } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
-import QuestionnaireDetailExpansionPanels from './QuestionnaireDetailExpansionPanels';
+import QuestionnaireExpansionPanels from './QuestionnaireExpansionPanels';
 import QuestionnairesTable from './QuestionnairesTable';
 import SortableQuestionnaire from './SortableQuestionnaire';
 import LayoutHelpers from '../../lib/LayoutHelpers';
@@ -42,12 +42,7 @@ import { get } from 'lodash';
 
 let defaultQuestionnaire = {
   index: 2,
-  id: '',
-  username: '',
-  email: '',
-  given: '',
-  family: '',
-  gender: ''
+  id: ''
 };
 
 // =========================================================================================================
@@ -542,30 +537,28 @@ export class QuestionnairesPage extends React.Component {
     }
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
-    // let isActiveLabel = 'Active';
-
-    // if(this.data.isActive){
-    //   isActiveLabel = 'Active';
-    // } else {
-    //   isActiveLabel = 'Inactive';
-    // }
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+    
+    console.log('QuestionnairesPage.render().data', this.data)
 
     return (
-      <PageCanvas id="questionnairesPage" headerHeight={headerHeight}>
+      <PageCanvas id="questionnairesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           <Grid container>
             <Grid item md={6}>
-              <StyledCard height="auto" margin={20}>
+              <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
                 <CardHeader
                   title={this.data.questionnairesCount + " Questionnaires"}
                 />
                 <QuestionnairesTable 
                   questionnaires={ this.data.questionnaires }
                   selectedQuestionnaireId={this.data.selectedQuestionnaireId}                  
-                  hideCheckbox={true}
-                  hideActionIcons={true}
-                  hideIdentifier={true}
                   onRemoveRecord={function(questionnaireId){
                     Questionnaires.remove({_id: questionnaireId})
                   }}
@@ -574,13 +567,13 @@ export class QuestionnairesPage extends React.Component {
                     Session.set('selectedQuestionnaireId', questionnaireId)
                     Session.set('selectedQuestionnaire', Questionnaires.findOne({id: questionnaireId}))
                   }}
-                  hideCheckbox={true}                  
+                  formFactorLayout={formFactor}              
                 />
               </StyledCard>
             </Grid>
             <Grid item md={5} style={{position: 'sticky', top: '0px', margin: '20px'}}>
                 <h1 className="barcode helveticas">{this.data.selectedQuestionnaireId}</h1>
-              <StyledCard margins={20}>
+              <StyledCard margins={20} width={cardWidth + 'px'}>
                 <CardContent>
                   <FormControl style={{width: '100%', marginTop: '20px'}}>
                     <InputAdornment 
@@ -647,7 +640,7 @@ export class QuestionnairesPage extends React.Component {
               </StyledCard>
               <DynamicSpacer />
 
-              <QuestionnaireDetailExpansionPanels 
+              <QuestionnaireExpansionPanels 
                 id='questionnaireDetails' 
                 selectedQuestionnaire={this.data.selectedQuestionnaire} 
                 selectedQuestionnaireId={this.data.selectedQuestionnaireId}

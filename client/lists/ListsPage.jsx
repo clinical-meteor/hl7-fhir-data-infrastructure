@@ -281,9 +281,15 @@ export class ListsPage extends React.Component {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
 
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+
     let layoutContents;
     if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto" margin={20} >
+      layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
         <CardHeader title={this.data.listsCount + " Lists"} />
         <CardContent>
 
@@ -314,7 +320,7 @@ export class ListsPage extends React.Component {
     } else {
       layoutContents = <Grid container spacing={3}>
         <Grid item lg={6}>
-          <StyledCard height="auto" margin={20} >
+          <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
             <CardHeader title={this.data.listsCount + " Lists"} />
             <CardContent>
               <ListsTable 
@@ -339,7 +345,7 @@ export class ListsPage extends React.Component {
           </StyledCard>
         </Grid>
         <Grid item lg={4}>
-          <StyledCard height="auto" margin={20} scrollable>
+          <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
             <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedListId }</h1>
             <CardContent>
               <CardContent>
@@ -360,7 +366,7 @@ export class ListsPage extends React.Component {
     }
 
     return (
-      <PageCanvas id="listsPage" headerHeight={headerHeight}>
+      <PageCanvas id="listsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           { layoutContents }
         </MuiThemeProvider>

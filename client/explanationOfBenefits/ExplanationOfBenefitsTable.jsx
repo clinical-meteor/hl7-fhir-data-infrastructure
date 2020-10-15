@@ -203,6 +203,8 @@ function ExplanationOfBenefitsTable(props){
     dateFormat,
     showMinutes,
 
+    formFactorLayout,
+
     ...otherProps 
   } = props;
 
@@ -782,7 +784,9 @@ ExplanationOfBenefitsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  actionButtonLabel: PropTypes.string
+  actionButtonLabel: PropTypes.string,
+
+  formFactorLayout: PropTypes.string
 };
 ExplanationOfBenefitsTable.defaultProps = {
   hideCheckbox: true,

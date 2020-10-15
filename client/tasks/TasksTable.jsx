@@ -156,6 +156,29 @@ function TasksTable(props){
     ...otherProps 
   } = props;
 
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    switch (formFactorLayout) {
+      case "phone":
+        
+        break;
+      case "tablet":
+      
+        break;
+      case "web":
+    
+        break;
+      case "desktop":
+  
+        break;
+      case "videowall":
+
+        break;            
+    }
+  }
+
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -515,7 +538,9 @@ TasksTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  actionButtonLabel: PropTypes.string
+  actionButtonLabel: PropTypes.string,
+
+  formFactorLayout: PropTypes.string
 };
 TasksTable.defaultProps = {
   hideCheckbox: true,

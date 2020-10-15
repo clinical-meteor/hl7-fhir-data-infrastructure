@@ -21,6 +21,8 @@ let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
+import { flattenDevice } from '../../lib/FhirDehydrator';
+
 
 //===========================================================================
 // THEMING
@@ -41,11 +43,11 @@ const useStyles = makeStyles(theme => ({
 let styles = {
   hideOnPhone: {
     visibility: 'visible',
-    display: 'table'
+    hide: 'table'
   },
   cellHideOnPhone: {
     visibility: 'visible',
-    display: 'table',
+    hide: 'table',
     paddingTop: '16px',
     maxWidth: '120px'
   },
@@ -55,42 +57,9 @@ let styles = {
 }
 
 
+
 //===========================================================================
-// FLATTENING / MAPPING
-
-flattenDevice = function(device, internalDateFormat){
-  let result = {
-    _id: '',
-    id: '',
-    meta: '',
-    identifier: '',
-    deviceName: '',
-    deviceModel: '',
-    manufacturer: '',
-    serialNumber: '',
-    costOfOwnership: '',
-    status: ''
-  };
-
-  if(!internalDateFormat){
-    internalDateFormat = "YYYY-MM-DD";
-  }
-
-  result._id =  get(device, 'id') ? get(device, 'id') : get(device, '_id');
-  result.id = get(device, 'id', '');
-  result.identifier = get(device, 'identifier[0].value', '');
-
-  result.status = get(device, 'status', '');
-  result.deviceName = get(device, 'type.text', '');
-  result.deviceModel = get(device, 'model', '');
-  result.manufacturer = get(device, 'manufacturer', '');
-  result.serialNumber = get(device, 'identifier[0].value', '');
-  result.note = get(device, 'note[0].text', '');
-  
-
-  return result;
-}
-
+// MAIN COMPONENT
 
 function DevicesTable(props){
   logger.info('Rendering the DevicesTable');
@@ -101,6 +70,7 @@ function DevicesTable(props){
 
   let { 
     children, 
+    id,
 
     data,
     devices,
@@ -108,29 +78,112 @@ function DevicesTable(props){
     paginationLimit,
     disablePagination,
   
-    displayCheckbox,
-    displayIdentifier,
-    displayMake,
-    displayModel,
-    displayManufacturer,
-    displaySerialNumber,
+    hideCheckbox,
+    hideIdentifier,
+    hideActionIcons,
+    hideDeviceName,
+    hideStatus,
+    hideMake,
+    hideModel,
+    hideManufacturer,
+    hideSerialNumber,
+    hideTypeCodingDisplay,
+    hideLotNumber,
+    hideBarcode,
 
     onCellClick,
     onRowClick,
     onMetaClick,
     onRemoveRecord,
     onActionButtonClick,
-    showActionButton,
+    hideActionButton,
     actionButtonLabel,
   
     rowsPerPage,
     tableRowSize,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
+    hideEnteredInError,
+    formFactorLayout,
 
     ...otherProps 
   } = props;
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideDeviceName = false;
+        hideStatus = false;
+        hideMake = true;
+        hideModel = true;
+        hideManufacturer = true;
+        hideSerialNumber = true;
+        hideTypeCodingDisplay = true;
+        hideLotNumber = true;
+        hideBarcode = true;
+        break;
+      case "tablet":
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideDeviceName = false;
+        hideStatus = false;
+        hideMake = true;
+        hideModel = false;
+        hideManufacturer = true;
+        hideSerialNumber = true;
+        hideTypeCodingDisplay = true;
+        hideLotNumber = true;
+        hideBarcode = true;
+        break;
+      case "web":
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideDeviceName = false;
+        hideMake = true;
+        hideModel = false;
+        hideManufacturer = false;
+        hideSerialNumber = false;
+        hideTypeCodingDisplay = false;
+        hideLotNumber = true;
+        hideBarcode = true;
+        break;
+      case "desktop":
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideDeviceName = false;
+        hideMake = true;
+        hideModel = false;
+        hideManufacturer = false;
+        hideSerialNumber = false;
+        hideTypeCodingDisplay = false;
+        hideLotNumber = true;
+        hideBarcode = false;
+        break;
+      case "hdmi":
+        hideCheckbox = false;
+        hideIdentifier = false;
+        hideActionIcons = false;
+        hideDeviceName = false;
+        hideMake = false;
+        hideModel = false;
+        hideManufacturer = false;
+        hideSerialNumber = false;
+        hideTypeCodingDisplay = false;
+        hideLotNumber = false;
+        hideBarcode = false;
+        break;            
+    }
+  }
 
     //---------------------------------------------------------------------
     // Pagination
@@ -179,18 +232,19 @@ function DevicesTable(props){
     console.log('handleActionButtonClick')
   }
 
+
   //---------------------------------------------------------------------
   // Column Rendering 
 
   function renderCheckboxHeader(){
-    if (props.displayCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(patientId ){
-    if (props.displayCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle">
           <Checkbox
@@ -201,14 +255,14 @@ function DevicesTable(props){
     }
   }
   function renderActionIconsHeader(){
-    if (props.displayActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons'>Actions</TableCell>
       );
     }
   }
   function renderActionIcons( device ){
-    if (props.displayActionIcons) {
+    if (!hideActionIcons) {
 
       let iconStyle = {
         marginLeft: '4px', 
@@ -226,46 +280,129 @@ function DevicesTable(props){
     }
   } 
   function renderIdentifierHeader(){
-    if (props.displayIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
   function renderIdentifier(identifier ){
-    if (props.displayIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   } 
-
+  function renderTypeDisplay(type){
+    if (!hideTypeCodingDisplay) {
+      return (
+        <TableCell className='type'>{type}</TableCell>
+      );
+    }
+  }
+  function renderTypeDisplayHeader(){
+    if (!hideTypeCodingDisplay) {
+      return (
+        <TableCell className='type'>Type</TableCell>
+      );
+    }
+  }
+  function renderLotNumber(lotNumber){
+    if (!hideLotNumber) {
+      return (
+        <TableCell className="lotNumber">{lotNumber}</TableCell>
+      );
+    }
+  }
+  function renderLotNumberHeader(){
+    if (!hideLotNumber) {
+      return (
+        <TableCell className="lotNumber">Lot Number</TableCell>
+      );
+    }
+  }
+  function renderStatus(status){
+    if (!hideStatus) {
+      return (
+        <TableCell className="status">{status}</TableCell>
+      );
+    }
+  }
+  function renderStatusHeader(){
+    if (!hideStatus) {
+      return (
+        <TableCell className="status">Status</TableCell>
+      );
+    }
+  }
+  function renderManufacturer(manufacturer){
+    if (!hideManufacturer) {
+      return (
+        <TableCell className="manufacturer">{manufacturer}</TableCell>
+      );
+    }
+  }
+  function renderManufacturerHeader(){
+    if (!hideManufacturer) {
+      return (
+        <TableCell className="manufacturer">Manufacturer</TableCell>
+      );
+    }
+  }
+  function renderDeviceName(deviceName){
+    if (!hideDeviceName) {
+      return (
+        <TableCell className="deviceName">{deviceName}</TableCell>
+      );
+    }
+  }
+  function renderDeviceNameHeader(){
+    if (!hideDeviceName) {
+      return (
+        <TableCell className="deviceName">Name</TableCell>
+      );
+    }
+  }
+  function renderModel(model){
+    if (!hideModel) {
+      return (
+        <TableCell className="model">{model}</TableCell>
+      );
+    }
+  }
+  function renderModelHeader(){
+    if (!hideModel) {
+      return (
+        <TableCell className="model">Model</TableCell>
+      );
+    }
+  }
   function renderBarcode(id){
-    if (props.displayBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helveticas">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (props.displayBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
     }
   }
   function renderActionButtonHeader(){
-    if (props.showActionButton === true) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
-  function renderActionButton(patient){
-    if (props.showActionButton === true) {
+  function renderActionButton(device){
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >
-          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+          <Button onClick={ handleActionButtonClick.bind(this, device._id)}>{ get(props, "actionButtonLabel", "") }</Button>
         </TableCell>
       );
     }
@@ -314,11 +451,15 @@ function DevicesTable(props){
         <TableRow className="deviceRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, devicesToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
           { renderCheckbox() }  
           { renderActionIcons() }
-          { renderIdentifier() }
-          <TableCell className='deviceName'>{ get(devicesToRender[i], 'status') }</TableCell>
-          <TableCell className='deviceName'>{ get(devicesToRender[i], 'device[0].name') }</TableCell>
-          <TableCell className='manufacturer'>{devicesToRender[i].manufacturer }</TableCell>
-          <TableCell className='deviceModel'>{devicesToRender[i].model }</TableCell>
+          { renderIdentifier(get(devicesToRender[i], 'identifier')) }
+          { renderTypeDisplay(get(devicesToRender[i], 'deviceType')) }
+
+          { renderDeviceName(get(devicesToRender[i], 'deviceName')) }
+          { renderStatus(get(devicesToRender[i], 'status')) }
+          { renderManufacturer(get(devicesToRender[i], 'manufacturer')) }
+          { renderModel(get(devicesToRender[i], 'deviceModel')) }
+
+          { renderLotNumber(get(devicesToRender[i], 'lotNumber'))}
           { renderBarcode(devicesToRender[i].id)}
           { renderActionButton(devicesToRender[i]) }
         </TableRow>
@@ -332,17 +473,19 @@ function DevicesTable(props){
   // Actual Render Method
 
   return(
-    <div>
+    <div id={id} className="tableWithPagination">
       <Table className='devicesTable' size={tableRowSize} aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
             { renderCheckboxHeader() }  
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
-            <TableCell className='status'>Status</TableCell>
-            <TableCell className='deviceName'>Name</TableCell>
-            <TableCell className='manufacturer'>Manufacturer</TableCell>
-            <TableCell className='deviceModel'>Model</TableCell>
+            { renderTypeDisplayHeader() }
+            { renderDeviceNameHeader() }
+            { renderStatusHeader() }
+            { renderManufacturerHeader() }
+            { renderModelHeader() }
+            { renderLotNumberHeader() }
             { renderBarcodeHeader() }
             { renderActionButtonHeader() }
           </TableRow>
@@ -361,41 +504,55 @@ function DevicesTable(props){
 
 
 DevicesTable.propTypes = {
+  id: PropTypes.string,
+
   data: PropTypes.array,
   devices: PropTypes.array,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  displayCheckbox: PropTypes.bool,
-  displayIdentifier: PropTypes.bool,
-  displayMake: PropTypes.bool,
-  displayModel: PropTypes.bool,
-  displayManufacturer: PropTypes.bool,
-  displaySerialNumber: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+  hideStatus: PropTypes.bool,
+  hideDeviceName: PropTypes.bool,
+  hideMake: PropTypes.bool,
+  hideModel: PropTypes.bool,
+  hideManufacturer: PropTypes.bool,
+  hideSerialNumber: PropTypes.bool,
+  hideTypeCodingDisplay: PropTypes.bool,
+  hideLotNumber: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  showActionButton: PropTypes.bool,
+  hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,
   tableRowSize: PropTypes.string,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  displayEnteredInError: PropTypes.bool
+  hideEnteredInError: PropTypes.bool,
+  formFactorLayout: PropTypes.string
 };
 
 DevicesTable.defaultProps = {
-  displayCheckbox: false,
-  displayIdentifier: true,
-  displayMake: true,
-  displayModel: true,
-  displayManufacturer: true,
-  displaySerialNumber: true,
+  hideCheckbox: true,
+  hideIdentifier: true,
+  hideDeviceName: false,
+  hideStatus: false,
+  hideMake: true,
+  hideModel: false,
+  hideManufacturer: false,
+  hideSerialNumber: false,
+  hideTypeCodingDisplay: true,
+  hideLotNumber: true,
+  hideBarcode: true,
+  disablePagination: false,
+  hideActionButton: true,
   rowsPerPage: 5,
   tableRowSize: 'medium'
 }

@@ -174,30 +174,28 @@ export class ProceduresPage extends React.Component {
     if(process.env.NODE_ENV === "test") console.log('In ProceduresPage render');
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
 
     let proceduresTitle = this.data.proceduresCount + " Procedures";
 
     return (
-      <PageCanvas id="proceduresPage" headerHeight={headerHeight} >
+      <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
-            <StyledCard height="auto" scrollable={true} margin={20} >
+            <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
               <CardHeader title={proceduresTitle} />
               <CardContent>
                 <ProceduresTable 
                   procedures={this.data.procedures}
-                  noDataMessagePadding={100}
-                  displayDates={true} 
                   count={this.data.proceduresCount}
-                  rowsPerPage={20}
-                  hideActionIcons={true}
-                  hideIdentifier={true}
-                  hideCategory={true}
-                  hideBodySite={true}
-                  hideSubject={true}
-                  showMinutes={true}
-                  hideBarcode={false}
-                  hideCheckboxes={true}
+                  rowsPerPage={25}
                   tableRowSize="medium"
+                  formFactorLayout={formFactor}
                   />
                 {/* <Tabs id="proceduresPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
                 <Tab className='newProcedureTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>

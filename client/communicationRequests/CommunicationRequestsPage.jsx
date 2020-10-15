@@ -82,6 +82,7 @@ export class CommunicationRequestPage extends React.Component {
   render() {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
     return (
       <div id="communicationRequestsPage">

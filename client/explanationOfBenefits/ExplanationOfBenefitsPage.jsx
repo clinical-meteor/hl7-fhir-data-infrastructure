@@ -196,6 +196,7 @@ export class ExplanationOfBenefitsPage extends React.Component {
   render() {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
     let layoutContents;
     if(this.data.onePageLayout){

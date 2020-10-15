@@ -6,6 +6,10 @@
 //
 // =======================================================================
 
+
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import { 
   Table,
   TableBody,
@@ -15,247 +19,457 @@ import {
   TablePagination,
 } from '@material-ui/core';
 
-import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+// import { ReactMeteorData } from 'meteor/react-meteor-data';
+// import ReactMixin from 'react-mixin';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import { moment } from 'moment';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
+
+import { get, set } from 'lodash';
+
+import moment from 'moment'
+
+import { FhirUtilities } from '../../lib/FhirUtilities';
+import FhirDehydrator, { flattenAllergyIntolerance } from '../../lib/FhirDehydrator';
+
+
+//===========================================================================
+// ICONS
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 
-export class AllergyIntolerancesTable extends React.Component {
 
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity')
-      },
-      selected: [],
-      allergyIntolerances: [],
-      displayToggle: false,
-      displayIdentifier: false,
-      displayDates: false,
-      displayStatus: false,
-      displayVerification: false,
-      displayType: false,
-      displayCategory: false,
-      fhirVersion: 'v1.0.2'
-    }
-
-    // STU3 v3.0.1
-    if(this.props.displayStatus){
-      data.hideStatus = this.props.displayStatus;
-    }
-    if(this.props.displayVerification){
-      data.hideVerification = this.props.displayVerification;
-    }
+//===========================================================================
+// THEMING
 
 
-    // DSTU2 v1.0.2
-    if(this.props.displayIdentifier){
-      data.hideIdentifier = this.props.displayIdentifier;
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
+}));
+
+let styles = {
+  hideOnPhone: {
+    visibility: 'visible',
+    display: 'table'
+  },
+  cellHideOnPhone: {
+    visibility: 'visible',
+    display: 'table',
+    paddingTop: '16px',
+    maxWidth: '120px'
+  },
+  cell: {
+    paddingTop: '16px'
+  }
+}
+
+
+//===========================================================================
+// MAIN COMPONENT
+
+function AllergyIntolerancesTable(props){
+  logger.debug('Rendering the AllergyIntolerancesTable');
+  logger.verbose('clinical:hl7-resource-encounter.client.AllergyIntolerancesTable');
+  logger.data('AllergyIntolerancesTable.props', {data: props}, {source: "AllergyIntolerancesTable.jsx"});
+
+  const classes = useStyles();
+
+
+  let { 
+    id,
+    children, 
+    allergyIntolerances,
+    selectedAllergyIntoleranceId,
+    dateFormat,
+    showMinutes,
+
+    hideCheckbox,
+    hideIdentifier,
+    hideActionIcons,
+    hidePatientDisplay,
+    hidePatientReference,
+    hideReaction,
+    hideCriticality,
+    hideSeverity,
+    hideRecorder,
+    hideOnset,
+    hideVerification,
+    hideClinical,
+    hideSubstance,
+    hideCategory,
+    hideType,
+    hideRecordedDate,
+    hideBarcode,
+    
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    showActionButton,
+    actionButtonLabel,
+
+    query,
+    paginationLimit,
+    disablePagination,
+    hideEnteredInError,
+    rowsPerPage,
+    tableRowSize,
+
+    count,
+    formFactorLayout,
+
+    ...otherProps 
+  } = props;
+
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+
+    switch (formFactorLayout) {
+      case "phone":
+        hideCheckbox = true;
+        hideType = true;
+        hideSeverity = true;
+        hideCriticality = true;
+        hidePatientDisplay = true;
+        hidePatientReference = true;
+        hideRecordedDate = false;
+        hideClinical = true;
+        hideVerification = true;
+        hideOnset = true;
+        hideBarcode = true;
+      break;
+      case "tablet":
+        hideSeverity = false;
+        hideCriticality = false;
+        hidePatientDisplay = true;
+        hidePatientReference = true;
+        hideRecordedDate = false;
+        hideClinical = false;
+        hideVerification = true;
+        hideOnset = true;
+        hideBarcode = true;
+      break;
+      case "web":
+        hideSeverity = false;
+        hideCriticality = false;
+        hidePatientDisplay = false;
+        hidePatientReference = false;
+        hideRecordedDate = false;
+        hideClinical = false;
+        hideVerification = false;
+        hideOnset = false;
+        hideBarcode = true;
+      break;
+      case "desktop":
+        hideSeverity = false;
+        hideCriticality = false;
+        hidePatientDisplay = false;
+        hidePatientReference = false;
+        hideRecordedDate = false;
+        hideClinical = false;
+        hideVerification = false;
+        hideOnset = false;
+        hideBarcode = true;
+      break;
+      case "hdmi":
+        hideSeverity = false;
+        hideCriticality = false;
+        hidePatientDisplay = false;
+        hidePatientReference = false;
+        hideRecordedDate = false;
+        hideClinical = false;
+        hideVerification = false;
+        hideOnset = false;
+        hideBarcode = false;
+      break;            
     }
-    if(this.props.displayType){
-      data.hideType = this.props.displayType;
+  }
+
+
+  // ------------------------------------------------------------------------
+  // Helper Functions
+
+
+  function handleRowClick(_id){
+    // console.log('Clicking row ' + _id)
+    if(props.onRowClick){
+      props.onRowClick(_id);
     }
-    if(this.props.displayCategory){
-      data.hideCategory = this.props.displayCategory;
+  }
+
+  function removeRecord(_id){
+    logger.info('Remove measureReport: ' + _id)
+    if(props.onRemoveRecord){
+      props.onRemoveRecord(_id);
     }
-    if(this.props.fhirVersion){
-      data.fhirVersion = this.props.fhirVersion;
-      switch (this.props.fhirVersion) {
-        case 'v1.0.2':
-            data.hideToggle = false;
-            data.hideDates = true;
-            data.hideIdentifier = true;
-            data.hideStatus = false;
-            data.hideVerification = false;
-            data.hideType = true;
-            data.hideCategory = true;
-          break;      
-        case 'v3.0.1':
-          data.hideToggle = false;
-          data.hideDates = true;
-          data.hideIdentifier = true;
-          data.hideStatus = true;
-          data.hideVerification = true;
-          data.hideType = true;
-          data.hideCategory = true;
-        break;      
-      default:
-          break;
+  }
+  function handleActionButtonClick(id){
+    if(typeof props.onActionButtonClick === "function"){
+      props.onActionButtonClick(id);
+    }
+  }
+  function cellClick(id){
+    if(typeof props.onCellClick === "function"){
+      props.onCellClick(id);
+    }
+  }
+
+  function handleMetaClick(patient){
+    let self = this;
+    if(props.onMetaClick){
+      props.onMetaClick(self, patient);
+    }
+  }
+
+
+
+
+
+  // ------------------------------------------------------------------------
+  // Column Rendering
+
+  function renderToggleHeader(){
+    if (!hideCheckbox) {
+      return (
+        <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
+      );
+    }
+  }
+  function renderToggle(){
+    if (!hideCheckbox) {
+      return (
+        <TableCell className="toggle" style={{width: '60px'}}>
+            {/* <Checkbox
+              defaultChecked={true}
+            /> */}
+        </TableCell>
+      );
+    }
+  }
+  function renderActionIconsHeader(){
+    if (!hideActionIcons) {
+      return (
+        <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
+      );
+    }
+  }
+  function renderActionIcons(measureReport ){
+    if (!hideActionIcons) {
+      let iconStyle = {
+        marginLeft: '4px', 
+        marginRight: '4px', 
+        marginTop: '4px', 
+        fontSize: '120%'
       }
-    }
 
-    // Workflow Items
-    if(this.props.hideToggle){
-      data.hideToggle = this.props.hideToggle;
-    }
-    if(this.props.displayDates){
-      data.hideDates = this.props.displayDates;
-    }
-
-    // Data
-    if(this.props.data){
-      data.allergyIntolerances = this.props.data;
-    } else {
-      if(AllergyIntolerances.find().count() > 0){
-        data.allergyIntolerances = AllergyIntolerances.find().fetch();
-      }  
-    }
-
-    if(process.env.NODE_ENV === "test") console.log("AllergyIntolerancesTable[data]", data);
-    return data;
-  };
-  removeRecord(_id){
-    console.log('Remove allergy ', _id)
-    AllergyIntolerances._collection.remove({_id: _id})
-  }
-  showSecurityDialog(allergy){
-    console.log('showSecurityDialog', allergy)
-
-    Session.set('securityDialogResourceJson', AllergyIntolerances.findOne(get(allergy, '_id')));
-    Session.set('securityDialogResourceType', 'AllergyIntolerance');
-    Session.set('securityDialogResourceId', get(allergy, '_id'));
-    Session.set('securityDialogOpen', true);
-  }
-  renderTogglesHeader(){
-    if (!this.props.hideToggle) {
       return (
-        <TableHead className="toggle">Toggle</TableHead>
+        <TableCell className='actionIcons' style={{minWidth: '120px'}}>
+          {/* <FaTags style={iconStyle} onClick={ onMetaClick.bind(measureReport)} />
+          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(measureReport._id)} />   */}
+        </TableCell>
+      );
+    }
+  } 
+  function renderIdentifier(identifier){
+    if (!hideIdentifier) {
+      return (
+        <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   }
-  renderToggles(patientId ){
-    if (!this.props.hideToggle) {
+  function renderIdentifierHeader(){
+    if (!hideIdentifier) {
       return (
-        <TableCell className="toggle">
-            <Toggle
-              defaultToggled={true}
-            />
-          </TableCell>
+        <TableCell className='identifier'>Identifier</TableCell>
+      );
+    }
+  }
+  function renderBarcode(id){
+    if (!hideBarcode) {
+      return (
+        <TableCell><span className="barcode">{id}</span></TableCell>
+      );
+    }
+  }
+  function renderBarcodeHeader(){
+    if (!hideBarcode) {
+      return (
+        <TableCell>System ID</TableCell>
       );
     }
   }
 
-  renderIdentifierHeader(){
-    if (!this.props.hideIdentifier) {
+
+  function renderSubstanceHeader(){
+    if (!hideSubstance) {
       return (
-        <TableHead className="identifier">Identifier</TableHead>
+        <TableCell className="substance">Substance</TableCell>
       );
     }
   }
-  renderIdentifier(allergyIntolerance ){
-    if (!this.props.hideIdentifier) {
+  function renderSubstance(substance ){
+    if (!hideSubstance) {
       
       return (
-        <TableCell className='identifier'>{ get(allergyIntolerance, 'identifier[0].value') }</TableCell>       );
+        <TableCell className='substance'>{ substance }</TableCell>       );
     }
   }
-
-  renderDateHeader(){
-    if (!this.props.hideDates) {
+  function renderReactionHeader(){
+    if (!hideReaction) {
       return (
-        <TableHead className='date'>Date</TableHead>
+        <TableCell className="reaction">Reaction</TableCell>
       );
     }
   }
-  renderDate(newDate ){
-    if (!this.props.hideDates) {
+  function renderReaction(reaction ){
+    if (!hideReaction) {
+      
       return (
-        <TableCell className='date'>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
+        <TableCell className='reaction'>{ reaction }</TableCell>       );
+    }
+  }
+
+  function renderCriticalityHeader(){
+    if (!hideCriticality) {
+      return (
+        <TableCell className="criticality">Criticality</TableCell>
+      );
+    }
+  }
+  function renderCriticality(criticality ){
+    if (!hideCriticality) {
+      
+      return (
+        <TableCell className='criticality'>{ criticality }</TableCell>       );
+    }
+  }
+
+  function renderRecorderHeader(){
+    if (!hideRecorder) {
+      return (
+        <TableCell className="recorder">Recorder</TableCell>
+      );
+    }
+  }
+  function renderRecorder(recorder ){
+    if (!hideRecorder) {
+      
+      return (
+        <TableCell className='recorder'>{ recorder }</TableCell>       );
+    }
+  }
+
+  function renderOnsetHeader(){
+    if (!hideOnset) {
+      return (
+        <TableCell className='onset'>Onset</TableCell>
+      );
+    }
+  }
+  function renderOnset(onsetDate ){
+    if (!hideOnset) {
+      return (
+        <TableCell className='onset'>{ onsetDate }</TableCell>
       );
     }
   }
 
 
 
-  renderClinicalStatusHeader(){
-    if (!this.props.hideStatus) {
+  function renderClinicalStatusHeader(){
+    if (!hideClinical) {
       return (
-        <TableHead className="clinicalStatus">Status</TableHead>
+        <TableCell className="clinicalStatus">Status</TableCell>
       );
     }
   }
-  renderClinicalStatus(allergyIntolerances ){
-    if (!this.props.hideStatus) {
+  function renderClinicalStatus(clinicalStatus ){
+    if (!hideClinical) {
       return (
-        <TableCell className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</TableCell>       );
+        <TableCell className='clinicalStatus'>{ clinicalStatus }</TableCell>       );
     }
   }
 
-  renderRecorderHeader(){
-    if (!this.props.hideStatus) {
+  function renderRecorderHeader(){
+    if (!hideRecorder) {
       return (
-        <TableHead className="clinicalStatus">Status</TableHead>
+        <TableCell className="recorder">Recorder</TableCell>
       );
     }
   }
-  renderRecorder(allergyIntolerances ){
-    if (!this.props.hideRecorder) {
+  function renderRecorder(recorder ){
+    if (!hideRecorder) {
       return (
-        <TableCell className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</TableCell>       );
-    }
-  }
-
-
-  renderVerificationStatusHeader(){
-    if (!this.props.hideVerification) {
-      return (
-        <TableHead className="verificationStatus">Verification</TableHead>
-      );
-    }
-  }
-  renderVerificationStatus(allergyIntolerances ){
-    if (!this.props.hideVerification) {
-      return (
-        <TableCell className='verificationStatus'>{ get(allergyIntolerances, 'verificationStatus') }</TableCell>       );
+        <TableCell className='recorder'>{ recorder }</TableCell>       );
     }
   }
 
 
-  renderTypeHeader(){
-    if (!this.props.hideType) {
+  function renderVerificationStatusHeader(){
+    if (!hideVerification) {
       return (
-        <TableHead className="type">Type</TableHead>
+        <TableCell className="verificationStatus">Verification</TableCell>
       );
     }
   }
-  renderType(allergyIntolerances ){
-    if (!this.props.hideType) {
+  function renderVerificationStatus(verificatonStatus ){
+    if (!hideVerification) {
       return (
-        <TableCell className='type'>{ get(allergyIntolerances, 'type') }</TableCell>       );
+        <TableCell className='verificationStatus'>{ verificatonStatus }</TableCell>       );
     }
   }
-  renderCategoryHeader(){
-    if (!this.props.hideCategory) {
+
+  function renderTypeHeader(){
+    if (!hideType) {
       return (
-        <TableHead className="category">Category</TableHead>
+        <TableCell className="type">Type</TableCell>
       );
     }
   }
-  renderCategory(allergyIntolerances ){
-    if (!this.props.hideCategory) {
+  function renderType(type ){
+    if (!hideType) {
       return (
-        <TableCell className='category'>{ get(allergyIntolerances, 'category[0]') }</TableCell>       );
+        <TableCell className='type'>{ type }</TableCell>       );
     }
   }
-  renderActionIconsHeader(){
-    if (!this.props.hideActionIcons) {
+  function renderCategoryHeader(){
+    if (!hideCategory) {
       return (
-        <TableHead className='actionIcons' style={{minWidth: '120px'}}>Actions</TableHead>
+        <TableCell className="category">Category</TableCell>
       );
     }
   }
-  renderActionIcons(allergyIntolerance ){
-    if (!this.props.hideActionIcons) {
+  function renderCategory(category ){
+    if (!hideCategory) {
+      return (
+        <TableCell className='category'>{ category }</TableCell>       );
+    }
+  }
+  function renderActionIconsHeader(){
+    if (!hideActionIcons) {
+      return (
+        <TableCell className='actionIcons' style={{minWidth: '120px'}}>Actions</TableCell>
+      );
+    }
+  }
+  function renderActionIcons(allergyIntolerance ){
+    if (!hideActionIcons) {
 
       let iconStyle = {
         marginLeft: '4px', 
@@ -266,170 +480,402 @@ export class AllergyIntolerancesTable extends React.Component {
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          {/* <Icon icon={tag} style={iconStyle} onClick={this.showSecurityDialog.bind(this, allergyIntolerance)} />
-          <Icon icon={iosTrashOutline} style={iconStyle} onClick={this.removeRecord.bind(this, allergyIntolerance._id)} /> */}
+          {/* <Icon icon={tag} style={iconStyle} onClick={showSecurityDialog.bind(this, allergyIntolerance)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={removeRecord.bind(this, allergyIntolerance._id)} /> */}
         </TableCell>
       );      
     }
   } 
-  renderPatientNameHeader(){
-    if (!this.props.hidePatient) {
+  function renderPatientNameHeader(){
+    if (!hidePatientDisplay) {
       return (
-        <TableHead className='patientDisplay'>Patient</TableHead>
+        <TableCell className='patientDisplay'>Patient</TableCell>
       );
     }
   }
-  renderPatientName(patientDisplay ){
-    if (!this.props.hidePatient) {
+  function renderPatientName(patientDisplay ){
+    if (!hidePatientDisplay) {
       return (
         <TableCell className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</TableCell>
       );
     }
   }
-  rowClick(id){
-    Session.set('allergyIntolerancesUpsert', false);
-    Session.set('selectedAllergyIntolerance', id);
-    Session.set('allergyIntolerancePageTabIndex', 2);
+
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
-  render () {
-    let tableRows = [];
-    for (var i = 0; i < this.data.allergyIntolerances.length; i++) {
-      var newRow = {
-        patientDisplay: '',
-        asserterDisplay: '',
-        identifier: '',
-        type: '',
-        category: '',
-        clinicalStatus: '',
-        verificationStatus: '',
-        snomedCode: '',
-        snomedDisplay: '',
-        evidenceDisplay: '',
-        barcode: '',
-        criticality: '',
-        patient: '',
-        recorder: '', 
-        reaction: '',
-        substance: '',
-        onset: ''
-      };
 
-      newRow.identifier = get(this.data.allergyIntolerances[i], 'identifier[0].value');
-      newRow.clinicalStatus = get(this.data.allergyIntolerances[i], 'clinicalStatus');
-      newRow.verificationStatus = get(this.data.allergyIntolerances[i], 'verificationStatus');
-      newRow.type = get(this.data.allergyIntolerances[i], 'type');
-      newRow.category = get(this.data.allergyIntolerances[i], 'category[0]');
-      newRow.substance = get(this.data.allergyIntolerances[i], 'substance.coding[0].display');
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
-      if(get(this.data.allergyIntolerances[i], 'code.coding[0]')){            
-        newRow.snomedCode = get(this.data.allergyIntolerances[i], 'code.coding[0].code');
-        newRow.snomedDisplay = get(this.data.allergyIntolerances[i], 'code.coding[0].display');
-      }
 
-      // DSTU2 v1.0.2
-      newRow.patient = get(this.data.allergyIntolerances[i], 'patient.display');
-      newRow.recorder = get(this.data.allergyIntolerances[i], 'recorder.display');
-      newRow.reaction = get(this.data.allergyIntolerances[i], 'reaction[0].description', '');
-      newRow.onset = moment(get(this.data.allergyIntolerances[i], 'reaction[0].onset')).format("YYYY-MM-DD");
 
-      // DSTU v4
-      if(get(this.data.allergyIntolerances[i], 'onsetDateTime')){
-        newRow.onset = moment(get(this.data.allergyIntolerances[i], 'onsetDateTime')).format("YYYY-MM-DD");
-      }
-      if(get(this.data.allergyIntolerances[i], 'reaction[0].manifestation[0].text')){
-        newRow.reaction = get(this.data.allergyIntolerances[i], 'reaction[0].manifestation[0].text', '');
-      }
 
-      if(get(this.data.allergyIntolerances[i], 'criticality')){
-        switch (get(this.data.allergyIntolerances[i], 'criticality')) {
-          case "CRITL":
-            newRow.criticality = 'Low Risk';         
-            break;
-          case "CRITH":
-            newRow.criticality = 'High Risk';         
-            break;
-          case "CRITU":
-            newRow.criticality = 'Unable to determine';         
-            break;        
-          default:
-            newRow.criticality = get(this.data.allergyIntolerances[i], 'criticality');    
-          break;
+  //---------------------------------------------------------------------
+  // Table Rows
+
+
+  let tableRows = [];
+  let allergyIntolerancesToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(internalDateFormat){
+    internalDateFormat = dateFormat;
+  }
+
+  if(allergyIntolerances){
+    if(allergyIntolerances.length > 0){              
+      let count = 0;  
+
+      allergyIntolerances.forEach(function(allergyIntolerance){
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          allergyIntolerancesToRender.push(flattenAllergyIntolerance(allergyIntolerance));
         }
-      };
+        count++;
+      }); 
+    }
+  }
 
-      let rowStyle = {
-        cursor: 'pointer'
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '52px'
+  }
+
+  if(allergyIntolerancesToRender.length === 0){
+    logger.trace('AllergyIntolerancesTable:  No allergyIntolerances to render.');
+    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+  } else {
+    for (var i = 0; i < allergyIntolerancesToRender.length; i++) {
+      let selected = false;
+      if(allergyIntolerancesToRender[i].id === selectedAllergyIntoleranceId){
+        selected = true;
       }
-      if(get(this.data.allergyIntolerances[i], 'modifierExtension[0]')){
+      if(get(allergyIntolerancesToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
-
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
       tableRows.push(
-        <TableRow key={i} className="allergyIntoleranceRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.allergyIntolerances[i]._id)} >
-          { this.renderToggles(this.data.allergyIntolerances[i]) }
-          { this.renderActionIcons(this.data.allergyIntolerances[i]) }
-          { this.renderIdentifier(this.data.allergyIntolerances[i]) }
-          <TableCell className='substance'>{ newRow.substance }</TableCell>
-          <TableCell className='reaction'>{ newRow.reaction }</TableCell>
-          <TableCell className='criticality'>{ newRow.criticality }</TableCell>
-          { this.renderType(this.data.allergyIntolerances[i]) }
-          { this.renderCategory(this.data.allergyIntolerances[i]) }
-          { this.renderPatientName(newRow.patientDisplay ) } 
-          {/* <TableCell className='patient'>{ newRow.patient }</TableCell> */}
-          <TableCell className='recorder'>{ newRow.recorder }</TableCell>
-          <TableCell className='onset'>{ newRow.onset }</TableCell>
-          { this.renderClinicalStatus(this.data.allergyIntolerances[i]) }
-          { this.renderVerificationStatus(this.data.allergyIntolerances[i]) }
-          {/* { this.renderDate(this.data.allergyIntolerances[i].assertedDate) } */}
-        </TableRow>
-      )
-    }
+        <TableRow className="allergyIntoleranceRow" key={i} onClick={ handleRowClick.bind(this, allergyIntolerancesToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
+          { renderToggle() }
+          { renderActionIcons(allergyIntolerancesToRender[i]) }
+          { renderIdentifier(allergyIntolerancesToRender[i].identifier)}
 
-    return(
-      <Table id='allergyIntolerancesTable' hover >
-        <TableHeader>
+          { renderSubstance(allergyIntolerancesToRender[i].substance) }
+          { renderReaction(allergyIntolerancesToRender[i].reaction) }
+          { renderCriticality(allergyIntolerancesToRender[i].criticality) }
+
+          { renderType(allergyIntolerancesToRender[i].type) }
+          { renderCategory(allergyIntolerancesToRender[i].category) }
+          { renderPatientName(allergyIntolerancesToRender[i].patientDisplay ) } 
+
+          { renderRecorder(allergyIntolerancesToRender[i].recorder ) } 
+          { renderOnset(allergyIntolerancesToRender[i].onset ) } 
+
+          { renderClinicalStatus(allergyIntolerancesToRender[i].clinicalStatus) }
+          { renderVerificationStatus(allergyIntolerancesToRender[i].verificationStatus) }
+          
+          { renderBarcode(allergyIntolerancesToRender[i]._id)}
+        </TableRow>
+      );    
+    }
+  }
+
+  return(
+    <div id={id} className="tableWithPagination">
+      <Table size={tableRowSize} aria-label="a dense table">
+        <TableHead>
           <TableRow>
-            { this.renderTogglesHeader() }
-            { this.renderActionIconsHeader() }
-            { this.renderIdentifierHeader() }
-            <TableHead className='substance'>Substance</TableHead>
-            <TableHead className='reaction'>Reaction</TableHead>
-            <TableHead className='criticality'>Criticality</TableHead>
-            { this.renderTypeHeader() }
-            { this.renderCategoryHeader() }
-            { this.renderPatientNameHeader() }
-            {/* <TableHead className='patient' style={{minWidth: '140px'}}>Patient</TableHead> */}
-            <TableHead className='recorder'  style={{minWidth: '140px'}}>Recorder</TableHead>
-            <TableHead className='onsert'>Onset</TableHead>
-            { this.renderClinicalStatusHeader() }
-            { this.renderVerificationStatusHeader() }
-            {/* { this.renderDateHeader() } */}
+            { renderToggleHeader() }
+            { renderActionIconsHeader() }
+            { renderIdentifierHeader() }
+        
+            { renderSubstanceHeader() }
+            { renderReactionHeader() }
+            { renderCriticalityHeader() }
+      
+
+            { renderTypeHeader() }
+            { renderCategoryHeader() }
+            { renderPatientNameHeader() }
+
+            { renderRecorderHeader() }
+            { renderOnsetHeader() }
+
+            { renderClinicalStatusHeader() }
+            { renderVerificationStatusHeader() }
+
+            { renderBarcodeHeader() }
           </TableRow>
-        </TableHeader>
+        </TableHead>
         <TableBody>
           { tableRows }
         </TableBody>
       </Table>
-    );
-  }
+      { paginationFooter }
+    </div>
+  )
 }
+
+
+
+// export class AllergyIntolerancesTable extends React.Component {
+
+//   // getMeteorData() {
+//   //   let data = {
+//   //     style: {
+//   //       opacity: Session.get('globalOpacity')
+//   //     },
+//   //     selected: [],
+//   //     allergyIntolerances: [],
+//   //     hideToggle: false,
+//   //     hideIdentifier: false,
+//   //     hideDates: false,
+//   //     hideStatus: false,
+//   //     hideVerification: false,
+//   //     hideType: false,
+//   //     hideCategory: false,
+//   //     fhirVersion: 'v1.0.2'
+//   //   }
+
+//   //   // Data
+//   //   if(props.data){
+//   //     data.allergyIntolerances = props.data;
+//   //   } else {
+//   //     if(AllergyIntolerances.find().count() > 0){
+//   //       data.allergyIntolerances = AllergyIntolerances.find().fetch();
+//   //     }  
+//   //   }
+
+//   //   if(process.env.NODE_ENV === "test") console.log("AllergyIntolerancesTable[data]", data);
+//   //   return data;
+//   // };
+//   // removeRecord(_id){
+//   //   console.log('Remove allergy ', _id)
+//   //   AllergyIntolerances._collection.remove({_id: _id})
+//   // }
+//   // showSecurityDialog(allergy){
+//   //   console.log('showSecurityDialog', allergy)
+
+//   //   Session.set('securityDialogResourceJson', AllergyIntolerances.findOne(get(allergy, '_id')));
+//   //   Session.set('securityDialogResourceType', 'AllergyIntolerance');
+//   //   Session.set('securityDialogResourceId', get(allergy, '_id'));
+//   //   Session.set('securityDialogOpen', true);
+//   // }
+//   // renderTogglesHeader(){
+//   //   if (!hideToggle) {
+//   //     return (
+//   //       <TableHead className="toggle">Toggle</TableHead>
+//   //     );
+//   //   }
+//   // }
+//   // renderToggles(patientId ){
+//   //   if (!hideToggle) {
+//   //     return (
+//   //       <TableCell className="toggle">
+//   //           <Toggle
+//   //             defaultToggled={true}
+//   //           />
+//   //         </TableCell>
+//   //     );
+//   //   }
+//   // }
+
+//   // renderIdentifierHeader(){
+//   //   if (!hideIdentifier) {
+//   //     return (
+//   //       <TableHead className="identifier">Identifier</TableHead>
+//   //     );
+//   //   }
+//   // }
+//   // renderIdentifier(allergyIntolerance ){
+//   //   if (!hideIdentifier) {
+      
+//   //     return (
+//   //       <TableCell className='identifier'>{ get(allergyIntolerance, 'identifier[0].value') }</TableCell>       );
+//   //   }
+//   // }
+
+//   // rowClick(id){
+//   //   Session.set('allergyIntolerancesUpsert', false);
+//   //   Session.set('selectedAllergyIntolerance', id);
+//   //   Session.set('allergyIntolerancePageTabIndex', 2);
+//   // };
+//   render () {
+//     let tableRows = [];
+//     for (var i = 0; i < data.allergyIntolerances.length; i++) {
+//       var newRow = FhirDehydrator.flattenAllergyIntolerance(data.allergyIntolerance[i])
+      
+//       let rowStyle = {
+//         cursor: 'pointer'
+//       }
+//       if(get(data.allergyIntolerances[i], 'modifierExtension[0]')){
+//         rowStyle.color = "orange";
+//       }
+
+//       tableRows.push(
+//         <TableRow key={i} className="allergyIntoleranceRow" style={rowStyle} onClick={ rowClick.bind('this', data.allergyIntolerances[i]._id)} >
+//           { renderToggles(newRow) }
+//           { renderActionIcons(newRow) }
+//           { renderIdentifier(newRow.identifier) }
+
+//           { renderSubstance(newRow.substance) }
+//           { renderReaction(newRow.reaction) }
+//           { renderCriticality(newRow.criticality) }
+
+//           { renderType(newRow.type) }
+//           { renderCategory(newRow.category) }
+//           { renderPatientName(newRow.patientDisplay ) } 
+
+//           { renderRecorder(newRow.recorder ) } 
+//           { renderOnset(newRow.onset ) } 
+
+//           { renderClinicalStatus(newRow.clinicalStatus) }
+//           { renderVerificationStatus(newRow.verificationStatus) }
+//         </TableRow>
+//       )
+//     }
+
+//     // return(
+//     //   <Table id='allergyIntolerancesTable' hover >
+//     //     <TableHead>
+//     //       <TableRow>
+//     //         { renderTogglesHeader() }
+//     //         { renderActionIconsHeader() }
+//     //         { renderIdentifierHeader() }
+
+//     //         { renderSubstanceHeader() }
+//     //         { renderReactionHeader() }
+//     //         { renderCriticalityHeader() }
+      
+
+//     //         { renderTypeHeader() }
+//     //         { renderCategoryHeader() }
+//     //         { renderPatientNameHeader() }
+
+//     //         { renderRecorderHeader() }
+//     //         { renderOnsetHeader() }
+
+//     //         { renderClinicalStatusHeader() }
+//     //         { renderVerificationStatusHeader() }
+//     //       </TableRow>
+//     //     </TableHead>
+//     //     <TableBody>
+//     //       { tableRows }
+//     //     </TableBody>
+//     //   </Table>
+//     // );
+//   }
+// }
 
 
 AllergyIntolerancesTable.propTypes = {
   data: PropTypes.array,
+  allergyIntolerances: PropTypes.array,
+  selectedAllergyIntoleranceId: PropTypes.array,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
-  hideIdentifier: PropTypes.bool,
-  hideToggle: PropTypes.bool,
+  disablePagination: PropTypes.bool,
+
+  hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
-  hideType: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+  hidePatientDisplay: PropTypes.bool,
+  hidePatientReference: PropTypes.bool,
+  hideReaction: PropTypes.bool,
+  hideCriticality: PropTypes.bool,
+  hideSeverity: PropTypes.bool,
+  hideRecorder:  PropTypes.bool,
+  hideOnset:  PropTypes.bool,
+  hideSubstance: PropTypes.bool,
   hideCategory: PropTypes.bool,
-  hidePatient: PropTypes.bool,
-  hideRecorder: PropTypes.bool,
-  hideStatus: PropTypes.bool,
   hideVerification: PropTypes.bool,
-  enteredInError: PropTypes.bool
+  hideClinical: PropTypes.bool,
+  hideType: PropTypes.bool,
+  hideRecordedDate: PropTypes.bool,
+
+  hideBarcode: PropTypes.bool,
+
+  onCellClick: PropTypes.func,
+  onRowClick: PropTypes.func,
+  onMetaClick: PropTypes.func,
+  onRemoveRecord: PropTypes.func,
+  onActionButtonClick: PropTypes.func,
+  showActionButton: PropTypes.bool,
+  actionButtonLabel: PropTypes.string,
+
+  rowsPerPage: PropTypes.number,
+  dateFormat: PropTypes.string,
+  showMinutes: PropTypes.bool,
+  hideEnteredInError: PropTypes.bool,
+  count: PropTypes.number,
+  tableRowSize: PropTypes.string,
+  formFactorLayout: PropTypes.string
 };
 
-ReactMixin(AllergyIntolerancesTable.prototype, ReactMeteorData);
+AllergyIntolerancesTable.defaultProps = {
+  allergyIntolerances: [],
+  hideCheckbox: false,
+  hideActionIcons: false,
+  hideIdentifier: false,
+  hidePatientDisplay: false,
+  hidePatientReference: false,
+
+  hideIdentifier: true,
+  hideToggle: true,
+  hideActionIcons: true,
+  hideType: true,
+  hideCategory: true,
+  hidePatient: true,
+  hideRecorder: true,
+  hideReaction: false,
+  hideStatus: false,
+  hideVerification: false,
+  hideCriticality: false,
+  hideSeverity: false,
+  hideRecorder: true,
+  hideOnset: false,
+  hideClinical: false,
+  hideRecordedDate: false,
+
+  hideBarcode: false,
+  disablePagination: false,
+  autoColumns: true,
+  rowsPerPage: 5,
+  tableRowSize: "medium"  // small | normal
+}
+
+
+//ReactMixin(AllergyIntolerancesTable.prototype, ReactMeteorData);
 export default AllergyIntolerancesTable;

@@ -111,9 +111,51 @@ function ValueSetsTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    formFactorLayout,
 
     ...otherProps 
   } = props;
+
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    switch (formFactorLayout) {
+      case "phone":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideTitle = false;
+        hideDescription = false;
+        hideApprovalDate = false;
+        hideLastReviewed = false;
+        hideVersion = false;
+        hideStatus = false;
+        hideAuthor = true;
+        hidePublisher = false;
+        hideReviewer = false;
+        hideEditor = false;
+        hideEndorser = false;
+        hideType = false;
+        hideRiskAdjustment = true;
+        hideRateAggregation = true;
+        hideScoring = false;
+        break;
+      case "tablet":
+      
+        break;
+      case "web":
+    
+        break;
+      case "desktop":
+  
+        break;
+      case "videowall":
+
+        break;            
+    }
+  }
 
 
   // ------------------------------------------------------------------------
@@ -354,7 +396,9 @@ ValueSetsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  actionButtonLabel: PropTypes.string
+  actionButtonLabel: PropTypes.string,
+
+  formFactorLayout: PropTypes.string
 };
 ValueSetsTable.defaultProps = {
   hideCheckbox: true,

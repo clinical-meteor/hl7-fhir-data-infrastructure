@@ -5,12 +5,16 @@ import FhirUtilities from './lib/FhirUtilities';
 import FhirDehydrator from './lib/FhirDehydrator';
 import LayoutHelpers from './lib/LayoutHelpers';
 
+import AuditEventsPage from './client/auditEvents/AuditEventsPage';
+import AuditEventsTable from './client/auditEvents/AuditEventsTable';
+// import AuditEventDetail from './client/auditEvents/AuditEventDetail';
+
 import AllergyIntolerancesPage from './client/allergyIntolerances/AllergyIntolerancesPage';
 import AllergyIntolerancesTable from './client/allergyIntolerances/AllergyIntolerancesTable';
 import AllergyIntoleranceDetail from './client/allergyIntolerances/AllergyIntoleranceDetail';
 
 import BundlesPage from './client/bundles/BundlesPage';
-import BundleTable from './client/bundles/BundleTable';
+import BundlesTable from './client/bundles/BundlesTable';
 import BundleDetail from './client/bundles/BundleDetail';
 
 import CarePlansPage from './client/carePlans/CarePlansPage';
@@ -132,8 +136,13 @@ import DynamicSpacer from './ui/DynamicSpacer';
 
 let DynamicRoutes = [{
   'name': 'AllergyIntolerancesPage',
-  'path': '/allergies',
+  'path': '/allergy-intolerances',
   'component': AllergyIntolerancesPage,
+  'requireAuth': true
+}, {
+  'name': 'AuditEventPage',
+  'path': '/audit-events',
+  'component': AuditEventsPage,
   'requireAuth': true
 }, {
   'name': 'BundlePage',
@@ -284,8 +293,13 @@ let DynamicRoutes = [{
 
 let SidebarElements = [{
   'primaryText': 'Allergies & Intolerances',
-  'to': '/allergies',
-  'href': '/allergies'
+  'to': '/allergy-intolerances',
+  'href': '/allergy-intolerances',
+  'iconName': 'ic_warning'
+}, {
+  'primaryText': 'Audit Events',
+  'to': '/audit-events',
+  'href': '/audit-events'
 }, {
   'primaryText': 'Bundles',
   'to': '/bundles',
@@ -507,10 +521,14 @@ export {
 
   AllergyIntolerancesPage,
   AllergyIntolerancesTable,
-  AllergyIntoleranceDetail,
+  // AllergyIntoleranceDetail,
+
+  AuditEventsPage,
+  AuditEventsTable,
+  AuditEventDetail,
 
   BundlesPage,
-  BundleTable,
+  BundlesTable,
   BundleDetail,
 
   CarePlansPage,

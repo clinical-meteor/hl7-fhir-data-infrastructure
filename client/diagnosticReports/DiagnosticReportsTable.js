@@ -170,6 +170,8 @@ function DiagnosticReportsTable(props){
     showMinutes,
     fhirVersion,
 
+    formFactorLayout,
+
     ...otherProps 
   } = props;
 
@@ -508,7 +510,8 @@ DiagnosticReportsTable.propTypes = {
   rowsPerPageToRender: PropTypes.number,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  count: PropTypes.number
+  count: PropTypes.number,
+  formFactorLayout: PropTypes.string
 };
 DiagnosticReportsTable.defaultProps = {
   rowsPerPage: 5,

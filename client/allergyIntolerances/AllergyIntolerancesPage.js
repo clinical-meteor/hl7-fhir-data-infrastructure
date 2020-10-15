@@ -22,7 +22,7 @@ import {
 } from '@material-ui/core';
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
-import AllergyIntoleranceDetail from './AllergyIntoleranceDetail';
+// import AllergyIntoleranceDetail from './AllergyIntoleranceDetail';
 import AllergyIntolerancesTable from './AllergyIntolerancesTable';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
@@ -74,7 +74,8 @@ export class AllergyIntolerancesPage extends React.Component {
       allergyIntoleranceSearchFilter: Session.get('allergyIntoleranceSearchFilter'),
       allergyIntoleranceId: Session.get('selectedAllergyIntolerance'),
       fhirVersion: Session.get('fhirVersion'),
-      selectedAllergy: false
+      selectedAllergy: false,
+      allergyIntolerances: AllergyIntolerances.find().fetch()      
     };
 
     if (Session.get('selectedAllergyIntolerance')){
@@ -83,9 +84,6 @@ export class AllergyIntolerancesPage extends React.Component {
       data.selectedAllergy = false;
     }
 
-    data.style = Glass.blur(data.style);
-    data.style.appbar = Glass.darkroom(data.style.appbar);
-    data.style.tab = Glass.darkroom(data.style.tab);
 
     return data;
   }
@@ -101,58 +99,37 @@ export class AllergyIntolerancesPage extends React.Component {
 
   render() {
     if(process.env.NODE_ENV === "test") console.log('In AllergyIntolerancesPage render');
-
+    
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+    
     return (
-      <div id='allergyIntolerancesPage'>
-        <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+      <PageCanvas id="allergyIntolerancesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title='Allergy Intolerances' />
             <CardContent>
-              <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
-                <Tab label="History" value={0} />
-                <Tab label="New" value={1} />
-              </Tabs>
-              <TabPanel >
-                <AllergyIntolerancesTable id='allergyIntolerancesTable' fhirVersion={ this.data.fhirVersion } />
-              </TabPanel >
-              <TabPanel >
-                <AllergyIntoleranceDetail 
-                  id='allergyIntoleranceDetails' 
-                  showDatePicker={true} 
-                  fhirVersion={ this.data.fhirVersion }
-                  allergy={ this.data.selectedAllergy }
-                  allergyIntoleranceId={ this.data.allergyIntoleranceId } />
-              </TabPanel >
-
-              {/* <Tabs default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-               <Tab className='newAllergyIntoleranceTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
-                 <AllergyIntoleranceDetail 
-                  id='newAllergyIntolerance' 
-                  fhirVersion={ this.data.fhirVersion }
-                  showDatePicker={true} 
-                  allergy={ this.data.selectedAllergy }
-                  allergyIntoleranceId={ this.data.allergyIntoleranceId } />
-               </Tab>
-               <Tab className="allergyIntoleranceListTab" label='AllergyIntolerances' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                <AllergyIntolerancesTable id='allergyIntolerancesTable' fhirVersion={ this.data.fhirVersion } />
-               </Tab>
-               <Tab className="allergyIntoleranceDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                 <AllergyIntoleranceDetail 
-                    id='allergyIntoleranceDetails' 
-                    showDatePicker={true} 
-                    fhirVersion={ this.data.fhirVersion }
-                    allergy={ this.data.selectedAllergy }
-                    allergyIntoleranceId={ this.data.allergyIntoleranceId } />
-               </Tab>
-             </Tabs> */}
+              <AllergyIntolerancesTable 
+                id='allergyIntolerancesTable' 
+                fhirVersion={ this.data.fhirVersion } 
+                allergyIntolerances={this.data.allergyIntolerances}
+                formFactorLayout={formFactor}
+                />
             </CardContent>
         </StyledCard>
-      </div>
+      </PageCanvas>
     );
   }
 }
 
 ReactMixin(AllergyIntolerancesPage.prototype, ReactMeteorData);
+
+
+
 
 export default AllergyIntolerancesPage;

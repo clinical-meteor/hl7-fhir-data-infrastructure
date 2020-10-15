@@ -517,7 +517,9 @@ MedicationOrdersTable.propTypes = {
 
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
-  showMinutes: PropTypes.bool
+  showMinutes: PropTypes.bool,
+
+  formFactorLayout: PropTypes.string
 };
 
 export default MedicationOrdersTable;

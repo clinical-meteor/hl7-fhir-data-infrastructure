@@ -336,11 +336,11 @@ export class CompositionsPage extends React.Component {
     }
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
     return (
       <div id="compositionsPage" style={{paddingLeft: '100px', paddingRight: '100px', paddingBottom: '100px'}}>
         <MuiThemeProvider theme={muiTheme} >
-          {/* <Container> */}
             <StyledCard>
               <CardHeader
                 title="Compositions"
@@ -440,7 +440,6 @@ export class CompositionsPage extends React.Component {
                 </Tabs> */}
               </CardContent>
             </StyledCard>
-          {/* </Container> */}
         </MuiThemeProvider>
       </div>
     );

@@ -201,33 +201,24 @@ export class ValueSetsPage extends React.Component {
   render() {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+
 
     let layoutContents;
     if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto" margin={20} >
+      layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
         <CardHeader title={this.data.valueSetsCount + " ValueSets"} />
         <CardContent>
 
           <ValueSetsTable 
             valueSets={ this.data.valueSets }
-            hideCheckbox={true} 
-            hideActionIcons={true}
-            hideIdentifier={true} 
-            hideTitle={false} 
-            hideDescription={false} 
-            hideApprovalDate={false}
-            hideLastReviewed={false}
-            hideVersion={false}
-            hideStatus={false}
-            hideAuthor={true}
-            hidePublisher={false}
-            hideReviewer={false}
-            hideEditor={false}
-            hideEndorser={false}
-            hideType={false}
-            hideRiskAdjustment={true}
-            hideRateAggregation={true}
-            hideScoring={false}
+            formFactorLayout={formFactor}
             paginationLimit={10}     
             />
           </CardContent>
@@ -235,24 +226,14 @@ export class ValueSetsPage extends React.Component {
     } else {
       layoutContents = <Grid container spacing={3}>
         <Grid item lg={6}>
-          <StyledCard height="auto" margin={20} >
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title={this.data.valueSetsCount + " Value Sets"} />
             <CardContent>
               <ValueSetsTable 
                 valueSets={ this.data.valueSets }
                 selectedValueSetId={ this.data.selectedValueSetId }
-                hideIdentifier={true} 
-                hideCheckbox={true} 
-                hideApprovalDate={false}
-                hideLastReviewed={false}
-                hideVersion={false}
-                hideStatus={false}
-                hidePublisher={true}
-                hideReviewer={true}
-                hideScoring={true}
-                hideEndorser={true}
+                formFactorLayout={formFactor}
                 paginationLimit={10}            
-                hideActionIcons={true}
                 onRowClick={this.handleRowClick.bind(this) }
                 count={this.data.valueSetsCount}
                 />
@@ -260,7 +241,7 @@ export class ValueSetsPage extends React.Component {
           </StyledCard>
         </Grid>
         <Grid item lg={4}>
-          <StyledCard height="auto" margin={20} scrollable>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedValueSetId }</h1>
             {/* <CardHeader title={this.data.selectedValueSetId } className="helveticas barcode" /> */}
             <CardContent>
@@ -282,7 +263,7 @@ export class ValueSetsPage extends React.Component {
     }
 
     return (
-      <PageCanvas id="valueSetsPage" headerHeight={headerHeight}>
+      <PageCanvas id="valueSetsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           { layoutContents }
         </MuiThemeProvider>

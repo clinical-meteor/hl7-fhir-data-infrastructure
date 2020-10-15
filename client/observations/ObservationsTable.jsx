@@ -21,10 +21,20 @@ import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;
+let has = _.has;
+
+import FhirUtilities from '../../lib/FhirUtilities';
+
+import { flattenObservation } from '../../lib/FhirDehydrator';
+
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+
+
+//===========================================================================
+// THEMING
 
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
@@ -56,124 +66,23 @@ let styles = {
   }
 }
 
-flattenObservation = function(observation, dateFormat, props){
-  let result = {
-    _id: '',
-    meta: '',
-    category: '',
-    codeValue: '',
-    codeDisplay: '',
-    valueString: '',
-    value: '',
-    observationValue: '',
-    subject: '',
-    subjectReference: '',
-    status: '',
-    device: '',
-    createdBy: '',
-    effectiveDateTime: '',
-    issued: '',
-    unit: '',
-    numerator: '',
-    denominator: ''
-  };
 
-  if(!dateFormat){
-    dateFormat = get(Meteor, "settings.public.defaults.dateFormat", "YYYY-MM-DD hh a");
-  }
-
-  result._id =  get(observation, 'id') ? get(observation, 'id') : get(observation, '_id');
-
-  if(get(observation, 'category[0].text')){
-    result.category = get(observation, 'category[0].text', '');
-  } else if (get(observation, 'category[0].coding[0].display')){
-    result.category = get(observation, 'category[0].coding[0].display', '');
-  }
-
-  if(get(observation, 'code.coding[0].code')){
-    result.codeValue = get(observation, 'code.coding[0].code', '');
-  } else {
-    result.codeValue = get(observation, 'code.text', '');
-  }
-  if(get(observation, 'code.coding[0].display')){
-    result.codeDisplay = get(observation, 'code.coding[0].display', '');
-  } else {
-    result.codeDisplay = get(observation, 'code.text', '');
-  }
-
-  // result.codeValue = get(observation, 'code.coding[0].code', '');
-  result.subject = get(observation, 'subject.display', '');
-  result.subjectReference = get(observation, 'subject.reference', '');
-  result.device = get(observation, 'device.display', '');
-  result.status = get(observation, 'status', '');
-  
-  if(get(observation, 'effectiveDateTime')){
-    result.effectiveDateTime =  moment(get(observation, 'effectiveDateTime')).format(dateFormat);
-  }
-  if(get(observation, 'issued')){
-    result.effectiveDateTime =  moment(get(observation, 'issued')).format(dateFormat);    
-  }
-
-  result.meta = get(observation, 'category.text', '');
-
-  if(result.valueString.length > 0){
-    result.value = result.valueString;
-  } else {
-    if(result.comparator){
-      result.value = result.comparator + ' ';
-    } 
-    result.value = result.value + result.observationValue + ' ' + result.unit;
-  }
-
-  if(Array.isArray(get(observation, 'component'))){
-    // sometimes observations have multiple components
-    // a great example is blood pressure, which includes systolic and diastolic measurements
-    observation.component.forEach(function(componentObservation){
-      // we grab the numerator and denominator and put in separate fields
-      if(get(componentObservation, 'code.coding[0].code') === get(props, 'numeratorCode')){
-        result.numerator = get(componentObservation, 'valueQuantity.value') + get(componentObservation, 'code.valueQuantity.unit')
-      }
-      if(get(componentObservation, 'code.coding[0].code') === get(props, 'denominatorCode')){
-        result.denominator = get(componentObservation, 'valueQuantity.value') + get(componentObservation, 'code.valueQuantity.unit')
-      }
-    })
-    // and if it's multiComponentValue, we string it all together into a nice string to be displayed
-    if(props.multiComponentValues){
-      result.unit = get(observation, 'valueQuantity.unit', '');  
-      result.valueString = result.numerator + " / " + result.denominator + " " +  result.unit;
-    }
-  } else {
-    // most observations arrive in a single component
-    // some values are a string, such as Blood Type, or pos/neg
-    if(get(observation, 'valueString')){
-      result.valueString = get(observation, 'valueString', '');
-    } else if(get(observation, 'valueCodeableConcept')){
-      result.valueString = get(observation, 'valueCodeableConcept.text', '');
-    } else {
-      // other values are quantities with units
-      // we need to place the quantity bits in the appropriate cells
-      result.comparator = get(observation, 'valueQuantity.comparator', '');
-      result.observationValue = Number.parseFloat(get(observation, 'valueQuantity.value', 0)).toFixed(2);;
-      result.unit = get(observation, 'valueQuantity.unit', '');  
-
-      // but we also want to string it together into a nice readable string
-      result.valueString = result.comparator + " " + result.observationValue + " " + result.unit;
-    }
-  }
-
-  return result;
-}
+//===========================================================================
+// MAIN COMPONENT
 
 
 function ObservationsTable(props){
-  logger.info('Rendering the ObservationsTable');
+  logger.debug('Rendering the ObservationsTable');
   logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ObservationsTable');
   logger.data('ObservationsTable.props', {data: props}, {source: "ObservationsTable.jsx"});
 
   //---------------------------------------------------------------------
   // Properties
 
-  const {
+  let {
+    childen,
+    id,
+
     observations,
     query,
     barcodes,
@@ -185,6 +94,7 @@ function ObservationsTable(props){
     hideIdentifier,
     hideCategory,
     hideValue,
+    hideUnits,
     hideSubject,
     hideSubjects,
     hideSubjectReference,
@@ -205,6 +115,8 @@ function ObservationsTable(props){
     enteredInError,
     multiline,
     multiComponentValues,
+    sampledData,
+  
   
     hideBarcode,
   
@@ -219,11 +131,99 @@ function ObservationsTable(props){
     tableRowSize,
     dateFormat,
     showMinutes,
+    showSeconds,
     count,
+
+    formFactorLayout,
 
     ...otherProps
 
   } = props
+
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideCategory = true;
+        hideValue = false;
+        hideUnits = false;
+        hideSubject = true;
+        hideSubjects = true;
+        hideSubjectReference = true;
+        hideEffectiveDateTime = true;
+        hideStatus = true;
+        hideCodeValue = true;
+        hideCode = false;
+        hideDevices = true;
+        hideComparator = true;
+        multiline = true;
+        break;
+      case "tablet":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideCategory = true;
+        hideValue = false;
+        hideUnits = false;
+        hideSubject = true;
+        hideSubjects = true;
+        hideSubjectReference = true;
+        hideEffectiveDateTime = false;
+        hideStatus = false;
+        hideCodeValue = true;
+        hideCode = false;
+        hideDevices = true;
+        hideComparator = true;
+        multiline = false;
+        break;
+      case "web":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideCategory = false;
+        hideValue = false;
+        hideUnits = false;
+        hideSubject = true;
+        hideSubjects = true;
+        hideSubjectReference = true;
+        hideEffectiveDateTime = false;
+        hideStatus = false;
+        hideCodeValue = false;
+        hideCode = false;
+        hideDevices = true;
+        hideComparator = true;
+        multiline = false;
+        break;
+      case "desktop":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideCategory = false;
+        hideValue = false;
+        hideUnits = false;
+        hideSubject = true;
+        hideSubjects = true;
+        hideSubjectReference = true;
+        hideEffectiveDateTime = false;
+        hideStatus = false;
+        hideCodeValue = false;
+        hideCode = false;
+        hideDevices = false;
+        hideComparator = true;
+        multiline = false;
+        break;
+      case "hdmi":
+
+        break;            
+    }
+  }
 
 
   //---------------------------------------------------------------------
@@ -238,29 +238,29 @@ function ObservationsTable(props){
   let rows = [];
   
   const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(props.rowsPerPage);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
   }
 
   function rowClick(id){
-    if(typeof props.onRowClick === "function"){
-      props.onRowClick(id);
+    if(typeof onRowClick === "function"){
+      onRowClick(id);
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
   function renderActionIcons(observation ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -278,124 +278,138 @@ function ObservationsTable(props){
   } 
   function removeRecord(_id){
     logger.info('Remove observation: ' + _id)
-    if(props.onRemoveRecord){
-      props.onRemoveRecord(_id);
+    if(onRemoveRecord){
+      onRemoveRecord(_id);
     }
   }
   function handleActionButtonClick(id){
-    if(typeof props.onActionButtonClick === "function"){
-      props.onActionButtonClick(id);
+    if(typeof onActionButtonClick === "function"){
+      onActionButtonClick(id);
     }
   }
   function cellClick(id){
-    if(typeof props.onCellClick === "function"){
-      props.onCellClick(id);
+    if(typeof onCellClick === "function"){
+      onCellClick(id);
     }
   }
 
   function handleMetaClick(patient){
     let self = this;
-    if(props.onMetaClick){
-      props.onMetaClick(self, patient);
+    if(onMetaClick){
+      onMetaClick(self, patient);
     }
   }
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helvetica">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
     }
   }
   function renderSubject(id){
-    if (!props.hideSubject) {
+    if (!hideSubject) {
       return (
         <TableCell className='name'>{ id }</TableCell>
       );
     }
   }
   function renderSubjectHeader(){
-    if (!props.hideSubject) {
+    if (!hideSubject) {
       return (
       <TableCell className='name'>Subject</TableCell>
       );
     }
   }
   function renderSubjectReference(id){
-    if (!props.hideSubjectReference) {
+    if (!hideSubjectReference) {
       return (
         <TableCell className='subjectReference'>{ id }</TableCell>
       );
     }
   }
   function renderSubjectReferenceHeader(){
-    if (!props.hideSubjectReference) {
+    if (!hideSubjectReference) {
       return (
       <TableCell className='subjectReference'>Subject Reference</TableCell>
       );
     }
   }
   function renderDevice(device){
-    if (!props.hideDevices) {
+    if (!hideDevices) {
       return (
       <TableCell className='device.display'>{device }</TableCell>
       );
     }    
   }
   function renderDeviceHeader(){
-    if (!props.hideDevices) {
+    if (!hideDevices) {
       return (
         <TableCell className='device.display'>Device</TableCell>
       );
     }
   }
   function renderValue(valueString){
-    if (!props.hideValue) {
+    if (!hideValue) {
       return (
         <TableCell className='value'>{ valueString }</TableCell>
       );
     }
   }
   function renderValueHeader(){
-    if (!props.hideValue) {
+    if (!hideValue) {
       return (
         <TableCell className='value'>Value</TableCell>
       );
     }
   }
+  function renderUnits(units){
+    if (!hideUnits) {
+      return (
+        <TableCell className='units'>{ units }</TableCell>
+      );
+    }
+  }
+  function renderUnitsHeader(){
+    if (!hideUnits) {
+      return (
+        <TableCell className='units'>Units</TableCell>
+      );
+    }
+  }
   function renderCodeValueHeader(){
-    if (!props.hideCodeValue) {
+    if (!hideCodeValue) {
       return (
         <TableCell className='codeValue'>Code Value</TableCell>
       );
     }
   }
   function renderCodeValue(code){
-    if (!props.hideCodeValue) {
+    if (!hideCodeValue) {
       return (
         <TableCell className='codeValue'>{ code }</TableCell>
       );  
     }
   }
   function renderCodeHeader(){
-    if (!props.hideCode) {
+    if (!hideCode) {
       return (
         <TableCell className='code'>Code</TableCell>
       );
     }
   }
   function renderCode(code, value){
-    if (!props.hideCode) {
-      if(props.multiline){
+    if (!hideCode) {
+      if(multiline){
         return (<TableCell className='code'>
           <span style={{fontWeight: 400}}>{code }</span> <br />
-          { value }
+          <span style={{color: 'gray'}}>{ value }</span>
         </TableCell>)
       } else {
         return (
@@ -405,56 +419,56 @@ function ObservationsTable(props){
     }
   }
   function renderCategoryHeader(){
-    if (!props.hideCategory) {
+    if (!hideCategory) {
       return (
         <TableCell className='category'>Category</TableCell>
       );
     }
   }
   function renderCategory(category){
-    if (!props.hideCategory) {
+    if (!hideCategory) {
       return (
         <TableCell className='category'>{ category }</TableCell>
       );
     }
   }
   function renderValueString(valueString){
-    if (!props.hideValue) {
+    if (!hideValue) {
       return (
         <TableCell className='value'>{ valueString }</TableCell>
       );
     }
   }
   function renderValueStringHeader(){
-    if (!props.hideValue) {
+    if (!hideValue) {
       return (
         <TableCell className='value'>Value</TableCell>
       );
     }
   }
   function renderComparator(comparator){
-    if (!props.hideComparator) {
+    if (!hideComparator) {
       return (
         <TableCell className='comparator'>{ comparator }</TableCell>
       );
     }
   }
   function renderComparatorHeader(){
-    if (!props.hideComparator) {
+    if (!hideComparator) {
       return (
         <TableCell className='comparator'>Comparator</TableCell>
         );
     }
   }
   function renderToggleHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             <Checkbox
@@ -465,58 +479,116 @@ function ObservationsTable(props){
     }
   }
   function renderStatus(valueString){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status'>{ valueString }</TableCell>
       );
     }
   }
   function renderStatusHeader(){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status'>Status</TableCell>
       );
     }
   }
   function renderEffectiveDateTimeHeader(){
-    if (!props.hideEffectiveDateTime) {
+    if (!hideEffectiveDateTime) {
       return (
-        <TableCell className='effectiveDateTime' style={{minWidth: '140px'}}>Performed</TableCell>
+        <TableCell className='effectiveDateTime' style={{minWidth: '180px'}}>Performed</TableCell>
       );
     }
   }
   function renderEffectiveDateTime(effectiveDateTime){
-    if (!props.hideEffectiveDateTime) {
+    if (!hideEffectiveDateTime) {
       return (
-        <TableCell className='effectiveDateTime' style={{minWidth: '140px'}}>{ effectiveDateTime }</TableCell>
+        <TableCell className='effectiveDateTime' style={{minWidth: '180px'}}>{ effectiveDateTime }</TableCell>
       );
     }
   }
   function renderComponentNumerator(numerator){
-    if (!props.hideNumerator) {
+    if (!hideNumerator) {
       return (
         <TableCell className='numerator'>{ numerator }</TableCell>
       );
     }
   }
   function renderComponentNumeratorHeader(){
-    if (!props.hideNumerator) {
+    if (!hideNumerator) {
       return (
-        <TableCell className='numerator'>{props.numeratorLabel}</TableCell>
+        <TableCell className='numerator'>{numeratorLabel}</TableCell>
       );
     }
   }
   function renderComponentDenominator(denominator){
-    if (!props.hideDenominator) {
+    if (!hideDenominator) {
       return (
         <TableCell className='denominator'>{ denominator }</TableCell>
       );
     }
   }
   function renderComponentDenominatorHeader(){
-    if (!props.hideDenominator) {
+    if (!hideDenominator) {
       return (
-        <TableCell className='denominator'>{props.denominatorLabel}</TableCell>
+        <TableCell className='denominator'>{denominatorLabel}</TableCell>
+      );
+    }
+  }
+
+  function renderSampledPeriod(value){
+    if (sampledData) {
+      return (
+        <TableCell className='sampledPeriod'>{ value }</TableCell>
+      );
+    }
+  }
+  function renderSampledPeriodHeader(){
+    if (sampledData) {
+      return (
+        <TableCell className='sampledPeriod'>Sample Rate</TableCell>
+      );
+    }
+  }
+
+  function renderSampledMin(value){
+    if (sampledData && !Meteor.isCordova) {
+      return (
+        <TableCell className='sampledMin'>{ value }</TableCell>
+      );
+    }
+  }
+  function renderSampledMinHeader(){
+    if (sampledData && !Meteor.isCordova) {
+      return (
+        <TableCell className='sampledMin'>Sample Min</TableCell>
+      );
+    }
+  }
+  function renderSampledMax(value){
+    if (sampledData && !Meteor.isCordova) {
+      return (
+        <TableCell className='sampledMax'>{ value }</TableCell>
+      );
+    }
+  }
+  function renderSampledMaxHeader(){
+    if (sampledData && !Meteor.isCordova) {
+      return (
+        <TableCell className='sampledMax'>Sample Max</TableCell>
+      );
+    }
+  }
+  function renderSampledChecksum(value){
+    if (sampledData && !Meteor.isCordova) {
+      return (
+        <TableCell className='checksum'>{ value }</TableCell>
+      );
+    }
+  }
+  function renderSampledChecksumHeader(){
+    if (sampledData && !Meteor.isCordova) {
+      return (
+        <TableCell className='checksum'>Checksum</TableCell>
       );
     }
   }
@@ -527,19 +599,29 @@ function ObservationsTable(props){
   let footer;
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.dateFormat){
-    internalDateFormat = props.dateFormat;
+  if(showSeconds){
+    internalDateFormat = "YYYY-MM-DD hh:mm:ss";
+  }
+  if(dateFormat){
+    internalDateFormat = dateFormat;
   }
 
-  if(props.observations){
-    if(props.observations.length > 0){     
+  if(observations){
+    if(observations.length > 0){     
       let count = 0;    
-      props.observations.forEach(function(observation){
+      observations.forEach(function(observation){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          observationsToRender.push(flattenObservation(observation, internalDateFormat, props));
+          observationsToRender.push(flattenObservation(
+            observation, 
+            internalDateFormat, 
+            get(props, 'numeratorCode'),
+            get(props, 'denominatorCode'),
+            get(props, 'multiComponentValues'),
+            get(props, 'sampledData')
+          ));
         }
         count++;
       });  
@@ -548,17 +630,17 @@ function ObservationsTable(props){
 
   if(observationsToRender.length === 0){
     logger.trace('ObservationsTable:  No observations to render.');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < observationsToRender.length; i++) {
-      if(props.multiline){
+      if(multiline){
         tableRows.push(
           <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} hover={true}>
             { renderToggle() }
             { renderActionIcons(observationsToRender[i]) }
             { renderCategory(observationsToRender[i].category) }
             { renderCodeValue(observationsToRender[i].codeValue) }
-            { renderCode(observationsToRender[i].codeDisplay, observationsToRender[i].value) }
+            { renderCode(observationsToRender[i].codeDisplay, observationsToRender[i].effectiveDateTime) }
             { renderValue(observationsToRender[i].valueString)}
             { renderSubject(observationsToRender[i].subject)}
             { renderSubjectReference(observationsToRender[i].subjectReference)}
@@ -567,6 +649,12 @@ function ObservationsTable(props){
             { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
             { renderComponentNumerator(observationsToRender[i].numerator)}
             { renderComponentDenominator(observationsToRender[i].denominator)}
+
+            { renderSampledPeriod(observationsToRender[i].sampledPeriod)}
+            { renderSampledMin(observationsToRender[i].sampledMin)}
+            { renderSampledMax(observationsToRender[i].sampledMax)}
+            { renderSampledChecksum(observationsToRender[i].sampledChecksum)}
+
             { renderBarcode(observationsToRender[i].id)}
           </TableRow>
         );    
@@ -587,6 +675,12 @@ function ObservationsTable(props){
             { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
             { renderComponentNumerator(observationsToRender[i].numerator)}
             { renderComponentDenominator(observationsToRender[i].denominator)}
+
+            { renderSampledPeriod(observationsToRender[i].sampledPeriod)}
+            { renderSampledMin(observationsToRender[i].sampledMin)}
+            { renderSampledMax(observationsToRender[i].sampledMax)}
+            { renderSampledChecksum(observationsToRender[i].sampledChecksum)}
+
             { renderBarcode(observationsToRender[i].id)}
           </TableRow>
         );    
@@ -599,7 +693,7 @@ function ObservationsTable(props){
   };
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       rowsPerPageOptions={[5, 10, 25, 100]}
@@ -613,7 +707,7 @@ function ObservationsTable(props){
   }
   
   return(
-    <div>
+    <div id={id} className="tableWithPagination">
       <Table id="observationsTable" size={tableRowSize} aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow key='tableHeader'>
@@ -630,6 +724,12 @@ function ObservationsTable(props){
             { renderEffectiveDateTimeHeader() }
             { renderComponentNumeratorHeader()}
             { renderComponentDenominatorHeader()}
+
+            { renderSampledPeriodHeader()}
+            { renderSampledMinHeader()}
+            { renderSampledMaxHeader()}
+            { renderSampledChecksumHeader()}
+
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -643,6 +743,8 @@ function ObservationsTable(props){
 }
 
 ObservationsTable.propTypes = {
+  id: PropTypes.string,
+
   observations: PropTypes.array,
   query: PropTypes.object,
   
@@ -654,6 +756,7 @@ ObservationsTable.propTypes = {
   hideIdentifier: PropTypes.bool,
   hideCategory: PropTypes.bool,
   hideValue: PropTypes.bool,
+  hideUnits: PropTypes.bool,
   hideSubject: PropTypes.bool,
   hideSubjects: PropTypes.bool,
   hideSubjectReference: PropTypes.bool,
@@ -675,6 +778,7 @@ ObservationsTable.propTypes = {
   enteredInError: PropTypes.bool,
   multiline: PropTypes.bool,
   multiComponentValues: PropTypes.bool,
+  sampledData: PropTypes.bool,  
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -686,21 +790,34 @@ ObservationsTable.propTypes = {
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
+  showSeconds: PropTypes.bool,
   tableRowSize: PropTypes.string,
+  noDataMessagePadding: PropTypes.string,
 
-  count: PropTypes.number
+  count: PropTypes.number,
+  formFactorLayout: PropTypes.string
 };
 ObservationsTable.defaultProps = {
-  hideBarcode: true,
+  tableRowSize: 'medium',
   rowsPerPage: 5,
+  dateFormat: "YYYY-MM-DD hh:mm:ss",
+  hideCheckbox: true,
+  hideCategory: true,
+  hideBarcode: true,
+  hideActionIcons: true,
   hideNumerator: true,
   hideDenominator: true,
+  hideDevices: true,
+  hideCode: false,
+  hideCodeValue: false,
+  hideEffectiveDateTime: false,
+  sampledData: false,
+  hideUnits: false,
   numeratorLabel: "Systolic",
   denominatorLabel: "Diastolic",
   numeratorCode: "8480-6",
   denominatorCode: "8462-4",
-  multiComponentValues: false,
-  tableRowSize: 'small'
+  multiComponentValues: false
 }
 
 

@@ -187,6 +187,7 @@ function MeasureReportsTable(props){
     tableRowSize,
 
     count,
+    formFactorLayout,
 
     ...otherProps 
   } = props;
@@ -724,7 +725,9 @@ MeasureReportsTable.propTypes = {
   measureScoreType: PropTypes.string,
 
   count: PropTypes.number,
-  tableRowSize: PropTypes.string
+  tableRowSize: PropTypes.string,
+
+  formFactorLayout: PropTypes.string
 };
 MeasureReportsTable.defaultProps = {
   tableRowSize: 'medium',

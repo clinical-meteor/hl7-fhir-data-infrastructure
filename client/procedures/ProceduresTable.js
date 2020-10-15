@@ -31,6 +31,7 @@ let set = _.set;
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
+import { flattenProcedure } from '../../lib/FhirDehydrator';
 
 //===========================================================================
 // THEMING
@@ -49,69 +50,69 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-//===========================================================================
-// FLATTENING / MAPPING
+// //===========================================================================
+// // FLATTENING / MAPPING
 
-flattenProcedure = function(procedure, internalDateFormat){
-  let result = {
-    _id: '',
-    id: '',
-    meta: '',
-    identifier: '',
-    status: '',
-    categoryDisplay: '',
-    code: '',
-    codeDisplay: '',
-    subject: '',
-    subjectReference: '',
-    performerDisplay: '',
-    performedStart: '',
-    performedEnd: '',
-    notesCount: '',
-    bodySiteDisplay: ''
-  };
+// flattenProcedure = function(procedure, internalDateFormat){
+//   let result = {
+//     _id: '',
+//     id: '',
+//     meta: '',
+//     identifier: '',
+//     status: '',
+//     categoryDisplay: '',
+//     code: '',
+//     codeDisplay: '',
+//     subject: '',
+//     subjectReference: '',
+//     performerDisplay: '',
+//     performedStart: '',
+//     performedEnd: '',
+//     notesCount: '',
+//     bodySiteDisplay: ''
+//   };
 
-  if(!internalDateFormat){
-    internalDateFormat = "YYYY-MM-DD";
-  }
+//   if(!internalDateFormat){
+//     internalDateFormat = "YYYY-MM-DD";
+//   }
 
-  result._id =  get(procedure, 'id') ? get(procedure, 'id') : get(procedure, '_id');
+//   result._id =  get(procedure, 'id') ? get(procedure, 'id') : get(procedure, '_id');
 
-  result.id = get(procedure, 'id', '');
-  result.status = get(procedure, 'status', '');
-  result.categoryDisplay = get(procedure, 'category.coding[0].display', '');
-  result.identifier = get(procedure, 'identifier[0].value');
-  result.code = get(procedure, 'code.coding[0].code');
-  result.codeDisplay = get(procedure, 'code.coding[0].display');
-  result.categoryDisplay = get(procedure, 'category.coding[0].display')    
+//   result.id = get(procedure, 'id', '');
+//   result.status = get(procedure, 'status', '');
+//   result.categoryDisplay = get(procedure, 'category.coding[0].display', '');
+//   result.identifier = get(procedure, 'identifier[0].value');
+//   result.code = get(procedure, 'code.coding[0].code');
+//   result.codeDisplay = get(procedure, 'code.coding[0].display');
+//   result.categoryDisplay = get(procedure, 'category.coding[0].display')    
 
-  if(get(procedure, 'subject')){
-    result.subject = get(procedure, 'subject.display', '');
-    result.subjectReference = get(procedure, 'subject.reference', '');
-  } else if(get(procedure, 'patient')){
-    result.subject = get(procedure, 'patient.display', '');
-    result.subjectReference = get(procedure, 'patient.reference', '');
-  }
+//   if(get(procedure, 'subject')){
+//     result.subject = get(procedure, 'subject.display', '');
+//     result.subjectReference = get(procedure, 'subject.reference', '');
+//   } else if(get(procedure, 'patient')){
+//     result.subject = get(procedure, 'patient.display', '');
+//     result.subjectReference = get(procedure, 'patient.reference', '');
+//   }
 
-  result.performedStart = moment(get(procedure, 'performedDateTime')).format(internalDateFormat);      
-  result.performerDisplay = moment(get(procedure, 'performer.display')).format(internalDateFormat);
-  result.performerReference = get(procedure, 'performer.reference');
-  result.bodySiteDisplay = get(procedure, 'bodySite.display');
+//   result.performedStart = moment(get(procedure, 'performedDateTime')).format(internalDateFormat);      
+//   result.performerDisplay = moment(get(procedure, 'performer.display')).format(internalDateFormat);
+//   result.performerReference = get(procedure, 'performer.reference');
+//   result.bodySiteDisplay = get(procedure, 'bodySite.display');
 
-  if(get(procedure, 'performedPeriod')){
-    result.performedStart = moment(get(procedure, 'performedPeriod.start')).format(internalDateFormat);      
-    result.performedEnd = moment(get(procedure, 'performedPeriod.end')).format(internalDateFormat);      
-  }
+//   if(get(procedure, 'performedPeriod')){
+//     result.performedStart = moment(get(procedure, 'performedPeriod.start')).format(internalDateFormat);      
+//     result.performedEnd = moment(get(procedure, 'performedPeriod.end')).format(internalDateFormat);      
+//   }
 
-  let notes = get(procedure, 'notes')
-  if(notes && notes.length > 0){
-    result.notesCount = notes.length;
-  } else {
-    result.notesCount = 0;
-  }
+//   let notes = get(procedure, 'notes')
+//   if(notes && notes.length > 0){
+//     result.notesCount = notes.length;
+//   } else {
+//     result.notesCount = 0;
+//   }
 
-  return result;
-}
+//   return result;
+// }
 
 
 function ProceduresTable(props){
@@ -119,16 +120,18 @@ function ProceduresTable(props){
   logger.verbose('clinical:hl7-resource-encounter.client.ProceduresTable');
   logger.data('ProceduresTable.props', {data: props}, {source: "ProceduresTable.jsx"});
 
-  const { 
+  let { 
+    id,
     children, 
 
     data,
     procedures,
+    selectedProcedureId,
     query,
     paginationLimit,
     disablePagination,
   
-    hideCheckboxes,
+    hideCheckbox,
     hideIdentifier,
     hideActionIcons,
     hideCategory,
@@ -157,9 +160,94 @@ function ProceduresTable(props){
     tableRowSize,
     dateFormat,
     showMinutes,
-    
+    formFactorLayout,
+    count,
+    multiline,
+
     ...otherProps 
   } = props;
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(dateFormat){
+    internalDateFormat = dateFormat;
+  }
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        hideSubject = true;
+        hideSubjectReference = true;
+        hideCode = true;
+        hideStatus = true;
+        hidePerformedDate = true;
+        hidePerformedDateEnd = true;
+        hidePerformer = true;
+        hideBodySite = true;
+        hideNotes = true;
+        multiline = true;
+        hideBarcode = true;
+        break;
+      case "tablet":
+        hideCode = false;
+        hideStatus = false;
+        hidePerformedDate = false;
+        hidePerformedDateEnd = true;
+        hidePerformer = true;
+        hideBodySite = true;
+        hideNotes = true;
+        multiline = false;
+        hideBarcode = true;
+        break;
+      case "web":
+        hideCode = false;
+        hideStatus = false;
+        hidePerformedDate = false;
+        hidePerformedDateEnd = true;
+        hidePerformer = false;
+        hideBodySite = false;
+        hideNotes = true;
+        multiline = false;
+        hideBarcode = true;
+        break;
+      case "desktop":
+        hideCode = false;
+        hideStatus = false;
+        hidePerformedDate = false;
+        hidePerformedDateEnd = false;
+        hidePerformer = false;
+        hideBodySite = false;
+        hideNotes = false;
+        multiline = false;
+        hideBarcode = true;
+        break;
+      case "hdmi":
+        hideCode = false;
+        hideStatus = false;
+        hidePerformedDate = false;
+        hidePerformedDateEnd = false;
+        hidePerformer = false;
+        hideBodySite = false;
+        hideNotes = false;
+        multiline = false;
+        hideBarcode = true;
+        break;            
+    }
+  }
+
+
+  //---------------------------------------------------------------------
+  // Styles
 
   const classes = useStyles();
 
@@ -170,18 +258,18 @@ function ProceduresTable(props){
   const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
-  // if(props.rowsPerPage){
+  // if(rowsPerPage){
   //   // if we receive an override as a prop, render that many rows
   //   // best to use rowsPerPageToRender with disablePagination
-  //   setRowsPerPage(props.rowsPerPage)
+  //   setRowsPerPage(rowsPerPage)
   // } else {
   //   // otherwise default to the user selection
-  //   setRowsPerPage(props.rowsPerPage)
+  //   setRowsPerPage(rowsPerPage)
   // }
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
   }
@@ -196,19 +284,19 @@ function ProceduresTable(props){
     // Session.set('procedurePageTabIndex', 1);
     // Session.set('procedureDetailState', false);
 
-    if(props && (typeof props.onRowClick === "function")){
-      props.onRowClick(id);
+    if(props && (typeof onRowClick === "function")){
+      onRowClick(id);
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
   function renderActionIcons(procedure ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -226,59 +314,53 @@ function ProceduresTable(props){
   } 
   function handleMetaClick(_id){
     logger.info('Opening metadata for procedure: ' + _id)
-    if(props.onMetaClick){
-      props.onMetaClick(_id);
+    if(onMetaClick){
+      onMetaClick(_id);
     }
   }
   function removeRecord(_id){
     logger.info('Remove procedure: ' + _id)
-    if(props.onRemoveRecord){
-      props.onRemoveRecord(_id);
+    if(onRemoveRecord){
+      onRemoveRecord(_id);
     }
   }
   function handleActionButtonClick(id){
-    if(typeof props.onActionButtonClick === "function"){
-      props.onActionButtonClick(id);
+    if(typeof onActionButtonClick === "function"){
+      onActionButtonClick(id);
     }
   }
 
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helvetica">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
     }
   }
-  function renderSubject(name, type){
-    if (!props.hideSubject) {
+  function renderSubject(name, type, date){
+    if (!hideSubject) {
       let result;
-      if(props.multiline){
-        result = <TableCell className='name'>
-          { name }<br/>
-          { type }        
-        </TableCell>;
-      } else {
-        result = <TableCell className='name'>{ name }</TableCell>;
-      }
-      return (result);
+      return (
+        <TableCell className='name'>{ name }</TableCell>
+      );
     }
   }
   function renderSubjectHeader(){
-    if (!props.hideSubject) {
+    if (!hideSubject) {
       return (
         <TableCell className='name'>Subject</TableCell>
       );
     }
   }
   function renderSubjectReference(referenceString){
-    if (!props.hideSubjectReference) {
+    if (!hideSubjectReference) {
       return (
         <TableCell className='patientReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
           { FhirUtilities.pluckReferenceId(referenceString) }
@@ -287,49 +369,49 @@ function ProceduresTable(props){
     }
   }
   function renderSubjectReferenceHeader(){
-    if (!props.hideSubjectReference) {
+    if (!hideSubjectReference) {
       return (
         <TableCell className='subjectReference'>Subject Reference</TableCell>
       );
     }
   }
   function renderStatus(valueString){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status'>{ valueString }</TableCell>
       );
     }
   }
   function renderStatusHeader(){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status'>Status</TableCell>
       );
     }
   }
   function renderCategoryHeader(){
-    if (!props.hideCategory) {
+    if (!hideCategory) {
       return (
         <TableCell className='category'>Category</TableCell>
       );
     }
   }
   function renderCategory(category){
-    if (!props.hideCategory) {
+    if (!hideCategory) {
       return (
         <TableCell className='category'>{ category }</TableCell>
       );
     }
   }
   function renderToggleHeader(){
-    if (!props.hideCheckboxes) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckboxes) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -340,42 +422,48 @@ function ProceduresTable(props){
     }
   }
   function renderPerformedStartHeader(){
-    if (!props.hidePerformedDate) {
+    if (!hidePerformedDate) {
       return (
         <TableCell className='performedStart' style={{minWidth: '140px'}}>Performed</TableCell>
       );
     }
   }
   function renderPerformedStart(performedStart){
-    if (!props.hidePerformedDate) {
+    if (!hidePerformedDate) {
+      if(typeof performedStart === "object"){
+        performedStart = moment(performedStart).format(internalDateFormat);
+      }
       return (
         <TableCell className='performedStart' style={{minWidth: '140px'}}>{ performedStart }</TableCell>
       );
     }
   }
   function renderPerformedEndHeader(){
-    if (!props.hidePerformedDateEnd) {
+    if (!hidePerformedDateEnd) {
       return (
         <TableCell className='performedEnd' style={{minWidth: '140px'}}>End</TableCell>
       );
     }
   }
   function renderPerformedEnd(performedEnd){
-    if (!props.hidePerformedDateEnd) {
+    if (!hidePerformedDateEnd) {
+      if(typeof performedEnd === "object"){
+        performedEnd = moment(performedEnd).format(internalDateFormat);
+      }
       return (
         <TableCell className='performedEnd' style={{minWidth: '140px'}}>{ performedEnd }</TableCell>
       );
     }
   }
   function renderActionButtonHeader(){
-    if (!props.hideActionButton) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
   function renderActionButton(procedure){
-    if (!props.hideActionButton) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >
           <Button onClick={ handleActionButtonClick.bind(this, get(procedure, "id"))}>{ get(props, "actionButtonLabel", "") }</Button>
@@ -384,84 +472,91 @@ function ProceduresTable(props){
     }
   }
   function renderIdentifier(identifier){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   }
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
   function renderCodeHeader(){
-    if (!props.hideCode) {
+    if (!hideCode) {
       return (
         <TableCell className='code'>Code</TableCell>
       );
     }
   }
   function renderCode(code){
-    if (!props.hideCode) {
+    if (!hideCode) {
       return (
         <TableCell className='code'>{ code }</TableCell>
       );  
     }
   }
   function renderCodeDisplayHeader(){
-    if (!props.hideCodeDisplay) {
+    if (!hideCodeDisplay) {
       return (
         <TableCell className='codeDisplay'>Display</TableCell>
       );
     }
   }
-  function renderCodeDisplay(text){
-    if (!props.hideCodeDisplay) {
-      return (
-        <TableCell className='codeDisplay'>{ text }</TableCell>
-      );  
+  function renderCodeDisplay(codeDisplay, codeValue, date){
+    if (!hideCodeDisplay) {
+      if(multiline){
+        return (<TableCell className='codeDisplay'>
+          <span style={{overflowY: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{ codeDisplay }</span><br/>
+          <span style={{float: 'left'}}>{ codeValue }</span><span style={{float: 'right'}}>{ date }</span>
+        </TableCell>)
+      } else {
+        return (
+          <TableCell className='codeDisplay'>{ text }</TableCell>
+        );  
+      }
     }
   }
   function renderNotes(notesCount){
-    if (!props.hideNotes) {
+    if (!hideNotes) {
       return (
         <TableCell className='notes'>{ notesCount }</TableCell>
       );
     }
   }
   function renderNotesHeader(){
-    if (!props.hideNotes) {
+    if (!hideNotes) {
       return (
         <TableCell className='notes'>Notes</TableCell>
       );
     }
   }
   function renderPerformer(text){
-    if (!props.hidePerformer) {
+    if (!hidePerformer) {
       return (
         <TableCell className='performer'>{ text }</TableCell>
       );
     }
   }
   function renderPerformerHeader(){
-    if (!props.hidePerformer) {
+    if (!hidePerformer) {
       return (
         <TableCell className='performer'>Performer</TableCell>
       );
     }
   }
   function renderBodySite(text){
-    if (!props.hideBodySite) {
+    if (!hideBodySite) {
       return (
         <TableCell className='bodysite'>{ text }</TableCell>
       );
     }
   }
   function renderBodySiteHeader(){
-    if (!props.hideBodySite) {
+    if (!hideBodySite) {
       return (
         <TableCell className='bodysite'>Body Site</TableCell>
       );
@@ -471,19 +566,11 @@ function ProceduresTable(props){
 
   let tableRows = [];
   let proceduresToRender = [];
-  let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
-    internalDateFormat = "YYYY-MM-DD hh:mm";
-  }
-  if(props.dateFormat){
-    internalDateFormat = props.dateFormat;
-  }
-
-  if(props.procedures){
-    if(props.procedures.length > 0){     
+  if(procedures){
+    if(procedures.length > 0){     
       let count = 0;    
-      props.procedures.forEach(function(procedure){
+      procedures.forEach(function(procedure){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
           proceduresToRender.push(flattenProcedure(procedure, internalDateFormat));
         }
@@ -492,20 +579,35 @@ function ProceduresTable(props){
     }
   }
 
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '52px'
+  }
   if(proceduresToRender.length === 0){
     logger.trace('ProceduresTable:  No procedures to render.');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < proceduresToRender.length; i++) {
+      let selected = false;
+      if(proceduresToRender[i].id === selectedProcedureId){
+        selected = true;
+      }
+      if(get(proceduresToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+
       tableRows.push(
-        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, proceduresToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, proceduresToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
           { renderToggle() }
           { renderActionIcons(proceduresToRender[i]) }
           { renderIdentifier(proceduresToRender.identifier ) }
           { renderStatus(proceduresToRender[i].status)}
           { renderCategory(proceduresToRender[i].categoryDisplay)}
           { renderCode(proceduresToRender[i].code)}
-          { renderCodeDisplay(proceduresToRender[i].codeDisplay)}          
+          { renderCodeDisplay(proceduresToRender[i].codeDisplay, proceduresToRender[i].code, proceduresToRender[i].performedStart)}          
           { renderSubject(proceduresToRender[i].subject)}
           { renderSubjectReference(proceduresToRender[i].subjectReference)}
           { renderPerformer(proceduresToRender[i].performerDisplay)}
@@ -526,7 +628,7 @@ function ProceduresTable(props){
   };
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       rowsPerPageOptions={[5, 10, 25, 100]}
@@ -572,11 +674,14 @@ function ProceduresTable(props){
 }
 
 ProceduresTable.propTypes = {
+  id: PropTypes.string,
+
   procedures: PropTypes.array,
+  selectedProcedureId: PropTypes.string,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  hideCheckboxes: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideCategory: PropTypes.bool,
@@ -605,11 +710,20 @@ ProceduresTable.propTypes = {
   tableRowSize: PropTypes.string,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  count: PropTypes.number
+  count: PropTypes.number,
+  multiline: PropTypes.bool,
+
+  formFactorLayout: PropTypes.string
 };
 ProceduresTable.defaultProps = {
   rowsPerPage: 5,
+  hideCheckbox: true,
+  hideActionIcons: true,
   hideActionButton: true,
+  hideIdentifier: true,
+  hideCategory: true,
+  hideBodySite: true,
+  multiline: false,
   tableRowSize: 'medium'
 }
 

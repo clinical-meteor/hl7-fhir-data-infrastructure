@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-
-
 import { 
   Button,
   Checkbox,
@@ -20,9 +18,9 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-
 import FhirUtilities from '../../lib/FhirUtilities';
 import { flattenOrganization } from '../../lib/FhirDehydrator';
+
 
 
 
@@ -59,46 +57,46 @@ let styles = {
 }
 
 
-  //===========================================================================
-  // FLATTENING / MAPPING
+  // //===========================================================================
+  // // FLATTENING / MAPPING
 
-  flattenOrganization = function(organization){
-    let result = {
-      _id: '',
-      id: '',
-      meta: '',
-      name: '',
-      identifier: '',
-      phone: '',
-      addressLine: '',
-      text: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      extension: ''
-    };
+  // flattenOrganization = function(organization){
+  //   let result = {
+  //     _id: '',
+  //     id: '',
+  //     meta: '',
+  //     name: '',
+  //     identifier: '',
+  //     phone: '',
+  //     addressLine: '',
+  //     text: '',
+  //     city: '',
+  //     state: '',
+  //     postalCode: '',
+  //     extension: ''
+  //   };
 
-    result._id =  get(organization, 'id') ? get(organization, 'id') : get(organization, '_id');
-    result.id = get(organization, 'id', '');
-    result.identifier = get(organization, 'identifier[0].value', '');
+  //   result._id =  get(organization, 'id') ? get(organization, 'id') : get(organization, '_id');
+  //   result.id = get(organization, 'id', '');
+  //   result.identifier = get(organization, 'identifier[0].value', '');
 
-    result.name = get(organization, 'name', '')
+  //   result.name = get(organization, 'name', '')
 
-    result.phone = FhirUtilities.pluckPhone(get(organization, 'telecom'));
-    result.email = FhirUtilities.pluckEmail(get(organization, 'telecom'));
+  //   result.phone = FhirUtilities.pluckPhone(get(organization, 'telecom'));
+  //   result.email = FhirUtilities.pluckEmail(get(organization, 'telecom'));
 
-    result.addressLine = get(organization, 'address[0].line[0]');
-    result.state = get(organization, 'address[0].state');
-    result.postalCode = get(organization, 'address[0].postalCode');
-    result.country = get(organization, 'address[0].country');
+  //   result.addressLine = get(organization, 'address[0].line[0]');
+  //   result.state = get(organization, 'address[0].state');
+  //   result.postalCode = get(organization, 'address[0].postalCode');
+  //   result.country = get(organization, 'address[0].country');
 
-    // S.A.N.E.R. Reporting Extensions
-    if(Array.isArray(get(organization, 'extension'))){
-      result.extension = get(organization, 'extension[0].valueQuantity');
-    }
+  //   // S.A.N.E.R. Reporting Extensions
+  //   if(Array.isArray(get(organization, 'extension'))){
+  //     result.extension = get(organization, 'extension[0].valueQuantity');
+  //   }
 
-    return result;
-  }
+  //   return result;
+  // }
 
 //===========================================================================
 // SESSION VARIABLES
@@ -119,6 +117,7 @@ function OrganizationsTable(props){
 
   let { 
     children, 
+    id,
 
     data,
     organizations,
@@ -155,9 +154,87 @@ function OrganizationsTable(props){
     size,
 
     appHeight,
+    formFactorLayout,
+    count,
+    multiline,
 
     ...otherProps 
   } = props;
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideName = false;
+        hidePhone = true;
+        hideEmail = true;
+        hideAddressLine = true;
+        hideCity = true;
+        hideState = true;
+        hidePostalCode = true;
+        hideBarcode = true;
+        multiline = true;
+        break;
+      case "tablet":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideName = false;
+        hidePhone = true;
+        hideEmail = true;
+        hideAddressLine = true;
+        hideCity = false;
+        hideState = false;
+        hidePostalCode = false;
+        hideBarcode = true;
+        break;
+      case "web":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideName = false;
+        hidePhone = true;
+        hideEmail = true;
+        hideAddressLine = false;
+        hideCity = false;
+        hideState = false;
+        hidePostalCode = false;
+        hideBarcode = true;
+        break;
+      case "desktop":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = false;
+        hideName = false;
+        hidePhone = false;
+        hideEmail = true;
+        hideAddressLine = false;
+        hideCity = false;
+        hideState = false;
+        hidePostalCode = false;
+        hideBarcode = true;
+        break;
+      case "videowall":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = false;
+        hideName = false;
+        hidePhone = false;
+        hideEmail = false;
+        hideAddressLine = false;
+        hideCity = false;
+        hideState = false;
+        hidePostalCode = false;
+        hideBarcode = false;
+        break;            
+    }
+  }
 
 
 
@@ -170,8 +247,8 @@ function OrganizationsTable(props){
 
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
   }
@@ -181,7 +258,7 @@ function OrganizationsTable(props){
   }
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       rowsPerPageOptions={[5, 10, 25, 100]}
@@ -204,8 +281,8 @@ function OrganizationsTable(props){
   }
   function handleRowClick(id){
     console.log('handleRowClick')
-    if(typeof props.onRowClick === "function"){
-      props.onRowClick(id);
+    if(typeof onRowClick === "function"){
+      onRowClick(id);
     }
   }
   function handleActionButtonClick(){
@@ -216,14 +293,14 @@ function OrganizationsTable(props){
   // Column Rendering
 
   function renderCheckboxHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(patientId ){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle">
           <Checkbox
@@ -234,14 +311,14 @@ function OrganizationsTable(props){
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons'>Actions</TableCell>
       );
     }
   }
   function renderActionIcons( organization ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
 
       let iconStyle = {
         marginLeft: '4px', 
@@ -259,154 +336,162 @@ function OrganizationsTable(props){
     }
   } 
   function renderIdentifier(identifier){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className="identifier">{ identifier }</TableCell>
       );
     }
   }
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className="identifier">Identifier</TableCell>
       );
     }
   }
   function renderExtensions(extensions){
-    if (!props.hideExtensions) {
+    if (!hideExtensions) {
       return (
         <TableCell className="extensions">{ extensions }</TableCell>
       );
     }
   }
   function renderExtensionsHeader(){
-    if (!props.hideExtensions) {
+    if (!hideExtensions) {
       return (
         <TableCell className="extensions">Extensions</TableCell>
       );
     }
   }
-  function renderName(name){
-    if (!props.hideName) {
-      return (
-        <TableCell className="name">{ name }</TableCell>
-      );
+  function renderName(name, fullAaddress){
+    if (!hideName) {
+      if(multiline){
+        return (<TableCell className='multilineNameAndAddress'>
+          <span className='name' style={{fontWeight: 400}}>{name }</span> <br />
+          <span className='fullAddress' style={{color: 'gray'}}>{ fullAaddress }</span>
+        </TableCell>)
+  
+      } else {
+        return (
+          <TableCell className="name">{ name }</TableCell>
+        );  
+      }
     }
   }
   function renderNameHeader(){
-    if (!props.hideName) {
+    if (!hideName) {
       return (
         <TableCell className="name">Name</TableCell>
       );
     }
   }
   function renderPhone(phone){
-    if (!props.hidePhone) {
+    if (!hidePhone) {
       return (
         <TableCell className="phone">{ phone }</TableCell>
       );
     }
   }
   function renderPhoneHeader(){
-    if (!props.hidePhone) {
+    if (!hidePhone) {
       return (
         <TableCell className="phone">Phone</TableCell>
       );
     }
   }
   function renderEmail(email){
-    if (!props.hideEmail) {
+    if (!hideEmail) {
       return (
         <TableCell className="email hidden-on-phone">{ email }</TableCell>
       );
     }
   }
   function renderEmailHeader(){
-    if (!props.hideEmail) {
+    if (!hideEmail) {
       return (
         <TableCell className="email hidden-on-phone">Email</TableCell>
       );
     }
   }
   function renderAddressLine(addressLine){
-    if (!props.hideAddressLine) {
+    if (!hideAddressLine) {
       return (
         <TableCell className="addressLine ">{ addressLine }</TableCell>
       );
     }
   }
   function renderAddressLineHeader(){
-    if (!props.hideAddressLine) {
+    if (!hideAddressLine) {
       return (
         <TableCell className="addressLine"> Address</TableCell>
       );
     }
   }
   function renderCity(city){
-    if (!props.hideCity) {
+    if (!hideCity) {
       return (
         <TableCell className="city ">{ city }</TableCell>
       );
     }
   }
   function renderCityHeader(){
-    if (!props.hideCity) {
+    if (!hideCity) {
       return (
         <TableCell className="city">City</TableCell>
       );
     }
   }
   function renderState(state){
-    if (!props.hideState) {
+    if (!hideState) {
       return (
         <TableCell className="state">{ state }</TableCell>
       );
     }
   }
   function renderStateHeader(){
-    if (!props.hideState) {
+    if (!hideState) {
       return (
         <TableCell className="state">State</TableCell>
       );
     }
   }
   function renderPostalCode(postalCode){
-    if (!props.hidePostalCode) {
+    if (!hidePostalCode) {
       return (
         <TableCell className="postalCode hidden-on-phone">{ postalCode }</TableCell>
       );
     }
   }
   function renderPostalCodeHeader(){
-    if (!props.hidePostalCode) {
+    if (!hidePostalCode) {
       return (
         <TableCell className="postalCode hidden-on-phone">Postal Code</TableCell>
       );
     }
   }
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helveticas">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
     }
   }
   function renderActionButtonHeader(){
-    if (!props.hideActionButton) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
   function renderActionButton(patient){
-    if (!props.hideActionButton) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >
           <Button onClick={ handleActionButtonClick.bind(this, patient._id)}>{ get(props, "actionButtonLabel", "") }</Button>
@@ -422,11 +507,11 @@ function OrganizationsTable(props){
   let organizationsToRender = [];
 
   
-  if(props.organizations){
-    if(props.organizations.length > 0){     
+  if(organizations){
+    if(organizations.length > 0){     
       let count = 0;    
 
-      props.organizations.forEach(function(organization){
+      organizations.forEach(function(organization){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
           organizationsToRender.push(flattenOrganization(organization));
         }
@@ -440,7 +525,7 @@ function OrganizationsTable(props){
   }
   if(organizationsToRender.length === 0){
     logger.trace('OrganizationsTable: No organizations to render.');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < organizationsToRender.length; i++) {
       let selected = false;
@@ -457,7 +542,7 @@ function OrganizationsTable(props){
           { renderActionIcons(organizationsToRender[i]) }
           { renderIdentifier(organizationsToRender[i].identifier ) }
 
-          {renderName(organizationsToRender[i].name)}
+          {renderName(organizationsToRender[i].name, organizationsToRender[i].fullAddress)}
           {renderPhone(organizationsToRender[i].phone)}
           {renderEmail(organizationsToRender[i].email)}
           {renderAddressLine(organizationsToRender[i].addressLine)}
@@ -478,7 +563,7 @@ function OrganizationsTable(props){
   // Actual Render Method
 
   return(
-    <div>
+    <div id={id} className="tableWithPagination">
       <Table className='organizationsTable' size={tableRowSize} aria-label="a size table" { ...otherProps }>
         <TableHead>
           <TableRow>
@@ -511,6 +596,8 @@ function OrganizationsTable(props){
 
 
 OrganizationsTable.propTypes = {
+  id: PropTypes.string,
+
   data: PropTypes.array,
   organizations: PropTypes.array,
   query: PropTypes.object,
@@ -542,7 +629,11 @@ OrganizationsTable.propTypes = {
   tableRowSize: PropTypes.string,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  size: PropTypes.string
+  size: PropTypes.string,
+  count: PropTypes.number,
+  multiline: PropTypes.bool,
+
+  formFactorLayout: PropTypes.string
 };
 
 OrganizationsTable.defaultProps = {
@@ -551,6 +642,7 @@ OrganizationsTable.defaultProps = {
   hideCheckbox: true,
   hideBarcode: true,
   hideExtensions: true,
+  multiline: false,
   rowsPerPage: 5,
   tableRowSize: 'medium'
 }

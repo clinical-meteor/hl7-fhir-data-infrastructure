@@ -184,6 +184,8 @@ function MeasuresTable(props){
     showMinutes,
     displayEnteredInError,
 
+    formFactorLayout,
+
     ...otherProps 
   } = props;
 
@@ -777,7 +779,9 @@ MeasuresTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
-  tableRowSize: PropTypes.string
+  tableRowSize: PropTypes.string,
+
+  formFactorLayout: PropTypes.string
 };
 MeasuresTable.defaultProps = {
   hideCheckbox: true,

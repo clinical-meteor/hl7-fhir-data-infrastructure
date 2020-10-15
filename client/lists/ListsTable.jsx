@@ -130,6 +130,8 @@ function ListsTable(props){
     showMinutes,
     displayEnteredInError,
 
+    formFactorLayout,
+
     ...otherProps 
   } = props;
 
@@ -410,7 +412,9 @@ ListsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  actionButtonLabel: PropTypes.string
+  actionButtonLabel: PropTypes.string,
+
+  formFactorLayout: PropTypes.string
 };
 ListsTable.defaultProps = {
   hideCheckbox: true,

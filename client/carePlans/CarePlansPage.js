@@ -12,7 +12,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import CarePlanDetail from './CarePlanDetail';
+// import CarePlanDetail from './CarePlanDetail';
 import CarePlansTable from './CarePlansTable';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
@@ -59,7 +59,8 @@ export class CarePlansPage extends React.Component {
       },
       tabIndex: Session.get('carePlanPageTabIndex'),
       carePlanSearchFilter: Session.get('carePlanSearchFilter'),
-      currentCarePlan: Session.get('selectedCarePlan')
+      currentCarePlan: Session.get('selectedCarePlan'),
+      carePlans: CarePlans.find().fetch()
     };
 
     // data.style = Glass.blur(data.style);
@@ -83,22 +84,24 @@ export class CarePlansPage extends React.Component {
 
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+
 
     return (
-      <PageCanvas id='carePlansPage' headerHeight={headerHeight} >
-        <StyledCard height='auto'>
+      <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+        <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
           <CardHeader title='CarePlans' />
           <CardContent>
-            <CarePlansTable />
-
-            {/* <Tabs id="carePlansPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-              <Tab className="carePlanListTab" label='CarePlans' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-              <CarePlansTable />
-              </Tab>
-              <Tab className="carePlanDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                <CarePlanDetail id='carePlanDetails' />
-              </Tab>
-            </Tabs> */}
+            <CarePlansTable 
+              carePlans={this.data.carePlans}
+              formFactorLayout={formFactor}
+            />
           </CardContent>
         </StyledCard>
       </PageCanvas>

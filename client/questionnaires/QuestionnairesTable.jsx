@@ -17,6 +17,7 @@ import { has, get } from 'lodash';
 import moment from 'moment'
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
+import { flattenQuestionnaire } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -52,65 +53,138 @@ let styles = {
 }
 
 //===========================================================================
-// FLATTENING / MAPPING
-
-flattenQuestionnaire = function(questionnaire){
-  let result = {
-    _id: questionnaire._id,
-    id: '',
-    title: '',
-    state: '',
-    date: '',
-    items: 0
-  };
-
-  result.id = get(questionnaire, 'id', '');
-
-  result.date = moment(questionnaire.date).add(1, 'days').format("YYYY-MM-DD")
-  result.title = get(questionnaire, 'title', '');
-  result.status = get(questionnaire, 'status', '');
-  result.items = get(questionnaire, 'item', []).length;
-  
-  return result;
-}
-
-//===========================================================================
 // MAIN COMPONENT  
 
 
 function QuestionnaireTable(props){
 
+  let { 
+    children, 
+    id,
 
+    data,
+    questionnaires,
+    selectedQuestionnaireId,
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    hideCheckbox,
+    hideIdentifier,
+    hideActionIcons,
+    hideTitle,
+    hideStatus,
+    hideDate,
+    hideNumItems,
+    hideBarcode,
+  
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    hideActionButton,
+    actionButtonLabel,
+  
+    rowsPerPage,
+    tableRowSize,
+    dateFormat,
+    showMinutes,
+
+    formFactorLayout,
+    
+    ...otherProps 
+  } = props;
+
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideTitle = false;
+        hideStatus = true;
+        hideDate = true;
+        hideNumItems = true;
+        hideBarcode = true;
+        break;
+      case "tablet":
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideTitle = false;
+        hideStatus = true;
+        hideDate = false;
+        hideNumItems = true;
+        hideBarcode = true;
+        break;
+      case "web":        
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideTitle = false;
+        hideStatus = false;
+        hideDate = false;
+        hideNumItems = false;
+        hideBarcode = true;
+        break;
+      case "desktop":
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideTitle = false;
+        hideStatus = false;
+        hideDate = false;
+        hideNumItems = false;
+        hideBarcode = true;
+        break;
+      case "videowall":
+        hideCheckbox = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideTitle = false;
+        hideStatus = false;
+        hideDate = false;
+        hideNumItems = false;
+        hideBarcode = false;
+        break;            
+    }
+  }
 
   // ------------------------------------------------------------------------
   // CRUD Methods
 
   function removeRecord(_id){
     console.log('Remove questionnaire ', _id)
-    if(props.onRemoveRecord){
-      props.onRemoveRecord(_id);
+    if(onRemoveRecord){
+      onRemoveRecord(_id);
     }
   }
-  function onActionButtonClick(id){
-    if(typeof props.onActionButtonClick === "function"){
-      props.onActionButtonClick(id);
+  function handleActionButtonClick(id){
+    if(typeof onActionButtonClick === "function"){
+      onActionButtonClick(id);
     }
   }
   function cellClick(id){
-    if(typeof props.onCellClick === "function"){
-      props.onCellClick(id);
+    if(typeof onCellClick === "function"){
+      onCellClick(id);
     }
   }
 
-  function onMetaClick(patient){
+  function handleMetaClick(patient){
     let self = this;
-    if(typeof props.onMetaClick === "function"){
-      props.onMetaClick(self, patient);
+    if(typeof onMetaClick === "function"){
+      onMetaClick(self, patient);
     }
   }
   function selectQuestionnaireRow(questionnaireId){
-    if(typeof props.onRowClick === "function"){
-      props.onRowClick(questionnaireId);
+    if(typeof onRowClick === "function"){
+      onRowClick(questionnaireId);
     }
   }
 
@@ -118,32 +192,32 @@ function QuestionnaireTable(props){
   // Column Rendering
 
   function renderToggleHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
-            {/* <Checkbox
+            <Checkbox
               defaultChecked={true}
-            /> */}
+            />
         </TableCell>
       );
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
   function renderActionIcons(measureReport ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -160,14 +234,14 @@ function QuestionnaireTable(props){
     }
   } 
   function renderIdentifier(identifier){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   }
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
@@ -176,37 +250,96 @@ function QuestionnaireTable(props){
       
 
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
     }
   }
+  function renderTitle(title){
+    if (!hideTitle) {
+      return (
+        <TableCell><span className="title">{title}</span></TableCell>
+      );
+    }
+  }
+  function renderTitleHeader(){
+    if (!hideTitle) {
+      return (
+        <TableCell>Title</TableCell>
+      );
+    }
+  }
+  function renderStatus(status){
+    if (!hideStatus) {
+      return (
+        <TableCell><span className="status">{status}</span></TableCell>
+      );
+    }
+  }
+  function renderStatusHeader(){
+    if (!hideStatus) {
+      return (
+        <TableCell>Status</TableCell>
+      );
+    }
+  }
+  function renderDate(date){
+    if (!hideDate) {
+      let columnDateFormat = "YYYY-MM-DD";
+      if(dateFormat){
+        columnDateFormat = dateFormat;
+      }
+      return (
+        <TableCell>{moment(date).format("YYYY-MM-DD")}</TableCell>
+      );
+    }
+  }
+  function renderDateHeader(){
+    if (!hideDate) {
+      return (
+        <TableCell>Date</TableCell>
+      );
+    }
+  }
 
   function renderActionButtonHeader(){
-    if (!props.hideActionButton) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
   function renderActionButton(patient){
-    if (!props.hideActionButton) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >
-          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+          <Button onClick={ handleActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
         </TableCell>
       );
     }
   }
-
+  function renderNumItems(numItems){
+    if (!hideNumItems) {
+      return (
+        <TableCell><span className="numItems">{numItems}</span></TableCell>
+      );
+    }
+  }
+  function renderNumItemsHeader(){
+    if (!hideNumItems) {
+      return (
+        <TableCell># Items</TableCell>
+      );
+    }
+  }
   // ------------------------------------------------------------------------
   // Table Row Rendering
 
@@ -214,16 +347,16 @@ function QuestionnaireTable(props){
   let questionnairesToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.internalDateFormat){
-    internalDateFormat = props.dateFormat;
+  if(internalDateFormat){
+    internalDateFormat = dateFormat;
   }
 
-  if(props.questionnaires){
-    if(props.questionnaires.length > 0){              
-      props.questionnaires.forEach(function(questionnaire){
+  if(questionnaires){
+    if(questionnaires.length > 0){              
+      questionnaires.forEach(function(questionnaire){
         questionnairesToRender.push(flattenQuestionnaire(questionnaire, internalDateFormat));
       });  
     }
@@ -236,7 +369,7 @@ function QuestionnaireTable(props){
     for (var i = 0; i < questionnairesToRender.length; i++) {
 
       let selected = false;
-      if(questionnairesToRender[i].id === props.selectedQuestionnaireId){
+      if(questionnairesToRender[i].id === selectedQuestionnaireId){
         selected = true;
       }
 
@@ -244,65 +377,92 @@ function QuestionnaireTable(props){
         <TableRow key={i} selected={selected} className="questionnaireRow" style={{cursor: "pointer"}} onClick={ selectQuestionnaireRow.bind(this, questionnairesToRender[i].id )} hover={true} >
           { renderToggle(questionnairesToRender[i]) }
           { renderActionIcons(questionnairesToRender[i]) }
-          { renderIdentifier(questionnairesToRender[i]) }
-          <TableCell className='title' >{questionnairesToRender[i].title }</TableCell>
-          <TableCell className='status' >{questionnairesToRender[i].status }</TableCell>
-          <TableCell className='date' style={{minWidth: '140px'}}>{questionnairesToRender[i].date }</TableCell>
-          <TableCell className='items' >{questionnairesToRender[i].items }</TableCell>
+          { renderIdentifier(questionnairesToRender[i].identifier) }
+
+          { renderTitle(questionnairesToRender[i].title) } 
+          { renderStatus(questionnairesToRender[i].status) }
+          { renderDate(questionnairesToRender[i].date) }
+          { renderNumItems(questionnairesToRender[i].numItems) }
+
           { renderBarcode(questionnairesToRender[i].id) }
         </TableRow>
       );
     }
   }
-    
 
+  return(
+    <div id={id} className="tableWithPagination">
+      <Table id='questionnairesTable' >
+        <TableHead>
+          <TableRow>
+          { renderToggleHeader() }
+          { renderActionIconsHeader() }
+          { renderIdentifierHeader() }
 
-    return(
-      <div>
-        <Table id='questionnairesTable' >
-          <TableHead>
-            <TableRow>
-            { renderToggleHeader() }
-            { renderActionIconsHeader() }
-            { renderIdentifierHeader() }
-              <TableCell className='title'>Title</TableCell>
-              <TableCell className='status'>Status</TableCell>
-              <TableCell className='date' style={{minWidth: '140px'}}>Date</TableCell>
-              <TableCell className='items'>Items</TableCell>
-            { renderBarcodeHeader() }
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            { tableRows }
-          </TableBody>
-        </Table>
-      </div>
-    );
+          { renderTitleHeader() }
+          { renderStatusHeader() }
+          { renderDateHeader() }
+          { renderNumItemsHeader() }
+
+          { renderBarcodeHeader() }
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          { tableRows }
+        </TableBody>
+      </Table>
+    </div>
+  );
 }
 
 
 
 
 QuestionnaireTable.propTypes = {
+  id: PropTypes.string,
+
   data: PropTypes.array,
   questionnaires: PropTypes.array,
   selectedQuestionnaireId: PropTypes.string,
+
   fhirVersion: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
+
   hideIdentifier: PropTypes.bool,
   hideCheckbox: PropTypes.bool,
-  hideBarcodes: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
+  hideTitle: PropTypes.bool,
+  hideStatus: PropTypes.bool,
+  hideDate: PropTypes.bool,
+  hideNumItems: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   onCheck: PropTypes.func,
-  actionButtonLabel: PropTypes.string,
 
-  hideActionButton: PropTypes.bool
+  actionButtonLabel: PropTypes.string,
+  hideActionButton: PropTypes.bool,
+
+  formFactorLayout: PropTypes.string
+};
+QuestionnaireTable.defaultProps = {
+  questionnaires: [],
+  tableRowSize: 'medium',
+  rowsPerPage: 5,
+  dateFormat: "YYYY-MM-DD hh:mm:ss",
+  hideCheckbox: true,
+  hideIdentifier: false,
+  hideBarcode: true,
+  hideActionIcons: true,
+  hideTitle: false,
+  hideStatus: false,
+  hideDate: false,
+  hideNumItems: false
 };
 
 export default QuestionnaireTable;

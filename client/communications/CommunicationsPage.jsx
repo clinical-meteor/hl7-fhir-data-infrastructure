@@ -80,6 +80,7 @@ export class CommunicationsPage extends React.Component {
   render() {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
     return (
       <div id="communicationsPage">

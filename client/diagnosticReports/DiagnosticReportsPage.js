@@ -180,6 +180,7 @@ export class DiagnosticReportsPage extends React.Component {
     if(process.env.NODE_ENV === "test") console.log('In DiagnosticReportsPage render');
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
     return (
       <PageCanvas id="measuresPage" headerHeight={headerHeight}>

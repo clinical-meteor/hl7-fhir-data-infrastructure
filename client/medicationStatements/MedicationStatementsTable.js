@@ -704,7 +704,8 @@ MedicationStatementsTable.propTypes = {
   displayEnteredInError: PropTypes.bool,
   count: PropTypes.number,
 
-  medicationsCursor: PropTypes.object
+  medicationsCursor: PropTypes.object,
+  formFactorLayout: PropTypes.string
 };
 
 MedicationStatementsTable.defaultProps = {

@@ -46,11 +46,11 @@ const useStyles = makeStyles(theme => ({
 let styles = {
   hideOnPhone: {
     visibility: 'visible',
-    display: 'table'
+    hide: 'table'
   },
   cellHideOnPhone: {
     visibility: 'visible',
-    display: 'table',
+    hide: 'table',
     paddingTop: '16px',
     maxWidth: '120px'
   },
@@ -59,97 +59,6 @@ let styles = {
   }
 }
 
-
-//===========================================================================
-// FLATTENING / MAPPING
-
-// flattenCondition = function(condition, internalDateFormat){
-//   let result = {
-//     _id: '',
-//     id: '',
-//     meta: '',
-//     identifier: '',
-//     clinicalStatus: '',
-//     patientDisplay: '',
-//     patientReference: '',
-//     asserterDisplay: '',
-//     verificationStatus: '',
-//     severity: '',
-//     snomedCode: '',
-//     snomedDisplay: '',
-//     evidenceDisplay: '',
-//     barcode: '',
-//     onsetDateTime: '',
-//     abatementDateTime: ''
-//   };
-
-//   if(!internalDateFormat){
-//     internalDateFormat = "YYYY-MM-DD";
-//   }
-
-//   result._id =  get(condition, 'id') ? get(condition, 'id') : get(condition, '_id');
-//   result.id = get(condition, 'id', '');
-//   result.identifier = get(condition, 'identifier[0].value', '');
-
-//   if(get(condition, 'patient')){
-//     result.patientDisplay = get(condition, 'patient.display', '');
-//     result.patientReference = get(condition, 'patient.reference', '');
-//   } else if (get(condition, 'subject')){
-//     result.patientDisplay = get(condition, 'subject.display', '');
-//     result.patientReference = get(condition, 'subject.reference', '');
-//   }
-//   result.asserterDisplay = get(condition, 'asserter.display', '');
-
-
-//   if(get(condition, 'clinicalStatus.coding[0].code')){
-//     result.clinicalStatus = get(condition, 'clinicalStatus.coding[0].code', '');  //R4
-//   } else {
-//     result.clinicalStatus = get(condition, 'clinicalStatus', '');                 // DSTU2
-//   }
-
-//   if(get(condition, 'verificationStatus.coding[0].code')){
-//     result.verificationStatus = get(condition, 'verificationStatus.coding[0].code', '');  // R4
-//   } else {
-//     result.verificationStatus = get(condition, 'verificationStatus', '');                 // DSTU2
-//   }
-
-//   result.snomedCode = get(condition, 'code.coding[0].code', '');
-//   result.snomedDisplay = get(condition, 'code.coding[0].display', '');
-
-//   result.evidenceDisplay = get(condition, 'evidence[0].detail[0].display', '');
-//   result.barcode = get(condition, '_id', '');
-//   result.severity = get(condition, 'severity.text', '');
-
-//   result.onsetDateTime = moment(get(condition, 'onsetDateTime', '')).format("YYYY-MM-DD");
-//   result.abatementDateTime = moment(get(condition, 'abatementDateTime', '')).format("YYYY-MM-DD");
-
-//   // let momentStart = moment(get(encounter, 'period.start', ''))
-//   // if(get(encounter, 'period.start')){
-//   //   momentStart = moment(get(encounter, 'period.start', ''))
-//   // } else if(get(encounter, 'performedPeriod.start')){
-//   //   momentStart = moment(get(encounter, 'performedPeriod.start', ''))
-//   // }
-//   // if(momentStart){
-//   //   result.periodStart = momentStart.format(internalDateFormat);
-//   // } 
-
-
-//   // let momentEnd;
-//   // if(get(encounter, 'period.end')){
-//   //   momentEnd = moment(get(encounter, 'period.end', ''))
-//   // } else if(get(encounter, 'performedPeriod.end')){
-//   //   momentEnd = moment(get(encounter, 'performedPeriod.end', ''))
-//   // }
-//   // if(momentEnd){
-//   //   result.periodEnd = momentEnd.format(internalDateFormat);
-//   // } 
-
-//   // if(momentStart && momentEnd){
-//   //   result.duration = Math.abs(momentStart.diff(momentEnd, 'minutes', true))
-//   // }
-
-//   return result;
-// }
 
 
 //===========================================================================
@@ -163,29 +72,32 @@ function ConditionsTable(props){
   const classes = useStyles();
 
   let { 
+    id,
     children, 
 
     data,
     conditions,
+    selectedConditionId,
+
     query,
     paginationLimit,
     disablePagination,
   
-    displayCheckboxes,
-    displayActionIcons,
-    displayIdentifier,
-    displayPatientName,
-    displayPatientReference,
-    displayAsserterName,
-    displayClinicalStatus,
-    displaySnomedCode,
-    displaySnomedDisplay,
-    displayVerification,
-    displaySeverity,
-    displayEvidence,
-    displayDates,
-    displayEndDate,
-    displayBarcode,
+    hideCheckbox,
+    hideActionIcons,
+    hideIdentifier,
+    hidePatientName,
+    hidePatientReference,
+    hideAsserterName,
+    hideClinicalStatus,
+    hideSnomedCode,
+    hideSnomedDisplay,
+    hideVerification,
+    hideSeverity,
+    hideEvidence,
+    hideDates,
+    hideEndDate,
+    hideBarcode,
   
     onCellClick,
     onRowClick,
@@ -200,10 +112,90 @@ function ConditionsTable(props){
     tableRowSize,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
+    hideEnteredInError,
+    formFactorLayout,
 
     ...otherProps 
   } = props;
+
+
+    // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hidePatientName = true;
+        hidePatientReference = true;
+        hideClinicalStatus = true;
+        hideSnomedCode = true;
+        hideSnomedDisplay = false;
+        hideVerification = false;
+        hideSeverity = true;
+        hideEvidence = true;
+        hideDates = true;
+        hideEndDate = true;
+        hideBarcode = true;  
+        multiline = true;
+        break;
+      case "tablet":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hidePatientName = true;
+        hidePatientReference = true;
+        hideClinicalStatus = true;
+        hideSnomedCode = false;
+        hideSnomedDisplay = true;
+        hideVerification = false;
+        hideSeverity = true;
+        hideEvidence = false;
+        hideDates = true;
+        hideEndDate = false;
+        hideBarcode = false;   
+        multiline = false;
+        break;
+      case "web":
+        hideClinicalStatus = true;
+        hideSnomedCode = true;
+        hideSnomedDisplay = true;
+        hideVerification = true;
+        hideSeverity = true;
+        hideEvidence = false;
+        hideDates = true;
+        hideEndDate = false;
+        hideBarcode = false;
+        multiline = false;
+        break;
+      case "desktop":
+        hideClinicalStatus = true;
+        hideSnomedCode = true;
+        hideSnomedDisplay = true;
+        hideVerification = true;
+        hideSeverity = true;
+        hideEvidence = false;
+        hideDates = true;
+        hideEndDate = true;
+        hideBarcode = false;
+        multiline = false;
+        break;
+      case "hdmi":
+        hideClinicalStatus = true;
+        hideSnomedCode = true;
+        hideSnomedDisplay = true;
+        hideVerification = true;
+        hideSeverity = true;
+        hideEvidence = true;
+        hideDates = true;
+        hideEndDate = true;
+        hideBarcode = true;
+        multiline = false;
+        break;            
+    }
+  }
+
 
   //---------------------------------------------------------------------
   // Pagination
@@ -228,7 +220,7 @@ function ConditionsTable(props){
     evidence: false,
     dates: false,
     endDate: false,
-    displayBarcode: false
+    hideBarcode: false
   });
 
 
@@ -244,7 +236,7 @@ function ConditionsTable(props){
   };
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       rowsPerPageOptions={[5, 10, 25, 100]}
@@ -351,14 +343,14 @@ function ConditionsTable(props){
   // Column Rendering
 
   function renderCheckboxHeader(){
-    if (props.displayCheckboxes) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(patientId ){
-    if (props.displayCheckboxes) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle">
           <Checkbox
@@ -369,56 +361,56 @@ function ConditionsTable(props){
     }
   }
   function renderDateHeader(){
-    if (props.displayDates || (props.autoColumns && autoColumnState.dates)) {
+    if (!hideDates || (props.autoColumns && autoColumnState.dates)) {
       return (
         <TableCell className='date' style={{minWidth: '100px'}}>Start</TableCell>
       );
     }
   }
   function renderEndDateHeader(){
-    if ((props.displayDates && props.displayEndDate) || (props.autoColumns && autoColumnState.endDate)) {
+    if ((!hideDates && !hideEndDate) || (props.autoColumns && autoColumnState.endDate)) {
       return (
         <TableCell className='date' style={{minWidth: '100px'}}>End</TableCell>
       );
     }
   }
   function renderStartDate(startDate ){
-    if (props.displayDates || (props.autoColumns && autoColumnState.dates)) {
+    if (!hideDates || (props.autoColumns && autoColumnState.dates)) {
       return (
         <TableCell className='date'>{ moment(startDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
   function renderEndDate(endDate ){
-    if ((props.displayDates && props.displayEndDate) || (props.autoColumns && autoColumnState.endDate)) {
+    if ((!hideDates && !hideEndDate) || (props.autoColumns && autoColumnState.endDate)) {
       return (
         <TableCell className='date'>{ moment(endDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
   function renderPatientNameHeader(){
-    if (props.displayPatientName || (props.autoColumns && autoColumnState.patientName)) {
+    if (!hidePatientName || (props.autoColumns && autoColumnState.patientName)) {
       return (
         <TableCell className='patientDisplay'>Patient</TableCell>
       );
     }
   }
   function renderPatientName(patientDisplay ){
-    if (props.displayPatientName || (props.autoColumns && autoColumnState.patientName)) {
+    if (!hidePatientName || (props.autoColumns && autoColumnState.patientName)) {
       return (
         <TableCell className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</TableCell>
       );
     }
   }
   function renderPatientReferenceHeader(){
-    if (props.displayPatientReference) {
+    if (!hidePatientReference) {
       return (
         <TableCell className='patientReference'>Patient Reference</TableCell>
       );
     }
   }
   function renderPatientReference(patientReference ){
-    if (props.displayPatientReference) {
+    if (!hidePatientReference) {
       return (
         <TableCell className='patientReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
           { FhirUtilities.pluckReferenceId(patientReference) }
@@ -427,126 +419,133 @@ function ConditionsTable(props){
     }
   }
   function renderAsserterNameHeader(){
-    if (props.displayAsserterName || (props.autoColumns && autoColumnState.asserterName)) {
+    if (!hideAsserterName || (props.autoColumns && autoColumnState.asserterName)) {
       return (
         <TableCell className='asserterDisplay'>Asserter</TableCell>
       );
     }
   }
   function renderAsserterName(asserterDisplay ){
-    if (props.displayAsserterName || (props.autoColumns && autoColumnState.asserterName)) {
+    if (!hideAsserterName || (props.autoColumns && autoColumnState.asserterName)) {
       return (
         <TableCell className='asserterDisplay' style={{minWidth: '140px'}}>{ asserterDisplay }</TableCell>
       );
     }
   }  
   function renderSeverityHeader(){
-    if (props.displaySeverity) {
+    if (!hideSeverity) {
       return (
         <TableCell className='renderSeverity'>Severity</TableCell>
       );
     }
   }
   function renderSeverity(severity ){
-    if (props.displaySeverity) {
+    if (!hideSeverity) {
       return (
         <TableCell className='severity'>{ severity }</TableCell>
       );
     }
   } 
   function renderEvidenceHeader(){
-    if (props.displayEvidence || (props.autoColumns && autoColumnState.evidence)) {
+    if (!hideEvidence || (props.autoColumns && autoColumnState.evidence)) {
       return (
         <TableCell className='evidence'>Evidence</TableCell>
       );
     }
   }
   function renderEvidence(evidenceDisplay ){
-    if (props.displayEvidence || (props.autoColumns && autoColumnState.evidence)) {
+    if (!hideEvidence || (props.autoColumns && autoColumnState.evidence)) {
       return (
         <TableCell className='evidence'>{ evidenceDisplay }</TableCell>
       );
     }
   } 
   function renderIdentifierHeader(){
-    if (props.displayIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
   function renderIdentifier(identifier ){
-    if (props.displayIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   } 
   function renderClinicalStatus(clinicalStatus){
-    if (props.displayClinicalStatus) {
+    if (!hideClinicalStatus) {
       return (
         <TableCell className='clinicalStatus'>{ clinicalStatus }</TableCell>
       );
     }
   }
   function renderClinicalStatusHeader(){
-    if (props.displayClinicalStatus) {
+    if (!hideClinicalStatus) {
       return (
         <TableCell className='clinicalStatus'>Clinical Status</TableCell>
       );
     }
   }
   function renderSnomedCode(snomedCode){
-    if (props.displaySnomedCode) {
+    if (!hideSnomedCode) {
       return (
         <TableCell className='snomedCode'>{ snomedCode }</TableCell>
       );
     }
   }
   function renderSnomedCodeHeader(){
-    if (props.displaySnomedCode) {
+    if (!hideSnomedCode) {
       return (
         <TableCell className='snomedCode'>SNOMED Code</TableCell>
       );
     }
   }
-  function renderSnomedDisplay(snomedDisplay){
-    if (props.displaySnomedDisplay) {
-      return (
-        <TableCell className='snomedDisplay' style={{whiteSpace: 'nowrap'}} >{ snomedDisplay }</TableCell>
-      );
+  function renderSnomedDisplay(snomedDisplay, snomedCode){
+    if (!hideSnomedDisplay) {
+      if(multiline){
+        return (<TableCell className='snomedDisplay'>
+          <span style={{fontWeight: 400}}>{snomedDisplay }</span> <br />
+          <span style={{color: 'gray'}}>{ snomedCode }</span>
+        </TableCell>)
+      } else {
+        return (
+          <TableCell className='snomedDisplay' style={{whiteSpace: 'nowrap'}} >{ snomedDisplay }</TableCell>
+        );  
+      }
     }
   }
   function renderSnomedDisplayHeader(){
-    if (props.displaySnomedDisplay) {
+    if (!hideSnomedDisplay) {
       return (
         <TableCell className='snomedDisplay'>SNOMED Display</TableCell>
       );
     }
   }
   function renderVerification(verificationStatus){
-    if (props.displayVerification) {
+    if (!hideVerification) {
       return (
         <TableCell className='verificationStatus' >{ verificationStatus }</TableCell>
       );
     }
   }
   function renderVerificationHeader(){
-    if (props.displayVerification) {
+    if (!hideVerification) {
       return (
         <TableCell className='verificationStatus' >Verification</TableCell>
       );
     }
   }
   function renderActionIconsHeader(){
-    if (props.displayActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons'>Actions</TableCell>
       );
     }
   }
   function renderActionIcons( condition ){
-    if (props.displayActionIcons) {
+    if (!hideActionIcons) {
 
       let iconStyle = {
         marginLeft: '4px', 
@@ -565,14 +564,14 @@ function ConditionsTable(props){
   } 
 
   function renderBarcode(id){
-    if (props.displayBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helveticas">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (props.displayBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
@@ -620,7 +619,7 @@ function ConditionsTable(props){
     if(props.conditions.length > 0){     
       let count = 0;    
 
-      // if(props.displayEnteredInError){
+      // if(!hideEnteredInError){
       //   query.verificationStatus = {
       //     $nin: ["entered-in-error"]  // unconfirmed | provisional | differential | confirmed | refuted | entered-in-error
       //   }
@@ -642,8 +641,15 @@ function ConditionsTable(props){
     logger.trace('ConditionsTable: No conditions to render.');
   } else {
     for (var i = 0; i < conditionsToRender.length; i++) {
+      let selected = false;
+      if(conditionsToRender[i].id === selectedConditionId){
+        selected = true;
+      }
       if(get(conditionsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
       }
       logger.trace('conditionsToRender[i]', conditionsToRender[i])
       tableRows.push(
@@ -656,7 +662,7 @@ function ConditionsTable(props){
           { renderAsserterName(conditionsToRender[i].asserterDisplay ) } 
           { renderClinicalStatus(conditionsToRender[i].clinicalStatus)}
           { renderSnomedCode(conditionsToRender[i].snomedCode)}
-          { renderSnomedDisplay(conditionsToRender[i].snomedDisplay)}
+          { renderSnomedDisplay(conditionsToRender[i].snomedDisplay, conditionsToRender[i].snomedCode)}
           { renderVerification(conditionsToRender[i].verificationStatus ) } 
           { renderSeverity(conditionsToRender[i].severity) }
           { renderEvidence(conditionsToRender[i].evidenceDisplay) }
@@ -674,6 +680,7 @@ function ConditionsTable(props){
   //---------------------------------------------------------------------
   // Actual Render Method
 
+  
   return(
     <div>
       <Table className='conditionsTable' size={tableRowSize} aria-label="a dense table" { ...otherProps }>
@@ -710,25 +717,26 @@ function ConditionsTable(props){
 ConditionsTable.propTypes = {
   data: PropTypes.array,
   conditions: PropTypes.array,
+  selectedConditionId: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
-  displayCheckboxes: PropTypes.bool,
-  displayActionIcons: PropTypes.bool,
-  displayIdentifier: PropTypes.bool,
-  displayPatientName: PropTypes.bool,
-  displayPatientReference: PropTypes.bool,
-  displayAsserterName: PropTypes.bool,
-  displayClinicalStatus: PropTypes.bool,
-  displaySnomedCode: PropTypes.bool,
-  displaySnomedDisplay: PropTypes.bool,
-  displayVerification: PropTypes.bool,
-  displaySeverity: PropTypes.bool,
-  displayEvidence: PropTypes.bool,
-  displayDates: PropTypes.bool,
-  displayEndDate: PropTypes.bool,
-  displayBarcode: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
+  hideActionIcons: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+  hidePatientName: PropTypes.bool,
+  hidePatientReference: PropTypes.bool,
+  hideAsserterName: PropTypes.bool,
+  hideClinicalStatus: PropTypes.bool,
+  hideSnomedCode: PropTypes.bool,
+  hideSnomedDisplay: PropTypes.bool,
+  hideVerification: PropTypes.bool,
+  hideSeverity: PropTypes.bool,
+  hideEvidence: PropTypes.bool,
+  hideDates: PropTypes.bool,
+  hideEndDate: PropTypes.bool,
+  hideBarcode: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -741,29 +749,31 @@ ConditionsTable.propTypes = {
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  displayEnteredInError: PropTypes.bool,
+  hideEnteredInError: PropTypes.bool,
   count: PropTypes.number,
-  tableRowSize: PropTypes.string
+  tableRowSize: PropTypes.string,
+  formFactorLayout: PropTypes.string
 };
 
 ConditionsTable.defaultProps = {
-  displayCheckboxes: false,
-  displayActionIcons: false,
-  displayIdentifier: false,
-  displayPatientName: false,
-  displayPatientReference: true,
-  displayAsserterName: false,
-  displayClinicalStatus: true,
-  displaySnomedCode: true,
-  displaySnomedDisplay: true,
-  displayVerification: true,
-  displaySeverity: true,
-  displayEvidence: false,
-  displayDates: true,
-  displayEndDate: true,
-  displayBarcode: false,
+  hideCheckbox: true,
+  hideActionIcons: true,
+  hideIdentifier: true,
+  hidePatientName: true,
+  hidePatientReference: true,
+  hideAsserterName: true,
+  hideClinicalStatus: true,
+  hideSnomedCode: true,
+  hideSnomedDisplay: true,
+  hideVerification: true,
+  hideSeverity: true,
+  hideEvidence: false,
+  hideDates: true,
+  hideEndDate: true,
+  hideBarcode: false,
   disablePagination: false,
-  autoColumns: true,
+
+  autoColumns: false,
   rowsPerPage: 5,
   tableRowSize: "normal"  // small | normal
 }

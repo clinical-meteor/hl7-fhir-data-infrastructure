@@ -200,6 +200,7 @@ function EncountersTable(props){
     rowsPerPage,
     dateFormat,
     showMinutes,
+    formFactorLayout,
 
     ...otherProps 
   } = props;
@@ -677,7 +678,9 @@ EncountersTable.propTypes = {
   rowsPerPage: PropTypes.number,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
-  count: PropTypes.number
+  count: PropTypes.number,
+
+  formFactorLayout: PropTypes.string
 };
 
 EncountersTable.defaultProps = {

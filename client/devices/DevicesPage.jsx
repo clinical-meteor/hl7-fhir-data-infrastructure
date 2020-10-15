@@ -174,22 +174,25 @@ export class DevicesPage extends React.Component {
     if(process.env.NODE_ENV === "test") console.log('In DevicesPage render');
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
     
     return (
-      <PageCanvas id="devicesPage" headerHeight={headerHeight} >
+      <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title='Devices' />
             <CardContent>
               <DevicesTable 
                 devices={this.data.devices}
                 count={this.data.devicesCount}
+                formFactorLayout={formFactor}
               />
-              {/* <DeviceDetail 
-              id='deviceDetails' 
-              fhirVersion={ this.data.fhirVersion }
-              device={ this.data.selectedDevice }
-              deviceId={ this.data.currentDeviceId } />   */}
             </CardContent>
         </StyledCard>
         </MuiThemeProvider>

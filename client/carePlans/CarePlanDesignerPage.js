@@ -13,7 +13,7 @@ import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
 
 import { ActivitiesTable, GoalsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 import { MedicationsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
-import { PatientTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { PatientsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 if(Package["clinical:hl7-fhir-data-infrastructure"]){
   import { QuestionnaireTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
@@ -186,13 +186,13 @@ export class CarePlanDesignerPage extends React.Component {
               onChange={this.changeInput.bind(this, 'description')}
               value={this.data.patientDialog.patient.display}
               fullWidth />
-              <PatientTable 
+              <PatientsTable 
                 hideToggle={true}
                 hideActions={true}
                 hideMaritalStatus={true}
                 hideLanguage={true}
                 onRowClick={function(patientId){
-                  console.log('CarePlanDesigner.PatientTable.onRowClick()')
+                  console.log('CarePlanDesigner.PatientsTable.onRowClick()')
                   Session.set('selectedPatientId', patientId);
                   Session.set('selectedPatient', Patients.findOne({id: patientId}));
                   Session.set('patientDialogOpen', false);

@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
-import { DynamicSpacer } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { DynamicSpacer, Questionnaires, QuestionnaireResponses } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 import QuestionnaireResponseDetail from './QuestionnaireResponseDetail';
 import QuestionnaireResponsesTable from './QuestionnaireResponsesTable';
@@ -18,6 +18,8 @@ import ReactMixin from 'react-mixin';
 import { Session } from 'meteor/session';
 
 import { get } from 'lodash';
+
+import SurveyResponseSummary from './SurveyResponseSummary';
 
 
 //===============================================================================================================
@@ -116,7 +118,6 @@ export class QuestionnaireResponsesPage extends React.Component {
       questionnaireResponseId: Session.get('selectedQuestionnaireResponseId'),
       questionnaireResponseSearchFilter: '',
       currentQuestionnaireResponse: null,
-      onePageLayout: true,
       responses: QuestionnaireResponses.find().fetch(),
       responsesCount: QuestionnaireResponses.find().count(),
       onePageLayout: Session.get('QuestionnaireResponsesPage.onePageLayout')
@@ -175,20 +176,22 @@ export class QuestionnaireResponsesPage extends React.Component {
 
   render() {
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
 
     let layoutContents;
     if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto" margin={20} >
+      layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
         <CardHeader title={this.data.responsesCount + " Questionnaire Responses"} />
         <CardContent>
-
           <QuestionnaireResponsesTable 
             questionnaireResponses={this.data.responses}
             count={this.data.responsesCount}
-            hideActionIcons={true}
-            hideCheckbox={true}
-            hideBarcodes={false} 
-            hideIdentifier={false}
             onCellClick={function(responseId){
               console.log('responseId', responseId)
               Session.set('selectedQuestionnaireResponse', responseId)
@@ -198,40 +201,58 @@ export class QuestionnaireResponsesPage extends React.Component {
               console.log('onRemoveRecord()')
               QuestionnaireResponses.remove({_id: responseId});                      
             }}
+            onRowClick={function(responseId){
+              console.log('onRowClick()', responseId)
+              Session.set('selectedQuestionnaireResponseId', responseId);                  
+              Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne(responseId));                  
+            }}
+            formFactorLayout={formFactor}
             />
         </CardContent>
       </StyledCard>
     } else {
       layoutContents = <Grid container spacing={3}>
         <Grid item lg={6}>
-          <StyledCard height="auto" margin={20} >
+          <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
             <CardHeader title={this.data.responsesCount + " Responses"} />
             <CardContent>
               <QuestionnaireResponsesTable 
                 questionnaireResponses={this.data.responses}
                 count={this.data.responsesCount}
-                hideActionIcons={true}
-                hideCheckbox={true}
-                hideBarcodes={false} 
-                hideIdentifier={false}
                 onCellClick={function(responseId){
                   console.log('responseId', responseId)
                   Session.set('selectedQuestionnaireResponse', responseId)
+                  Session.set('selectedQuestionnaireResponseId', responseId)
                   Session.set('questionnaireResponsePageTabIndex', 2)
                 }}
                 onRemoveRecord={function(responseId){
                   console.log('onRemoveRecord()')
                   QuestionnaireResponses.remove({_id: responseId});                      
                 }}
+                onRowClick={function(responseId){
+                  console.log('onRowClick()', responseId)
+                  Session.set('selectedQuestionnaireResponseId', responseId);                  
+                  Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne(responseId));                  
+                }}
+                formFactorLayout={formFactor}
               />
             </CardContent>
           </StyledCard>
         </Grid>
         <Grid item lg={4}>
-          <StyledCard height="auto" margin={20} scrollable>
-            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedListId }</h1>
+          <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
+            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.questionnaireResponseId }</h1>
             <CardContent>
               <CardContent>
+                {/* <code>
+                  {JSON.stringify(this.data.questionnaireResponse)}
+                </code> */}
+
+                <SurveyResponseSummary 
+                  id='surveyResponseSummary' 
+                  selectedResponse={this.data.questionnaireResponse} 
+                  selectedResponseId={this.data.questionnaireResponse.id}
+                  />
 
               </CardContent>
             </CardContent>
@@ -241,7 +262,7 @@ export class QuestionnaireResponsesPage extends React.Component {
     }
     
     return (
-      <PageCanvas id="questionnaireResponsesPage" headerHeight={headerHeight}>
+      <PageCanvas id="questionnaireResponsesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
          <MuiThemeProvider theme={muiTheme} >
           { layoutContents }
         </MuiThemeProvider>

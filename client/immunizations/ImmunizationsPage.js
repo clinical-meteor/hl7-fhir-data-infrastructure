@@ -97,17 +97,24 @@ export class ImmunizationsPage extends React.Component {
     if(process.env.NODE_ENV === "test") console.log('ImmunizationsPage.render()', this.data);
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
-    
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+
     return (
-      <PageCanvas id='immunizationsPage' headerHeight={headerHeight} >
-        <StyledCard height="auto" scrollable={true} margin={20} >
+      <PageCanvas id='immunizationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title='Immunizations' />
             <CardContent>
               <Grid container>
                 <Grid item md={12}>
                   <ImmunizationsTable 
                     immunizations={this.data.immunizations }    
-                    displayDates={true}
+                    formFactorLayout={formFactor}
                   />
                 </Grid>
               </Grid>

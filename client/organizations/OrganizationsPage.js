@@ -170,14 +170,22 @@ export class OrganizationsPage extends React.Component {
   render() {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+    
     let layoutContents;
     if(this.data.onePageLayout){
       layoutContents = <Grid container>
-        <StyledCard height="auto" margin={20} >
+        <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
         <CardHeader title={this.data.organizationsCount + " Organizations"} />
         <CardContent>
-          <OrganizationsTable          
+          <OrganizationsTable        
+            formFactorLayout={formFactor}  
             organizations={this.data.organizations}
             count={this.data.organizationsCount}
             selectedOrganizationId={ this.data.selectedOrganizationId }
@@ -194,7 +202,7 @@ export class OrganizationsPage extends React.Component {
     } else {
       layoutContents = <Grid container spacing={3}>
         <Grid item lg={6}>
-          <StyledCard height="auto" margin={20} >
+          <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
             <CardHeader title={this.data.organizationsCount + " Organizations"} />
             <CardContent>
               <OrganizationsTable
@@ -214,7 +222,7 @@ export class OrganizationsPage extends React.Component {
           </StyledCard>
         </Grid>
         <Grid item lg={4}>
-          <StyledCard height="auto" margin={20} scrollable>
+          <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
             <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedOrganizationId }</h1>
             <CardContent>
               <CardContent>
@@ -230,7 +238,7 @@ export class OrganizationsPage extends React.Component {
     }
     
     return (
-      <PageCanvas id="organizationsPage" headerHeight={headerHeight} >
+      <PageCanvas id="organizationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           { layoutContents }
         </MuiThemeProvider>

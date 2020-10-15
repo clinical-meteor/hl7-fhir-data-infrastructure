@@ -436,7 +436,9 @@ MessageHeadersTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  actionButtonLabel: PropTypes.string
+  actionButtonLabel: PropTypes.string,
+
+  formFactorLayout: PropTypes.string
 };
 MessageHeadersTable.defaultProps = {
   hideCheckbox: true,

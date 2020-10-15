@@ -333,6 +333,7 @@ export class EncountersPage extends React.Component {
     const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
 
     let encountersCount = this.data.encounters.length;
 

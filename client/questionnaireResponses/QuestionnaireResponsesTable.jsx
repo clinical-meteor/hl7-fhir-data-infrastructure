@@ -18,6 +18,7 @@ import { get } from 'lodash';
 import moment from 'moment'
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
+import { flattenQuestionnaireResponse } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -52,48 +53,48 @@ let styles = {
   }
 }
 
-//===========================================================================
-// FLATTENING / MAPPING
+// //===========================================================================
+// // FLATTENING / MAPPING
 
-flattenQuestionnaireResponse = function(questionnaireResponse){
-  let result = {
-    _id: questionnaireResponse._id,
-    id: '',
-    title: '',
-    identifier: '',
-    questionnaire: '',
-    status: '',
-    subjectDisplay: '',
-    subjectReference: '',
-    sourceDisplay: '',
-    sourceReference: '',
-    encounter: '',
-    author: '',
-    date: '',
-    count: 0
-  };
+// flattenQuestionnaireResponse = function(questionnaireResponse){
+//   let result = {
+//     _id: questionnaireResponse._id,
+//     id: '',
+//     title: '',
+//     identifier: '',
+//     questionnaire: '',
+//     status: '',
+//     subjectDisplay: '',
+//     subjectReference: '',
+//     sourceDisplay: '',
+//     sourceReference: '',
+//     encounter: '',
+//     author: '',
+//     date: '',
+//     count: 0
+//   };
 
 
-  // there's an off-by-1 error between momment() and Date() that we want
-  // to account for when converting back to a string
-  result.date = moment(questionnaireResponse.authored).add(1, 'days').format("YYYY-MM-DD HH:mm")
-  result.questionnaire = get(questionnaireResponse, 'questionnaire', '');
-  result.encounter = get(questionnaireResponse, 'encounter.reference', '');
-  result.subjectDisplay = get(questionnaireResponse, 'subject.display', '');
-  result.subjectReference = get(questionnaireResponse, 'subject.reference', '');
-  result.sourceDisplay = get(questionnaireResponse, 'source.display', '');
-  result.sourceReference = get(questionnaireResponse, 'source.reference', '');
-  result.author = get(questionnaireResponse, 'author.display', '');
-  result.identifier = get(questionnaireResponse, 'identifier.value', '');
-  result.status = get(questionnaireResponse, 'status', '');
-  result.id = get(questionnaireResponse, 'id', '');
+//   // there's an off-by-1 error between momment() and Date() that we want
+//   // to account for when converting back to a string
+//   result.date = moment(questionnaireResponse.authored).add(1, 'days').format("YYYY-MM-DD HH:mm")
+//   result.questionnaire = get(questionnaireResponse, 'questionnaire', '');
+//   result.encounter = get(questionnaireResponse, 'encounter.reference', '');
+//   result.subjectDisplay = get(questionnaireResponse, 'subject.display', '');
+//   result.subjectReference = get(questionnaireResponse, 'subject.reference', '');
+//   result.sourceDisplay = get(questionnaireResponse, 'source.display', '');
+//   result.sourceReference = get(questionnaireResponse, 'source.reference', '');
+//   result.author = get(questionnaireResponse, 'author.display', '');
+//   result.identifier = get(questionnaireResponse, 'identifier.value', '');
+//   result.status = get(questionnaireResponse, 'status', '');
+//   result.id = get(questionnaireResponse, 'id', '');
 
-  let items = get(questionnaireResponse, 'item', []);
+//   let items = get(questionnaireResponse, 'item', []);
 
-  result.count = items.length;
+//   result.count = items.length;
   
-  return result;
-}
+//   return result;
+// }
 
 //===========================================================================
 // MAIN COMPONENT 
@@ -101,6 +102,131 @@ flattenQuestionnaireResponse = function(questionnaireResponse){
 function QuestionnaireResponsesTable(props){
 
 
+  let { 
+    children, 
+    id,
+
+    data,
+    questionnaireResponses,
+    selectedResponseId,
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    hideCheckbox,
+    hideIdentifier,
+    hideSourceDisplay,
+    hideSourceReference,
+    hideSubjectDisplay,
+    hideSubjectReference,
+    hideQuestionnaire,
+    hideStatus,
+    hideBarcode,
+    hideAuthored,
+    hideActionIcons,
+  
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    hideActionButton,
+    actionButtonLabel,
+  
+    rowsPerPage,
+    tableRowSize,
+    dateFormat,
+    showMinutes,
+    
+    formFactorLayout,
+    multiline,
+
+    ...otherProps 
+  } = props;
+
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout: ' +  formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideSourceDisplay = false;
+        hideSourceReference = true;
+        hideSubjectDisplay = true;
+        hideSubjectReference = true;
+        hideAuthored = true;
+        hideStatus = true;
+        hideBarcode = true;
+        multiline = true;
+        break;
+      case "tablet":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideSourceDisplay = false;
+        hideSourceReference = true;
+        hideSubjectDisplay = true;
+        hideSubjectReference = true;
+        hideStatus = false;
+        hideBarcode = true;
+        hideAuthored = true;
+        multiline = true;
+        break;
+      case "web":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideSourceDisplay = false;
+        hideSourceReference = true;
+        hideSubjectDisplay = true;
+        hideSubjectReference = false;
+        hideStatus = false;
+        hideAuthored = false;
+        hideBarcode = true;
+        break;
+      case "desktop":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideSourceDisplay = false;
+        hideSourceReference = true;
+        hideSubjectDisplay = true;
+        hideSubjectReference = false;
+        hideStatus = false;
+        hideAuthored = false;
+        hideBarcode = true;
+        break;
+      case "hdmi":
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideSourceDisplay = false;
+        hideSourceReference = true;
+        hideSubjectDisplay = true;
+        hideSubjectReference = false;
+        hideStatus = false;
+        hideAuthored = false;
+        hideBarcode = true;
+        break;   
+      case "hdmi":
+        hideCheckbox = true;
+        hideActionIcons = false;
+        hideIdentifier = false;
+        hideSourceDisplay = false;
+        hideSourceReference = false;
+        hideSubjectDisplay = true;
+        hideSubjectReference = false;
+        hideStatus = false;
+        hideBarcode = false;
+        hideAuthored = false;
+        break;            
+    }
+  }
 
 
   // ------------------------------------------------------------------------
@@ -108,31 +234,31 @@ function QuestionnaireResponsesTable(props){
 
   function removeRecord(_id){
     console.log('Remove questionnaire ', _id)
-    if(this.props.onRemoveRecord){
-      this.props.onRemoveRecord(_id);
+    if(onRemoveRecord){
+      onRemoveRecord(_id);
     }
   }
-  function onActionButtonClick(id){
-    if(typeof this.props.onActionButtonClick === "function"){
-      this.props.onActionButtonClick(id);
+  function handleActionButtonClick(id){
+    if(typeof onActionButtonClick === "function"){
+      onActionButtonClick(id);
     }
   }
   function cellClick(id){
-    if(typeof this.props.onCellClick === "function"){
-      this.props.onCellClick(id);
+    if(typeof onCellClick === "function"){
+      onCellClick(id);
     }
   }
 
-  function onMetaClick(patient){
+  function handleMetaClick(patient){
     let self = this;
-    if(this.props.onMetaClick){
-      this.props.onMetaClick(self, patient);
+    if(onMetaClick){
+      onMetaClick(self, patient);
     }
   }
 
-  function onRowClick(responseId){
-    if(typeof(this.props.onRowClick) === "function"){
-      this.props.onRowClick(responseId);
+  function handleRowClick(responseId){
+    if(typeof onRowClick === "function"){
+      onRowClick(responseId);
     }
   }
 
@@ -140,14 +266,14 @@ function QuestionnaireResponsesTable(props){
   // Column Rendering
 
   function renderToggleHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             <Checkbox
@@ -158,14 +284,14 @@ function QuestionnaireResponsesTable(props){
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
   function renderActionIcons(measureReport ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -182,98 +308,120 @@ function QuestionnaireResponsesTable(props){
     }
   } 
   function renderStatus(status){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status'>{ status }</TableCell>
       );
     }
   }
   function renderStatusHeader(){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status'>Status</TableCell>
       );
     }
   }
+  function renderAuthored(authored){
+    if (!hideAuthored) {
+      return (
+        <TableCell className='authored'>{ authored }</TableCell>
+      );
+    }
+  }
+  function renderAuthoredHeader(){
+    if (!hideAuthored) {
+      return (
+        <TableCell className='authored'>Authored</TableCell>
+      );
+    }
+  }
   function renderIdentifier(identifier){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   }
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
   function renderSubjectDisplay(subjectDisplay){
-    if (!props.hideSubjectDisplay) {
+    if (!hideSubjectDisplay) {
       return (
         <TableCell className='subjectDisplay'>{ subjectDisplay }</TableCell>
       );
     }
   }
   function renderSubjectDisplayHeader(){
-    if (!props.hideSubjectDisplay) {
+    if (!hideSubjectDisplay) {
       return (
         <TableCell className='subjectDisplay'>Subject</TableCell>
       );
     }
   }
   function renderSubjectReference(subjectReference){
-    if (!props.hideSubjectReference) {
+    if (!hideSubjectReference) {
       return (
         <TableCell className='subjectReference'>{ subjectReference }</TableCell>
       );
     }
   }
   function renderSubjectReferenceHeader(){
-    if (!props.hideSubjectReference) {
+    if (!hideSubjectReference) {
       return (
         <TableCell className='subjectReference'>Reference</TableCell>
       );
     }
   }
   function renderSourceReference(sourceReference){
-    if (!props.hideSourceReference) {
+    if (!hideSourceReference) {
       return (
         <TableCell className='sourceReference'>{ sourceReference }</TableCell>
       );
     }
   }
   function renderSourceReferenceHeader(){
-    if (!props.hideSourceReference) {
+    if (!hideSourceReference) {
       return (
         <TableCell className='sourceReference'>Source Reference</TableCell>
       );
     }
   }
   function renderSourceDisplay(sourceDisplay){
-    if (!props.hideSourceDisplay) {
+    if (!hideSourceDisplay) {
       return (
         <TableCell className='sourceDisplay'>{ sourceDisplay }</TableCell>
       );
     }
   }
   function renderSourceDisplayHeader(){
-    if (!props.hideSourceDisplay) {
+    if (!hideSourceDisplay) {
       return (
         <TableCell className='sourceDisplay'>Source Display</TableCell>
       );
     }
   }
-  function renderQuestionnaire(questionnaireUrl){
-    if (!props.hideQuestionnaire) {
-      return (
-        <TableCell className='questionnaireUrl'>{ questionnaireUrl }</TableCell>
-      );
+  function renderQuestionnaire(response){ 
+    if (!hideQuestionnaire) {
+      if(multiline){
+        return (<TableCell >
+          <span className='authored' style={{fontWeight: 400}}>{ response.authored }</span> <span className='status' style={{float: 'right'}}>{ response.status }</span><br />
+          <span className='questionnaireUrl' style={{color: 'gray'}}>{response.questionnaire }</span> <br />
+          <span className='subjectReference' style={{color: 'gray'}}>{ response.subjectReference }</span>
+        </TableCell>)  
+      } else {
+        return (
+          <TableCell className='questionnaireUrl'>{ response.questionnaire }</TableCell>
+        );  
+      }
     }
   }
   function renderQuestionnaireHeader(){
-    if (!props.hideQuestionnaire) {
+    if (!hideQuestionnaire) {
       return (
         <TableCell className='questionnaireUrl'>Questionnaire</TableCell>
       );
@@ -282,31 +430,31 @@ function QuestionnaireResponsesTable(props){
       
 
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
     }
   }
   function renderActionButtonHeader(){
-    if (!props.hideActionButton) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
   function renderActionButton(patient){
-    if (!props.hideActionButton) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >
-          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+          <Button onClick={ handleActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
         </TableCell>
       );
     }
@@ -320,23 +468,21 @@ function QuestionnaireResponsesTable(props){
   let responsesToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.internalDateFormat){
-    internalDateFormat = props.dateFormat;
+  if(internalDateFormat){
+    internalDateFormat = dateFormat;
   }
 
 
-  if(props.questionnaireResponses){
-    if(props.questionnaireResponses.length > 0){              
-      props.questionnaireResponses.forEach(function(questionnaireResponse){
+  if(questionnaireResponses){
+    if(questionnaireResponses.length > 0){              
+      questionnaireResponses.forEach(function(questionnaireResponse){
         responsesToRender.push(flattenQuestionnaireResponse(questionnaireResponse, internalDateFormat));
       });  
     }
   }
-
-
 
 
   if(responsesToRender.length === 0){
@@ -344,12 +490,13 @@ function QuestionnaireResponsesTable(props){
   } else {
     for (var i = 0; i < responsesToRender.length; i++) {
       tableRows.push(
-        <TableRow key={i} className="patientRow" style={{cursor: "pointer"}} onClick={ onRowClick.bind(this, responsesToRender[i]._id )} hover={true} >
+        <TableRow key={i} className="patientRow" style={{cursor: "pointer"}} onClick={ handleRowClick.bind(this, responsesToRender[i]._id )} hover={true} >
           { renderToggle(responsesToRender[i]) }
           { renderActionIcons(responsesToRender[i]) }
           { renderIdentifier(responsesToRender[i].identifier) }
           { renderStatus(responsesToRender[i].status) }
-          { renderQuestionnaire(responsesToRender[i].questionnaire) }
+          { renderAuthored(responsesToRender[i].authored) }
+          { renderQuestionnaire(responsesToRender[i]) }
           { renderSubjectDisplay(responsesToRender[i].subjectDisplay) }
           { renderSubjectReference(responsesToRender[i].subjectReference) }
           { renderSourceReference(responsesToRender[i].sourceReference) }          
@@ -359,10 +506,8 @@ function QuestionnaireResponsesTable(props){
     }
   }
   
-
-
   return(
-    <div>
+    <div id={id} className="tableWithPagination">
       <Table id='questionnaireResponsesTable' >
         <TableHead>
           <TableRow>
@@ -370,6 +515,7 @@ function QuestionnaireResponsesTable(props){
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
             { renderStatusHeader() }
+            { renderAuthoredHeader() }
             { renderQuestionnaireHeader() }
             { renderSubjectDisplayHeader() }
             { renderSubjectReferenceHeader() }
@@ -389,11 +535,14 @@ function QuestionnaireResponsesTable(props){
 
 
 QuestionnaireResponsesTable.propTypes = {
+  id: PropTypes.string,
+ 
   questionnaireResponses: PropTypes.array,
   fhirVersion: PropTypes.string,
   query: PropTypes.object,
   sort: PropTypes.string,
   paginationLimit: PropTypes.number,
+  selectedResponseId: PropTypes.string,  
 
   hideCheckbox: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
@@ -401,6 +550,9 @@ QuestionnaireResponsesTable.propTypes = {
   hideSourceReference: PropTypes.bool,
   hideSubjectDisplay: PropTypes.bool,
   hideSubjectReference: PropTypes.bool,
+  hideQuestionnaire: PropTypes.bool,
+  hideAuthored: PropTypes.bool,
+  hideStatus: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
 
@@ -413,18 +565,28 @@ QuestionnaireResponsesTable.propTypes = {
   actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,
-  tableRowSize: PropTypes.string
+  tableRowSize: PropTypes.string,
+
+  formFactorLayout: PropTypes.string,
+  multiline: PropTypes.bool
 };
 
 QuestionnaireResponsesTable.defaultTypes = {
+  tableRowSize: 'medium',
+  rowsPerPage: 5,
+  dateFormat: "YYYY-MM-DD hh:mm:ss",
+  multiline: false,
+  hideQuestionnaire: false,
   hideCheckbox: true,
-  hideIdentifier: false,
+  hideIdentifier: true,
   hideSubjectDisplay: true,
   hideSubjectReference: false,
   hideSourceDisplay: false,
   hideSourceReference: false,
   hideBarcode: false,
-  hideActionIcons: true
+  hideActionIcons: true,
+  hideStatus: false,
+  hideAuthored: false
 }
 
 

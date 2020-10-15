@@ -19,13 +19,17 @@ import { Session } from 'meteor/session'
 import { Meteor } from 'meteor/meteor'
 
 import { get } from 'lodash';
-import moment from 'moment';
+
+import moment from 'moment'
+
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
+
+import { flattenImmunization } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -62,75 +66,6 @@ let styles = {
 
 
 
-//===========================================================================
-// FLATTENING / MAPPING
-
-flattenImmunization = function(immunization, internalDateFormat){
-  let result = {
-    _id: '',
-    id: '',
-    meta: '',
-    identifier: '',
-    patientDisplay: '',
-    patientReference: '',
-    performerDisplay: '',
-    performerReference: '',
-    vaccineCode: '',
-    vaccineDisplay: '',
-    status: '',
-    reported: '',
-    date: ''
-  };
-
-  if(!internalDateFormat){
-    internalDateFormat = "YYYY-MM-DD";
-  }
-
-  result._id =  get(immunization, 'id') ? get(immunization, 'id') : get(immunization, '_id');
-  result.id = get(immunization, 'id', '');
-  result.identifier = get(immunization, 'identifier[0].value', '');
-
-  if(get(immunization, 'patient')){
-    result.patientDisplay = get(immunization, 'patient.display', '');
-    result.patientReference = get(immunization, 'patient.reference', '');
-  } else if (get(immunization, 'subject')){
-    result.patientDisplay = get(immunization, 'subject.display', '');
-    result.patientReference = get(immunization, 'subject.reference', '');
-  }
-
-  if(get(immunization, 'performer')){
-    result.performerDisplay = get(immunization, 'performer.display', '');
-    result.performerReference = get(immunization, 'performer.reference', '');
-  } 
-
-  result.performerDisplay = get(immunization, 'asserter.display', '');
-
-  if(get(immunization, 'status.coding[0].code')){
-    result.status = get(immunization, 'status.coding[0].code', '');  //R4
-  } else {
-    result.status = get(immunization, 'status', '');                 // DSTU2
-  }
-
-  result.vaccineCode = get(immunization, 'vaccineCode.coding[0].code', '');
-
-  if(get(immunization, 'vaccineCode.coding[0].display')){
-    result.vaccineDisplay = get(immunization, 'vaccineCode.coding[0].display', '');  //R4
-  } else {
-    result.vaccineDisplay = get(immunization, 'vaccineCode.text', '');                 // DSTU2
-  }
-
-  result.barcode = get(immunization, '_id', '');
-
-  if(get(immunization, 'occurrenceDateTime')){
-    result.date = moment(get(immunization, 'occurrenceDateTime')).format("YYYY-MM-DD");
-  } else {
-    result.date = moment(get(immunization, 'date')).format("YYYY-MM-DD");
-  }
-  result.reported = moment(get(immunization, 'reported', '')).format("YYYY-MM-DD");
-
-  return result;
-}
-
 
 //===========================================================================
 // MAIN COMPONENT
@@ -143,10 +78,12 @@ function ImmunizationsTable(props){
   const classes = useStyles();
 
   let { 
+    id,
     children, 
 
     data,
     immunizations,
+    selectedImmunizationId,
     query,
     paginationLimit,
     disablePagination,
@@ -159,6 +96,7 @@ function ImmunizationsTable(props){
     hidePatient,
     hidePerformer,
     hideVaccineCode,
+    hideVaccineCodeText,
 
     onCellClick,
     onRowClick,
@@ -173,8 +111,40 @@ function ImmunizationsTable(props){
     showMinutes,
     displayEnteredInError,
 
+    tableRowSize,
+    formFactorLayout,
+    count,
+
     ...otherProps 
   } = props;
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        hidePatient = true;
+        hideIdentifier = true;
+        hidePerformer = true;
+        hideVaccineCode = true;
+        break;
+      case "tablet":
+        hideVaccineCode = false;
+        break;
+      case "web":
+    
+        break;
+      case "desktop":
+  
+        break;
+      case "videowall":
+
+        break;            
+    }
+  }
+
 
   //---------------------------------------------------------------------
   // Pagination
@@ -185,8 +155,8 @@ function ImmunizationsTable(props){
 
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
   }
@@ -196,7 +166,7 @@ function ImmunizationsTable(props){
   }
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       rowsPerPageOptions={[5, 10, 25, 100]}
@@ -227,14 +197,14 @@ function ImmunizationsTable(props){
   // Column Rendering
 
   function renderCheckboxHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle">
             <Checkbox
@@ -245,14 +215,14 @@ function ImmunizationsTable(props){
     }
   }
   function renderDateHeader(){
-    if (!props.hideDate) {
+    if (!hideDate) {
       return (
         <TableCell className='date'>Date</TableCell>
       );
     }
   }
   function renderDate(newDate ){
-    if (!props.hideDate) {
+    if (!hideDate) {
       return (
         <TableCell className='date'>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
       );
@@ -260,42 +230,42 @@ function ImmunizationsTable(props){
   }
 
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className="identifier">Identifier</TableCell>
       );
     }
   }
   function renderIdentifier(immunization){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       
       return (
         <TableCell className='identifier'>{ get(immunization, 'identifier[0].value') }</TableCell>       );
     }
   }
   function renderStatusHeader(){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className="status">Status</TableCell>
       );
     }
   }
   function renderStatus(status){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       
       return (
         <TableCell className='status'>{ status }</TableCell>       );
     }
   }
   function renderVaccineCodeHeader(){
-    if (!props.hideVaccineCode) {
+    if (!hideVaccineCode) {
       return (
         <TableCell className="vaccineCode">Vaccine Code</TableCell>
       );
     }
   }
   function renderVaccineCode(vaccineCode){
-    if (!props.hideVaccineCode) {
+    if (!hideVaccineCode) {
       
       return (
         <TableCell className='vaccineCode'>{ vaccineCode }</TableCell>       );
@@ -303,14 +273,14 @@ function ImmunizationsTable(props){
   }
 
   function renderVaccineCodeTextHeader(){
-    if (!props.hideVaccineCodeText) {
+    if (!hideVaccineCodeText) {
       return (
         <TableCell className="vaccineCodeText">Vaccine</TableCell>
       );
     }
   }
   function renderVaccineCodeText(vaccineCodeText){
-    if (!props.hideVaccineCodeText) {
+    if (!hideVaccineCodeText) {
       
       return (
         <TableCell className='vaccineCodeText'>{ vaccineCodeText }</TableCell>       );
@@ -318,28 +288,28 @@ function ImmunizationsTable(props){
   }
 
   function renderPatientHeader(){
-    if (!props.hidePatient) {
+    if (!hidePatient) {
       return (
         <TableCell className="patient">Patient</TableCell>
       );
     }
   }
   function renderPatient(immunization){
-    if (!props.hidePatient) {
+    if (!hidePatient) {
       
       return (
         <TableCell className='patient'>{ get(immunization, 'patient.display') }</TableCell>       );
     }
   }
   function renderPerformerHeader(){
-    if (!props.hidePerformer) {
+    if (!hidePerformer) {
       return (
         <TableCell className="performer">Performer</TableCell>
       );
     }
   }
   function renderPerformer(immunization){
-    if (!props.hidePerformer) {
+    if (!hidePerformer) {
       
       return (
         <TableCell className='performer'>{ get(immunization, 'performer.display') }</TableCell>       );
@@ -353,14 +323,14 @@ function ImmunizationsTable(props){
     Session.set('immunizationPageTabIndex', 2);
   };
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
   function renderActionIcons(immunization ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -377,14 +347,14 @@ function ImmunizationsTable(props){
     }
   } 
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
   function renderIdentifier(identifier ){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
@@ -411,18 +381,18 @@ function ImmunizationsTable(props){
   let immunizationsToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.dateFormat){
-    internalDateFormat = props.dateFormat;
+  if(dateFormat){
+    internalDateFormat = dateFormat;
   }
 
-  if(props.immunizations){
-    if(props.immunizations.length > 0){     
+  if(immunizations){
+    if(immunizations.length > 0){     
       let count = 0;    
 
-      props.immunizations.forEach(function(immunization){
+      immunizations.forEach(function(immunization){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
           immunizationsToRender.push(flattenImmunization(immunization, internalDateFormat));
         }
@@ -432,15 +402,26 @@ function ImmunizationsTable(props){
   }
 
   let rowStyle = {
-    cursor: 'pointer'
+    cursor: 'pointer', 
+    height: '52px'
   }
   if(immunizationsToRender.length === 0){
     logger.trace('ConditionsTable: No immunizations to render.');
   } else {
+
     for (var i = 0; i < immunizationsToRender.length; i++) {
+
+      let selected = false;
+      if(immunizationsToRender[i].id === selectedImmunizationId){
+        selected = true;
+      }
       if(get(immunizationsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+
       logger.trace('immunizationsToRender[i]', immunizationsToRender[i])
       tableRows.push(
         <TableRow className="immunizationRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, immunizationsToRender[i]._id)} hover={true} >            
@@ -466,15 +447,15 @@ function ImmunizationsTable(props){
       <Table className='immunizationsTable' size="small" aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
-              { renderCheckboxHeader() }
-              { renderActionIconsHeader() }
-              { renderIdentifierHeader() }
-              { renderVaccineCodeHeader() }
-              { renderVaccineCodeTextHeader() }
-              { renderStatusHeader() }
-              { renderPatientHeader() }
-              { renderPerformerHeader() }
-              { renderDateHeader() }
+            { renderCheckboxHeader() }
+            { renderActionIconsHeader() }
+            { renderIdentifierHeader() }
+            { renderVaccineCodeHeader() }
+            { renderVaccineCodeTextHeader() }
+            { renderStatusHeader() }
+            { renderPatientHeader() }
+            { renderPerformerHeader() }
+            { renderDateHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
@@ -490,6 +471,7 @@ ImmunizationsTable.propTypes = {
   id: PropTypes.string,
   fhirVersion: PropTypes.string,
   immunizations: PropTypes.array,
+  selectedImmunizationId: PropTypes.string,
 
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
@@ -506,10 +488,33 @@ ImmunizationsTable.propTypes = {
   query: PropTypes.object,
   patient: PropTypes.string,
   patientDisplay: PropTypes.string,
-  sort: PropTypes.string
+  sort: PropTypes.string,
+  dateFormat: PropTypes.string,
+
+  onCellClick: PropTypes.func,
+  onRowClick: PropTypes.func,
+  onMetaClick: PropTypes.func,
+  onRemoveRecord: PropTypes.func,
+  onActionButtonClick: PropTypes.func,
+  actionButtonLabel: PropTypes.string,
+  showActionButton: PropTypes.bool,
+
+  count: PropTypes.number,
+  tableRowSize: PropTypes.string,
+  formFactorLayout: PropTypes.string
 };
+
+
 ImmunizationsTable.defaultProps = {
-  rowsPerPage: 5
-}
+  tableRowSize: 'medium',
+  rowsPerPage: 5,
+  dateFormat: "YYYY-MM-DD hh:mm:ss",
+  hideCheckbox: true,
+  hideActionIcons: true,
+  hideIdentifier: false,
+  hidePatient: false,
+  hidePerformer: false,
+  hideStatus: false
+};
 
 export default ImmunizationsTable;
