@@ -541,12 +541,13 @@ DevicesTable.propTypes = {
 
 DevicesTable.defaultProps = {
   hideCheckbox: true,
+  hideActionIcons: true,
   hideIdentifier: true,
   hideDeviceName: false,
   hideStatus: false,
   hideMake: true,
-  hideModel: false,
-  hideManufacturer: false,
+  hideModel: true,
+  hideManufacturer: true,
   hideSerialNumber: false,
   hideTypeCodingDisplay: true,
   hideLotNumber: true,

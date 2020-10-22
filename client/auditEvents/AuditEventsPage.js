@@ -105,6 +105,7 @@ export class AuditEventsPage extends React.Component {
           <CardContent>
             <AuditEventsTable 
               auditEvents={this.data.auditEvents}
+              count={this.data.auditEvents.length}
               formFactorLayout={formFactor}
             />
 

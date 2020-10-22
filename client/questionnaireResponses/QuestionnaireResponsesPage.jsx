@@ -212,7 +212,7 @@ export class QuestionnaireResponsesPage extends React.Component {
       </StyledCard>
     } else {
       layoutContents = <Grid container spacing={3}>
-        <Grid item lg={6}>
+        <Grid item lg={6} style={{width: '100%'}} >
           <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
             <CardHeader title={this.data.responsesCount + " Responses"} />
             <CardContent>
@@ -239,7 +239,7 @@ export class QuestionnaireResponsesPage extends React.Component {
             </CardContent>
           </StyledCard>
         </Grid>
-        <Grid item lg={4}>
+        <Grid item lg={4} style={{width: '100%', marginBottom: '80px'}} >
           <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
             <h1 className="barcode" style={{fontWeight: 100}}>{this.data.questionnaireResponseId }</h1>
             <CardContent>

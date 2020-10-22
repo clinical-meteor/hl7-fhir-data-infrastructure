@@ -143,7 +143,7 @@ function QuestionnaireTable(props){
         hideNumItems = false;
         hideBarcode = true;
         break;
-      case "videowall":
+      case "hdmi":
         hideCheckbox = true;
         hideIdentifier = true;
         hideActionIcons = true;
@@ -298,7 +298,7 @@ function QuestionnaireTable(props){
         columnDateFormat = dateFormat;
       }
       return (
-        <TableCell>{moment(date).format("YYYY-MM-DD")}</TableCell>
+        <TableCell style={{minWidth: '120px'}}>{moment(date).format("YYYY-MM-DD")}</TableCell>
       );
     }
   }

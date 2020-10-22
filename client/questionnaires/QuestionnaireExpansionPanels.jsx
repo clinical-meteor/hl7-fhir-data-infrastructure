@@ -179,16 +179,39 @@ function QuestionnaireExpansionPanels(props){
       fontWeight: 'bold',
       maxWidth: '100px',
       textOverflow: 'elipsis',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      display: 'flex'
     },
     description: {
       position: 'absolute',
-      marginLeft: '120px'
+      marginLeft: '120px',
+      marginRight: '20px'
     },
     expansionPanel: {
-      marginRight: '40px'
+      //marginRight: '40px'
+    },
+    summary: {
+      content: {
+        alignItems: 'center',
+        verticalAlign: 'middle'  
+      }
     }
   }
+
+  let noWrap = false;
+  if(window.innerWidth < 768){
+    styles.expansionPanel.marginRight = '0px'
+    styles.identifier.display = 'none'
+    styles.description.maxWidth = (window.innerWidth - 100) + 'px'
+    styles.description.marginLeft = '0px'
+    styles.description.marginRight = '0px'
+    styles.description.marginTop = '-10px'
+    styles.summary.content.verticalAlign = 'top';
+    styles.summary.content.height = '56px'
+    noWrap = true;
+  }
+
+
 
   let questionPanels = [];
 
@@ -369,10 +392,10 @@ function QuestionnaireExpansionPanels(props){
           answerChoices = parseQuestion(renderItemIndex, -1);
   
           questionPanels.push(<ExpansionPanel style={styles.expansionPanel} key={'expansionPanel-topLevel-' + renderItemIndex}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls={'expansionPanel-topLevel-' + renderItemIndex + "-content"} id={'expansionPanel-topLevel-' + renderItemIndex + "-header"} >
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls={'expansionPanel-topLevel-' + renderItemIndex + "-content"} id={'expansionPanel-topLevel-' + renderItemIndex + "-header"}  style={styles.summary} >
               <Typography className="measure-identifier" style={styles.identifier}>{get(renderItem, 'linkId', renderItemIndex)}</Typography>
               {/* <Typography id="panel-m2-measure-score" className="measure-score" style={styles.score}>{get(item, 'type')}</Typography>             */}
-              <Typography className="measure-description" style={styles.description}>
+              <Typography className="measure-description" style={styles.description} noWrap={noWrap}>
                 {get(renderItem, 'text')}
               </Typography>
             </ExpansionPanelSummary>
@@ -391,9 +414,9 @@ function QuestionnaireExpansionPanels(props){
           console.log('itemChecked', itemChecked, checkboxChecked);
 
           questionPanels.push(<ExpansionPanel style={styles.expansionPanel} key={'expansionPanel-topLevel-' + renderItemIndex}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls={'expansionPanel-topLevel-' + renderItemIndex + "-content"} id={'expansionPanel-topLevel-' + renderItemIndex + "-header"} >
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls={'expansionPanel-topLevel-' + renderItemIndex + "-content"} id={'expansionPanel-topLevel-' + renderItemIndex + "-header"} style={styles.summary}  >
               <Typography className="measure-identifier" style={styles.identifier}>{get(renderItem, 'linkId', renderItemIndex)}</Typography>
-              <Typography className="measure-description" style={styles.description}>
+              <Typography className="measure-description" style={styles.description} noWrap={noWrap} >
                 {/* <Checkbox checked={itemChecked} onChange={handleToggleCheckbox.bind(this, renderItemIndex)} />  */}
                 {get(renderItem, 'text')}
               </Typography>
@@ -408,10 +431,10 @@ function QuestionnaireExpansionPanels(props){
             answerChoices = parseQuestion(renderItemIndex, questionIndex);
   
               questionPanels.push(<ExpansionPanel style={styles.expansionPanel} key={'expansionPanel-question-' + renderItemIndex + '-' + questionIndex}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls={'expansionPanel-question-' + renderItemIndex + '-' + questionIndex + '-content'} id={'expansionPanel-question-' + renderItemIndex + '-' + questionIndex + '-header'} >
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls={'expansionPanel-question-' + renderItemIndex + '-' + questionIndex + '-content'} id={'expansionPanel-question-' + renderItemIndex + '-' + questionIndex + '-header'} style={styles.summary}  >
                   <Typography className="measure-identifier" style={styles.identifier}>{get(question, 'linkId', questionIndex)}</Typography>
                   {/* <Typography id="panel-m2-measure-score" className="measure-score" style={styles.score}>{get(item, 'type')}</Typography>             */}
-                  <Typography className="measure-description" style={styles.description}>
+                  <Typography className="measure-description" style={styles.description} noWrap={noWrap}>
                     {get(question, 'text')}
                   </Typography>
                 </ExpansionPanelSummary>
@@ -429,7 +452,7 @@ function QuestionnaireExpansionPanels(props){
 
   return (
     <div id={ get(this, 'props.id', '')} className="questionnaireDetail">
-      <div id='questionnaireDocument'>
+      <div id='questionnaireExpansionPanels'>
         { questionPanels }
       </div>
     </div>

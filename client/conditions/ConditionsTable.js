@@ -653,7 +653,7 @@ function ConditionsTable(props){
       }
       logger.trace('conditionsToRender[i]', conditionsToRender[i])
       tableRows.push(
-        <TableRow className="conditionRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, conditionsToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+        <TableRow className="conditionRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, conditionsToRender[i]._id)} style={rowStyle} hover={true} selected={selected} >            
           { renderCheckbox() }
           { renderActionIcons(conditionsToRender[i]) }
           { renderIdentifier(conditionsToRender.identifier ) }

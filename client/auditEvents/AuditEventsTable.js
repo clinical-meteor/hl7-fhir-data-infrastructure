@@ -520,7 +520,7 @@ function AuditEventsTable(props){
   } else {
     for (var i = 0; i < auditEventsToRender.length; i++) {
       let selected = false;
-      if(auditEventsToRender[i].id === selectedAuditEventId){
+      if(auditEventsToRender[i]._id === selectedAuditEventId){
         selected = true;
       }
       if(get(auditEventsToRender[i], 'modifierExtension[0]')){

@@ -22,10 +22,8 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { 
   FormControl,
-  InputLabel,
   Input,
-  InputAdornment,
-  FormControlLabel,
+  InputAdornment
 } from '@material-ui/core';
 
 
@@ -537,21 +535,33 @@ export class QuestionnairesPage extends React.Component {
     }
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
+    let formFactor = LayoutHelpers.determineFormFactor(2);
 
     let paddingWidth = 84;
     if(Meteor.isCordova){
       paddingWidth = 20;
     }
     let cardWidth = window.innerWidth - paddingWidth;
+
     
-    console.log('QuestionnairesPage.render().data', this.data)
+    // console.log('QuestionnairesPage.render().data', this.data)
+
+    let secondaryGridSize = 5;
+    let secondaryGridStyle = {
+      position: 'sticky', 
+      top: '0px', 
+      marginBottom: '84px',
+      width: '100%'
+    }
+    if(window.innerWidth < 768){
+      let secondaryGridSize = 5;
+    }
 
     return (
       <PageCanvas id="questionnairesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
-          <Grid container>
-            <Grid item md={6}>
+          <Grid container spacing={3} >
+            <Grid item lg={6} style={{width: '100%'}} >
               <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
                 <CardHeader
                   title={this.data.questionnairesCount + " Questionnaires"}
@@ -571,9 +581,9 @@ export class QuestionnairesPage extends React.Component {
                 />
               </StyledCard>
             </Grid>
-            <Grid item md={5} style={{position: 'sticky', top: '0px', margin: '20px'}}>
+            <Grid item lg={secondaryGridSize} style={secondaryGridStyle}>
                 <h1 className="barcode helveticas">{this.data.selectedQuestionnaireId}</h1>
-              <StyledCard margins={20} width={cardWidth + 'px'}>
+              <StyledCard margin={20} width={cardWidth + 'px'}>
                 <CardContent>
                   <FormControl style={{width: '100%', marginTop: '20px'}}>
                     <InputAdornment 
