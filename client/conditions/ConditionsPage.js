@@ -22,12 +22,11 @@ import ReactMixin  from 'react-mixin';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
-import ConditionDetail from './ConditionDetail';
+// import ConditionDetail from './ConditionDetail';
 import ConditionsTable from './ConditionsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { get } from 'lodash';
-
 
 
 //=============================================================================================================================================
@@ -169,7 +168,6 @@ export class ConditionsPage extends React.Component {
   handleTabChange(index){
     Session.set('conditionPageTabIndex', index);
   }
-
   onNewTab(){
     Session.set('selectedConditionId', false);
   }
@@ -207,16 +205,17 @@ export class ConditionsPage extends React.Component {
       <PageCanvas id="conditionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={ this.data.conditionsCount + " Conditions"} />
-              <CardContent>
+            <CardHeader title={ this.data.conditionsCount + " Conditions"} />
+            <CardContent>
 
-                <ConditionsTable 
-                  conditions={this.data.conditions}
-                  count={this.data.conditionsCount}  
-                  rowsPerPage={25}
-                  formFactorLayout={formFactor}
-                />
-              </CardContent>
+              <ConditionsTable 
+                id='conditionsTable'
+                conditions={this.data.conditions}
+                count={this.data.conditionsCount}  
+                rowsPerPage={25}
+                formFactorLayout={formFactor}
+              />
+            </CardContent>
           </StyledCard>
         </MuiThemeProvider>
       </PageCanvas>

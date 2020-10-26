@@ -401,6 +401,7 @@ function CarePlansTable(props){
     hideCategory,
     hideTemplate,
     hideCreated,
+    hideStatus,
     hideBarcode,
 
     onRowClick,
@@ -441,6 +442,7 @@ function CarePlansTable(props){
         hideCategory = true;
         hideTemplate = true;
         hideCreated = false;
+        hideStatus = true;
         hideBarcode = true;
         break;
       case "tablet":
@@ -456,6 +458,7 @@ function CarePlansTable(props){
         hideCategory = true;
         hideTemplate = true;
         hideCreated = false;
+        hideStatus = true;
         hideBarcode = true;
         break;
       case "web":
@@ -471,6 +474,7 @@ function CarePlansTable(props){
         hideCategory = false;
         hideTemplate = true;
         hideCreated = false;
+        hideStatus = false;
         hideBarcode = true;
         break;
       case "desktop":
@@ -486,6 +490,7 @@ function CarePlansTable(props){
         hideCategory = false;
         hideTemplate = false;
         hideCreated = false;
+        hideStatus = false;
         hideBarcode = true;
         break;
       case "videowall":
@@ -501,6 +506,7 @@ function CarePlansTable(props){
         hideCategory = false;
         hideTemplate = false;
         hideCreated = false;
+        hideStatus = false;
         hideBarcode = false;
         break;            
     }
@@ -716,6 +722,21 @@ function CarePlansTable(props){
     }
   }
 
+  function renderStatus(status){
+    if (!hideStatus) {
+      return (
+        <TableCell><span className="status">{status}</span></TableCell>
+      );
+    }
+  }
+  function renderStatusHeader(){
+    if (!hideStatus) {
+      return (
+        <TableCell className="status">Status</TableCell>
+      );
+    }
+  }
+
   function renderBarcode(id){
     if (!hideBarcode) {
       return (
@@ -831,6 +852,7 @@ function CarePlansTable(props){
           { renderAddresses( carePlansToRender[i].addresses ) } 
 
           { renderCreated(carePlansToRender[i].recorded) }
+          { renderStatus(carePlansToRender[i].status) }
           
           { renderBarcode(carePlansToRender[i]._id)}
         </TableRow>
@@ -856,6 +878,7 @@ function CarePlansTable(props){
             { renderAddressesHeader() }
 
             { renderCreatedHeader() }            
+            { renderStatusHeader() }            
   
             { renderBarcodeHeader() }
           </TableRow>
@@ -894,6 +917,7 @@ CarePlansTable.propTypes = {
   hideCategory: PropTypes.bool,
   hideTemplate: PropTypes.bool,
   hideCreated: PropTypes.bool,
+  hideStatus: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
   onCellClick: PropTypes.func,
@@ -925,6 +949,7 @@ CarePlansTable.defaultProps = {
   hideCategory: false,
   hideTemplate: false,
   hideCreated: false,
+  hideStatus: false,
   hideBarcode: true,
   carePlans: []
 };

@@ -347,7 +347,7 @@ export class PatientsPage extends React.Component {
       <PageCanvas id="patientsPageClass" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title="Patients" />
+            <CardHeader title={this.data.patientCount + " Patients"} />
             <CardContent>
               <PatientsTable 
                 noDataMessagePadding={100}

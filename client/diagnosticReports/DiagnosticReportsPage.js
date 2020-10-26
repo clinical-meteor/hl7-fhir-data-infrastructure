@@ -182,10 +182,16 @@ export class DiagnosticReportsPage extends React.Component {
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
 
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+
     return (
-      <PageCanvas id="measuresPage" headerHeight={headerHeight}>
+      <PageCanvas id="measuresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme}>
-          <StyledCard height="auto" scrollable={true} margin={20} >
+          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title={this.data.diagnosticReportCount + ' Diagnostic Reports'} />
             <CardContent>
               <DiagnosticReportsTable 

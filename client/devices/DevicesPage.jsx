@@ -149,7 +149,7 @@ export class DevicesPage extends React.Component {
       fhirVersion: Session.get('fhirVersion'),
       selectedDevice: false,
       devices: Devices.find().fetch(),
-      deviceCount: Devices.find().count()
+      devicesCount: Devices.find().count()
     };
 
     if (Session.get('selectedDeviceId')){
@@ -186,7 +186,7 @@ export class DevicesPage extends React.Component {
       <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title='Devices' />
+            <CardHeader title={this.data.devicesCount + ' Devices'} />
             <CardContent>
               <DevicesTable 
                 devices={this.data.devices}

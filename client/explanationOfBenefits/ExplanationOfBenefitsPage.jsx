@@ -198,9 +198,15 @@ export class ExplanationOfBenefitsPage extends React.Component {
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
 
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
+    }
+    let cardWidth = window.innerWidth - paddingWidth;
+
     let layoutContents;
     if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto" margin={20} >
+      layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
         <CardHeader title={this.data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
         <CardContent>
 
@@ -239,7 +245,7 @@ export class ExplanationOfBenefitsPage extends React.Component {
     } else {
       layoutContents = <Grid container spacing={3}>
         <Grid item lg={6}>
-          <StyledCard height="auto" margin={20} >
+          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title={this.data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
             <CardContent>
               <ExplanationOfBenefitsTable 
@@ -277,7 +283,7 @@ export class ExplanationOfBenefitsPage extends React.Component {
           </StyledCard>
         </Grid>
         <Grid item lg={4}>
-          <StyledCard height="auto" margin={20} scrollable>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedExplanationOfBenefitId }</h1>
             <CardContent>
               <CardContent>
@@ -298,7 +304,7 @@ export class ExplanationOfBenefitsPage extends React.Component {
     }
 
     return (
-      <PageCanvas id="ExplanationOfBenefitsPage" headerHeight={headerHeight}>
+      <PageCanvas id="explanationOfBenefitsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           { layoutContents }
         </MuiThemeProvider>

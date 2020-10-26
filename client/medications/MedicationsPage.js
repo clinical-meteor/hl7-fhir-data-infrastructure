@@ -17,6 +17,8 @@ import MedicationDetail from './MedicationDetail';
 import MedicationsTable from './MedicationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
+import { get } from 'lodash';
+
 // import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
@@ -72,9 +74,12 @@ export class MedicationsPage extends React.Component {
       data.selectedMedication = false;
     }
 
-    data.style = Glass.blur(data.style);
-    data.style.appbar = Glass.darkroom(data.style.appbar);
-    data.style.tab = Glass.darkroom(data.style.tab);
+    data.medications = Medications.find().fetch();
+    data.medicationsCount = Medications.find().count();
+
+    // data.style = Glass.blur(data.style);
+    // data.style.appbar = Glass.darkroom(data.style.appbar);
+    // data.style.tab = Glass.darkroom(data.style.tab);
 
     if(process.env.NODE_ENV === "test") console.log("MedicationsPage[data]", data);
     return data;
@@ -91,24 +96,39 @@ export class MedicationsPage extends React.Component {
 
   render() {
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader')){
-      headerHeight = 128;
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
+    let formFactor = LayoutHelpers.determineFormFactor();
+
+    let paddingWidth = 84;
+    if(Meteor.isCordova){
+      paddingWidth = 20;
     }
+    let cardWidth = window.innerWidth - paddingWidth;
 
     return (
-      <div id="medicationsPage">
-        <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+      <PageCanvas id='medicationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader
-              title="Medications"
+              title={this.data.medicationsCount + " Medications"}
             />
             <CardContent>
-              <Tabs id="medicationsPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
+              <MedicationsTable 
+                medications={this.data.medications}
+                count={this.data.medicationsCount}
+                selectedMedicationId={this.data.selectedMedicationId}
+              />
+
+
+              {/* <Tabs id="medicationsPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
                 <Tab label="Medications" value={0} />
                 <Tab label="New" value={1} />
               </Tabs>
               <TabPanel >
-                <MedicationsTable />
+                <MedicationsTable 
+                  medications={this.data.medications}
+                  count={this.data.medicationsCount}
+                  selectedMedicationId={this.data.selectedMedicationId}
+                />
               </TabPanel>
               <TabPanel >
                 <MedicationDetail 
@@ -118,10 +138,10 @@ export class MedicationsPage extends React.Component {
                   medicationId={ this.data.selectedMedicationId }
                   hideCode={false} 
                   />  
-              </TabPanel>              
+              </TabPanel>               */}
             </CardContent>
           </StyledCard>
-      </div>
+      </PageCanvas>
     );
   }
 }

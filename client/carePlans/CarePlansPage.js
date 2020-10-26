@@ -60,7 +60,8 @@ export class CarePlansPage extends React.Component {
       tabIndex: Session.get('carePlanPageTabIndex'),
       carePlanSearchFilter: Session.get('carePlanSearchFilter'),
       currentCarePlan: Session.get('selectedCarePlan'),
-      carePlans: CarePlans.find().fetch()
+      carePlans: CarePlans.find().fetch(),
+      carePlansCount: CarePlans.find().count()
     };
 
     // data.style = Glass.blur(data.style);
@@ -96,10 +97,11 @@ export class CarePlansPage extends React.Component {
     return (
       <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
-          <CardHeader title='CarePlans' />
+          <CardHeader title={this.data.carePlansCount + ' CarePlans'} />
           <CardContent>
             <CarePlansTable 
               carePlans={this.data.carePlans}
+              count={this.data.carePlansCount}
               formFactorLayout={formFactor}
             />
           </CardContent>

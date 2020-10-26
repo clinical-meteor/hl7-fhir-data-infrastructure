@@ -68,7 +68,8 @@ export class ImmunizationsPage extends React.Component {
       fhirVersion: Session.get('fhirVersion'),
       selectedImmunization: false,
 
-      immunizations: Immunizations.find().fetch()
+      immunizations: Immunizations.find().fetch(),
+      immunizationsCount: Immunizations.find().count()
     };
 
     if (Session.get('selectedImmunizationId')){
@@ -108,12 +109,13 @@ export class ImmunizationsPage extends React.Component {
     return (
       <PageCanvas id='immunizationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title='Immunizations' />
+            <CardHeader title={this.data.immunizationsCount + ' Immunizations'} />
             <CardContent>
               <Grid container>
                 <Grid item md={12}>
                   <ImmunizationsTable 
                     immunizations={this.data.immunizations }    
+                    count={this.data.immunizationsCount }    
                     formFactorLayout={formFactor}
                   />
                 </Grid>

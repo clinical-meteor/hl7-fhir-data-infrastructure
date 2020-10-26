@@ -147,8 +147,8 @@ function ConditionsTable(props){
         hidePatientName = true;
         hidePatientReference = true;
         hideClinicalStatus = true;
-        hideSnomedCode = false;
-        hideSnomedDisplay = true;
+        hideSnomedCode = true;
+        hideSnomedDisplay = false;
         hideVerification = false;
         hideSeverity = true;
         hideEvidence = false;
@@ -160,7 +160,8 @@ function ConditionsTable(props){
       case "web":
         hideClinicalStatus = true;
         hideSnomedCode = true;
-        hideSnomedDisplay = true;
+        hideSnomedDisplay = false;
+        hidePatientName = false;
         hideVerification = true;
         hideSeverity = true;
         hideEvidence = false;
@@ -170,13 +171,14 @@ function ConditionsTable(props){
         multiline = false;
         break;
       case "desktop":
-        hideClinicalStatus = true;
-        hideSnomedCode = true;
-        hideSnomedDisplay = true;
+        hideClinicalStatus = false;
+        hidePatientName = false;
+        hideSnomedCode = false;
+        hideSnomedDisplay = false;
         hideVerification = true;
         hideSeverity = true;
         hideEvidence = false;
-        hideDates = true;
+        hideDates = false;
         hideEndDate = true;
         hideBarcode = false;
         multiline = false;
@@ -205,23 +207,23 @@ function ConditionsTable(props){
   const [hasInitializedAutoColumns, setHasInitializedAutoColumns] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-  const [autoColumnState, setAutoColumns] = useState({
-    checkboxes: false,
-    actionIcons: false,
-    identifier: false,
-    patientName: false,
-    patientReference: false,
-    asserterName: false,
-    clinicalStatus: false,
-    snomedCode: false,
-    snomedDisplay: false,
-    verification: false,
-    serverity: false,
-    evidence: false,
-    dates: false,
-    endDate: false,
-    hideBarcode: false
-  });
+  // const [autoColumnState, setAutoColumns] = useState({
+  //   checkboxes: false,
+  //   actionIcons: false,
+  //   identifier: false,
+  //   patientName: false,
+  //   patientReference: false,
+  //   asserterName: false,
+  //   clinicalStatus: false,
+  //   snomedCode: false,
+  //   snomedDisplay: false,
+  //   verification: false,
+  //   serverity: false,
+  //   evidence: false,
+  //   dates: false,
+  //   endDate: false,
+  //   hideBarcode: false
+  // });
 
 
   let paginationCount = 101;
@@ -254,75 +256,75 @@ function ConditionsTable(props){
 
     
   if(Array.isArray(conditions)){
-    if(!hasInitializedAutoColumns){
-      let columnHasData = {
-        identifier: false,
-        patientName: false,
-        patientReference: false,
-        asserterName: false,
-        clinicalStatus: false,
-        snomedCode: false,
-        snomedDisplay: false,
-        verification: false,
-        serverity: false,
-        evidence: false,
-        dates: false,
-        endDate: false,
-        barcode: false
-      }
+    // if(!hasInitializedAutoColumns){
+    //   let columnHasData = {
+    //     identifier: false,
+    //     patientName: false,
+    //     patientReference: false,
+    //     asserterName: false,
+    //     clinicalStatus: false,
+    //     snomedCode: false,
+    //     snomedDisplay: false,
+    //     verification: false,
+    //     serverity: false,
+    //     evidence: false,
+    //     dates: false,
+    //     endDate: false,
+    //     barcode: false
+    //   }
       
-      let flattenedCollection = conditions.map(function(record){
-        return flattenCondition(record, "YYYY-MM-DD");
-      });      
+    //   let flattenedCollection = conditions.map(function(record){
+    //     return flattenCondition(record, "YYYY-MM-DD");
+    //   });      
   
-      flattenedCollection.forEach(function(row){
-        if(get(row, 'id')){
-          columnHasData.barcode = true;
-        }
-        if(get(row, 'identifier')){
-          columnHasData.identifier = true;
-        }
-        if(get(row, 'clinicalStatus')){
-          columnHasData.clinicalStatus = true;
-        }
-        if(get(row, 'verificationStatus')){
-          columnHasData.barcode = true;
-        }
-        if(get(row, 'verificationStatus')){
-          columnHasData.barcode = true;
-        }
-        if(get(row, 'patientDisplay')){
-          columnHasData.patientName = true;
-        }
-        if(get(row, 'patientReference')){
-          columnHasData.patientReference = true;
-        }
-        if(get(row, 'severity')){
-          columnHasData.severity = true;
-        }
-        if(get(row, 'snomedCode')){
-          columnHasData.snomedCode = true;
-        }
-        if(get(row, 'snomedDisplay')){
-          columnHasData.snomedDisplay = true;
-        }
-        if(get(row, 'evidenceDisplay')){
-          columnHasData.barcode = true;
-        }
-        if(get(row, 'evidence')){
-          columnHasData.barcode = true;
-        }
-        if(get(row, 'onsetDateTime')){
-          columnHasData.dates = true;
-        }
-        if(get(row, 'abatementDateTime')){
-          columnHasData.endDate = true;
-        }
-      })
+    //   flattenedCollection.forEach(function(row){
+    //     if(get(row, 'id')){
+    //       columnHasData.barcode = true;
+    //     }
+    //     if(get(row, 'identifier')){
+    //       columnHasData.identifier = true;
+    //     }
+    //     if(get(row, 'clinicalStatus')){
+    //       columnHasData.clinicalStatus = true;
+    //     }
+    //     if(get(row, 'verificationStatus')){
+    //       columnHasData.barcode = true;
+    //     }
+    //     if(get(row, 'verificationStatus')){
+    //       columnHasData.barcode = true;
+    //     }
+    //     if(get(row, 'patientDisplay')){
+    //       columnHasData.patientName = true;
+    //     }
+    //     if(get(row, 'patientReference')){
+    //       columnHasData.patientReference = true;
+    //     }
+    //     if(get(row, 'severity')){
+    //       columnHasData.severity = true;
+    //     }
+    //     if(get(row, 'snomedCode')){
+    //       columnHasData.snomedCode = true;
+    //     }
+    //     if(get(row, 'snomedDisplay')){
+    //       columnHasData.snomedDisplay = true;
+    //     }
+    //     if(get(row, 'evidenceDisplay')){
+    //       columnHasData.barcode = true;
+    //     }
+    //     if(get(row, 'evidence')){
+    //       columnHasData.barcode = true;
+    //     }
+    //     if(get(row, 'onsetDateTime')){
+    //       columnHasData.dates = true;
+    //     }
+    //     if(get(row, 'abatementDateTime')){
+    //       columnHasData.endDate = true;
+    //     }
+    //   })
   
-      setHasInitializedAutoColumns(true);
-      setAutoColumns(columnHasData)
-    }
+    //   setHasInitializedAutoColumns(true);
+    //   setAutoColumns(columnHasData)
+    // }
   }
 
 
@@ -361,42 +363,42 @@ function ConditionsTable(props){
     }
   }
   function renderDateHeader(){
-    if (!hideDates || (props.autoColumns && autoColumnState.dates)) {
+    if (!hideDates) {
       return (
         <TableCell className='date' style={{minWidth: '100px'}}>Start</TableCell>
       );
     }
   }
   function renderEndDateHeader(){
-    if ((!hideDates && !hideEndDate) || (props.autoColumns && autoColumnState.endDate)) {
+    if ((!hideDates && !hideEndDate)) {
       return (
         <TableCell className='date' style={{minWidth: '100px'}}>End</TableCell>
       );
     }
   }
   function renderStartDate(startDate ){
-    if (!hideDates || (props.autoColumns && autoColumnState.dates)) {
+    if (!hideDates) {
       return (
         <TableCell className='date'>{ moment(startDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
   function renderEndDate(endDate ){
-    if ((!hideDates && !hideEndDate) || (props.autoColumns && autoColumnState.endDate)) {
+    if ((!hideDates && !hideEndDate)) {
       return (
         <TableCell className='date'>{ moment(endDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
   function renderPatientNameHeader(){
-    if (!hidePatientName || (props.autoColumns && autoColumnState.patientName)) {
+    if (!hidePatientName) {
       return (
         <TableCell className='patientDisplay'>Patient</TableCell>
       );
     }
   }
   function renderPatientName(patientDisplay ){
-    if (!hidePatientName || (props.autoColumns && autoColumnState.patientName)) {
+    if (!hidePatientName) {
       return (
         <TableCell className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</TableCell>
       );
@@ -419,14 +421,14 @@ function ConditionsTable(props){
     }
   }
   function renderAsserterNameHeader(){
-    if (!hideAsserterName || (props.autoColumns && autoColumnState.asserterName)) {
+    if (!hideAsserterName) {
       return (
         <TableCell className='asserterDisplay'>Asserter</TableCell>
       );
     }
   }
   function renderAsserterName(asserterDisplay ){
-    if (!hideAsserterName || (props.autoColumns && autoColumnState.asserterName)) {
+    if (!hideAsserterName) {
       return (
         <TableCell className='asserterDisplay' style={{minWidth: '140px'}}>{ asserterDisplay }</TableCell>
       );
@@ -447,14 +449,14 @@ function ConditionsTable(props){
     }
   } 
   function renderEvidenceHeader(){
-    if (!hideEvidence || (props.autoColumns && autoColumnState.evidence)) {
+    if (!hideEvidence) {
       return (
         <TableCell className='evidence'>Evidence</TableCell>
       );
     }
   }
   function renderEvidence(evidenceDisplay ){
-    if (!hideEvidence || (props.autoColumns && autoColumnState.evidence)) {
+    if (!hideEvidence) {
       return (
         <TableCell className='evidence'>{ evidenceDisplay }</TableCell>
       );
@@ -682,7 +684,7 @@ function ConditionsTable(props){
 
   
   return(
-    <div>
+    <div id={id} className="tableWithPagination">
       <Table className='conditionsTable' size={tableRowSize} aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
@@ -715,6 +717,7 @@ function ConditionsTable(props){
 
 
 ConditionsTable.propTypes = {
+  id: PropTypes.string,
   data: PropTypes.array,
   conditions: PropTypes.array,
   selectedConditionId: PropTypes.string,
@@ -775,7 +778,7 @@ ConditionsTable.defaultProps = {
 
   autoColumns: false,
   rowsPerPage: 5,
-  tableRowSize: "normal"  // small | normal
+  tableRowSize: "medium"  // small | normal
 }
 
 export default ConditionsTable;

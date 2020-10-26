@@ -161,6 +161,7 @@ function DiagnosticReportsTable(props){
     onMetaClick,
     onRemoveRecord,
     onActionButtonClick,
+    hideCheckbox,
     hideActionButton,
     hideActionIcons,
     actionButtonLabel,
@@ -186,14 +187,14 @@ function DiagnosticReportsTable(props){
   };
 
   function renderToggleHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -204,14 +205,14 @@ function DiagnosticReportsTable(props){
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
   function renderActionIcons(encounter ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -228,66 +229,66 @@ function DiagnosticReportsTable(props){
     }
   } 
   function renderSubject(name){
-    if (!props.hideSubjects) {
+    if (!hideSubjects) {
       return (<TableCell className='name'>{ name }</TableCell>);
     }
   }
   function renderSubjectHeader(){
-    if (!props.hideSubjects) {
+    if (!hideSubjects) {
       return (
         <TableCell className='name'>Subject</TableCell>
       );
     }
   }
   function renderSubjectReference(subjectReference){
-    if (!props.hideSubjectReference) {
+    if (!hideSubjectReference) {
       return (<TableCell className='subjectReference'>{ subjectReference }</TableCell>);
     }
   }
   function renderSubjectReferenceHeader(){
-    if (!props.hideSubjectReference) {
+    if (!hideSubjectReference) {
       return (
         <TableCell className='subjectReference'>Subject Reference</TableCell>
       );
     }
   }
   function renderStatus(valueString){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='value'>{ valueString }</TableCell>
       );
     }
   }
   function renderStatusHeader(){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='value'>Status</TableCell>
       );
     }
   }
   function renderIssuedDateHeader(){
-    if (!props.hideStartDateTime) {
+    if (!hideStartDateTime) {
       return (
         <TableCell className='start' style={{minWidth: '140px'}}>Start</TableCell>
       );
     }
   }
   function renderIssuedDate(periodStart){
-    if (!props.hideStartDateTime) {
+    if (!hideStartDateTime) {
       return (
         <TableCell className='periodStart' style={{minWidth: '140px'}}>{ periodStart }</TableCell>
       );
     }
   }
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helvetica">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
@@ -310,56 +311,56 @@ function DiagnosticReportsTable(props){
     }
   }
   function renderIdentifier(identifier){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   }
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
   function renderCodeHeader(){
-    if (!props.hideCode) {
+    if (!hideCode) {
       return (
         <TableCell className='code'>Code</TableCell>
       );
     }
   }
   function renderCode(code){
-    if (!props.hideCode) {
+    if (!hideCode) {
       return (
         <TableCell className='code'>{ code }</TableCell>
       );  
     }
   }
   function renderPerformer(text){
-    if (!props.hidePerformer) {
+    if (!hidePerformer) {
       return (
         <TableCell className='performer'>{ text }</TableCell>
       );
     }
   }
   function renderPerformerHeader(){
-    if (!props.hidePerformer) {
+    if (!hidePerformer) {
       return (
         <TableCell className='performer'>Performer</TableCell>
       );
     }
   }
   function renderCategoryHeader(){
-    if (!props.hideCategory) {
+    if (!hideCategory) {
       return (
         <TableCell className='category'>Category</TableCell>
       );
     }
   }
   function renderCategory(category){
-    if (!props.hideCategory) {
+    if (!hideCategory) {
       return (
         <TableCell className='category'>{ category }</TableCell>
       );
@@ -387,7 +388,7 @@ function DiagnosticReportsTable(props){
   };
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       rowsPerPageOptions={[5, 10, 25, 100]}
