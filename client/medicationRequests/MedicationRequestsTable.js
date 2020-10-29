@@ -503,6 +503,7 @@ function MedicationRequestsTable(props){
 MedicationRequestsTable.propTypes = {
   id: PropTypes.string,
   medicationRequests: PropTypes.array,
+  selectedMedicationId: PropTypes.string,
 
   query: PropTypes.object,
   paginationLimit: PropTypes.number,

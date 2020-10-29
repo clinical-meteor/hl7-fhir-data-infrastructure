@@ -114,29 +114,6 @@ flattenMedication = function(medication, internalDateFormat, fhirVersion){
 Session.setDefault('selectedMedications', []);
 
 
-//===========================================================================
-// TYPES & DEFAULT VALUES
-
-MedicationsTable.propTypes = {
-  medications: PropTypes.array,
-  fhirVersion: PropTypes.string,
-  query: PropTypes.object,
-  paginationLimit: PropTypes.number,
-  hideCheckbox: PropTypes.bool,
-  hideActionIcons: PropTypes.bool,
-  hideIdentifier: PropTypes.bool,
-  hideActiveIngredient: PropTypes.bool,
-  hideForm: PropTypes.bool,
-  hideCode: PropTypes.bool,
-  hideManufacturer: PropTypes.bool,
-  hideName: PropTypes.bool,
-  hideBarcode: PropTypes.bool,
-  onRowClick: PropTypes.func
-};
-
-MedicationsTable.defaultProps = {
-  rowsPerPage: 5
-};
 
 //===========================================================================
 // MAIN COMPONENT
@@ -149,6 +126,7 @@ function MedicationsTable(props){
   const classes = useStyles();
 
   let { 
+    id,
     children, 
 
     medications,
@@ -165,7 +143,12 @@ function MedicationsTable(props){
     hideManufacturer,
     hideBarcode,
     onRowClick,
+
     rowsPerPage,
+    tableRowSize,
+    dateFormat,
+    showMinutes,
+    formFactorLayout,
 
     ...otherProps 
   } = props;
@@ -445,8 +428,8 @@ function MedicationsTable(props){
   }
 
   return(
-    <div>
-      <Table className="medicationsTable" size="small" aria-label="a dense table" { ...otherProps }>
+    <div id={id} className="tableWithPagination">
+      <Table className="medicationsTable" size={tableRowSize} aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
             { renderCheckboxHeader() }
@@ -472,6 +455,47 @@ function MedicationsTable(props){
 
 
 
+MedicationsTable.propTypes = {
+  id: PropTypes.string,
+  data: PropTypes.array,
+  medications: PropTypes.array,
+  selectedConditionId: PropTypes.string,
+  query: PropTypes.object,
+  paginationLimit: PropTypes.number,
+  disablePagination: PropTypes.bool,
+
+  hideCheckbox: PropTypes.bool,
+  hideActionIcons: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+
+  hideBarcode: PropTypes.bool,
+
+  onCellClick: PropTypes.func,
+  onRowClick: PropTypes.func,
+  onMetaClick: PropTypes.func,
+  onRemoveRecord: PropTypes.func,
+  onActionButtonClick: PropTypes.func,
+  hideActionButton: PropTypes.bool,
+  actionButtonLabel: PropTypes.string,
+
+  rowsPerPage: PropTypes.number,
+  dateFormat: PropTypes.string,
+  showMinutes: PropTypes.bool,
+  hideEnteredInError: PropTypes.bool,
+  count: PropTypes.number,
+  tableRowSize: PropTypes.string,
+  formFactorLayout: PropTypes.string
+};
+
+MedicationsTable.defaultProps = {
+  tableRowSize: 'medium',
+  rowsPerPage: 5,
+  dateFormat: "YYYY-MM-DD hh:mm:ss",
+  hideCheckbox: true,
+  hideActionIcons: true,
+  hideIdentifier: true,  
+  medications: []
+}
 
 
 export default MedicationsTable;

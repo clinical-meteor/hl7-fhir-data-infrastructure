@@ -278,6 +278,7 @@ export class ExplanationOfBenefitsPage extends React.Component {
                 hideActionIcons={true}
                 onRowClick={this.handleRowClick.bind(this) }
                 count={this.data.explanationOfBenefitsCount}
+                rowsPerPage={LayoutHelpers.calcTableRows()}
                 />
             </CardContent>
           </StyledCard>
@@ -295,6 +296,7 @@ export class ExplanationOfBenefitsPage extends React.Component {
                   explanationOfBenefitId={ this.data.selectedExplanationOfBenefitId } 
                   showexplanationOfBenefitInputs={true}
                   showHints={false}
+                  
                 />
               </CardContent>
             </CardContent>

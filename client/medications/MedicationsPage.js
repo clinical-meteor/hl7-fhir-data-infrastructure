@@ -116,6 +116,7 @@ export class MedicationsPage extends React.Component {
                 medications={this.data.medications}
                 count={this.data.medicationsCount}
                 selectedMedicationId={this.data.selectedMedicationId}
+                rowsPerPage={LayoutHelpers.calcTableRows()}
               />
 
 

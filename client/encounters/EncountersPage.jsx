@@ -365,6 +365,7 @@ export class EncountersPage extends React.Component {
                   showMinutes={true}
                   hideActionIcons={true}
                   hideBarcode={false}
+                  rowsPerPage={LayoutHelpers.calcTableRows()}
                   />
               </CardContent>
             </StyledCard>

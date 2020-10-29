@@ -149,9 +149,11 @@ function DiagnosticReportsTable(props){
 
 
   let { 
+    id,
     children, 
 
     diagnosticReports,
+    selectedDiagnosticReportId,
     query,
     paginationLimit,
     disablePagination,
@@ -164,6 +166,18 @@ function DiagnosticReportsTable(props){
     hideCheckbox,
     hideActionButton,
     hideActionIcons,
+    hideIdentifier,
+    hideStatus,
+    hideSubjects,
+    hideSubject,
+    hideSubjectReference,
+    hideIssuedDate,
+    hidePerformer,
+    hideCode,
+    hideCodeDisplay,
+    hideStartDateTime,
+    hideCategory,
+    hideBarcode,
     actionButtonLabel,
   
     rowsPerPage,
@@ -171,6 +185,7 @@ function DiagnosticReportsTable(props){
     showMinutes,
     fhirVersion,
 
+    tableRowSize,
     formFactorLayout,
 
     ...otherProps 
@@ -427,13 +442,31 @@ function DiagnosticReportsTable(props){
     }
   }
 
+  let rowStyle = {
+    cursor: 'pointer',
+    height: '52px'
+  }
+
   if(diagnosticReportsToRender.length === 0){
     logger.trace('DiagnosticReportsTable:  No reports to render.');
     
   } else {
     for (var i = 0; i < diagnosticReportsToRender.length; i++) {
+
+      let selected = false;
+      if(diagnosticReportsToRender[i].id === selectedDiagnosticReportId){
+        selected = true;
+      }
+      if(get(diagnosticReportsToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+      logger.trace('diagnosticReportsToRender[i]', diagnosticReportsToRender[i])
+
       tableRows.push(
-        <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, diagnosticReportsToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+        <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, diagnosticReportsToRender[i]._id)} style={{cursor: 'pointer'}} style={rowStyle} hover={true} selected={selected} >            
           { renderToggle() }
           { renderActionIcons(diagnosticReportsToRender[i]) }
           { renderSubject(diagnosticReportsToRender[i].subjectDisplay)}
@@ -451,8 +484,8 @@ function DiagnosticReportsTable(props){
     }
   }
   return(
-    <div>
-      <Table className="diagnosticReportTable" size="small" aria-label="a dense table" { ...otherProps } >
+    <div id={id} className="tableWithPagination">
+      <Table className="diagnosticReportTable" size={tableRowSize} aria-label="a dense table" { ...otherProps } >
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
@@ -482,8 +515,11 @@ function DiagnosticReportsTable(props){
 
 
 DiagnosticReportsTable.propTypes = {
+  id: PropTypes.string,
+
   fhirVersion: PropTypes.string,
   diagnosticReports: PropTypes.array,
+  selectedDiagnosticReportId: PropTypes.string,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
@@ -512,11 +548,15 @@ DiagnosticReportsTable.propTypes = {
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   count: PropTypes.number,
+  tableRowSize: PropTypes.string,
   formFactorLayout: PropTypes.string
 };
 DiagnosticReportsTable.defaultProps = {
+  tableRowSize: 'medium',
   rowsPerPage: 5,
-  hideActionButton: true
+  dateFormat: "YYYY-MM-DD hh:mm:ss",
+  hideActionButton: true,
+  hideSubject: true
 }
 
 export default DiagnosticReportsTable;

@@ -50,23 +50,12 @@ function TabPanel(props) {
 export class CarePlansPage extends React.Component {
   getMeteorData() {
     let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
       tabIndex: Session.get('carePlanPageTabIndex'),
       carePlanSearchFilter: Session.get('carePlanSearchFilter'),
       currentCarePlan: Session.get('selectedCarePlan'),
       carePlans: CarePlans.find().fetch(),
       carePlansCount: CarePlans.find().count()
     };
-
-    // data.style = Glass.blur(data.style);
-    // data.style.appbar = Glass.darkroom(data.style.appbar);
-    // data.style.tab = Glass.darkroom(data.style.tab);
 
     return data;
   }
@@ -81,8 +70,7 @@ export class CarePlansPage extends React.Component {
   }
 
   render() {
-    if(process.env.NODE_ENV === "test") console.log('In CarePlansPage render');
-
+    // if(process.env.NODE_ENV === "test") console.log('In CarePlansPage render');
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
@@ -103,6 +91,7 @@ export class CarePlansPage extends React.Component {
               carePlans={this.data.carePlans}
               count={this.data.carePlansCount}
               formFactorLayout={formFactor}
+              rowsPerPage={LayoutHelpers.calcTableRows()}
             />
           </CardContent>
         </StyledCard>

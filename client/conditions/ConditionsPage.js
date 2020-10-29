@@ -111,25 +111,6 @@ const muiTheme = createMuiTheme({
   }
 });
 
-//=============================================================================================================================================
-// TABS
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 //=============================================================================================================================================
 // MAIN COMPONENT
@@ -137,13 +118,6 @@ function TabPanel(props) {
 export class ConditionsPage extends React.Component {
   getMeteorData() {
     let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
       tabIndex: Session.get('conditionPageTabIndex'),
       conditionSearchFilter: Session.get('conditionSearchFilter'),
       currentConditionId: Session.get('selectedConditionId'),
@@ -164,7 +138,6 @@ export class ConditionsPage extends React.Component {
 
     return data;
   }
-
   handleTabChange(index){
     Session.set('conditionPageTabIndex', index);
   }
@@ -172,17 +145,17 @@ export class ConditionsPage extends React.Component {
     Session.set('selectedConditionId', false);
   }
   onInsert(conditionId){
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
+    //HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
     Session.set('conditionPageTabIndex', 1);
     Session.set('selectedConditionId', false);
   }
   onUpdate(conditionId){
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
+    //HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
     Session.set('conditionPageTabIndex', 1);
     Session.set('selectedConditionId', false);
-}
+  }
   onRemove(conditionId){
-    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
+    //HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
     Session.set('conditionPageTabIndex', 1);
     Session.set('selectedConditionId', false);
   }
@@ -190,7 +163,7 @@ export class ConditionsPage extends React.Component {
     Session.set('conditionPageTabIndex', 1);
   }
   render() {
-    if(get(Meteor, 'settings.public.logging') === "debug") console.log('In ConditionsPage render');
+    // if(get(Meteor, 'settings.public.logging') === "debug") console.log('In ConditionsPage render');
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
@@ -203,21 +176,19 @@ export class ConditionsPage extends React.Component {
     
     return (
       <PageCanvas id="conditionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={ this.data.conditionsCount + " Conditions"} />
-            <CardContent>
+        <StyledCard height="auto" scrollable={true} margin={20}>
+          <CardHeader title={ this.data.conditionsCount + " Conditions"} />
+          <CardContent>
 
-              <ConditionsTable 
-                id='conditionsTable'
-                conditions={this.data.conditions}
-                count={this.data.conditionsCount}  
-                rowsPerPage={25}
-                formFactorLayout={formFactor}
-              />
-            </CardContent>
-          </StyledCard>
-        </MuiThemeProvider>
+            <ConditionsTable 
+              id='conditionsTable'
+              conditions={this.data.conditions}
+              count={this.data.conditionsCount}  
+              formFactorLayout={formFactor}
+              rowsPerPage={LayoutHelpers.calcTableRows()}
+            />
+          </CardContent>
+        </StyledCard>
       </PageCanvas>
     );
   }

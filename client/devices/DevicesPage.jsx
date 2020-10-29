@@ -192,6 +192,7 @@ export class DevicesPage extends React.Component {
                 devices={this.data.devices}
                 count={this.data.devicesCount}
                 formFactorLayout={formFactor}
+                rowsPerPage={LayoutHelpers.calcTableRows()}
               />
             </CardContent>
         </StyledCard>

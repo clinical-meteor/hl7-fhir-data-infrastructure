@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.6.2',
+  version: '6.7.0',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -24,10 +24,12 @@ Package.onUse(function (api) {
   api.addFiles('lib/FhirUtilities.js', ['client', 'server']);
   api.addFiles('lib/LayoutHelpers.js', ['client', 'server']);
   api.addFiles('lib/FhirDehydrator.js', ['client', 'server']);
+  api.addFiles('lib/MedicalRecordImporter.js', ['client', 'server']);
 
   api.export('FhirUtilities');
   api.export('LayoutHelpers');
   api.export('FhirDehydrator');
+  api.export('MedicalRecordImporter');
 
   // schemas and cursors
   api.addFiles('lib/BaseModel.js', ['client', 'server']);
@@ -43,6 +45,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/CommunicationResponses.js', ['client', 'server']);
   api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
+  // api.addFiles('lib/schemas/DocumentReferences.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
   api.addFiles('lib/schemas/Endpoints.js', ['client', 'server']);
   api.addFiles('lib/schemas/ExplanationOfBenefit.js', ['client', 'server']);
@@ -109,6 +112,10 @@ Package.onUse(function (api) {
   api.export('DiagnosticReport');
   api.export('DiagnosticReports');
   api.export('DiagnosticReportSchema');
+
+  // api.export('DocumentReference');
+  // api.export('DocumentReferences');
+  // api.export('DocumentReferenceSchema');
 
   api.export('Encounter');
   api.export('Encounters');
@@ -206,6 +213,7 @@ Package.onUse(function (api) {
 
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
   api.mainModule('index.jsx', 'client');
+  api.mainModule('server.js', 'server');
 });
 
 Npm.depends({

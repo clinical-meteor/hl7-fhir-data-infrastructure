@@ -200,26 +200,8 @@ export class DiagnosticReportsPage extends React.Component {
                 fhirVersion={ this.data.fhirVersion }
                 hideCheckbox={true}
                 hideActionIcons={true}
+                rowsPerPage={LayoutHelpers.calcTableRows()}
               />
-              {/* <Tabs id="diagnosticReportsPageTabs" value={ this.data.tabIndex} onChange={ this.handleTabChange.bind(this) }>
-                <Tab id='reportHistoryTab' label='History' value={0} />
-                <Tab id="viewReportTab" label='Report' value={1} />
-              </Tabs>
-              <TabPanel>
-                <DiagnosticReportsTable 
-                  diagnosticReports={this.data.diagnosticReports}
-                  count={this.data.diagnosticReportCount}
-                  fhirVersion={ this.data.fhirVersion }/>
-              </TabPanel>
-              <TabPanel>
-                <DiagnosticReportDetail 
-                  id='viewDiagnosticReport'
-                  showDatePicker={ false }   
-                  fhirVersion={  this.data.fhirVersion }
-                  diagnosticReport={  this.data.selectedDiagnosticReport }
-                  diagnosticReportId={  this.data.selectedDiagnosticReportId } 
-                />  
-              </TabPanel> */}
             </CardContent>
           </StyledCard>
         </MuiThemeProvider>

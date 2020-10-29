@@ -104,7 +104,7 @@ function ConditionsTable(props){
     onMetaClick,
     onRemoveRecord,
     onActionButtonClick,
-    showActionButton,
+    hideActionButton,
     actionButtonLabel,
   
     autoColumns,
@@ -114,6 +114,7 @@ function ConditionsTable(props){
     showMinutes,
     hideEnteredInError,
     formFactorLayout,
+    count,
 
     ...otherProps 
   } = props;
@@ -159,7 +160,7 @@ function ConditionsTable(props){
         break;
       case "web":
         hideClinicalStatus = true;
-        hideSnomedCode = true;
+        hideSnomedCode = false;
         hideSnomedDisplay = false;
         hidePatientName = false;
         hideVerification = true;
@@ -184,78 +185,27 @@ function ConditionsTable(props){
         multiline = false;
         break;
       case "hdmi":
-        hideClinicalStatus = true;
-        hideSnomedCode = true;
-        hideSnomedDisplay = true;
-        hideVerification = true;
-        hideSeverity = true;
-        hideEvidence = true;
-        hideDates = true;
-        hideEndDate = true;
-        hideBarcode = true;
+        hideClinicalStatus = false;
+        hideSnomedCode = false;
+        hideSnomedDisplay = false;
+        hideVerification = false;
+        hideSeverity = false;
+        hideEvidence = false;
+        hideDates = false;
+        hideEndDate = false;
+        hideBarcode = false;
         multiline = false;
         break;            
     }
   }
 
 
-  //---------------------------------------------------------------------
-  // Pagination
-
-  
-  let rows = [];
-  const [hasInitializedAutoColumns, setHasInitializedAutoColumns] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-  // const [autoColumnState, setAutoColumns] = useState({
-  //   checkboxes: false,
-  //   actionIcons: false,
-  //   identifier: false,
-  //   patientName: false,
-  //   patientReference: false,
-  //   asserterName: false,
-  //   clinicalStatus: false,
-  //   snomedCode: false,
-  //   snomedDisplay: false,
-  //   verification: false,
-  //   serverity: false,
-  //   evidence: false,
-  //   dates: false,
-  //   endDate: false,
-  //   hideBarcode: false
-  // });
-
-
-  let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
 
   //--------------------------------------------------------------------------------
   // Autocolumns  
 
     
-  if(Array.isArray(conditions)){
+  // if(Array.isArray(conditions)){
     // if(!hasInitializedAutoColumns){
     //   let columnHasData = {
     //     identifier: false,
@@ -325,7 +275,7 @@ function ConditionsTable(props){
     //   setHasInitializedAutoColumns(true);
     //   setAutoColumns(columnHasData)
     // }
-  }
+  //}
 
 
   //---------------------------------------------------------------------
@@ -580,14 +530,14 @@ function ConditionsTable(props){
     }
   }
   function renderActionButtonHeader(){
-    if (props.showActionButton === true) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
   function renderActionButton(patient){
-    if (props.showActionButton === true) {
+    if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >
           <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
@@ -602,7 +552,40 @@ function ConditionsTable(props){
   };
 
 
+  //---------------------------------------------------------------------
+  // Pagination
 
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+  
   //---------------------------------------------------------------------
   // Table Rows
 
@@ -610,24 +593,18 @@ function ConditionsTable(props){
   let conditionsToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.dateFormat){
-    internalDateFormat = props.dateFormat;
+  if(dateFormat){
+    internalDateFormat = dateFormat;
   }
 
-  if(props.conditions){
-    if(props.conditions.length > 0){     
+  if(conditions){
+    if(conditions.length > 0){     
       let count = 0;    
 
-      // if(!hideEnteredInError){
-      //   query.verificationStatus = {
-      //     $nin: ["entered-in-error"]  // unconfirmed | provisional | differential | confirmed | refuted | entered-in-error
-      //   }
-      // }
-
-      props.conditions.forEach(function(condition){
+      conditions.forEach(function(condition){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
           conditionsToRender.push(flattenCondition(condition, internalDateFormat));
         }
@@ -637,8 +614,10 @@ function ConditionsTable(props){
   }
 
   let rowStyle = {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    height: '52px'
   }
+
   if(conditionsToRender.length === 0){
     logger.trace('ConditionsTable: No conditions to render.');
   } else {
@@ -710,7 +689,7 @@ function ConditionsTable(props){
           { tableRows }
         </TableBody>
       </Table>
-    { paginationFooter }
+      { paginationFooter }
     </div>
   );
 }
@@ -746,7 +725,7 @@ ConditionsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
-  showActionButton: PropTypes.bool,
+  hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,
@@ -759,26 +738,27 @@ ConditionsTable.propTypes = {
 };
 
 ConditionsTable.defaultProps = {
+  tableRowSize: 'medium',
+  rowsPerPage: 5,
+  dateFormat: "YYYY-MM-DD hh:mm:ss",
   hideCheckbox: true,
   hideActionIcons: true,
   hideIdentifier: true,
-  hidePatientName: true,
+  hidePatientName: false,
   hidePatientReference: true,
   hideAsserterName: true,
   hideClinicalStatus: true,
-  hideSnomedCode: true,
-  hideSnomedDisplay: true,
+  hideSnomedCode: false,
+  hideSnomedDisplay: false,
   hideVerification: true,
   hideSeverity: true,
   hideEvidence: false,
   hideDates: true,
   hideEndDate: true,
   hideBarcode: false,
+  hideActionButton: true,
   disablePagination: false,
-
-  autoColumns: false,
-  rowsPerPage: 5,
-  tableRowSize: "medium"  // small | normal
+  conditions: []
 }
 
 export default ConditionsTable;

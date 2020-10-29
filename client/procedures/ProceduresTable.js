@@ -515,7 +515,7 @@ function ProceduresTable(props){
         </TableCell>)
       } else {
         return (
-          <TableCell className='codeDisplay'>{ text }</TableCell>
+          <TableCell className='codeDisplay'>{ codeDisplay }</TableCell>
         );  
       }
     }

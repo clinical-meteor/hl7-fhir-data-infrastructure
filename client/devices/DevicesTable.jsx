@@ -170,9 +170,9 @@ function DevicesTable(props){
         hideBarcode = false;
         break;
       case "hdmi":
-        hideCheckbox = false;
+        hideCheckbox = true;
+        hideActionIcons = true;
         hideIdentifier = false;
-        hideActionIcons = false;
         hideDeviceName = false;
         hideMake = false;
         hideModel = false;
@@ -494,7 +494,7 @@ function DevicesTable(props){
           { tableRows }
         </TableBody>
       </Table>
-    { paginationFooter }
+      { paginationFooter }
     </div>
   );
 

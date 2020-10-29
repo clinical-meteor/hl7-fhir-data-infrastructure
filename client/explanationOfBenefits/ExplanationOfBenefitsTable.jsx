@@ -157,6 +157,7 @@ function ExplanationOfBenefitsTable(props){
   const classes = useStyles();
 
   let { 
+    id,
     children, 
 
     explanationOfBenefits,
@@ -203,6 +204,7 @@ function ExplanationOfBenefitsTable(props){
     dateFormat,
     showMinutes,
 
+    tableRowSize,
     formFactorLayout,
 
     ...otherProps 
@@ -704,8 +706,8 @@ function ExplanationOfBenefitsTable(props){
   }
 
   return(
-    <div>
-      <Table size="small" aria-label="a dense table">
+    <div id={id} className="tableWithPagination">
+      <Table size={tableRowSize} aria-label="a dense table">
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
@@ -747,6 +749,8 @@ function ExplanationOfBenefitsTable(props){
 }
 
 ExplanationOfBenefitsTable.propTypes = {
+  id: PropTypes.string,
+
   explanationOfBenefits: PropTypes.array,
   selectedExplanationOfBenefitId: PropTypes.string,
 

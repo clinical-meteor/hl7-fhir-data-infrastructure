@@ -4,6 +4,7 @@ import { useTracker, withTracker } from './lib/Tracker';
 import FhirUtilities from './lib/FhirUtilities';
 import FhirDehydrator from './lib/FhirDehydrator';
 import LayoutHelpers from './lib/LayoutHelpers';
+import MedicalRecordImporter from './lib/MedicalRecordImporter';
 
 import AuditEventsPage from './client/auditEvents/AuditEventsPage';
 import AuditEventsTable from './client/auditEvents/AuditEventsTable';
@@ -644,6 +645,7 @@ export {
   FhirDehydrator,
   FhirUtilities,
   LayoutHelpers,
+  MedicalRecordImporter,
 
   BaseModel,
 

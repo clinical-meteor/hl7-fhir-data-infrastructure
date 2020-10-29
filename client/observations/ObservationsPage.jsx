@@ -248,7 +248,7 @@ export class ObservationsPage extends React.Component {
                 formFactorLayout={formFactor}
                 observations={ this.data.observations }
                 count={ this.data.observationsCount }
-                rowsPerPage={25}
+                rowsPerPage={LayoutHelpers.calcTableRows()}
                 actionButtonLabel="Send"
                 onRowClick={ this.onTableRowClick }
                 onCellClick={ this.onTableCellClick }

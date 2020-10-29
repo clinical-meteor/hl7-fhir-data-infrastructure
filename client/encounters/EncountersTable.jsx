@@ -162,10 +162,12 @@ function EncountersTable(props){
   logger.data('EncountersTable.props', {data: props}, {source: "EncountersTable.jsx"});
 
   let { 
+    id,
     children, 
     
     barcodes,
     encounters,
+    selectedEncounterId,
     query,
     paginationLimit,
     disablePagination,
@@ -200,6 +202,7 @@ function EncountersTable(props){
     rowsPerPage,
     dateFormat,
     showMinutes,
+    tableRowSize,
     formFactorLayout,
 
     ...otherProps 
@@ -539,13 +542,31 @@ function EncountersTable(props){
     }
   }
 
+  let rowStyle = {
+    cursor: 'pointer',
+    height: '52px'
+  }
+
   if(encountersToRender.length === 0){
     logger.trace('EncountersTable:  No encounters to render.');
   } else {
     for (var i = 0; i < encountersToRender.length; i++) {
+
+      let selected = false;
+      if(encountersToRender[i].id === selectedEncounterId){
+        selected = true;
+      }
+      if(get(encountersToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+      logger.trace('encountersToRender[i]', encountersToRender[i])
+
       if(props.multiline){
         tableRows.push(
-          <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, encountersToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >
+          <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, encountersToRender[i]._id)} style={{cursor: 'pointer'}} style={rowStyle} hover={true} selected={selected} >
             { renderToggle() }
             { renderActionIcons(encountersToRender[i]) }
             { renderSubject(encountersToRender[i].subject, encountersToRender[i].typeDisplay)}
@@ -565,7 +586,7 @@ function EncountersTable(props){
         );    
       } else {
         tableRows.push(
-          <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, encountersToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+          <TableRow className="encounterRow" key={i} onClick={ rowClick.bind(this, encountersToRender[i]._id)} style={{cursor: 'pointer'}} style={rowStyle} hover={true} selected={selected} >            
             { renderToggle() }
             { renderActionIcons(encountersToRender[i]) }
             { renderSubject(encountersToRender[i].subject)}
@@ -612,8 +633,8 @@ function EncountersTable(props){
   }
 
   return(
-    <div>
-      <Table size="small" aria-label="a dense table" { ...otherProps } >
+    <div id={id} className="tableWithPagination">
+      <Table size={tableRowSize} aria-label="a dense table" { ...otherProps } >
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
@@ -643,8 +664,11 @@ function EncountersTable(props){
 }
 
 EncountersTable.propTypes = {
+  id: PropTypes.string,
+
   barcodes: PropTypes.bool,
   encounters: PropTypes.array,
+  selectedEncounterId: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
@@ -685,6 +709,8 @@ EncountersTable.propTypes = {
 
 EncountersTable.defaultProps = {
   hideBarcode: true,
+  hideSubjects: false,
+  encounters: [],
   rowsPerPage: 5
 }
 

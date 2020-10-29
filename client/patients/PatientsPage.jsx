@@ -331,7 +331,7 @@ export class PatientsPage extends React.Component {
       self.setState({tabIndex: index});
     }
 
-    const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 25);
+    // const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 25);
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
@@ -353,11 +353,11 @@ export class PatientsPage extends React.Component {
                 noDataMessagePadding={100}
                 patients={ this.data.patients }
                 paginationLimit={ this.pagnationLimit }
-                rowsPerPage={rowsPerPage}
                 count={this.data.patientCount}
                 onRowClick={ this.onTableRowClick }
                 cursors={this.data.dataCursors}
-                formFactorLayout={formFactor}          
+                formFactorLayout={formFactor}    
+                rowsPerPage={LayoutHelpers.calcTableRows()}      
               />   
             </CardContent>
           </StyledCard>                

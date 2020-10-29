@@ -196,38 +196,8 @@ export class ProceduresPage extends React.Component {
                   rowsPerPage={25}
                   tableRowSize="medium"
                   formFactorLayout={formFactor}
+                  rowsPerPage={LayoutHelpers.calcTableRows()}
                   />
-                {/* <Tabs id="proceduresPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-                <Tab className='newProcedureTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
-                  <ProcedureDetail 
-                    id='newProcedure' 
-                    fhirVersion={ this.data.fhirVersion }
-                    procedure={ this.data.selectedProcedure }
-                    procedureId={ this.data.selectedProcedureId } 
-                    showDatePicker={true} 
-                    onInsert={ this.onInsert }
-                  />
-                </Tab>
-                <Tab className="procedureListTab" label='Procedures' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                  <ProceduresTable 
-                    noDataMessagePadding={100}
-                    // hideIdentifier={true} 
-                    displayDates={true} />
-                </Tab>
-                <Tab className="procedureDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                  <ProcedureDetail 
-                    id='procedureDetails'
-                    showDatePicker={true} 
-                    fhirVersion={ this.data.fhirVersion }
-                    procedure={ this.data.selectedProcedure }
-                    procedureId={ this.data.selectedProcedureId } 
-                    onInsert={ this.onInsert }
-                    onUpdate={ this.onUpdate }
-                    onRemove={ this.onRemove }
-                    onCancel={ this.onCancel }
-                    />  
-                </Tab>
-              </Tabs> */}
               </CardContent>
             </StyledCard>
         </MuiThemeProvider>
