@@ -15,15 +15,13 @@ import {
 
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get } from 'lodash';
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
-import FhirUtilities from '../../lib/FhirUtilities';
+import { FhirUtilities } from '../../lib/FhirUtilities';
 import FhirDehydrator, { flattenCondition } from '../../lib/FhirDehydrator';
 
 
@@ -575,7 +573,7 @@ function ConditionsTable(props){
   if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
+      // rowsPerPageOptions={[5, 10, 25, 100]}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}

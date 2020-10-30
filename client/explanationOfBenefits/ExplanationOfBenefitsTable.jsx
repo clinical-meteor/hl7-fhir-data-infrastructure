@@ -618,7 +618,7 @@ function ExplanationOfBenefitsTable(props){
   if(!props.disablePagination){
     paginationFooter = <TablePagination
       component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
+      // rowsPerPageOptions={[5, 10, 25, 100]}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}
@@ -818,7 +818,7 @@ ExplanationOfBenefitsTable.defaultProps = {
   hidePaymentDate: false,
   hideCounts: false,  
   hideBarcode: false,  
-  selectedExplanationOfBenefitId: false,
+  selectedExplanationOfBenefitId: '',
   rowsPerPage: 5
 }
 
