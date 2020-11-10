@@ -135,7 +135,7 @@ function TabPanel(props) {
 }
 
 
-
+Session.setDefault('taskChecklistMode', false)
 
 export class TasksPage extends React.Component {
   constructor(props) {
@@ -156,13 +156,18 @@ export class TasksPage extends React.Component {
       tasks: [],
       query: {},
       options: {
-        limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
+        sort: {
+          'focus.display': -1,
+          lastModified: -1
+        }
       },
       tabIndex: Session.get('taskPageTabIndex'),
+      taskChecklistMode: Session.get('taskChecklistMode'),
       onePageLayout: true
     };
 
     data.onePageLayout = Session.get('TasksPage.onePageLayout');
+
 
 
     // if(Session.get('tasksTableQuery')){
@@ -179,11 +184,28 @@ export class TasksPage extends React.Component {
     //   this.state.task = {};
     // }
 
-    console.log('TasksPage.data.query', data.query)
-    console.log('TasksPage.data.options', data.options)
+    console.log('TasksPage.data.query', data.query);
+    console.log('TasksPage.data.options', data.options);
 
     data.tasks = Tasks.find(data.query, data.options).fetch();
     data.tasksCount = Tasks.find(data.query, data.options).count();
+
+    if(Session.get('taskChecklistMode')){
+      data.tasks = Tasks.find({
+        'focus.display': "Patient Correction"
+      }, {
+        limit: 10,
+        sort: {lastModified: -1}
+      }).fetch();
+
+      data.tasksCount = Tasks.find({
+        'focus.display': "Patient Correction"
+      }, {
+        limit: 10,
+        sort: {lastModified: -1}
+      }).count();
+    }
+
 
     // console.log("TasksPage[data]", data);
     return data;
@@ -194,6 +216,7 @@ export class TasksPage extends React.Component {
     Session.set('taskPageTabIndex', index);
   }
   handleActive(index){
+
   }
   onCancelUpsertTask(context){
     Session.set('taskPageTabIndex', 1);
@@ -206,8 +229,7 @@ export class TasksPage extends React.Component {
       }
       if (result) {
         Session.set('selectedTaskId', '');
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
-        Bert.alert('Task removed!', 'success');
+        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});        
       }
     });
     Session.set('taskPageTabIndex', 1);
@@ -246,13 +268,12 @@ export class TasksPage extends React.Component {
         Tasks._collection.update({_id: get(context, 'state.taskId')}, {$set: fhirTaskData }, function(error, result){
           if (error) {
             if(process.env.NODE_ENV === "test") console.log("Tasks.insert[error]", error);
-            Bert.alert(error.reason, 'danger');
+          
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
             Session.set('selectedTaskId', '');
             Session.set('taskPageTabIndex', 1);
-            Bert.alert('Task added!', 'success');
           }
         });
       } else {
@@ -262,14 +283,12 @@ export class TasksPage extends React.Component {
         fhirTaskData.effectiveDateTime = new Date();
         Tasks._collection.insert(fhirTaskData, function(error, result) {
           if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('Tasks.insert[error]', error);
-            Bert.alert(error.reason, 'danger');
+            if(process.env.NODE_ENV === "test")  console.log('Tasks.insert[error]', error);           
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
             Session.set('taskPageTabIndex', 1);
             Session.set('selectedTaskId', '');
-            Bert.alert('Task added!', 'success');
           }
         });
       }
@@ -338,7 +357,7 @@ export class TasksPage extends React.Component {
     let layoutContents;
     if(this.data.onePageLayout){
       layoutContents = <StyledCard height="auto" margin={20} >
-        <CardHeader title={this.data.tasksCount + " Tasks"} />
+        <CardHeader title={this.data.tasksCount + " Task History Records"} />
         <CardContent>
 
           <TasksTable 
@@ -362,7 +381,9 @@ export class TasksPage extends React.Component {
             hideRateAggregation={true}
             hideScoring={false}
             hideBarcode={false}
+            showMinutes={true}
             paginationLimit={10}     
+            checklist={this.data.taskChecklistMode}
             />
           </CardContent>
         </StyledCard>

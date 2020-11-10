@@ -335,11 +335,8 @@ export class PatientsPage extends React.Component {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
-
-    let paddingWidth = 84;
-    if(Meteor.isCordova){
-      paddingWidth = 20;
-    }
+    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+    
     let cardWidth = window.innerWidth - paddingWidth;
     
 

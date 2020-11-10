@@ -66,6 +66,7 @@ flattenTask = function(task, internalDateFormat){
     status: '',
     title: '',
     authoredOn: '',
+    lastModified: '',
     focus: '',
     for: '',
     intent: '',
@@ -83,6 +84,9 @@ flattenTask = function(task, internalDateFormat){
 
   if(get(task, 'authoredOn')){
     result.authoredOn = moment(get(task, 'authoredOn', '')).format(internalDateFormat);
+  }
+  if(get(task, 'lastModified')){
+    result.lastModified = moment(get(task, 'lastModified', '')).format(internalDateFormat);
   }
 
   result.description = get(task, 'description', '');
@@ -152,6 +156,9 @@ function TasksTable(props){
     dateFormat,
     showMinutes,
     displayEnteredInError,
+
+    formFactorLayout,
+    checklist,
 
     ...otherProps 
   } = props;
@@ -298,10 +305,25 @@ function TasksTable(props){
   function renderAuthoredOnHeader(){
     if (!props.hideAuthoredOn) {
       return (
-        <TableCell className='approvalDate' style={{minWidth: '140px'}}>Approval Date</TableCell>
+        <TableCell className='approvalDate' style={{minWidth: '140px'}}>Authored Date</TableCell>
       );
     }
   }
+  function renderLastModified(lastModified){
+    if (!props.hideLastModified) {
+      return (
+        <TableCell className='lastModified'>{ lastModified }</TableCell>
+      );
+    }
+  }
+  function renderLastModifiedHeader(){
+    if (!props.hideLastModified) {
+      return (
+        <TableCell className='lastModified' style={{minWidth: '140px'}}>Last Modified</TableCell>
+      );
+    }
+  }
+
   function renderFocus(focus){
     if (!props.hideFocus) {
       return (
@@ -473,6 +495,7 @@ function TasksTable(props){
           { renderStatus(tasksToRender[i].status) }
           { renderDescription(tasksToRender[i].description) }          
           { renderAuthoredOn(tasksToRender[i].authoredOn) }
+          { renderLastModified(tasksToRender[i].lastModified) }
           { renderFocus(tasksToRender[i].focus) }
           { renderFor(tasksToRender[i].for) }
           { renderRequestor(tasksToRender[i].requester) }
@@ -495,8 +518,9 @@ function TasksTable(props){
             { renderStatusHeader() }
             { renderDescriptionHeader() }
             { renderAuthoredOnHeader() }
+            { renderLastModifiedHeader() }
             { renderFocusHeader() }
-            { renderFor() }
+            { renderForHeader() }
             { renderRequestorHeader() }
             { renderCodeHeader() }
             { renderIntentHeader() }
@@ -524,6 +548,7 @@ TasksTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideAuthoredOn: PropTypes.bool,
+  hideLastModified: PropTypes.bool,
   hideDescription: PropTypes.bool,
   hideFocus: PropTypes.bool,
   hideFor: PropTypes.bool,
@@ -540,12 +565,14 @@ TasksTable.propTypes = {
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
 
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+  checklist: PropTypes.bool
 };
 TasksTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideAuthoredOn: false,
+  hideLastModified: false,
   hideDescription: false,
   hideFocus: false,
   hideFor: false,
@@ -554,6 +581,7 @@ TasksTable.defaultProps = {
   hideStatus: false,
   hideCode: false,
   hideBarcode: true,
+  checklist: true,
   selectedTaskId: '',
   rowsPerPage: 5
 }

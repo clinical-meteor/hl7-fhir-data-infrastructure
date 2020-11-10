@@ -175,13 +175,9 @@ export class ProceduresPage extends React.Component {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
+    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-    let paddingWidth = 84;
-    if(Meteor.isCordova){
-      paddingWidth = 20;
-    }
     let cardWidth = window.innerWidth - paddingWidth;
-
     let proceduresTitle = this.data.proceduresCount + " Procedures";
 
     return (

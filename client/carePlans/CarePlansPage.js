@@ -74,13 +74,9 @@ export class CarePlansPage extends React.Component {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
+    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-    let paddingWidth = 84;
-    if(Meteor.isCordova){
-      paddingWidth = 20;
-    }
     let cardWidth = window.innerWidth - paddingWidth;
-
 
     return (
       <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
