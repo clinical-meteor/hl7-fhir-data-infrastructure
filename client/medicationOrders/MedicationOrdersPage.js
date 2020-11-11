@@ -14,7 +14,7 @@ import {
   Box
 } from '@material-ui/core';
 
-import MedicationOrderDetail from './MedicationOrderDetail';
+// import MedicationOrderDetail from './MedicationOrderDetail';
 import MedicationOrdersTable from './MedicationOrdersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -103,111 +103,61 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
     }
   });
 
-//=============================================================================================================================================
-//=============================================================================================================================================
-// TAB PANEL
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 //=============================================================================================================================================
 //=============================================================================================================================================
 // MEDICATION ORDER PAGE
 
-Session.setDefault('medicationOrderPageTabIndex', 0)
-export class MedicationOrdersPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      state: {
-        isLoggedIn: false
-      },
-      tabIndex: Session.get('medicationOrderPageTabIndex'),
-      medicationOrderSearchFilter: Session.get('medicationOrderSearchFilter'),
-      currentMedicationOrder: Session.get('selectedMedicationOrder'),
-      medicationOrders: [],
-      medicationOrdersCount: 0
-    };
-    
-    data.medicationOrders = MedicationOrders.find().fetch();
-    data.medicationOrdersCount = MedicationOrders.find().count();
 
-    if (Meteor.user()) {
-      data.state.isLoggedIn = true;
-    }
+export function MedicationOrdersPage(props){
+  let data = {
+    selectedMedicationOrderId: '',
+    selectedMedicationOrder: null,
+    medicationOrders: [],
+    onePageLayout: true
+  };
 
-    return data;
-  }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('MedicationOrdersPage.onePageLayout');
+  }, [])
+  data.selectedMedicationOrderId = useTracker(function(){
+    return Session.get('selectedMedicationOrderId');
+  }, [])
+  data.selectedMedicationOrder = useTracker(function(){
+    return MedicationOrders.findOne(Session.get('selectedMedicationOrderId'));
+  }, [])
+  data.medicationOrders = useTracker(function(){
+    return MedicationOrders.find().fetch();
+  }, [])
 
-  handleTabChange(index){
-    Session.set('medicationOrderPageTabIndex', index);
-  }
+  if(process.env.NODE_ENV === "test") console.log('In MedicationOrdersPage render');
 
-  onNewTab(){
-    Session.set('selectedMedicationOrder', false);
-    Session.set('medicationOrderUpsert', false);
-  }
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
 
-  render() {
-    if(process.env.NODE_ENV === "test") console.log('In MedicationOrdersPage render');
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-
-    return (
-      <PageCanvas id="medicationOrdersPage" headerHeight={headerHeight} >
-        <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} >
-            <CardHeader title={this.data.medicationOrdersCount + ' Medication Orders'} />
-            <CardContent>
-              <MedicationOrdersTable 
-                medicationOrders={this.data.medicationOrders}
-                rowsPerPage={20}
-                hideBarcodes={true}
-                hidePatient={true}
-                hideActionIcons={false}
-                hideCheckbox={true}
-                count={this.data.medicationOrdersCount}
-              />
-
-              {/* <div id="medicationOrdersPageTabs">
-                <Tabs value={this.data.tabIndex} onChange={this.handleTabChange.bind(this)} aria-label="simple tabs example">
-                  <Tab label="Prescription History" value={0} />
-                  <Tab label="New" value={1} />
-                </Tabs>
-                <TabPanel >
-                  
-                </TabPanel >
-                <TabPanel >
-                  <MedicationOrderDetail id='newMedicationOrder' />
-                </TabPanel >
-              </div> */}
-            </CardContent>
-          </StyledCard>
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
-  }
+  return (
+    <PageCanvas id="medicationOrdersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+        <StyledCard height="auto" scrollable={true} margin={20} >
+          <CardHeader title={this.data.medicationOrdersCount + ' Medication Orders'} />
+          <CardContent>
+            <MedicationOrdersTable 
+              medicationOrders={this.data.medicationOrders}
+              rowsPerPage={20}
+              hideBarcodes={true}
+              hidePatient={true}
+              hideActionIcons={false}
+              hideCheckbox={true}
+              count={this.data.medicationOrdersCount}
+            />
+          </CardContent>
+        </StyledCard>
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(MedicationOrdersPage.prototype, ReactMeteorData);
+
+
+
 export default MedicationOrdersPage;

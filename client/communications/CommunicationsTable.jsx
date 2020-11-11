@@ -19,6 +19,198 @@ import ReactMixin from 'react-mixin';
 import { get } from 'lodash';
 import moment from 'moment';
 
+import { FhirUtilities } from '../../lib/FhirUtilities';
+// import FhirDehydrator, { flattenCondition } from '../../lib/FhirDehydrator';
+
+
+//===========================================================================
+// THEMING
+
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
+}));
+
+let styles = {
+  hideOnPhone: {
+    visibility: 'visible',
+    hide: 'table'
+  },
+  cellHideOnPhone: {
+    visibility: 'visible',
+    hide: 'table',
+    paddingTop: '16px',
+    maxWidth: '120px'
+  },
+  cell: {
+    paddingTop: '16px'
+  }
+}
+
+
+//===========================================================================
+// MAIN COMPONENT
+
+function ConditionsTable(props){
+  logger.info('Rendering the ConditionsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ConditionsTable');
+  logger.data('ConditionsTable.props', {data: props}, {source: "ConditionsTable.jsx"});
+
+  const classes = useStyles();
+
+  let { 
+    id,
+    children, 
+
+    data,
+    conditions,
+    selectedConditionId,
+
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    hideCheckbox,
+    hideActionIcons,
+    hideIdentifier,
+    hidePatientName,
+    hidePatientReference,
+    hideAsserterName,
+    hideClinicalStatus,
+    hideSnomedCode,
+    hideSnomedDisplay,
+    hideVerification,
+    hideSeverity,
+    hideEvidence,
+    hideDates,
+    hideEndDate,
+    hideBarcode,
+  
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButtonClick,
+    hideActionButton,
+    actionButtonLabel,
+  
+    autoColumns,
+    rowsPerPage,
+    tableRowSize,
+    dateFormat,
+    showMinutes,
+    hideEnteredInError,
+    formFactorLayout,
+    count,
+
+    ...otherProps 
+  } = props;
+
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    switch (formFactorLayout) {
+      case "phone":
+        break;
+      case "tablet":
+        break;
+      case "web":
+        break;
+      case "desktop":
+        break;
+      case "hdmi":
+        break;            
+    }
+  }
+
+
+  //---------------------------------------------------------------------
+  // Column Rendering
+
+  function renderCheckboxHeader(){
+    if (!hideCheckbox) {
+      return (
+        <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
+      );
+    }
+  }
+  function renderCheckbox(patientId ){
+    if (!hideCheckbox) {
+      return (
+        <TableCell className="toggle">
+          <Checkbox
+            defaultChecked={true}
+          />
+        </TableCell>
+      );
+    }
+  }
+  function renderIdentifierHeader(){
+    if (!hideIdentifier) {
+      return (
+        <TableCell className='identifier'>Identifier</TableCell>
+      );
+    }
+  }
+  function renderIdentifier(identifier ){
+    if (!hideIdentifier) {
+      return (
+        <TableCell className='identifier'>{ identifier }</TableCell>
+      );
+    }
+  } 
+
+  function renderActionIconsHeader(){
+    if (!hideActionIcons) {
+      return (
+        <TableCell className='actionIcons'>Actions</TableCell>
+      );
+    }
+  }
+  function renderActionIcons( condition ){
+    if (!hideActionIcons) {
+
+      let iconStyle = {
+        marginLeft: '4px', 
+        marginRight: '4px', 
+        marginTop: '4px', 
+        fontSize: '120%'
+      }
+
+      return (
+        <TableCell className='actionIcons' style={{width: '120px'}}>
+          {/* <Icon icon={tag} style={iconStyle} onClick={showSecurityDialog.bind(this, condition)} />
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={removeRecord.bind(this, condition._id)} /> */}
+        </TableCell>
+      );
+    }
+  } 
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+}
+
 export class CommunicationsTable extends React.Component {
   getMeteorData() {
     let data = {

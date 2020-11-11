@@ -16,7 +16,7 @@ import styled from 'styled-components';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
-import DiagnosticReportDetail from './DiagnosticReportDetail';
+// import DiagnosticReportDetail from './DiagnosticReportDetail';
 import DiagnosticReportsTable from './DiagnosticReportsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -107,106 +107,56 @@ const muiTheme = createMuiTheme({
   }
 });
 
-// ==============================================================================================================
-// Tabs
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+// ==============================================================================================================
+// MAIN COMPONENT
+
+export function DiagnosticReportsPage(props){
+
+  let data = {
+    selectedDiagnosticReportId: '',
+    selectedDiagnosticReport: false,
+    diagnosticReports: []
+  };
+
+  data.selectedDiagnosticReportId = useTracker(function(){
+    return Session.get('selectedDiagnosticReportId');
+  }, [])
+  data.selectedDiagnosticReport = useTracker(function(){
+    return AuditEvents.findOne({_id: Session.get('selectedDiagnosticReportId')});
+  }, [])
+  data.diagnosticReports = useTracker(function(){
+    return DiagnosticReports.find().fetch();
+  }, [])
+
+  if(process.env.NODE_ENV === "test") console.log('In DiagnosticReportsPage render');
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
+  let cardWidth = window.innerWidth - paddingWidth;
 
   return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
+    <PageCanvas id="measuresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme}>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <CardHeader title={this.data.diagnosticReport.length + ' Diagnostic Reports'} />
+          <CardContent>
+            <DiagnosticReportsTable 
+              diagnosticReports={this.data.diagnosticReports}
+              count={this.data.diagnosticReport.length}
+              fhirVersion={ this.data.fhirVersion }
+              hideCheckbox={true}
+              hideActionIcons={true}
+              rowsPerPage={LayoutHelpers.calcTableRows()}
+            />
+          </CardContent>
+        </StyledCard>
+      </MuiThemeProvider>
+    </PageCanvas>
   );
 }
 
-// ==============================================================================================================
-// React CLass Component
-
-Session.setDefault('diagnosticReportPageTabIndex', 0);
-export class DiagnosticReportsPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('diagnosticReportPageTabIndex'),
-      diagnosticReportSearchFilter: Session.get('diagnosticReportSearchFilter'),
-      selectedDiagnosticReportId: Session.get('selectedDiagnosticReportId'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedDiagnosticReport: false,
-      diagnosticReports: [],
-      diagnosticReportCount: 0
-    };
-
-    if (Session.get('selectedDiagnosticReportId')){
-      data.selectedDiagnosticReport = DiagnosticReports.findOne({_id: Session.get('selectedDiagnosticReportId')});
-    } else {
-      data.selectedDiagnosticReport = false;
-    }
-
-    data.diagnosticReports = DiagnosticReports.find().fetch();
-    data.diagnosticReportCount = DiagnosticReports.find().count();
-
-
-    // data.style = Glass.blur(data.style);
-    // data.style.appbar = Glass.darkroom(data.style.appbar);
-    // data.style.tab = Glass.darkroom(data.style.tab);
-
-    return data;
-  }
-
-  handleTabChange(index){
-    // Session.set('diagnosticReportPageTabIndex', index);
-  }
-
-  onNewTab(){
-    // Session.set('selectedDiagnosticReportId', false);
-    // Session.set('diagnosticReportUpsert', false);
-  }
-
-  render() {
-    if(process.env.NODE_ENV === "test") console.log('In DiagnosticReportsPage render');
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-    let cardWidth = window.innerWidth - paddingWidth;
-
-    return (
-      <PageCanvas id="measuresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme}>
-          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={this.data.diagnosticReportCount + ' Diagnostic Reports'} />
-            <CardContent>
-              <DiagnosticReportsTable 
-                diagnosticReports={this.data.diagnosticReports}
-                count={this.data.diagnosticReportCount}
-                fhirVersion={ this.data.fhirVersion }
-                hideCheckbox={true}
-                hideActionIcons={true}
-                rowsPerPage={LayoutHelpers.calcTableRows()}
-              />
-            </CardContent>
-          </StyledCard>
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
-  }
-}
-
-ReactMixin(DiagnosticReportsPage.prototype, ReactMeteorData);
 
 export default DiagnosticReportsPage;

@@ -114,49 +114,29 @@ Session.setDefault('MeasureReportsPage.onePageLayout', true)
 
 
 
+export function MeasureReportsPage(props){
+  let data = {
+    selectedMeasureReportId: '',
+    selectedMeasureReport: null,
+    measureReports: [],
+    onePageLayout: true
+  };
+
+  data.onePageLayout = useTracker(function(){
+    return Session.get('MeasureReportsPage.onePageLayout');
+  }, [])
+  data.selectedMeasureReportId = useTracker(function(){
+    return Session.get('selectedMeasureReportId');
+  }, [])
+  data.selectedMeasureReport = useTracker(function(){
+    return MeasureReports.findOne(Session.get('selectedMeasureReportId'));
+  }, [])
+  data.measureReports = useTracker(function(){
+    return MeasureReports.find().fetch();
+  }, [])
 
 
-export class MeasureReportsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      measureReportId: false,
-      measureReport: {}
-    }
-  }
-
-  getMeteorData() {
-    let data = {
-      tabIndex: Session.get('measureReportPageTabIndex'),
-      measureReportSearchFilter: Session.get('measureReportSearchFilter'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedMeasureReportId: Session.get("selectedMeasureReportId"),
-      selectedMeasureReport: Session.get("selectedMeasureReport"),
-      selected: [],
-      measureReports: [],
-      query: {},
-      options: {},
-      tabIndex: Session.get('measureReportPageTabIndex'),
-      onePageLayout: Session.get('MeasureReportsPage.onePageLayout')
-    };
-
-
-
-    // console.log('MeasureReportsPage.data.query', data.query)
-    // console.log('MeasureReportsPage.data.options', data.options)
-
-    data.measureReports = MeasureReports.find(data.query, data.options).fetch();
-    data.measureReportsCount = MeasureReports.find(data.query, data.options).count();
-
-    // console.log("MeasureReportsPage[data]", data);
-    return data;
-  }
-
-
-  onCancelUpsertMeasureReport(context){
-
-  }
-  onDeleteMeasureReport(context){
+  function onDeleteMeasureReport(context){
     MeasureReports._collection.remove({_id: get(context, 'state.measureReportId')}, function(error, result){
       if (error) {
         if(process.env.NODE_ENV === "test") console.log('MeasureReports.insert[error]', error);
@@ -170,7 +150,7 @@ export class MeasureReportsPage extends React.Component {
     });
     
   }
-  onUpsertMeasureReport(context){
+  function onUpsertMeasureReport(context){
     //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
     console.log('Saving a new MeasureReport...', context.state)
 
@@ -227,27 +207,15 @@ export class MeasureReportsPage extends React.Component {
       }
     } 
   }
-
-
-  onInsert(measureReportId){
+  function onInsert(measureReportId){
     Session.set('selectedMeasureReportId', '');
     Session.set('measureReportPageTabIndex', 1);
     HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: measureReportId});
   }
-  onUpdate(measureReportId){
-    Session.set('selectedMeasureReportId', '');
-    Session.set('measureReportPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: measureReportId});
-  }
-  onRemove(measureReportId){
-    Session.set('measureReportPageTabIndex', 1);
-    Session.set('selectedMeasureReportId', '');
-    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MeasureReports", recordId: measureReportId});
-  }
-  onCancel(){
+  function onCancel(){
     Session.set('measureReportPageTabIndex', 1);
   } 
-  handleRowClick(measureReportId){
+  function handleRowClick(measureReportId){
     console.log('MeasureReportsPage.handleRowClick', measureReportId)
     let measureReport = MeasureReports.findOne({_id: measureReportId});
 
@@ -258,18 +226,43 @@ export class MeasureReportsPage extends React.Component {
     Session.set('currentSelection', measureReport);
   }
 
-  render() {
-    // console.log('MeasureReportsPage.data', this.data)
 
-    function handleChange(event, newValue) {
-      Session.set('measureReportPageTabIndex', newValue)
-    }
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
-    let layoutContents;
-    if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto" margin={20} >
+  let layoutContents;
+  if(this.data.onePageLayout){
+    layoutContents = <StyledCard height="auto" margin={20} >
+      <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
+      <CardContent>
+        <MeasureReportsTable 
+          hideIdentifier={true} 
+          hideCheckboxes={true} 
+          hideSubjects={false}
+          noDataMessagePadding={100}
+          actionButtonLabel="Send"
+          measureReports={ this.data.measureReports }
+          count={ this.data.measureReportsCount }
+          selectedMeasureReportId={ this.data.selectedMeasureReportId }
+          hideMeasureUrl={false}
+          paginationLimit={10}
+          hideSubjects={true}
+          hideClassCode={false}
+          hideReasonCode={false}
+          hideReason={false}
+          hideHistory={false}
+          onRowClick={this.handleRowClick.bind(this) }
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+          tableRowSize="medium"
+        />
+        </CardContent>
+      </StyledCard>
+  } else {
+    layoutContents = <Grid container spacing={3}>
+    <Grid item lg={6}>
+      <StyledCard height="auto" margin={20} >
         <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
         <CardContent>
           <MeasureReportsTable 
@@ -281,87 +274,60 @@ export class MeasureReportsPage extends React.Component {
             measureReports={ this.data.measureReports }
             count={ this.data.measureReportsCount }
             selectedMeasureReportId={ this.data.selectedMeasureReportId }
-            hideMeasureUrl={false}
             paginationLimit={10}
+            hideMeasureUrl={false}
             hideSubjects={true}
             hideClassCode={false}
             hideReasonCode={false}
             hideReason={false}
             hideHistory={false}
+            hideBarcode={true}
+            hideNumerator={true}
+            hideDenominator={true}
             onRowClick={this.handleRowClick.bind(this) }
             rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
             tableRowSize="medium"
-          />
-          </CardContent>
-        </StyledCard>
-    } else {
-      layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} >
-          <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
-          <CardContent>
-            <MeasureReportsTable 
-              hideIdentifier={true} 
-              hideCheckboxes={true} 
-              hideSubjects={false}
-              noDataMessagePadding={100}
-              actionButtonLabel="Send"
-              measureReports={ this.data.measureReports }
-              count={ this.data.measureReportsCount }
-              selectedMeasureReportId={ this.data.selectedMeasureReportId }
-              paginationLimit={10}
-              hideMeasureUrl={false}
-              hideSubjects={true}
-              hideClassCode={false}
-              hideReasonCode={false}
-              hideReason={false}
-              hideHistory={false}
-              hideBarcode={true}
-              hideNumerator={true}
-              hideDenominator={true}
-              onRowClick={this.handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
-              tableRowSize="medium"
-              />
-          </CardContent>
-        </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20}  scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureReportId }</h1>
-          <CardContent>
-            <CardContent>
-              <MeasureReportDetail 
-                id='measureReportDetails' 
-                displayDatePicker={true} 
-                displayBarcodes={false}
-                measureReport={ this.data.selectedMeasureReport }
-                measureReportId={ this.data.selectedMeasureReportId } 
-                showMeasureReportInputs={true}
-                showHints={false}
-                showPopulationCode={false}
-                // onInsert={ this.onInsert }
-                // onDelete={ this.onDeleteMeasureReport }
-                // onUpsert={ this.onUpsertMeasureReport }
-                // onCancel={ this.onCancelUpsertMeasureReport } 
-              />
-              
-            </CardContent>
-          </CardContent>
-        </StyledCard>
-      </Grid>
+            />
+        </CardContent>
+      </StyledCard>
     </Grid>
-    }
-
-    return (
-      <PageCanvas id="measureReportsPage" headerHeight={headerHeight}>
-        <MuiThemeProvider theme={muiTheme} >
-          { layoutContents }
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
+    <Grid item lg={4}>
+      <StyledCard height="auto" margin={20}  scrollable>
+        <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureReportId }</h1>
+        <CardContent>
+          <CardContent>
+            <MeasureReportDetail 
+              id='measureReportDetails' 
+              displayDatePicker={true} 
+              displayBarcodes={false}
+              measureReport={ this.data.selectedMeasureReport }
+              measureReportId={ this.data.selectedMeasureReportId } 
+              showMeasureReportInputs={true}
+              showHints={false}
+              showPopulationCode={false}
+              // onInsert={ this.onInsert }
+              // onDelete={ this.onDeleteMeasureReport }
+              // onUpsert={ this.onUpsertMeasureReport }
+              // onCancel={ this.onCancelUpsertMeasureReport } 
+            />
+            
+          </CardContent>
+        </CardContent>
+      </StyledCard>
+    </Grid>
+  </Grid>
   }
+
+  return (
+    <PageCanvas id="measureReportsPage" headerHeight={headerHeight}>
+      <MuiThemeProvider theme={muiTheme} >
+        { layoutContents }
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(MeasureReportsPage.prototype, ReactMeteorData);
+
+
+
 export default MeasureReportsPage;

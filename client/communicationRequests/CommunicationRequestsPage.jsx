@@ -16,8 +16,8 @@ import {
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 
-import CommunicationRequestDetail from './CommunicationRequestDetail';
-import CommunicationRequestsTable from './CommunicationRequestsTable';
+// import CommunicationRequestDetail from './CommunicationRequestDetail';
+// import CommunicationRequestsTable from './CommunicationRequestsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
@@ -38,87 +38,71 @@ let defaultCommunicationRequest = {
 Session.setDefault('communicationRequestFormData', defaultCommunicationRequest);
 Session.setDefault('communicationRequestSearchFilter', '');
 
-export class CommunicationRequestPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('communicationRequestPageTabIndex'),
-      communicationRequest: defaultCommunicationRequest,
-      communicationRequestSearchFilter: '',
-      currentCommunicationRequest: null,
-      communicationRequests: CommunicationRequests.find().fetch(),
-      communicationRequestsCount: CommunicationRequests.find().count()
-    };
+export function CommunicationRequestPage(props){
 
-    if (Session.get('communicationRequestFormData')) {
-      data.communicationRequest = Session.get('communicationRequestFormData');
-    }
-    if (Session.get('communicationRequestSearchFilter')) {
-      data.communicationRequestSearchFilter = Session.get('communicationRequestSearchFilter');
-    }
-    if (Session.get("selectedCommunicationRequest")) {
-      data.currentCommunicationRequest = Session.get("selectedCommunicationRequest");
-    }
+  let data = {
+    // communicationRequest: defaultCommunicationRequest,
+    selectedCommunicationRequestId: '',
+    currentCommunicationRequest: null,
+    communicationRequests: [],
+  };
 
-    if(process.env.NODE_ENV === "test") console.log("CommunicationRequestPage[data]", data);
-    return data;
+  if (Session.get('communicationRequestFormData')) {
+    data.communicationRequest = Session.get('communicationRequestFormData');
+  }
+  if (Session.get('communicationRequestSearchFilter')) {
+    data.communicationRequestSearchFilter = Session.get('communicationRequestSearchFilter');
+  }
+  if (Session.get("selectedCommunicationRequest")) {
+    data.currentCommunicationRequest = Session.get("selectedCommunicationRequest");
   }
 
-  handleTabChange(index){
-    Session.set('communicationRequestPageTabIndex', index);
-  }
+  data.selectedCommunicationRequestId = useTracker(function(){
+    return Session.get('selectedCommunicationRequestId');
+  }, [])
+  data.selectedCommunicationRequest = useTracker(function(){
+    return CommunicationRequests.findOne(Session.get('selectedCommunicationRequestId'));
+  }, [])
+  data.communicationRequests = useTracker(function(){
+    return CommunicationRequests.find().fetch();
+  }, [])
 
-  onNewTab(){
-    Session.set('selectedCommunicationRequest', false);
-    Session.set('communicationRequestUpsert', false);
-  }
 
-  render() {
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
+  return (
+    <PageCanvas id="communicationRequestsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      {/* <CommunicationRequestDetail 
+        id='newCommunicationRequest' /> */}
 
-    return (
-      <div id="communicationRequestsPage">
-        <PageCanvas headerHeight={headerHeight} >
-          {/* <CommunicationRequestDetail 
-            id='newCommunicationRequest' /> */}
+      <StyledCard height="auto" margin={20} >
+        <CardHeader
+          title="Communication Requests"
+        />
+        <CardContent>
+          CommunicationRequestsTable needs refactoring into a function component.
 
-          <StyledCard height="auto" margin={20} >
-            <CardHeader
-              title="Communication Requests"
-            />
-            <CardContent>
-              <CommunicationRequestsTable 
-                showBarcodes={true} 
-                hideIdentifier={true}
-                communicationRequests={this.data.communicationRequests}
-                count={this.data.communicationRequestsCount}
-                hideIdentifier={false}
-                hideCheckbox={true}
-                hideActionIcons={true}
-                hideBarcode={false}                
-                onRemoveRecord={function(recordId){
-                  CommunicationRequest.remove({_id: recordId})
-                }}
-                actionButtonLabel="Enroll"
-              />
-            </CardContent>
-          </StyledCard>
-        </PageCanvas>
-      </div>
-    );
-  }
+          {/* <CommunicationRequestsTable 
+            showBarcodes={true} 
+            hideIdentifier={true}
+            communicationRequests={this.data.communicationRequests}
+            count={this.data.communicationRequests.length}
+            hideIdentifier={false}
+            hideCheckbox={true}
+            hideActionIcons={true}
+            hideBarcode={false}                
+            onRemoveRecord={function(recordId){
+              CommunicationRequest.remove({_id: recordId})
+            }}
+            actionButtonLabel="Enroll"
+          /> */}
+        </CardContent>
+      </StyledCard>
+    </PageCanvas>
+  );
 }
 
-
-
-ReactMixin(CommunicationRequestPage.prototype, ReactMeteorData);
 
 export default CommunicationRequestPage;

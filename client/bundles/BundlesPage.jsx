@@ -28,7 +28,7 @@ import { Session } from 'meteor/session';
 
 // import { Bundles } from '../lib/Bundles.js';
 
-import BundleDetail from './BundleDetail';
+// import BundleDetail from './BundleDetail';
 import BundlesTable from './BundlesTable';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
@@ -130,7 +130,6 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 
 
 function BundlesPage(props){
-
 
   let bundles = [];
 

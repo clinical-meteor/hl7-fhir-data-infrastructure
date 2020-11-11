@@ -13,7 +13,7 @@ import React  from 'react';
 import ReactMixin  from 'react-mixin';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
-import MedicationDetail from './MedicationDetail';
+// import MedicationDetail from './MedicationDetail';
 import MedicationsTable from './MedicationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -23,127 +23,61 @@ import { get } from 'lodash';
 import { Session } from 'meteor/session';
 
 
-//=============================================================================================================================================
-// TABS
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 //=============================================================================================================================================
 // COMPONENT
 
 Session.setDefault('fhirVersion', 'v1.0.2');
-Session.setDefault('medicationPageTabIndex', 1);
-Session.setDefault('medicationSearchFilter', ''); 
 Session.setDefault('selectedMedicationId', false);
+Session.setDefault('MedicationsPage.onePageLayout', true)
 
-export class MedicationsPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('medicationPageTabIndex'),
-      medicationSearchFilter: Session.get('medicationSearchFilter'),
-      selectedMedicationId: Session.get('selectedMedicationId'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedMedication: false
-    }; 
+export function MedicationsPage(props){
+  let data = {
+    selectedMedicationId: '',
+    selectedMedication: null,
+    medications: [],
+    onePageLayout: true
+  };
 
-    if (Session.get('selectedMedicationId')){
-      data.selectedMedication = Medications.findOne({_id: Session.get('selectedMedicationId')});
-    } else {
-      data.selectedMedication = false;
-    }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('MedicationsPage.onePageLayout');
+  }, [])
+  data.selectedMedicationId = useTracker(function(){
+    return Session.get('selectedMedicationId');
+  }, [])
+  data.selectedMedication = useTracker(function(){
+    return Medications.findOne(Session.get('selectedMedicationId'));
+  }, [])
+  data.medications = useTracker(function(){
+    return Medications.find().fetch();
+  }, [])
 
-    data.medications = Medications.find().fetch();
-    data.medicationsCount = Medications.find().count();
 
-    // data.style = Glass.blur(data.style);
-    // data.style.appbar = Glass.darkroom(data.style.appbar);
-    // data.style.tab = Glass.darkroom(data.style.tab);
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
+  let cardWidth = window.innerWidth - paddingWidth;
 
-    if(process.env.NODE_ENV === "test") console.log("MedicationsPage[data]", data);
-    return data;
-  }
-
-  handleTabChange(index){
-    Session.set('medicationPageTabIndex', index);
-  }
-
-  onNewTab(){
-    Session.set('selectedMedicationId', false);
-    Session.set('medicationUpsert', false);
-  }
-
-  render() {
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-    let cardWidth = window.innerWidth - paddingWidth;
-
-    return (
-      <PageCanvas id='medicationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader
-              title={this.data.medicationsCount + " Medications"}
+  return (
+    <PageCanvas id='medicationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <CardHeader
+            title={this.data.medicationsCount + " Medications"}
+          />
+          <CardContent>
+            <MedicationsTable 
+              medications={this.data.medications}
+              count={this.data.medicationsCount}
+              selectedMedicationId={this.data.selectedMedicationId}
+              rowsPerPage={LayoutHelpers.calcTableRows()}
             />
-            <CardContent>
-              <MedicationsTable 
-                medications={this.data.medications}
-                count={this.data.medicationsCount}
-                selectedMedicationId={this.data.selectedMedicationId}
-                rowsPerPage={LayoutHelpers.calcTableRows()}
-              />
-
-
-              {/* <Tabs id="medicationsPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
-                <Tab label="Medications" value={0} />
-                <Tab label="New" value={1} />
-              </Tabs>
-              <TabPanel >
-                <MedicationsTable 
-                  medications={this.data.medications}
-                  count={this.data.medicationsCount}
-                  selectedMedicationId={this.data.selectedMedicationId}
-                />
-              </TabPanel>
-              <TabPanel >
-                <MedicationDetail 
-                  id='medicationDetails'
-                  fhirVersion={ this.data.fhirVersion }
-                  medication={ this.data.selectedMedication }
-                  medicationId={ this.data.selectedMedicationId }
-                  hideCode={false} 
-                  />  
-              </TabPanel>               */}
-            </CardContent>
-          </StyledCard>
-      </PageCanvas>
-    );
-  }
+          </CardContent>
+        </StyledCard>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(MedicationsPage.prototype, ReactMeteorData);
 
 export default MedicationsPage;

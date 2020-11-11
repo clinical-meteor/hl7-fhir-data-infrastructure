@@ -15,7 +15,7 @@ import {
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 
-import PractitionerDetail  from './PractitionerDetail';
+// import PractitionerDetail  from './PractitionerDetail';
 import PractitionersTable  from './PractitionersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -60,98 +60,72 @@ Session.setDefault('selectedPractitionerId', false);
 Session.setDefault('blockchainPractitionerData', []);
 Session.setDefault('fhirVersion', 'v1.0.2');
 
-export class PractitionersPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('practitionerPageTabIndex'),
-      practitionerSearchFilter: Session.get('practitionerSearchFilter'),
-      selectedPractitionerId: Session.get('selectedPractitionerId'),
-      blockchainData: Session.get('blockchainPractitionerData'),
-      fhirVersion: Session.get('fhirVersion'),
-      practitioners: Practitioners.find().fetch(),
-      selectedPractitioner: false
-    };
+export function PractitionersPage(props){
+  let data = {
+    selectedPractitionerId: '',
+    selectedPractitioner: null,
+    auditEvents: [],
+    onePageLayout: true
+  };
 
-    if (Session.get('selectedPractitionerId')){
-      data.selectedPractitioner = Practitioners.findOne({_id: Session.get('selectedPractitionerId')});
-    } else {
-      data.selectedPractitioner = false;
-    }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('PractitionersPage.onePageLayout');
+  }, [])
+  data.selectedPractitionerId = useTracker(function(){
+    return Session.get('selectedPractitionerId');
+  }, [])
+  data.selectedPractitioner = useTracker(function(){
+    return Practitioners.findOne(Session.get('selectedPractitionerId'));
+  }, [])
+  data.auditEvents = useTracker(function(){
+    return Practitioners.find().fetch();
+  }, [])
 
-    if(process.env.NODE_ENV === "test") console.log("PractitionersPage[data]", data);
-    return data;
+
+  let blockchainTab;
+  if (get(Meteor, 'settings.public.defaults.displayBlockchainComponents')){
+    blockchainTab = <Tab className="practitionerBlockchainHisotryTab" label='Blockchain' onActive={this.handleActive} style={this.data.style.tab} value={3}>
+      <PractitionersTable showBarcodes={false} data={ this.data.blockchainData } />
+    </Tab>                 
   }
 
-  // this could be a mixin
-  handleTabChange(index){
-    Session.set('practitionerPageTabIndex', index);
-  }
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-  // this could be a mixin
-  onNewTab(){
-    process.env.DEBUG && console.log("onNewTab; we should clear things...");
+  let cardWidth = window.innerWidth - paddingWidth;
 
-    Session.set('selectedPractitionerId', false);
-    Session.set('practitionerUpsert', false);
-  }
+  return (      
+    <PageCanvas id="practitionersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <CardHeader title='Practitioners' />
+          <CardContent>
+            <PractitionersTable 
+                practitioners={this.data.practitioners}
+                fhirVersion={this.data.fhirVersion} 
+                formFactorLayout={formFactor}
+                showBarcodes={false} />
 
-  render() {
-    var blockchainTab;
-    if (get(Meteor, 'settings.public.defaults.displayBlockchainComponents')){
-      blockchainTab = <Tab className="practitionerBlockchainHisotryTab" label='Blockchain' onActive={this.handleActive} style={this.data.style.tab} value={3}>
-        <PractitionersTable showBarcodes={false} data={ this.data.blockchainData } />
-      </Tab>                 
-    }
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-
-    let paddingWidth = 84;
-    if(Meteor.isCordova){
-      paddingWidth = 20;
-    }
-    let cardWidth = window.innerWidth - paddingWidth;
-
-    return (      
-      <PageCanvas id="practitionersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title='Practitioners' />
-            <CardContent>
+            {/* <Tabs id="practitionersPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
+              <Tab label="Practitioners" value={0} />
+              <Tab label="New" value={1} />
+            </Tabs>
+            <TabPanel >
               <PractitionersTable 
-                  practitioners={this.data.practitioners}
-                  fhirVersion={this.data.fhirVersion} 
-                  formFactorLayout={formFactor}
-                  showBarcodes={false} />
-
-              {/* <Tabs id="practitionersPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
-                <Tab label="Practitioners" value={0} />
-                <Tab label="New" value={1} />
-              </Tabs>
-              <TabPanel >
-                <PractitionersTable 
-                  fhirVersion={this.data.fhirVersion} 
-                  showBarcodes={false} />
-              </TabPanel>              
-              <TabPanel >
-                <PractitionerDetail 
-                  id='practitionerDetails' 
-                  practitioner={ this.data.selectedPractitioner }
-                  practitionerId={ this.data.selectedPractitionerId } />  
-              </TabPanel>               */}
-            </CardContent>
-            { blockchainTab }
-         </StyledCard>
-      </PageCanvas>
-    );
-  }
+                fhirVersion={this.data.fhirVersion} 
+                showBarcodes={false} />
+            </TabPanel>              
+            <TabPanel >
+              <PractitionerDetail 
+                id='practitionerDetails' 
+                practitioner={ this.data.selectedPractitioner }
+                practitionerId={ this.data.selectedPractitionerId } />  
+            </TabPanel>               */}
+          </CardContent>
+          { blockchainTab }
+       </StyledCard>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(PractitionersPage.prototype, ReactMeteorData);
 export default PractitionersPage;

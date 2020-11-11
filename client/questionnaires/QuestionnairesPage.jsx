@@ -170,94 +170,106 @@ const useStyles = makeStyles(theme => ({
 // =========================================================================================================
 // Main Component
 
-export class QuestionnairesPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('questionnairePageTabIndex'),
-      questionnaire: defaultQuestionnaire,
-      questionnaireSearchFilter: '',
-      currentQuestionnaire: null,
-      questionnaireId: false,
-      sortableItems: [],
-      enabled: Session.get('enableCurrentQuestionnaire'),
-      chatbotInstalled: false,
-      questionnaireName: '',
-      questionnaireDesignerCurrentQuestion: {text: ''},
-      questionnaireDesignerCurrentMultiChoice: {label: ''},
-      isActive: false,
-      isNumber: false,
-      isSorting: Session.get('questionnaireIsSorting'),
-      activeQuestionLinkId: Session.get('activeQuestionLinkId'),
-      onePageLayout: true,
-      questionnaires: Questionnaires.find().fetch(),
-      questionnairesCount: Questionnaires.find().count(), 
-      selectedQuestionnaireId: Session.get('selectedQuestionnaireId'),
-      selectedQuestionnaire: Session.get('selectedQuestionnaire')
-    };
+export function QuestionnairesPage(props){
+  let data = {
+    questionnaire: defaultQuestionnaire,
+    questionnaireSearchFilter: '',
+    currentQuestionnaire: null,
+    questionnaireId: false,
+    sortableItems: [],
+    enabled: true,
+    chatbotInstalled: false,
+    questionnaireName: '',
+    questionnaireDesignerCurrentQuestion: {text: ''},
+    questionnaireDesignerCurrentMultiChoice: {label: ''},
+    isActive: false,
+    isNumber: false,
+    isSorting: false,
+    activeQuestionLinkId: '',
+    onePageLayout: true,
+    questionnaires: [],
+    selectedQuestionnaireId: '',
+    selectedQuestionnaire: null,
+    questionnaireSearchFilter: ''
+  };
 
-    // if (Session.get('questionnaireFormData')) {
-    //   data.questionnaire = Session.get('questionnaireFormData');
-    // }
-    if (Session.get('questionnaireSearchFilter')) {
-      data.questionnaireSearchFilter = Session.get('questionnaireSearchFilter');
-    }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('QuestionnairesPage.onePageLayout');
+  }, [])
+  data.selectedQuestionnaireId = useTracker(function(){
+    return Session.get('selectedQuestionnaireId');
+  }, [])
+  data.selectedQuestionnaire = useTracker(function(){
+    return Questionnaires.findOne(Session.get('selectedQuestionnaireId'));
+  }, [])
+  data.questionnaires = useTracker(function(){
+    return Questionnaires.find().fetch();
+  }, [])
+  data.enabled = useTracker(function(){
+    return Session.get('enableCurrentQuestionnaire');
+  }, [])
+  data.isSorting = useTracker(function(){
+    return Session.get('questionnaireIsSorting');
+  }, [])
+  data.activeQuestionLinkId = useTracker(function(){
+    return Session.get('activeQuestionLinkId');
+  }, [])
 
-    if (get(data, 'selectedQuestionnaire')) {
-      if (get(data, 'selectedQuestionnaire.item')) {
-        
-        if(Array.isArray(data.selectedQuestionnaire.item)){
-          let count = 0;
-          data.selectedQuestionnaire.item.forEach(function(item){
-            data.sortableItems.push({
-              linkId: count,
-              text: get(item, 'text')
-            });              
-            count++;
-          });  
-        }
-      }
+  data.questionnaireSearchFilter = useTracker(function(){
+    return Session.get('questionnaireSearchFilter');
+  }, [])
 
-      if(get(data, 'selectedQuestionnaire.status') === "active"){
-        data.isActive = true;
-      } else {
-        data.isActive = false;
-      }
 
-      // if(get(data, 'selectedQuestionnaire.title')){
-      //   data.questionnaireName = get(data, 'selectedQuestionnaire.title');
-      // } else {
-      //   data.questionnaireName = '';
-      // }
-    }
-
-    if(Session.get('activeQuestionLinkId')){
-      console.log('ActiveQuestionLinkId was updated. Checking if it exists in the current questionnaire items.')
-      if (Array.isArray(get(data, 'selectedQuestionnaire.item'))) {
+  if (get(data, 'selectedQuestionnaire')) {
+    if (get(data, 'selectedQuestionnaire.item')) {
+      
+      if(Array.isArray(data.selectedQuestionnaire.item)){
+        let count = 0;
         data.selectedQuestionnaire.item.forEach(function(item){
-          if(Session.equals('activeQuestionLinkId', get(item, 'linkId', ''))){      
-            console.log('Found.  Updating the question being edited.')
-            data.questionnaireDesignerCurrentQuestion = item;
-          }  
-        });
-      } 
-    } 
+          data.sortableItems.push({
+            linkId: count,
+            text: get(item, 'text')
+          });              
+          count++;
+        });  
+      }
+    }
 
-    // if (Session.get('questionnaireDesignerCurrentQuestion')) {
-    //   console.log('Selected question not found.  Using dirty state.')
-    //   data.questionnaireDesignerCurrentQuestion = Session.get('questionnaireDesignerCurrentQuestion');
+    if(get(data, 'selectedQuestionnaire.status') === "active"){
+      data.isActive = true;
+    } else {
+      data.isActive = false;
+    }
+
+    // if(get(data, 'selectedQuestionnaire.title')){
+    //   data.questionnaireName = get(data, 'selectedQuestionnaire.title');
+    // } else {
+    //   data.questionnaireName = '';
     // }
-
-    console.log("QuestionnairesPage[data]", data);
-    return data;
   }
-  toggleSortStatus(){
+
+  if(get(data, 'activeQuestionLinkId')){
+    console.log('ActiveQuestionLinkId was updated. Checking if it exists in the current questionnaire items.')
+    if (Array.isArray(get(data, 'selectedQuestionnaire.item'))) {
+      data.selectedQuestionnaire.item.forEach(function(item){
+        if(Session.equals('activeQuestionLinkId', get(item, 'linkId', ''))){      
+          console.log('Found.  Updating the question being edited.')
+          data.questionnaireDesignerCurrentQuestion = item;
+        }  
+      });
+    } 
+  } 
+
+  // if (Session.get('questionnaireDesignerCurrentQuestion')) {
+  //   console.log('Selected question not found.  Using dirty state.')
+  //   data.questionnaireDesignerCurrentQuestion = Session.get('questionnaireDesignerCurrentQuestion');
+  // }
+
+  console.log("QuestionnairesPage[data]", data);
+
+
+
+  function toggleSortStatus(){
     if(Session.equals('questionnaireIsSorting', true)){
       this.saveSortedQuestionnaire();
       Session.set('questionnaireIsSorting', false);
@@ -265,36 +277,28 @@ export class QuestionnairesPage extends React.Component {
       Session.set('questionnaireIsSorting', true);
     }    
   }
-  // toggleActiveStatus(event, newValue){
-  //   //Session.toggle('enableCurrentQuestionnaire');
-  //   console.log('toggleActiveStatus', event, newValue)
-  //   console.log('toggleActiveStatus currentQuestionnaire id', get(this, 'data.currentQuestionnaire._id'))
+  function toggleActiveStatus(event, newValue){
+    console.log('toggleActiveStatus', event, newValue)
+    console.log('toggleActiveStatus currentQuestionnaire id', get(this, 'data.currentQuestionnaire._id'))
 
-  //   let currentStatus =  get(this, 'data.currentQuestionnaire.status');
+    let currentStatus =  get(this, 'data.currentQuestionnaire.status');
 
-  //   console.log('currentStatus', currentStatus)
+    console.log('currentStatus', currentStatus)
 
-  //   if(currentStatus === 'inactive'){
-  //     Questionnaires.update({_id: get(this, 'data.currentQuestionnaire._id')}, {$set: {
-  //       'status': 'active'
-  //     }});
-  //   } else if (currentStatus === 'active'){
-  //     Questionnaires.update({_id: get(this, 'data.currentQuestionnaire._id')}, {$set: {
-  //       'status': 'inactive'
-  //     }});
-  //   }
-  // }
-
-  handleTabChange(index){
+    if(currentStatus === 'inactive'){
+      Questionnaires.update({_id: get(this, 'data.currentQuestionnaire._id')}, {$set: {
+        'status': 'active'
+      }});
+    } else if (currentStatus === 'active'){
+      Questionnaires.update({_id: get(this, 'data.currentQuestionnaire._id')}, {$set: {
+        'status': 'inactive'
+      }});
+    }
+  }
+  function handleTabChange(index){
     Session.set('questionnairePageTabIndex', index);
   }
-  selectLanguage(){
-    
-  }
-  addChoice(){
-    console.log('addChoice')
-  }
-  changeText(name, event, newValue){
+  function changeText(name, event, newValue){
     console.log('changeText', this, newValue)
 
     // Session.set('activeQuestionnaireName', newValue);
@@ -304,8 +308,7 @@ export class QuestionnairesPage extends React.Component {
       'title': newValue
     }});
   }
-
-  onSend(id){
+  function onSend(id){
     let patient = QuestionnaireResponses.findOne({_id: id});
 
     console.log("QuestionnaireResponseTable.onSend()", patient);
@@ -325,8 +328,7 @@ export class QuestionnairesPage extends React.Component {
       }
     });
   }
-
-  saveQuestion(event, activeQuestionLinkId){
+  function saveQuestion(event, activeQuestionLinkId){
     console.log('Saving question to Questionnaire/', get(this, 'data.currentQuestionnaire._id'))
     console.log(' ')
     console.log('Going to try to add the following item: ');
@@ -357,7 +359,7 @@ export class QuestionnairesPage extends React.Component {
       'item': newItems
     }})  
   }
-  addQuestion(event, bar, baz){
+  function addQuestion(event, bar, baz){
     console.log('Adding a question to Questionnaire/', get(this, 'data.currentQuestionnaire._id'))
     console.log(' ')
     console.log('Going to try to add the following item: ');
@@ -382,11 +384,7 @@ export class QuestionnairesPage extends React.Component {
       'item': newItem
     }})    
   }
-  returnCurrentlySelectedQuestionItem(event){
-    console.log('Returning currently selected Question Item')
-    return '';
-  }
-  updateQuestionText(event, newValue){
+  function updateQuestionText(event, newValue){
     // console.log('record id', get(this, 'data.currentQuestionnaire._id'))
     console.log('updateQuestionText', newValue)
 
@@ -396,7 +394,7 @@ export class QuestionnairesPage extends React.Component {
     Session.set('questionnaireDesignerCurrentQuestion', newQuestionState);
     console.log('newQuestionState', newQuestionState)
   }
-  handleSaveQuestionnaireResponse(){
+  function handleSaveQuestionnaireResponse(){
     console.log('Posting questionnaire response to external system...')
 
     let newQuestionnaireResponse = {
@@ -511,163 +509,159 @@ export class QuestionnairesPage extends React.Component {
       }
     })
   }
-  render() {
-    // let classes = useStyles();
-    let classes = {
-      button: {
-        background: theme.background,
-        border: 0,
-        borderRadius: 3,
-        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-        color: theme.buttonText,
-        height: 48,
-        padding: '0 30px',
-      },
-      input: {
-        marginBottom: '20px'
-      },
-      compactInput: {
-        marginBottom: '10px'
-      },
-      label: {
-        paddingBottom: '10px'
-      }
+
+
+
+  // let classes = useStyles();
+  let classes = {
+    button: {
+      background: theme.background,
+      border: 0,
+      borderRadius: 3,
+      boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+      color: theme.buttonText,
+      height: 48,
+      padding: '0 30px',
+    },
+    input: {
+      marginBottom: '20px'
+    },
+    compactInput: {
+      marginBottom: '10px'
+    },
+    label: {
+      paddingBottom: '10px'
     }
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor(2);
-
-    let paddingWidth = 84;
-    if(Meteor.isCordova){
-      paddingWidth = 20;
-    }
-    let cardWidth = window.innerWidth - paddingWidth;
-
-    
-    // console.log('QuestionnairesPage.render().data', this.data)
-
-    let secondaryGridSize = 5;
-    let secondaryGridStyle = {
-      position: 'sticky', 
-      top: '0px', 
-      marginBottom: '84px',
-      width: '100%'
-    }
-    if(window.innerWidth < 768){
-      let secondaryGridSize = 5;
-    }
-
-    return (
-      <PageCanvas id="questionnairesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-          <Grid container spacing={3} >
-            <Grid item lg={6} style={{width: '100%'}} >
-              <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-                <CardHeader
-                  title={this.data.questionnairesCount + " Questionnaires"}
-                />
-                <QuestionnairesTable 
-                  questionnaires={ this.data.questionnaires }
-                  selectedQuestionnaireId={this.data.selectedQuestionnaireId}                  
-                  onRemoveRecord={function(questionnaireId){
-                    Questionnaires.remove({_id: questionnaireId})
-                  }}
-                  onRowClick={function(questionnaireId){
-                    console.log('Clicked on a row.  Questionnaire Id: ' + questionnaireId)
-                    Session.set('selectedQuestionnaireId', questionnaireId)
-                    Session.set('selectedQuestionnaire', Questionnaires.findOne({id: questionnaireId}))
-                  }}
-                  formFactorLayout={formFactor}              
-                />
-              </StyledCard>
-            </Grid>
-            <Grid item lg={secondaryGridSize} style={secondaryGridStyle}>
-                <h1 className="barcode helveticas">{this.data.selectedQuestionnaireId}</h1>
-              <StyledCard margin={20} width={cardWidth + 'px'}>
-                <CardContent>
-                  <FormControl style={{width: '100%', marginTop: '20px'}}>
-                    <InputAdornment 
-                      style={classes.label}
-                    >Questionnaire Title</InputAdornment>
-                    <Input
-                      id="publisherInput"
-                      name="publisherInput"
-                      style={classes.input}
-                      value={ get(this, 'data.selectedQuestionnaire.title', '') }
-                      onChange={ this.changeText.bind(this, 'title')}
-                      fullWidth              
-                    />       
-                  </FormControl>    
-                  <Grid container>
-                    <Grid item md={6}>
-                      <FormControl style={{width: '100%', marginTop: '20px'}}>
-                        <InputAdornment 
-                          style={classes.label}
-                        >Identifier</InputAdornment>
-                        <Input
-                          id="identifierInput"
-                          name="identifierInput"
-                          style={classes.input}
-                          value={ get(this, 'data.selectedQuestionnaire.identifier.value', '') }
-                          fullWidth              
-                        />       
-                      </FormControl>    
-                    </Grid>
-                    <Grid item md={3}>
-                      <FormControl style={{width: '100%', marginTop: '20px'}}>
-                        <InputAdornment 
-                          style={classes.label}
-                        >Date</InputAdornment>
-                        <Input
-                          id="dateInput"
-                          name="dateInput"
-                          style={classes.input}
-                          value={ moment(get(this, 'data.selectedQuestionnaire.date', '')).format("YYYY-MM-DD") }
-                          fullWidth              
-                        />       
-                      </FormControl>    
-                    </Grid>
-                    <Grid item md={3}>
-                      <FormControl style={{width: '100%', marginTop: '20px'}}>
-                        <InputAdornment 
-                          style={classes.label}
-                        >Status</InputAdornment>
-                        <Input
-                          id="statusInput"
-                          name="statusInput"
-                          style={classes.input}
-                          value={ get(this, 'data.selectedQuestionnaire.status', '') }
-                          fullWidth              
-                        />       
-                      </FormControl>    
-                    </Grid>
-                  </Grid>
-                </CardContent>
-                {/* <CardActions>
-                  <Button id='isActiveButton' onClick={this.toggleActiveStatus.bind(this)} primary={ this.data.isActive } >{isActiveLabel}</Button>
-                  <Button id='isSortingButton' onClick={this.toggleSortStatus.bind(this)} primary={ this.data.isSorting } >Sort</Button>
-                </CardActions> */}
-              </StyledCard>
-              <DynamicSpacer />
-
-              <QuestionnaireExpansionPanels 
-                id='questionnaireDetails' 
-                selectedQuestionnaire={this.data.selectedQuestionnaire} 
-                selectedQuestionnaireId={this.data.selectedQuestionnaireId}
-                />
-
-
-              <DynamicSpacer />
-              <Button id='saveAnswersButton' onClick={this.handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>
-
-            </Grid>
-          </Grid>
-        </MuiThemeProvider>         
-      </PageCanvas>
-    );
   }
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor(2);
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
+  let cardWidth = window.innerWidth - paddingWidth;
+
+
+
+  let secondaryGridSize = 5;
+  let secondaryGridStyle = {
+    position: 'sticky', 
+    top: '0px', 
+    marginBottom: '84px',
+    width: '100%'
+  }
+  if(window.innerWidth < 768){
+    let secondaryGridSize = 5;
+  }
+
+  return (
+    <PageCanvas id="questionnairesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+        <Grid container spacing={3} >
+          <Grid item lg={6} style={{width: '100%'}} >
+            <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+              <CardHeader
+                title={this.data.questionnairesCount + " Questionnaires"}
+              />
+              <QuestionnairesTable 
+                questionnaires={ this.data.questionnaires }
+                selectedQuestionnaireId={this.data.selectedQuestionnaireId}                  
+                onRemoveRecord={function(questionnaireId){
+                  Questionnaires.remove({_id: questionnaireId})
+                }}
+                onRowClick={function(questionnaireId){
+                  console.log('Clicked on a row.  Questionnaire Id: ' + questionnaireId)
+                  Session.set('selectedQuestionnaireId', questionnaireId)
+                  Session.set('selectedQuestionnaire', Questionnaires.findOne({id: questionnaireId}))
+                }}
+                formFactorLayout={formFactor}              
+              />
+            </StyledCard>
+          </Grid>
+          <Grid item lg={secondaryGridSize} style={secondaryGridStyle}>
+              <h1 className="barcode helveticas">{this.data.selectedQuestionnaireId}</h1>
+            <StyledCard margin={20} width={cardWidth + 'px'}>
+              <CardContent>
+                <FormControl style={{width: '100%', marginTop: '20px'}}>
+                  <InputAdornment 
+                    style={classes.label}
+                  >Questionnaire Title</InputAdornment>
+                  <Input
+                    id="publisherInput"
+                    name="publisherInput"
+                    style={classes.input}
+                    value={ get(this, 'data.selectedQuestionnaire.title', '') }
+                    onChange={ this.changeText.bind(this, 'title')}
+                    fullWidth              
+                  />       
+                </FormControl>    
+                <Grid container>
+                  <Grid item md={6}>
+                    <FormControl style={{width: '100%', marginTop: '20px'}}>
+                      <InputAdornment 
+                        style={classes.label}
+                      >Identifier</InputAdornment>
+                      <Input
+                        id="identifierInput"
+                        name="identifierInput"
+                        style={classes.input}
+                        value={ get(this, 'data.selectedQuestionnaire.identifier.value', '') }
+                        fullWidth              
+                      />       
+                    </FormControl>    
+                  </Grid>
+                  <Grid item md={3}>
+                    <FormControl style={{width: '100%', marginTop: '20px'}}>
+                      <InputAdornment 
+                        style={classes.label}
+                      >Date</InputAdornment>
+                      <Input
+                        id="dateInput"
+                        name="dateInput"
+                        style={classes.input}
+                        value={ moment(get(this, 'data.selectedQuestionnaire.date', '')).format("YYYY-MM-DD") }
+                        fullWidth              
+                      />       
+                    </FormControl>    
+                  </Grid>
+                  <Grid item md={3}>
+                    <FormControl style={{width: '100%', marginTop: '20px'}}>
+                      <InputAdornment 
+                        style={classes.label}
+                      >Status</InputAdornment>
+                      <Input
+                        id="statusInput"
+                        name="statusInput"
+                        style={classes.input}
+                        value={ get(this, 'data.selectedQuestionnaire.status', '') }
+                        fullWidth              
+                      />       
+                    </FormControl>    
+                  </Grid>
+                </Grid>
+              </CardContent>
+              {/* <CardActions>
+                <Button id='isActiveButton' onClick={this.toggleActiveStatus.bind(this)} primary={ this.data.isActive } >{isActiveLabel}</Button>
+                <Button id='isSortingButton' onClick={this.toggleSortStatus.bind(this)} primary={ this.data.isSorting } >Sort</Button>
+              </CardActions> */}
+            </StyledCard>
+            <DynamicSpacer />
+
+            <QuestionnaireExpansionPanels 
+              id='questionnaireDetails' 
+              selectedQuestionnaire={this.data.selectedQuestionnaire} 
+              selectedQuestionnaireId={this.data.selectedQuestionnaireId}
+              />
+
+
+            <DynamicSpacer />
+            <Button id='saveAnswersButton' onClick={this.handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>
+
+          </Grid>
+        </Grid>
+      </MuiThemeProvider>         
+    </PageCanvas>
+  );
 }
 
 
-ReactMixin(QuestionnairesPage.prototype, ReactMeteorData);
 export default QuestionnairesPage;

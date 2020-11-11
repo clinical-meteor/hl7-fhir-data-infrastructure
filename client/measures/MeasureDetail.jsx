@@ -61,9 +61,6 @@ function MeasureDetail(props){
     ...otherProps 
   } = props;
 
-
-
-
   let renderElements = [];
   let groups = get(measure, 'group');
 
@@ -442,5 +439,5 @@ MeasureDetail.propTypes = {
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
-ReactMixin(MeasureDetail.prototype, ReactMeteorData);
+
 export default MeasureDetail;

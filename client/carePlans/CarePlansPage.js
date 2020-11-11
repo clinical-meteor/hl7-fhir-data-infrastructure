@@ -23,79 +23,48 @@ import ReactMixin  from 'react-mixin';
 
 import { get } from 'lodash';
 
-//=============================================================================================================================================
-// TABS
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 //=============================================================================================================================================
 // COMPONENT
 
+function CarePlansPage(props){
 
-export class CarePlansPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      tabIndex: Session.get('carePlanPageTabIndex'),
-      carePlanSearchFilter: Session.get('carePlanSearchFilter'),
-      currentCarePlan: Session.get('selectedCarePlan'),
-      carePlans: CarePlans.find().fetch(),
-      carePlansCount: CarePlans.find().count()
-    };
+  let data = {    
+    selectedCarePlanId: null,
+    carePlans: []
+  };
 
-    return data;
-  }
+  data.selectedCarePlanId = useTracker(function(){
+    return Session.get('selectedCarePlanId');
+  }, [])
+  data.carePlans = useTracker(function(){
+    return CarePlans.find().fetch();
+  }, [])
 
-  handleTabChange(index){
-    Session.set('carePlanPageTabIndex', index);
-  }
 
-  onNewTab(){
-    Session.set('selectedCarePlan', false);
-    Session.set('carePlanUpsert', false);
-  }
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-  render() {
-    // if(process.env.NODE_ENV === "test") console.log('In CarePlansPage render');
+  let cardWidth = window.innerWidth - paddingWidth;
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-    let cardWidth = window.innerWidth - paddingWidth;
-
-    return (
-      <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
-          <CardHeader title={this.data.carePlansCount + ' CarePlans'} />
-          <CardContent>
-            <CarePlansTable 
-              carePlans={this.data.carePlans}
-              count={this.data.carePlansCount}
-              formFactorLayout={formFactor}
-              rowsPerPage={LayoutHelpers.calcTableRows()}
-            />
-          </CardContent>
-        </StyledCard>
-      </PageCanvas>
-    );
-  }
+  return (
+    <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
+        <CardHeader title={this.data.carePlans.length + ' CarePlans'} />
+        <CardContent>
+          <CarePlansTable 
+            carePlans={this.data.carePlans}
+            count={this.data.carePlans.length}
+            formFactorLayout={formFactor}
+            rowsPerPage={LayoutHelpers.calcTableRows()}
+          />
+        </CardContent>
+      </StyledCard>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(CarePlansPage.prototype, ReactMeteorData);
 
 export default CarePlansPage;

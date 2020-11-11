@@ -17,7 +17,7 @@ import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import ValueSetDetail from './ValueSetDetail';
+// import ValueSetDetail from './ValueSetDetail';
 import ValueSetsTable from './ValueSetsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -115,67 +115,37 @@ Session.setDefault('ValueSetsPage.onePageLayout', true)
 // `;
 
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+//===========================================================================
+// MAIN COMPONENT  
 
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
+export function ValueSetsPage(props){
 
+  let data = {
+    selectedValueSetId: '',
+    selectedValueSet: null,
+    valueSets: [],
+    onePageLayout: true,
+    valueSetSearchFilter: ''
+  };
 
-
-
-export class ValueSetsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      valueSetId: false,
-      valueSet: {}
-    }
-  }
-  getMeteorData() {
-    let data = {
-      tabIndex: Session.get('valueSetPageTabIndex'),
-      valueSetSearchFilter: Session.get('valueSetSearchFilter'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedValueSetId: Session.get("selectedValueSetId"),
-      selectedValueSet: Session.get("selectedValueSet"),
-      selected: [],
-      valueSets: [],
-      query: {},
-      options: {
-        limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
-      },
-      tabIndex: Session.get('valueSetPageTabIndex'),
-      onePageLayout: true
-    };
-
-    data.onePageLayout = Session.get('ValueSetsPage.onePageLayout');
+  data.onePageLayout = useTracker(function(){
+    return Session.get('ValueSetsPage.onePageLayout');
+  }, [])
+  data.selectedValueSetId = useTracker(function(){
+    return Session.get('selectedValueSetId');
+  }, [])
+  data.selectedValueSet = useTracker(function(){
+    return AuditEvents.findOne(Session.get('selectedValueSetId'));
+  }, [])
+  data.valueSets = useTracker(function(){
+    return AuditEvents.find().fetch();
+  }, [])
+  data.valueSetSearchFilter = useTracker(function(){
+    return Session.get('valueSetSearchFilter')
+  }, [])
 
 
-    console.log('ValueSetsPage.data.query', data.query)
-    console.log('ValueSetsPage.data.options', data.options)
-
-    data.valueSets = ValueSets.find(data.query, data.options).fetch();
-    data.valueSetsCount = ValueSets.find(data.query, data.options).count();
-
-    // console.log("ValueSetsPage[data]", data);
-    return data;
-  }
-
-
-
-  handleRowClick(valueSetId){
+  function handleRowClick(valueSetId){
     console.log('ValueSetsPage.handleRowClick', valueSetId)
     let valueSet = ValueSets.findOne({id: valueSetId});
     if(valueSet){
@@ -184,93 +154,74 @@ export class ValueSetsPage extends React.Component {
     }
   }
 
-  onInsert(valueSetId){
-    Session.set('selectedValueSetId', '');
-    //HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "ValueSets", recordId: valueSetId});
-  }
-  onUpdate(valueSetId){
-    Session.set('valueSetPageTabIndex', 1);
-    //HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "ValueSets", recordId: valueSetId});
-  }
-  onRemove(valueSetId){
-    Session.set('selectedValueSetId', '');
-    //HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "ValueSets", recordId: valueSetId});
-  }
-  onCancel(){
-  } 
-  render() {
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-
-    let paddingWidth = 84;
-    if(Meteor.isCordova){
-      paddingWidth = 20;
-    }
-    let cardWidth = window.innerWidth - paddingWidth;
+  let cardWidth = window.innerWidth - paddingWidth;
 
 
-    let layoutContents;
-    if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-        <CardHeader title={this.data.valueSetsCount + " ValueSets"} />
-        <CardContent>
+  let layoutContents;
+  if(this.data.onePageLayout){
+    layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+      <CardHeader title={this.data.valueSetsCount + " ValueSets"} />
+      <CardContent>
 
-          <ValueSetsTable 
-            valueSets={ this.data.valueSets }
-            formFactorLayout={formFactor}
-            paginationLimit={10}     
-            />
+        <ValueSetsTable 
+          valueSets={ this.data.valueSets }
+          formFactorLayout={formFactor}
+          paginationLimit={10}     
+          />
+        </CardContent>
+      </StyledCard>
+  } else {
+    layoutContents = <Grid container spacing={3}>
+      <Grid item lg={6}>
+      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <CardHeader title={this.data.valueSetsCount + " Value Sets"} />
+          <CardContent>
+            <ValueSetsTable 
+              valueSets={ this.data.valueSets }
+              selectedValueSetId={ this.data.selectedValueSetId }
+              formFactorLayout={formFactor}
+              paginationLimit={10}            
+              onRowClick={this.handleRowClick.bind(this) }
+              count={this.data.valueSetsCount}
+              />
           </CardContent>
         </StyledCard>
-    } else {
-      layoutContents = <Grid container spacing={3}>
-        <Grid item lg={6}>
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={this.data.valueSetsCount + " Value Sets"} />
-            <CardContent>
-              <ValueSetsTable 
-                valueSets={ this.data.valueSets }
-                selectedValueSetId={ this.data.selectedValueSetId }
-                formFactorLayout={formFactor}
-                paginationLimit={10}            
-                onRowClick={this.handleRowClick.bind(this) }
-                count={this.data.valueSetsCount}
-                />
-            </CardContent>
-          </StyledCard>
-        </Grid>
-        <Grid item lg={4}>
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedValueSetId }</h1>
-            {/* <CardHeader title={this.data.selectedValueSetId } className="helveticas barcode" /> */}
-            <CardContent>
-              <CardContent>
-                <ValueSetDetail 
-                  id='valueSetDetails' 
-                  displayDatePicker={true} 
-                  displayBarcodes={false}
-                  valueSet={ this.data.selectedValueSet }
-                  valueSetId={ this.data.selectedValueSetId } 
-                  showValueSetInputs={true}
-                  showHints={false}
-                />
-              </CardContent>
-            </CardContent>
-          </StyledCard>
-        </Grid>
       </Grid>
-    }
-
-    return (
-      <PageCanvas id="valueSetsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-          { layoutContents }
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
+      <Grid item lg={4}>
+      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedValueSetId }</h1>
+          {/* <CardHeader title={this.data.selectedValueSetId } className="helveticas barcode" /> */}
+          <CardContent>
+            <CardContent>
+              <ValueSetDetail 
+                id='valueSetDetails' 
+                displayDatePicker={true} 
+                displayBarcodes={false}
+                valueSet={ this.data.selectedValueSet }
+                valueSetId={ this.data.selectedValueSetId } 
+                showValueSetInputs={true}
+                showHints={false}
+              />
+            </CardContent>
+          </CardContent>
+        </StyledCard>
+      </Grid>
+    </Grid>
   }
+
+  return (
+    <PageCanvas id="valueSetsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+        { layoutContents }
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(ValueSetsPage.prototype, ReactMeteorData);
+
+
 export default ValueSetsPage;

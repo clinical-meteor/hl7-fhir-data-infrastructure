@@ -9,110 +9,84 @@ import {
   Card,
   CardHeader,
   CardContent,
-  Button
+  Button,
+  Typography,
+  Box
 } from '@material-ui/core';
+
+import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 // import AuditEventDetail from './AuditEventDetail';
 import AuditEventsTable from './AuditEventsTable';
 
-
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
+import React  from 'react';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import ReactMixin  from 'react-mixin';
+
+
 import { get } from 'lodash';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-//===========================================================================
-// THEMING
-
-
-import { ThemeProvider, makeStyles } from '@material-ui/styles';
-const useStyles = makeStyles(theme => ({
-  button: {
-    background: theme.background,
-    border: 0,
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: theme.buttonText,
-    height: 48,
-    padding: '0 30px',
-  }
-}));
-
-let styles = {
-  hideOnPhone: {
-    visibility: 'visible',
-    display: 'table'
-  },
-  cellHideOnPhone: {
-    visibility: 'visible',
-    display: 'table',
-    paddingTop: '16px',
-    maxWidth: '120px'
-  },
-  cell: {
-    paddingTop: '16px'
-  }
-}
 
 
 //===========================================================================
 // MAIN COMPONENT  
 
-export class AuditEventsPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('auditEventPageTabIndex'),
-      auditEventSearchFilter: Session.get('auditEventSearchFilter'),
-      currentAuditEvent: Session.get('selectedAuditEvent'),
-      auditEvents: AuditEvents.find().fetch()
-    };
+Session.setDefault('selectedAuditEventId', '');
+Session.setDefault('AuditEventsPage.onePageLayout', true)
 
-    return data;
-  }
+export function AuditEventsPage(props){
 
-  handleTabChange(index){
-    Session.set('auditEventPageTabIndex', index);
-  }
+  let data = {
+    selectedAuditEventId: '',
+    selectedAuditEvent: null,
+    auditEvents: [],
+    onePageLayout: true,
+    auditEventSearchFilter: ''
+  };
 
-  onNewTab(){
-    Session.set('selectedAuditEvent', false);
-    Session.set('auditEventUpsert', false);
-  }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('AuditEventsPage.onePageLayout');
+  }, [])
+  data.selectedAuditEventId = useTracker(function(){
+    return Session.get('selectedAuditEventId');
+  }, [])
+  data.selectedAuditEvent = useTracker(function(){
+    return AuditEvents.findOne(Session.get('selectedAuditEventId'));
+  }, [])
+  data.auditEvents = useTracker(function(){
+    return AuditEvents.find().fetch();
+  }, [])
+  data.auditEventSearchFilter = useTracker(function(){
+    return Session.get('auditEventSearchFilter')
+  }, [])
 
-  render() {
-    if(process.env.NODE_ENV === "test") console.log('In AuditEventsPage render');
+  if(process.env.NODE_ENV === "test") console.log('In AuditEventsPage render');
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
-    let cardWidth = window.innerWidth - paddingWidth;
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-    return (
-      <PageCanvas id="auditEventsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title='Audit Events' />
-          <CardContent>
-            <AuditEventsTable 
-              auditEvents={this.data.auditEvents}
-              count={this.data.auditEvents.length}
-              formFactorLayout={formFactor}
-            />
-          </CardContent>
-        </StyledCard>
-      </PageCanvas>
-    );
-  }
+  let cardWidth = window.innerWidth - paddingWidth;
+
+  return (
+    <PageCanvas id="auditEventsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+        <CardHeader title='Audit Events' />
+        <CardContent>
+          <AuditEventsTable 
+            auditEvents={this.data.auditEvents}
+            count={this.data.auditEvents.length}
+            formFactorLayout={formFactor}
+          />
+        </CardContent>
+      </StyledCard>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(AuditEventsPage.prototype, ReactMeteorData);
+
 export default AuditEventsPage;
