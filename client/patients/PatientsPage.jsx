@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { PatientsTable, PatientDetail, PageCanvas, StyledCard } from 'material-fhir-ui';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
@@ -91,22 +91,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
+  
 
 
 import { Meteor } from 'meteor/meteor';
@@ -124,248 +109,102 @@ let defaultPatient = {
   family: '',
   gender: ''
 };
+
+//===========================================================================
+// SESSION VARIABLES
+
 Session.setDefault('patientFormData', defaultPatient);
 Session.setDefault('patientSearchFilter', '');
 Session.setDefault('selectedPatientId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('patientPageTabIndex', 0)
 
-export class PatientsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      patientId: false,
-      patient: {},
-      tabIndex: 0
-    }
-  }
+//===========================================================================
+// MAIN COMPONENT  
 
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('patientPageTabIndex'),
-      patientSearchFilter: Session.get('patientSearchFilter'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedPatientId: Session.get("selectedPatientId"),
-      paginationLimit: 100,
-      selectedPatient: false,
-      selected: [],
-      patients: [],
-      patientCount: 0,
-      dataCursors: []
-    };
+export function PatientsPage(props){
 
-    Patients.find().forEach(function(patient){
-      data.dataCursors.push({
-        Patients: (typeof Patients !== "undefined") ? Patients.find({id: patient.id}).count() : 0,
-        AllergyIntolerances: (typeof AllergyIntolerances !== "undefined") ? AllergyIntolerances.find({id: patient.id}).count() : 0,
-        Conditions: (typeof Conditions !== "undefined") ? Conditions.find({id: patient.id}).count() : 0,
-        CarePlans: (typeof CarePlans !== "undefined") ? CarePlans.find({id: patient.id}).count() : 0,
-        Devices: (typeof Devices !== "undefined") ? Devices.find({id: patient.id}).count() : 0,
-        Encounters: (typeof Encounters !== "undefined") ? Encounters.find({'patient.reference': 'Patient/' + patient.id}).count() : 0,
-        Immunizations: (typeof Immunizations !== "undefined") ? Immunizations.find({id: patient.id}).count() : 0,
-        Medications: (typeof Medications !== "undefined") ? Medications.find({id: patient.id}).count() : 0,
-        MedicationOrders: (typeof MedicationOrders !== "undefined") ? MedicationOrders.find({id: patient.id}).count() : 0,
-        MedicationStatements: (typeof MedicationStatements !== "undefined") ? MedicationStatements.find({id: patient.id}).count() : 0,
-        Observations: (typeof Observations !== "undefined") ? Observations.find({'subject.reference': 'Patient/' + patient.id}).count() : 0,
-        Organizations: (typeof Organizations !== "undefined") ? Organizations.find({id: patient.id}).count() : 0,
-        Persons: (typeof Persons !== "undefined") ? Persons.find({id: patient.id}).count() : 0,
-        Practitioners: (typeof Practitioners !== "undefined") ? Practitioners.find({id: patient.id}).count() : 0,
-        RelatedPersons: (typeof RelatedPersons !== "undefined") ? RelatedPersons.find({id: patient.id}).count() : 0,
-        Procedures: (typeof Procedures !== "undefined") ? Procedures.find({'subject.reference': 'Patient/' + patient.id}).count() : 0
-      })
-    })
+  let data = {
+    selectedPatientId: '',
+    selectedPatient: null,
+    patients: [],
+    onePageLayout: true
+  };
 
-    // number of items in the table should be set globally
-    if (get(Meteor, 'settings.public.defaults.paginationLimit')) {
-      data.paginationLimit = get(Meteor, 'settings.public.defaults.paginationLimit');
-    }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('PatientsPage.onePageLayout');
+  }, [])
+  data.selectedPatientId = useTracker(function(){
+    return Session.get('selectedPatientId');
+  }, [])
+  data.selectedPatient = useTracker(function(){
+    return Patients.findOne({_id: Session.get('selectedPatientId')});
+  }, [])
+  data.patients = useTracker(function(){
+    return Patients.find().fetch();
+  }, [])
 
-    if (Session.get('selectedPatientId')){
-      data.selectedPatient = Patients.findOne({_id: Session.get('selectedPatientId')});
-      this.state.patient = Patients.findOne({_id: Session.get('selectedPatientId')});
-      this.state.patientId = Session.get('selectedPatientId');
-    } else {
-      data.selectedPatient = false;
-      this.state.patientId = false;
-      this.state.patient = {}
-    }
-
-    data.patients = Patients.find().fetch();
-    data.patientCount = Patients.find().count();
-
-    if(process.env.NODE_ENV === "test") console.log("PatientsPageClass[data]", data);
-    return data;
-  }
-  onCancelUpsertPatient(context){
-    Session.set('patientPageTabIndex', 1);
-  }
-  onDeletePatient(context){
-    Patients._collection.remove({_id: context.state.patientId}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('Patients.insert[error]', error);
-        // Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Patients", recordId: context.state.patientId});
-        Session.set('patientPageTabIndex', 1);
-        Session.set('selectedPatientId', false);
-        // Bert.alert('Patient removed!', 'success');
-      }
-    });
-  }
-  onUpsertPatient(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new Patient...', context.state)
-
-    if(get(context, 'state.patient')){
-      let self = context;
-      let fhirPatientData = Object.assign({}, context.state.patient);
-  
-      if(process.env.NODE_ENV === "test") console.log('fhirPatientData', fhirPatientData);
-  
-  
-      let patientValidator = PatientSchema.newContext();
-      // console.log('patientValidator', patientValidator)
-      patientValidator.validate(fhirPatientData)
-  
-      if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', patientValidator.isValid())
-        console.log('ValidationErrors: ', patientValidator.validationErrors());
-  
-      }
-  
-      console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.patientId')) {
-        if(process.env.NODE_ENV === "development") {
-          console.log("Updating patient...");
-        }
-
-        delete fhirPatientData._id;
-  
-        // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirPatientData.resourceType = 'Patient';
-  
-        Patients._collection.update({_id: context.state.patientId}, {$set: fhirPatientData }, function(error, result){
-          if (error) {
-            if(process.env.NODE_ENV === "test") console.log("Patients.insert[error]", error);
-            // Bert.alert(error.reason, 'danger');
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Patients", recordId: context.state.patientId});
-            Session.set('selectedPatientId', false);
-            Session.set('patientPageTabIndex', 1);
-            // Bert.alert('Patient added!', 'success');
-          }
-        });
-      } else {
-        if(process.env.NODE_ENV === "test") console.log("Creating a new patient...", fhirPatientData);
-  
-        Patients._collection.insert(fhirPatientData, function(error, result) {
-          if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('Patients.insert[error]', error);
-            // Bert.alert(error.reason, 'danger');
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Patients", recordId: context.state.patientId});
-            Session.set('patientPageTabIndex', 1);
-            Session.set('selectedPatientId', false);
-            // Bert.alert('Patient added!', 'success');
-          }
-        });
-      }
-    } 
-  }
-  onTableRowClick(patientId){
+  function onTableRowClick(patientId){
     console.log('onTableRowClick', patientId);
 
     Session.set('selectedPatientId', patientId);
     Session.set('selectedPatient', Patients.findOne(patientId));
   }
-  onTableCellClick(id){
-    Session.set('patientsUpsert', false);
-    Session.set('selectedPatientId', id);
-    Session.set('patientPageTabIndex', 2);
 
-  }
-  tableActionButtonClick(id){
-    let patient = Patients.findOne({_id: id});
+  // Patients.find().forEach(function(patient){
+  //   data.dataCursors.push({
+  //     Patients: (typeof Patients !== "undefined") ? Patients.find({id: patient.id}).count() : 0,
+  //     AllergyIntolerances: (typeof AllergyIntolerances !== "undefined") ? AllergyIntolerances.find({id: patient.id}).count() : 0,
+  //     Conditions: (typeof Conditions !== "undefined") ? Conditions.find({id: patient.id}).count() : 0,
+  //     CarePlans: (typeof CarePlans !== "undefined") ? CarePlans.find({id: patient.id}).count() : 0,
+  //     Devices: (typeof Devices !== "undefined") ? Devices.find({id: patient.id}).count() : 0,
+  //     Encounters: (typeof Encounters !== "undefined") ? Encounters.find({'patient.reference': 'Patient/' + patient.id}).count() : 0,
+  //     Immunizations: (typeof Immunizations !== "undefined") ? Immunizations.find({id: patient.id}).count() : 0,
+  //     Medications: (typeof Medications !== "undefined") ? Medications.find({id: patient.id}).count() : 0,
+  //     MedicationOrders: (typeof MedicationOrders !== "undefined") ? MedicationOrders.find({id: patient.id}).count() : 0,
+  //     MedicationStatements: (typeof MedicationStatements !== "undefined") ? MedicationStatements.find({id: patient.id}).count() : 0,
+  //     Observations: (typeof Observations !== "undefined") ? Observations.find({'subject.reference': 'Patient/' + patient.id}).count() : 0,
+  //     Organizations: (typeof Organizations !== "undefined") ? Organizations.find({id: patient.id}).count() : 0,
+  //     Persons: (typeof Persons !== "undefined") ? Persons.find({id: patient.id}).count() : 0,
+  //     Practitioners: (typeof Practitioners !== "undefined") ? Practitioners.find({id: patient.id}).count() : 0,
+  //     RelatedPersons: (typeof RelatedPersons !== "undefined") ? RelatedPersons.find({id: patient.id}).count() : 0,
+  //     Procedures: (typeof Procedures !== "undefined") ? Procedures.find({'subject.reference': 'Patient/' + patient.id}).count() : 0
+  //   })
+  // })
 
-    console.log("PatientsTable.onSend()", patient);
+  // const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 25);
 
-    var httpEndpoint = "http://localhost:8080";
-    if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
-      httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
-    }
-    HTTP.post(httpEndpoint + '/Patient', {
-      data: patient
-    }, function(error, result){
-      if (error) {
-        console.log("error", error);
-      }
-      if (result) {
-        console.log("result", result);
-      }
-    });
-  }
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
+  let cardWidth = window.innerWidth - paddingWidth;
+  
 
+  return (
+    <PageCanvas id="patientsPageClass" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <CardHeader title={this.data.patients.length + " Patients"} />
+          <CardContent>
+            <PatientsTable 
+              noDataMessagePadding={100}
+              patients={ this.data.patients }
+              count={this.data.patients.length}
+              onRowClick={ this.onTableRowClick }
+              // cursors={this.data.dataCursors}
+              formFactorLayout={formFactor}    
+              rowsPerPage={LayoutHelpers.calcTableRows()}      
+            />   
+          </CardContent>
+        </StyledCard>                
 
-  onNewTab(){
-    Session.set('selectedPatientId', false);
-    Session.set('patientUpsert', false);
-  }
-
-  render() {
-    console.log('React.version: ' + React.version);
-
-    let self = this;
-
-    function handleTabChange(event, index){
-      console.log('index', index)
-      self.setState({tabIndex: index});
-    }
-
-    // const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 25);
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
-    let cardWidth = window.innerWidth - paddingWidth;
-    
-
-    return (
-      <PageCanvas id="patientsPageClass" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={this.data.patientCount + " Patients"} />
-            <CardContent>
-              <PatientsTable 
-                noDataMessagePadding={100}
-                patients={ this.data.patients }
-                paginationLimit={ this.pagnationLimit }
-                count={this.data.patientCount}
-                onRowClick={ this.onTableRowClick }
-                cursors={this.data.dataCursors}
-                formFactorLayout={formFactor}    
-                rowsPerPage={LayoutHelpers.calcTableRows()}      
-              />   
-            </CardContent>
-          </StyledCard>                
-
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
-  }
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(PatientsPage.prototype, ReactMeteorData);
+
 export default PatientsPage;
 
 

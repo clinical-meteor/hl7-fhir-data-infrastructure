@@ -17,10 +17,10 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import EncounterDetail from './EncounterDetail';
+// import EncounterDetail from './EncounterDetail';
 import EncountersTable from './EncountersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -112,265 +112,243 @@ Session.setDefault('encountersArray', []);
   });
 
 //=============================================================================================================================================
-// TABS
+// MAIN COMPONENT
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+export function EncountersPage(props){
+
+  let data = {
+    selectedEncounterId: '',
+    selectedEncounter: null,
+    encounters: []
+  };
+
+  data.selectedEncounterId = useTracker(function(){
+    return Session.get('selectedEncounterId');
+  }, [])
+  data.selectedEncounter = useTracker(function(){
+    return Encounters.findOne(Session.get('selectedEncounterId'));
+  }, [])
+  data.encounters = useTracker(function(){
+    return Encounters.find().fetch();
+  }, [])
+
+  
+  const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
+  let cardWidth = window.innerWidth - paddingWidth;
 
   return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
+    <PageCanvas id="encountersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+            <CardHeader
+              title={ this.data.encountersCount + " Encounters"}
+            />
+            <CardContent>
+              <EncountersTable 
+                hideIdentifier={true} 
+                hideCheckboxes={true} 
+                hideSubjects={false}
+                actionButtonLabel="Send"
+                hideSubjects={false}
+                hideClassCode={false}
+                hideReasonCode={false}
+                hideReason={false}
+                hideHistory={false}
+                encounters={ this.data.encounters }
+                rowsPerPage={rowsPerPage}
+                count={this.data.encountersCount}      
+                showMinutes={true}
+                hideActionIcons={true}
+                hideBarcode={false}
+                rowsPerPage={LayoutHelpers.calcTableRows()}
+                />
+            </CardContent>
+          </StyledCard>
+      </MuiThemeProvider>
+    </PageCanvas>
   );
 }
 
+// export class EncountersPage extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       encounterId: false,
+//       encounter: {}
+//     }
+//   }
+//   getMeteorData() {
+//     let data = {
+//       tabIndex: Session.get('encounterPageTabIndex'),
+//       encounterSearchFilter: Session.get('encounterSearchFilter'),
+//       fhirVersion: Session.get('fhirVersion'),
+//       selectedEncounterId: Session.get("selectedEncounterId"),
+//       selectedEncounter: false,
+//       selected: [],
+//       encounters: [],
+//       encountersCount: 0,
+//       query: {},
+//       options: {},
+//       tabIndex: Session.get('encounterPageTabIndex')
+//     };
 
-export class EncountersPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      encounterId: false,
-      encounter: {}
-    }
-  }
-  getMeteorData() {
-    let data = {
-      tabIndex: Session.get('encounterPageTabIndex'),
-      encounterSearchFilter: Session.get('encounterSearchFilter'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedEncounterId: Session.get("selectedEncounterId"),
-      selectedEncounter: false,
-      selected: [],
-      encounters: [],
-      encountersCount: 0,
-      query: {},
-      options: {},
-      tabIndex: Session.get('encounterPageTabIndex')
-    };
 
-    // if(get(Meteor, 'settings.public.defaults.paginationLimit')){
-    //   data.options.limit = get(Meteor, 'settings.public.defaults.paginationLimit')
-    // }
+//     console.log('EncountersPage.data.query', data.query)
+//     console.log('EncountersPage.data.options', data.options)
 
-    // if(Session.get('encountersTableQuery')){
-    //   data.query = Session.get('encountersTableQuery')
-    // }
+//     data.encounters = Encounters.find(data.query, data.options).fetch();
+//     data.encountersCount = Encounters.find(data.query, data.options).count();
 
-    // if (Session.get('selectedEncounterId')){
-    //   data.selectedEncounter = Encounters.findOne({_id: Session.get('selectedEncounterId')});
-    //   this.state.encounter = Encounters.findOne({_id: Session.get('selectedEncounterId')});
-    //   this.state.encounterId = Session.get('selectedEncounterId');
-    // } else {
-    //   data.selectedEncounter = false;
-    //   this.state.encounterId = false;
-    //   this.state.encounter = {};
-    // }
+//     console.log("EncountersPage[data]", data);
+//     return data;
+//   }
 
-    console.log('EncountersPage.data.query', data.query)
-    console.log('EncountersPage.data.options', data.options)
+//   // this could be a mixin
+//   handleTabChange(index){
+//     Session.set('encounterPageTabIndex', index);
+//   }
+//   handleActive(index){
+//   }
+//   // this could be a mixin
+//   onNewTab(){
+//     console.log("onNewTab; we should clear things...");
 
-    data.encounters = Encounters.find(data.query, data.options).fetch();
-    data.encountersCount = Encounters.find(data.query, data.options).count();
+//     Session.set('selectedEncounterId', false);
+//   }
+//   onCancelUpsertEncounter(context){
+//     Session.set('encounterPageTabIndex', 0);
+//   }
+//   onDeleteEncounter(context){
+//     Encounters._collection.remove({_id: get(context, 'state.encounterId')}, function(error, result){
+//       if (error) {
+//         if(process.env.NODE_ENV === "test") console.log('Encounters.insert[error]', error);
+//         // Bert.alert(error.reason, 'danger');
+//       }
+//       if (result) {
+//         Session.set('selectedEncounterId', false);
+//         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: context.state.encounterId});
+//         // Bert.alert('Encounter removed!', 'success');
+//       }
+//     });
+//     Session.set('encounterPageTabIndex', 0);
+//   }
+//   onUpsertEncounter(context){
+//     //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
+//     console.log('Saving a new Encounter...', context.state)
 
-    console.log("EncountersPage[data]", data);
-    return data;
-  }
-
-  // this could be a mixin
-  handleTabChange(index){
-    Session.set('encounterPageTabIndex', index);
-  }
-  handleActive(index){
-  }
-  // this could be a mixin
-  onNewTab(){
-    console.log("onNewTab; we should clear things...");
-
-    Session.set('selectedEncounterId', false);
-  }
-  onCancelUpsertEncounter(context){
-    Session.set('encounterPageTabIndex', 0);
-  }
-  onDeleteEncounter(context){
-    Encounters._collection.remove({_id: get(context, 'state.encounterId')}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('Encounters.insert[error]', error);
-        // Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        Session.set('selectedEncounterId', false);
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: context.state.encounterId});
-        // Bert.alert('Encounter removed!', 'success');
-      }
-    });
-    Session.set('encounterPageTabIndex', 0);
-  }
-  onUpsertEncounter(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new Encounter...', context.state)
-
-    if(get(context, 'state.encounter')){
-      let self = context;
-      let fhirEncounterData = Object.assign({}, get(context, 'state.encounter'));
+//     if(get(context, 'state.encounter')){
+//       let self = context;
+//       let fhirEncounterData = Object.assign({}, get(context, 'state.encounter'));
   
-      // if(process.env.NODE_ENV === "test") console.log('fhirEncounterData', fhirEncounterData);
+//       // if(process.env.NODE_ENV === "test") console.log('fhirEncounterData', fhirEncounterData);
   
-      let encounterValidator = EncounterSchema.newContext();
-      // console.log('encounterValidator', encounterValidator)
-      encounterValidator.validate(fhirEncounterData)
+//       let encounterValidator = EncounterSchema.newContext();
+//       // console.log('encounterValidator', encounterValidator)
+//       encounterValidator.validate(fhirEncounterData)
   
-      if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', encounterValidator.isValid())
-        console.log('ValidationErrors: ', encounterValidator.validationErrors());
+//       if(process.env.NODE_ENV === "development"){
+//         console.log('IsValid: ', encounterValidator.isValid())
+//         console.log('ValidationErrors: ', encounterValidator.validationErrors());
   
-      }
+//       }
   
-      console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.encounterId')) {
-        if(process.env.NODE_ENV === "development") {
-          console.log("Updating encounter...");
-        }
+//       console.log('Checking context.state again...', context.state)
+//       if (get(context, 'state.encounterId')) {
+//         if(process.env.NODE_ENV === "development") {
+//           console.log("Updating encounter...");
+//         }
 
-        delete fhirEncounterData._id;
+//         delete fhirEncounterData._id;
   
-        // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirEncounterData.resourceType = 'Encounter';
+//         // not sure why we're having to respecify this; fix for a bug elsewhere
+//         fhirEncounterData.resourceType = 'Encounter';
   
-        Encounters._collection.update({_id: get(context, 'state.encounterId')}, {$set: fhirEncounterData }, function(error, result){
-          if (error) {
-            if(process.env.NODE_ENV === "test") console.log("Encounters.insert[error]", error);
-            // Bert.alert(error.reason, 'danger');
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: context.state.encounterId});
-            Session.set('selectedEncounterId', false);
-            Session.set('encounterPageTabIndex', 0);
-            // Bert.alert('Encounter added!', 'success');
-          }
-        });
-      } else {
-        // if(process.env.NODE_ENV === "test") 
-        console.log("Creating a new encounter...", fhirEncounterData);
+//         Encounters._collection.update({_id: get(context, 'state.encounterId')}, {$set: fhirEncounterData }, function(error, result){
+//           if (error) {
+//             if(process.env.NODE_ENV === "test") console.log("Encounters.insert[error]", error);
+//             // Bert.alert(error.reason, 'danger');
+//           }
+//           if (result) {
+//             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: context.state.encounterId});
+//             Session.set('selectedEncounterId', false);
+//             Session.set('encounterPageTabIndex', 0);
+//             // Bert.alert('Encounter added!', 'success');
+//           }
+//         });
+//       } else {
+//         // if(process.env.NODE_ENV === "test") 
+//         console.log("Creating a new encounter...", fhirEncounterData);
   
-        fhirEncounterData.effectiveDateTime = new Date();
-        Encounters._collection.insert(fhirEncounterData, function(error, result) {
-          if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('Encounters.insert[error]', error);
-            // Bert.alert(error.reason, 'danger');
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: context.state.encounterId});
-            Session.set('encounterPageTabIndex', 0);
-            Session.set('selectedEncounterId', false);
-            // Bert.alert('Encounter added!', 'success');
-          }
-        });
-      }
-    } 
-    Session.set('encounterPageTabIndex', 0);
-  }
-  onTableRowClick(encounterId){
-    Session.set('selectedEncounterId', encounterId);
-    Session.set('selectedPatient', Encounters.findOne({_id: encounterId}));
-  }
-  onTableCellClick(id){
-    Session.set('encountersUpsert', false);
-    Session.set('selectedEncounterId', id);
-    Session.set('encounterPageTabIndex', 2);
-  }
-  tableActionButtonClick(_id){
-    let encounter = Encounters.findOne({_id: _id});
+//         fhirEncounterData.effectiveDateTime = new Date();
+//         Encounters._collection.insert(fhirEncounterData, function(error, result) {
+//           if (error) {
+//             if(process.env.NODE_ENV === "test")  console.log('Encounters.insert[error]', error);
+//             // Bert.alert(error.reason, 'danger');
+//           }
+//           if (result) {
+//             HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: context.state.encounterId});
+//             Session.set('encounterPageTabIndex', 0);
+//             Session.set('selectedEncounterId', false);
+//             // Bert.alert('Encounter added!', 'success');
+//           }
+//         });
+//       }
+//     } 
+//     Session.set('encounterPageTabIndex', 0);
+//   }
+//   onTableRowClick(encounterId){
+//     Session.set('selectedEncounterId', encounterId);
+//     Session.set('selectedPatient', Encounters.findOne({_id: encounterId}));
+//   }
+//   onTableCellClick(id){
+//     Session.set('encountersUpsert', false);
+//     Session.set('selectedEncounterId', id);
+//     Session.set('encounterPageTabIndex', 2);
+//   }
+//   tableActionButtonClick(_id){
+//     let encounter = Encounters.findOne({_id: _id});
 
-    // console.log("EncountersTable.onSend()", encounter);
+//     // console.log("EncountersTable.onSend()", encounter);
 
-    var httpEndpoint = "http://localhost:8080";
-    if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
-      httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
-    }
-    HTTP.post(httpEndpoint + '/Encounter', {
-      data: encounter
-    }, function(error, result){
-      if (error) {
-        console.log("error", error);
-      }
-      if (result) {
-        console.log("result", result);
-      }
-    });
-  }
-  onInsert(encounterId){
-    Session.set('selectedEncounterId', false);
-    Session.set('encounterPageTabIndex', 0);
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: encounterId});
-  }
-  onUpdate(encounterId){
-    Session.set('selectedEncounterId', false);
-    Session.set('encounterPageTabIndex', 0);
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: encounterId});
-  }
-  onRemove(encounterId){
-    Session.set('encounterPageTabIndex', 0);
-    Session.set('selectedEncounterId', false);
-    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: encounterId});
-  }
-  onCancel(){
-    Session.set('encounterPageTabIndex', 0);
-  } 
-  render() {
-    // console.log('EncountersPage.data', this.data)
+//     var httpEndpoint = "http://localhost:8080";
+//     if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
+//       httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
+//     }
+//     HTTP.post(httpEndpoint + '/Encounter', {
+//       data: encounter
+//     }, function(error, result){
+//       if (error) {
+//         console.log("error", error);
+//       }
+//       if (result) {
+//         console.log("result", result);
+//       }
+//     });
+//   }
+//   onInsert(encounterId){
+//     Session.set('selectedEncounterId', false);
+//     Session.set('encounterPageTabIndex', 0);
+//     HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: encounterId});
+//   }
+//   onUpdate(encounterId){
+//     Session.set('selectedEncounterId', false);
+//     Session.set('encounterPageTabIndex', 0);
+//     HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: encounterId});
+//   }
+//   onRemove(encounterId){
+//     Session.set('encounterPageTabIndex', 0);
+//     Session.set('selectedEncounterId', false);
+//     HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Encounters", recordId: encounterId});
+//   }
+//   onCancel(){
+//     Session.set('encounterPageTabIndex', 0);
+//   } 
 
-    function handleChange(event, newValue) {
-      Session.set('encounterPageTabIndex', newValue)
-    }
+// }
 
-    const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
-    let cardWidth = window.innerWidth - paddingWidth;
-
-    return (
-      <PageCanvas id="encountersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-              <CardHeader
-                title={ this.data.encountersCount + " Encounters"}
-              />
-              <CardContent>
-                <EncountersTable 
-                  hideIdentifier={true} 
-                  hideCheckboxes={true} 
-                  hideSubjects={false}
-                  actionButtonLabel="Send"
-                  hideSubjects={false}
-                  hideClassCode={false}
-                  hideReasonCode={false}
-                  hideReason={false}
-                  hideHistory={false}
-                  encounters={ this.data.encounters }
-                  rowsPerPage={rowsPerPage}
-                  count={this.data.encountersCount}      
-                  showMinutes={true}
-                  hideActionIcons={true}
-                  hideBarcode={false}
-                  rowsPerPage={LayoutHelpers.calcTableRows()}
-                  />
-              </CardContent>
-            </StyledCard>
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
-  }
-}
-
-ReactMixin(EncountersPage.prototype, ReactMeteorData);
 export default EncountersPage;

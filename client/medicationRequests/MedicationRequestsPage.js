@@ -14,7 +14,7 @@ import {
   Box
 } from '@material-ui/core';
 
-import MedicationRequestDetail from './MedicationRequestDetail';
+// import MedicationRequestDetail from './MedicationRequestDetail';
 import MedicationRequestsTable from './MedicationRequestsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -22,7 +22,7 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 import { get, cloneDeep } from 'lodash';
@@ -128,82 +128,53 @@ function TabPanel(props) {
 //=============================================================================================================================================
 // MEDICATION ORDER PAGE
 
-Session.setDefault('medicationRequestPageTabIndex', 0)
-export class MedicationRequestsPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      state: {
-        isLoggedIn: false
-      },
-      tabIndex: Session.get('medicationRequestPageTabIndex'),
-      medicationRequestSearchFilter: Session.get('medicationRequestSearchFilter'),
-      currentMedicationRequest: Session.get('selectedMedicationRequest'),
-      medicationRequests: [],
-      medicationRequestsCount: 0
-    };
-    
-    data.medicationRequests = MedicationRequests.find().fetch();
-    data.medicationRequestsCount = MedicationRequests.find().count();
 
-    if (Meteor.user()) {
-      data.state.isLoggedIn = true;
-    }
 
-    return data;
-  }
+export function MedicationRequestsPage(props){
+  let data = {
+    selectedMedicationRequestId: '',
+    selectedMedicationRequest: null,
+    auditEvents: [],
+    onePageLayout: true
+  };
 
-  handleTabChange(index){
-    Session.set('medicationRequestPageTabIndex', index);
-  }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('MedicationRequestsPage.onePageLayout');
+  }, [])
+  data.selectedMedicationRequestId = useTracker(function(){
+    return Session.get('selectedMedicationRequestId');
+  }, [])
+  data.selectedMedicationRequest = useTracker(function(){
+    return MedicationRequests.findOne(Session.get('selectedMedicationRequestId'));
+  }, [])
+  data.auditEvents = useTracker(function(){
+    return MedicationRequests.find().fetch();
+  }, [])
 
-  onNewTab(){
-    Session.set('selectedMedicationRequest', false);
-    Session.set('medicationRequestUpsert', false);
-  }
 
-  render() {
-    if(process.env.NODE_ENV === "test") console.log('In MedicationRequestsPage render');
+  if(process.env.NODE_ENV === "test") console.log('In MedicationRequestsPage render');
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
 
-    return (
-      <PageCanvas id="medicationRequestsPage" headerHeight={headerHeight} >
-        <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} >
-            <CardHeader title='Medication Requests' />
-            <CardContent>
-              <div id="medicationRequestsPageTabs">
-                <Tabs value={this.data.tabIndex} onChange={this.handleTabChange.bind(this)} aria-label="simple tabs example">
-                  <Tab label="Prescription History" value={0} />
-                  <Tab label="New" value={1} />
-                </Tabs>
-                <TabPanel >
-                  <MedicationRequestsTable 
-                    medicationRequests={this.data.medicationRequests}
-                    rowsPerPage={20}
-                    hideBarcodes={true}
-                    hidePatient={true}
-                    count={this.data.medicationRequestsCount}
-                  />
-                </TabPanel >
-                <TabPanel >
-                  <MedicationRequestDetail id='newMedicationRequest' />
-                </TabPanel >
-              </div>
-            </CardContent>
-          </StyledCard>
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
-  }
+  return (
+    <PageCanvas id="medicationRequestsPage" headerHeight={headerHeight} >
+      <MuiThemeProvider theme={muiTheme} >
+        <StyledCard height="auto" scrollable={true} margin={20} >
+          <CardHeader title='Medication Requests' />
+          <CardContent>
+           <MedicationRequestsTable 
+              medicationRequests={this.data.medicationRequests}
+              rowsPerPage={20}
+              hideBarcodes={true}
+              hidePatient={true}
+              count={this.data.medicationRequestsCount}
+            />
+          </CardContent>
+        </StyledCard>
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(MedicationRequestsPage.prototype, ReactMeteorData);
+
 export default MedicationRequestsPage;

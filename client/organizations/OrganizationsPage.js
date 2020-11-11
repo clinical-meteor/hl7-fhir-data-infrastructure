@@ -24,7 +24,7 @@ import OrganizationsTable from './OrganizationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 
@@ -120,43 +120,31 @@ Session.setDefault('OrganizationsPage.onePageLayout', true)
 //=============================================================================================================================================
 // MAIN COMPONENT
 
+export function OrganizationsPage(props){
 
-export class OrganizationsPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      state: {
-        isLoggedIn: false
-      },
-      tabIndex: Session.get('organizationPageTabIndex'),
-      organizationSearchFilter: Session.get('organizationSearchFilter'),
-      selectedOrganizationId: Session.get('selectedOrganizationId'),
-      selectedOrganization: Session.get('selectedOrganization'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedOrganization: false,
-      onePageLayout: true,
-      organizations: [],
-      organizationsCount: 0,
-      appHeight: Session.get('appHeight')
-    };
+  let data = {
+    selectedOrganizationId: '',
+    selectedOrganization: null,
+    organizations: [],
+    onePageLayout: true
+  };
 
-    data.organizations = Organizations.find().fetch();
-    data.organizationsCount = Organizations.find().count();
-    data.onePageLayout = Session.get('OrganizationsPage.onePageLayout');
-    data.selectedOrganization = Session.get('selectedOrganization');
-
-    // logger.debug("OrganizationsPage[data]", data);
-    return data;
-  }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('OrganizationsPage.onePageLayout');
+  }, [])
+  data.selectedOrganizationId = useTracker(function(){
+    return Session.get('selectedOrganizationId');
+  }, [])
+  data.selectedOrganization = useTracker(function(){
+    return Organizations.findOne(Session.get('selectedOrganizationId'));
+  }, [])
+  data.organizations = useTracker(function(){
+    return Organizations.find().fetch();
+  }, [])
 
 
-  handleRowClick(organizationId){
+
+  function handleRowClick(organizationId){
     // logger.info('OrganizationsPage.handleRowClick', organizationId)
     let organization = Organizations.findOne({id: organizationId});
 
@@ -167,85 +155,83 @@ export class OrganizationsPage extends React.Component {
     Session.set('currentSelection', organization);
   }
 
-  render() {
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-    let paddingWidth = 84;
-    if(Meteor.isCordova){
-      paddingWidth = 20;
-    }
-    let cardWidth = window.innerWidth - paddingWidth;
-    
-    let layoutContents;
-    if(this.data.onePageLayout){
-      layoutContents = <Grid container>
+  let cardWidth = window.innerWidth - paddingWidth;
+  
+  let layoutContents;
+  if(this.data.onePageLayout){
+    layoutContents = <Grid container>
+      <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+      <CardHeader title={this.data.organizationsCount + " Organizations"} />
+      <CardContent>
+        <OrganizationsTable        
+          formFactorLayout={formFactor}  
+          organizations={this.data.organizations}
+          count={this.data.organizationsCount}
+          selectedOrganizationId={ this.data.selectedOrganizationId }
+          onRowClick={this.handleRowClick.bind(this) }
+          hideCheckbox={true}
+          hideBarcode={false}
+          hideActionIcons={true}
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+          size="small"
+        />                                
+        </CardContent>
+      </StyledCard>
+    </Grid>
+  } else {
+    layoutContents = <Grid container spacing={3}>
+      <Grid item lg={6}>
         <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-        <CardHeader title={this.data.organizationsCount + " Organizations"} />
-        <CardContent>
-          <OrganizationsTable        
-            formFactorLayout={formFactor}  
-            organizations={this.data.organizations}
-            count={this.data.organizationsCount}
-            selectedOrganizationId={ this.data.selectedOrganizationId }
-            onRowClick={this.handleRowClick.bind(this) }
-            hideCheckbox={true}
-            hideBarcode={false}
-            hideActionIcons={true}
-            rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
-            size="small"
-          />                                
+          <CardHeader title={this.data.organizationsCount + " Organizations"} />
+          <CardContent>
+            <OrganizationsTable
+              organizations={this.data.organizations}
+              count={this.data.organizationsCount}
+              hideCheckbox={true}
+              hideBarcode={true}
+              hidePhone={true}
+              hideEmail={true}
+              hideActionIcons={true}
+              selectedOrganizationId={ this.data.selectedOrganizationId }
+              onRowClick={this.handleRowClick.bind(this) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+              size="medium"
+            />              
           </CardContent>
         </StyledCard>
       </Grid>
-    } else {
-      layoutContents = <Grid container spacing={3}>
-        <Grid item lg={6}>
-          <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={this.data.organizationsCount + " Organizations"} />
+      <Grid item lg={4}>
+        <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
+          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedOrganizationId }</h1>
+          <CardContent>
             <CardContent>
-              <OrganizationsTable
-                organizations={this.data.organizations}
-                count={this.data.organizationsCount}
-                hideCheckbox={true}
-                hideBarcode={true}
-                hidePhone={true}
-                hideEmail={true}
-                hideActionIcons={true}
-                selectedOrganizationId={ this.data.selectedOrganizationId }
-                onRowClick={this.handleRowClick.bind(this) }
-                rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
-                size="medium"
-              />              
+              <OrganizationDetail 
+                organizationId={this.data.selectedOrganizationId}
+                organization={this.data.selectedOrganization}
+              />
             </CardContent>
-          </StyledCard>
-        </Grid>
-        <Grid item lg={4}>
-          <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
-            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedOrganizationId }</h1>
-            <CardContent>
-              <CardContent>
-                <OrganizationDetail 
-                  organizationId={this.data.selectedOrganizationId}
-                  organization={this.data.selectedOrganization}
-                />
-              </CardContent>
-            </CardContent>
-          </StyledCard>
-        </Grid>
+          </CardContent>
+        </StyledCard>
       </Grid>
-    }
-    
-    return (
-      <PageCanvas id="organizationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-          { layoutContents }
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
+    </Grid>
   }
+  
+  return (
+    <PageCanvas id="organizationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+        { layoutContents }
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(OrganizationsPage.prototype, ReactMeteorData);
+
+
+
+
 export default OrganizationsPage;

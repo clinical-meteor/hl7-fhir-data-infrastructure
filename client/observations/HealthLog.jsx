@@ -4,7 +4,7 @@ import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
 
 import { Meteor } from 'meteor/meteor';
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 import { VitalMeasurements } from './VitalMeasurements';

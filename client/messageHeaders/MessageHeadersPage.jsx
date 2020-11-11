@@ -14,10 +14,10 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import MessageHeaderDetail from './MessageHeaderDetail';
+// import MessageHeaderDetail from './MessageHeaderDetail';
 import MessageHeadersTable from './MessageHeadersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -36,139 +36,103 @@ Session.setDefault('messageHeadersArray', []);
 Session.setDefault('MessageHeadersPage.onePageLayout', true)
 
 // Global Theming 
-  // This is necessary for the Material UI component render layer
-  let theme = {
-    primaryColor: "rgb(108, 183, 110)",
-    primaryText: "rgba(255, 255, 255, 1) !important",
+// This is necessary for the Material UI component render layer
+let theme = {
+  primaryColor: "rgb(108, 183, 110)",
+  primaryText: "rgba(255, 255, 255, 1) !important",
 
-    secondaryColor: "rgb(108, 183, 110)",
-    secondaryText: "rgba(255, 255, 255, 1) !important",
+  secondaryColor: "rgb(108, 183, 110)",
+  secondaryText: "rgba(255, 255, 255, 1) !important",
 
-    cardColor: "rgba(255, 255, 255, 1) !important",
-    cardTextColor: "rgba(0, 0, 0, 1) !important",
+  cardColor: "rgba(255, 255, 255, 1) !important",
+  cardTextColor: "rgba(0, 0, 0, 1) !important",
 
-    errorColor: "rgb(128,20,60) !important",
-    errorText: "#ffffff !important",
+  errorColor: "rgb(128,20,60) !important",
+  errorText: "#ffffff !important",
 
-    appBarColor: "#f5f5f5 !important",
-    appBarTextColor: "rgba(0, 0, 0, 1) !important",
+  appBarColor: "#f5f5f5 !important",
+  appBarTextColor: "rgba(0, 0, 0, 1) !important",
 
-    paperColor: "#f5f5f5 !important",
-    paperTextColor: "rgba(0, 0, 0, 1) !important",
+  paperColor: "#f5f5f5 !important",
+  paperTextColor: "rgba(0, 0, 0, 1) !important",
 
-    backgroundCanvas: "rgba(255, 255, 255, 1) !important",
-    background: "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
+  backgroundCanvas: "rgba(255, 255, 255, 1) !important",
+  background: "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
 
-    nivoTheme: "greens"
-  }
-
-  // if we have a globally defined theme from a settings file
-  if(get(Meteor, 'settings.public.theme.palette')){
-    theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
-  }
-
-  const muiTheme = createMuiTheme({
-    typography: {
-      useNextVariants: true,
-    },
-    palette: {
-      primary: {
-        main: theme.primaryColor,
-        contrastText: theme.primaryText
-      },
-      secondary: {
-        main: theme.secondaryColor,
-        contrastText: theme.errorText
-      },
-      appBar: {
-        main: theme.appBarColor,
-        contrastText: theme.appBarTextColor
-      },
-      cards: {
-        main: theme.cardColor,
-        contrastText: theme.cardTextColor
-      },
-      paper: {
-        main: theme.paperColor,
-        contrastText: theme.paperTextColor
-      },
-      error: {
-        main: theme.errorColor,
-        contrastText: theme.secondaryText
-      },
-      background: {
-        default: theme.backgroundCanvas
-      },
-      contrastThreshold: 3,
-      tonalOffset: 0.2
-    }
-  });
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
+  nivoTheme: "greens"
 }
 
+// if we have a globally defined theme from a settings file
+if(get(Meteor, 'settings.public.theme.palette')){
+  theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
+}
 
-export class MessageHeadersPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      messageHeaderId: false,
-      messageHeader: {}
-    }
+const muiTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+  palette: {
+    primary: {
+      main: theme.primaryColor,
+      contrastText: theme.primaryText
+    },
+    secondary: {
+      main: theme.secondaryColor,
+      contrastText: theme.errorText
+    },
+    appBar: {
+      main: theme.appBarColor,
+      contrastText: theme.appBarTextColor
+    },
+    cards: {
+      main: theme.cardColor,
+      contrastText: theme.cardTextColor
+    },
+    paper: {
+      main: theme.paperColor,
+      contrastText: theme.paperTextColor
+    },
+    error: {
+      main: theme.errorColor,
+      contrastText: theme.secondaryText
+    },
+    background: {
+      default: theme.backgroundCanvas
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.2
   }
-  getMeteorData() {
-    let data = {
-      tabIndex: Session.get('messageHeaderPageTabIndex'),
-      messageHeaderSearchFilter: Session.get('messageHeaderSearchFilter'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedMessageHeaderId: Session.get("selectedMessageHeaderId"),
-      selectedMessageHeader: Session.get("selectedMessageHeader"),
-      selected: [],
-      messageHeaders: [],
-      query: {},
-      options: {
-        limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
-      },
-      tabIndex: Session.get('messageHeaderPageTabIndex'),
-      onePageLayout: true
-    };
+});
 
-    data.onePageLayout = Session.get('MessageHeadersPage.onePageLayout');
 
-    console.log('MessageHeadersPage.data.query', data.query)
-    console.log('MessageHeadersPage.data.options', data.options)
+  
 
-    data.messageHeaders = MessageHeaders.find(data.query, data.options).fetch();
-    data.messageHeadersCount = MessageHeaders.find(data.query, data.options).count();
+export function MessageHeadersPage(props){
 
-    // console.log("MessageHeadersPage[data]", data);
-    return data;
-  }
+  let data = {
+    selectedMessageHeaderId: '',
+    selectedMessageHeader: null,
+    messageHeaders: [],
+    onePageLayout: true
+  };
 
-  // this could be a mixin
-  handleTabChange(index){
-    Session.set('messageHeaderPageTabIndex', index);
-  }
-  handleActive(index){
-  }
-  onCancelUpsertMessageHeader(context){
+  data.onePageLayout = useTracker(function(){
+    return Session.get('MessageHeadersPage.onePageLayout');
+  }, [])
+  data.selectedMessageHeaderId = useTracker(function(){
+    return Session.get('selectedMessageHeaderId');
+  }, [])
+  data.selectedMessageHeader = useTracker(function(){
+    return MeasageHeaders.findOne(Session.get('selectedMessageHeaderId'));
+  }, [])
+  data.messageHeaders = useTracker(function(){
+    return MeasageHeaders.find().fetch();
+  }, [])
+
+  function onCancelUpsertMessageHeader(context){
     Session.set('messageHeaderPageTabIndex', 1);
   }
-  onDeleteMessageHeader(context){
+  function onDeleteMessageHeader(context){
     MessageHeaders._collection.remove({_id: get(context, 'state.messageHeaderId')}, function(error, result){
       if (error) {
         if(process.env.NODE_ENV === "test") console.log('MessageHeaders.insert[error]', error);
@@ -182,7 +146,7 @@ export class MessageHeadersPage extends React.Component {
     });
     Session.set('messageHeaderPageTabIndex', 1);
   }
-  onUpsertMessageHeader(context){
+  function onUpsertMessageHeader(context){
     console.log('Saving a new MessageHeader...', context.state)
 
     if(get(context, 'state.messageHeader')){
@@ -243,64 +207,26 @@ export class MessageHeadersPage extends React.Component {
     } 
     Session.set('messageHeaderPageTabIndex', 1);
   }
-  handleRowClick(messageHeaderId, foo, bar){
+  function handleRowClick(messageHeaderId, foo, bar){
     console.log('MessageHeadersPage.handleRowClick', messageHeaderId)
     let messageHeader = MessageHeaders.findOne({id: messageHeaderId});
 
     Session.set('selectedMessageHeaderId', get(messageHeader, 'id'));
     Session.set('selectedMessageHeader', messageHeader);
   }
-  onTableCellClick(id){
-    Session.set('messageHeadersUpsert', false);
-    Session.set('selectedMessageHeaderId', id);
-    Session.set('messageHeaderPageTabIndex', 2);
-  }
-  tableActionButtonClick(_id){
-    let messageHeader = MessageHeaders.findOne({_id: _id});
-
-    // console.log("MessageHeadersTable.onSend()", messageHeader);
-
-    var httpEndpoint = "http://localhost:8080";
-    if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
-      httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
-    }
-    HTTP.post(httpEndpoint + '/MessageHeader', {
-      data: messageHeader
-    }, function(error, result){
-      if (error) {
-        console.log("error", error);
-      }
-      if (result) {
-        console.log("result", result);
-      }
-    });
-  }
-  onInsert(messageHeaderId){
+  function onInsert(messageHeaderId){
     Session.set('selectedMessageHeaderId', '');
     Session.set('messageHeaderPageTabIndex', 1);
     HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MessageHeaders", recordId: messageHeaderId});
   }
-  onUpdate(messageHeaderId){
-    Session.set('selectedMessageHeaderId', '');
-    Session.set('messageHeaderPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MessageHeaders", recordId: messageHeaderId});
-  }
-  onRemove(messageHeaderId){
-    Session.set('messageHeaderPageTabIndex', 1);
-    Session.set('selectedMessageHeaderId', '');
-    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "MessageHeaders", recordId: messageHeaderId});
-  }
-  onCancel(){
+  function onCancel(){
     Session.set('messageHeaderPageTabIndex', 1);
   } 
-  render() {
-    // console.log('MessageHeadersPage.data', this.data)
 
-    function handleChange(event, newValue) {
-      Session.set('messageHeaderPageTabIndex', newValue)
-    }
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
     let layoutContents;
     if(this.data.onePageLayout){
@@ -386,14 +312,13 @@ export class MessageHeadersPage extends React.Component {
     }
 
     return (
-      <PageCanvas id="messageHeadersPage" headerHeight={headerHeight}>
+      <PageCanvas id="messageHeadersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <MuiThemeProvider theme={muiTheme} >
           { layoutContents }
         </MuiThemeProvider>
       </PageCanvas>
     );
-  }
 }
 
-ReactMixin(MessageHeadersPage.prototype, ReactMeteorData);
+
 export default MessageHeadersPage;

@@ -17,12 +17,12 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import ProcedureDetail from './ProcedureDetail';
+// import ProcedureDetail from './ProcedureDetail';
 import ProceduresTable from './ProceduresTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
@@ -111,97 +111,57 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 Session.setDefault('selectedProcedureId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
+Session.setDefault('ProceduresPage.onePageLayout', true)
 
-export class ProceduresPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('procedurePageTabIndex'),
-      procedureSearchFilter: Session.get('procedureSearchFilter'),
-      selectedProcedureId: Session.get('selectedProcedureId'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedProcedure: false,
-      procedures: [],
-      proceduresCount: 0
-    };
+export function ProceduresPage(props){
+  let data = {
+    selectedProcedureId: '',
+    selectedProcedure: null,
+    procedures: [],
+    onePageLayout: true
+  };
 
-    if (Session.get('selectedProcedureId')){
-      data.selectedProcedure = Procedures.findOne({_id: Session.get('selectedProcedureId')});
-    } else {
-      data.selectedProcedure = false;
-    }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('ProceduresPage.onePageLayout');
+  }, [])
+  data.selectedProcedureId = useTracker(function(){
+    return Session.get('selectedProcedureId');
+  }, [])
+  data.selectedProcedure = useTracker(function(){
+    return Procedures.findOne(Session.get('selectedProcedureId'));
+  }, [])
+  data.procedures = useTracker(function(){
+    return Procedures.find().fetch();
+  }, [])
 
-    data.procedures = Procedures.find().fetch();
-    data.proceduresCount = Procedures.find().count();
+  if(process.env.NODE_ENV === "test") console.log('In ProceduresPage render');
 
-    return data;
-  }
-  onInsert(procedureId){
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Procedures", recordId: procedureId});
-    Session.set('procedurePageTabIndex', 1);
-    Session.set('selectedProcedureId', false);
-  }
-  onUpdate(procedureId){
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Procedures", recordId: procedureId});
-    Session.set('procedurePageTabIndex', 1);
-    Session.set('selectedProcedureId', false);
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
+  let cardWidth = window.innerWidth - paddingWidth;
+  let proceduresTitle = this.data.proceduresCount + " Procedures";
+
+  return (
+    <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+            <CardHeader title={proceduresTitle} />
+            <CardContent>
+              <ProceduresTable 
+                procedures={this.data.procedures}
+                count={this.data.proceduresCount}
+                rowsPerPage={25}
+                tableRowSize="medium"
+                formFactorLayout={formFactor}
+                rowsPerPage={LayoutHelpers.calcTableRows()}
+                />
+            </CardContent>
+          </StyledCard>
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
-  onRemove(procedureId){
-    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Procedures", recordId: procedureId});
-    Session.set('procedurePageTabIndex', 1);
-    Session.set('selectedProcedureId', false);
-  }
-  onCancel(){
-    Session.set('procedurePageTabIndex', 1);
-  }
-
-  handleTabChange(index){
-    Session.set('procedurePageTabIndex', index);
-  }
-
-  onNewTab(){
-    Session.set('selectedProcedureId', false);
-    Session.set('procedureUpsert', false);
-  }
-
-  render() {
-    if(process.env.NODE_ENV === "test") console.log('In ProceduresPage render');
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-    let cardWidth = window.innerWidth - paddingWidth;
-    let proceduresTitle = this.data.proceduresCount + " Procedures";
-
-    return (
-      <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-            <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-              <CardHeader title={proceduresTitle} />
-              <CardContent>
-                <ProceduresTable 
-                  procedures={this.data.procedures}
-                  count={this.data.proceduresCount}
-                  rowsPerPage={25}
-                  tableRowSize="medium"
-                  formFactorLayout={formFactor}
-                  rowsPerPage={LayoutHelpers.calcTableRows()}
-                  />
-              </CardContent>
-            </StyledCard>
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
-  }
-}
-
-ReactMixin(ProceduresPage.prototype, ReactMeteorData);
 
 export default ProceduresPage;

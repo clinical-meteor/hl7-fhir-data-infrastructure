@@ -22,7 +22,7 @@ import {
 import { get, has, set } from 'lodash';
 
 import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
 import { moment } from 'moment';

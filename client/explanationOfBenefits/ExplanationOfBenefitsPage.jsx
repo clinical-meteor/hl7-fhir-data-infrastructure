@@ -14,10 +14,10 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import ExplanationOfBenefitDetail from './ExplanationOfBenefitDetail';
+// import ExplanationOfBenefitDetail from './ExplanationOfBenefitDetail';
 import ExplanationOfBenefitsTable from './ExplanationOfBenefitsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -106,211 +106,153 @@ Session.setDefault('ExplanationOfBenefitsPage.onePageLayout', true);
 
 
 
+export function ExplanationOfBenefitsPage(props){
 
-export class ExplanationOfBenefitsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      explanationOfBenefitId: false,
-      explanationOfBenefit: {}
-    }
-  }
-  getMeteorData() {
-    let data = {
-      tabIndex: Session.get('explanationOfBenefitPageTabIndex'),
-      explanationOfBenefitSearchFilter: Session.get('explanationOfBenefitSearchFilter'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedExplanationOfBenefitId: Session.get("selectedExplanationOfBenefitId"),
-      selectedExplanationOfBenefit: Session.get("selectedExplanationOfBenefit"),
-      selected: [],
-      explanationOfBenefits: [],
-      query: {},
-      options: {
-        limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
-      },
-      tabIndex: Session.get('explanationOfBenefitPageTabIndex'),
-      onePageLayout: Session.get('ExplanationOfBenefitsPage.onePageLayout')
-    };
+  let data = {
+    selectedExplanationOfBenefitId: '',
+    selectedExplanationOfBenefit: null,
+    explanationOfBenefits: [],
+    query: {},
+    options: {
+      limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
+    },
+    onePageLayout: Session.get('ExplanationOfBenefitsPage.onePageLayout')
+  };
 
-    console.log('ExplanationOfBenefitsPage.data.query', data.query)
-    console.log('ExplanationOfBenefitsPage.data.options', data.options)
-
-    data.explanationOfBenefits = ExplanationOfBenefits.find(data.query, data.options).fetch();
-    data.explanationOfBenefitsCount = ExplanationOfBenefits.find(data.query, data.options).count();
-
-    // console.log("ExplanationOfBenefitsPage[data]", data);
-    return data;
-  }
+  data.selectedExplanationOfBenefitId = useTracker(function(){
+    return Session.get('selectedExplanationOfBenefitId');
+  }, [])
+  data.selectedExplanationOfBenefit = useTracker(function(){
+    return ExplanationOfBenefits.findOne(Session.get('selectedExplanationOfBenefitId'));
+  }, [])
+  data.explanationOfBenefits = useTracker(function(){
+    return ExplanationOfBenefits.find().fetch();
+  }, [])
 
 
-  
-  handleRowClick(explanationOfBenefitId, foo, bar){
+  function handleRowClick(explanationOfBenefitId, foo, bar){
     console.log('ExplanationOfBenefitsPage.handleRowClick', explanationOfBenefitId)
     let explanationOfBenefit = ExplanationOfBenefits.findOne({id: explanationOfBenefitId});
 
     Session.set('selectedExplanationOfBenefitId', get(explanationOfBenefit, 'id'));
     Session.set('selectedExplanationOfBenefit', explanationOfBenefit);
   }
-  onTableCellClick(id){
-    Session.set('explanationOfBenefitsUpsert', false);
-    Session.set('selectedExplanationOfBenefitId', id);
-  }
-  tableActionButtonClick(_id){
-    let explanationOfBenefit = ExplanationOfBenefits.findOne({_id: _id});
 
-    // console.log("ExplanationOfBenefitsTable.onSend()", explanationOfBenefit);
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
+  let cardWidth = window.innerWidth - paddingWidth;
 
-    var httpEndpoint = "http://localhost:8080";
-    if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
-      httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
-    }
-    HTTP.post(httpEndpoint + '/explanationOfBenefit', {
-      data: explanationOfBenefit
-    }, function(error, result){
-      if (error) {
-        console.log("error", error);
-      }
-      if (result) {
-        console.log("result", result);
-      }
-    });
-  }
-  onInsert(explanationOfBenefitId){
-    Session.set('selectedExplanationOfBenefitId', '');
-    Session.set('explanationOfBenefitPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "explanationOfBenefits", recordId: explanationOfBenefitId});
-  }
-  onUpdate(explanationOfBenefitId){
-    Session.set('selectedExplanationOfBenefitId', '');
-    Session.set('explanationOfBenefitPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "explanationOfBenefits", recordId: explanationOfBenefitId});
-  }
-  onRemove(explanationOfBenefitId){
-    Session.set('explanationOfBenefitPageTabIndex', 1);
-    Session.set('selectedExplanationOfBenefitId', '');
-    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "explanationOfBenefits", recordId: explanationOfBenefitId});
-  }
-  onCancel(){
-    Session.set('explanationOfBenefitPageTabIndex', 1);
-  } 
-  render() {
+  let layoutContents;
+  if(this.data.onePageLayout){
+    layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+      <CardHeader title={this.data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
+      <CardContent>
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
-    let cardWidth = window.innerWidth - paddingWidth;
-
-    let layoutContents;
-    if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-        <CardHeader title={this.data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
-        <CardContent>
-
-          <ExplanationOfBenefitsTable 
-            explanationOfBenefits={ this.data.explanationOfBenefits }
-            hideCheckbox={true} 
-            hideActionIcons={true}
-            hideStatus={false}
-            hideIdentifier={false}    
-            hideType={true}
-            hideSubtype={false}
-            hideUse={false}
-            hidePatientDisplay={true}
-            hidePatientReference={false}
-            hideBillableStart={false}
-            hideBillableEnd={false}
-            hideCreated={false}
-            hideInsurerDisplay={true}
-            hideInsurerReference={false}
-            hideProviderDisplay={true}
-            hideProviderReference={false}
-            hidePayeeType={true}
-            hidePayeeDisplay={true}
-            hidePayeeReference={false}
-            hideOutcome={false}
-            hidePaymentType={true}
-            hidePaymentAmount={true}
-            hidePaymentDate={true}
-            hideBarcode={false}
-            count={this.data.explanationOfBenefitsCount}
-        
-            paginationLimit={10}     
-            />
+        <ExplanationOfBenefitsTable 
+          explanationOfBenefits={ this.data.explanationOfBenefits }
+          hideCheckbox={true} 
+          hideActionIcons={true}
+          hideStatus={false}
+          hideIdentifier={false}    
+          hideType={true}
+          hideSubtype={false}
+          hideUse={false}
+          hidePatientDisplay={true}
+          hidePatientReference={false}
+          hideBillableStart={false}
+          hideBillableEnd={false}
+          hideCreated={false}
+          hideInsurerDisplay={true}
+          hideInsurerReference={false}
+          hideProviderDisplay={true}
+          hideProviderReference={false}
+          hidePayeeType={true}
+          hidePayeeDisplay={true}
+          hidePayeeReference={false}
+          hideOutcome={false}
+          hidePaymentType={true}
+          hidePaymentAmount={true}
+          hidePaymentDate={true}
+          hideBarcode={false}
+          count={this.data.explanationOfBenefitsCount}
+      
+          paginationLimit={10}     
+          />
+        </CardContent>
+      </StyledCard>
+  } else {
+    layoutContents = <Grid container spacing={3}>
+      <Grid item lg={6}>
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <CardHeader title={this.data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
+          <CardContent>
+            <ExplanationOfBenefitsTable 
+              explanationOfBenefits={ this.data.explanationOfBenefits }
+              selectedExplanationOfBenefitId={ this.data.selectedExplanationOfBenefitId }
+              hideStatus={false}
+              hideIdentifier={false}    
+              hideType={true}
+              hideSubtype={false}
+              hideUse={false}
+              hidePatientDisplay={true}
+              hidePatientReference={false}
+              hideBillableStart={true}
+              hideBillableEnd={true}
+              hideCreated={false}
+              hideInsurerDisplay={true}
+              hideInsurerReference={false}
+              hideProviderDisplay={true}
+              hideProviderReference={false}
+              hidePayeeType={true}
+              hidePayeeDisplay={true}
+              hidePayeeReference={false}
+              hideOutcome={false}
+              hidePaymentType={true}
+              hidePaymentAmount={true}
+              hidePaymentDate={true}
+              hideBarcode={true}
+              count={this.data.explanationOfBenefitsCount}
+                  
+              hideActionIcons={true}
+              onRowClick={this.handleRowClick.bind(this) }
+              count={this.data.explanationOfBenefitsCount}
+              rowsPerPage={LayoutHelpers.calcTableRows()}
+              />
           </CardContent>
         </StyledCard>
-    } else {
-      layoutContents = <Grid container spacing={3}>
-        <Grid item lg={6}>
-          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={this.data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
-            <CardContent>
-              <ExplanationOfBenefitsTable 
-                explanationOfBenefits={ this.data.explanationOfBenefits }
-                selectedExplanationOfBenefitId={ this.data.selectedExplanationOfBenefitId }
-                hideStatus={false}
-                hideIdentifier={false}    
-                hideType={true}
-                hideSubtype={false}
-                hideUse={false}
-                hidePatientDisplay={true}
-                hidePatientReference={false}
-                hideBillableStart={true}
-                hideBillableEnd={true}
-                hideCreated={false}
-                hideInsurerDisplay={true}
-                hideInsurerReference={false}
-                hideProviderDisplay={true}
-                hideProviderReference={false}
-                hidePayeeType={true}
-                hidePayeeDisplay={true}
-                hidePayeeReference={false}
-                hideOutcome={false}
-                hidePaymentType={true}
-                hidePaymentAmount={true}
-                hidePaymentDate={true}
-                hideBarcode={true}
-                count={this.data.explanationOfBenefitsCount}
-                    
-                hideActionIcons={true}
-                onRowClick={this.handleRowClick.bind(this) }
-                count={this.data.explanationOfBenefitsCount}
-                rowsPerPage={LayoutHelpers.calcTableRows()}
-                />
-            </CardContent>
-          </StyledCard>
-        </Grid>
-        <Grid item lg={4}>
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedExplanationOfBenefitId }</h1>
-            <CardContent>
-              <CardContent>
-                <ExplanationOfBenefitDetail 
-                  id='ExplanationOfBenefitDetails' 
-                  displayDatePicker={true} 
-                  displayBarcodes={false}
-                  explanationOfBenefit={ this.data.selectedExplanationOfBenefit }
-                  explanationOfBenefitId={ this.data.selectedExplanationOfBenefitId } 
-                  showexplanationOfBenefitInputs={true}
-                  showHints={false}
-                  
-                />
-              </CardContent>
-            </CardContent>
-          </StyledCard>
-        </Grid>
       </Grid>
-    }
-
-    return (
-      <PageCanvas id="explanationOfBenefitsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-          { layoutContents }
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
+      <Grid item lg={4}>
+      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedExplanationOfBenefitId }</h1>
+          <CardContent>
+            <CardContent>
+              <ExplanationOfBenefitDetail 
+                id='ExplanationOfBenefitDetails' 
+                displayDatePicker={true} 
+                displayBarcodes={false}
+                explanationOfBenefit={ this.data.selectedExplanationOfBenefit }
+                explanationOfBenefitId={ this.data.selectedExplanationOfBenefitId } 
+                showexplanationOfBenefitInputs={true}
+                showHints={false}
+                
+              />
+            </CardContent>
+          </CardContent>
+        </StyledCard>
+      </Grid>
+    </Grid>
   }
+
+  return (
+    <PageCanvas id="explanationOfBenefitsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+        { layoutContents }
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(ExplanationOfBenefitsPage.prototype, ReactMeteorData);
+
 export default ExplanationOfBenefitsPage;

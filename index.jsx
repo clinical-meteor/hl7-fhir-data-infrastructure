@@ -12,108 +12,104 @@ import AuditEventsTable from './client/auditEvents/AuditEventsTable';
 
 import AllergyIntolerancesPage from './client/allergyIntolerances/AllergyIntolerancesPage';
 import AllergyIntolerancesTable from './client/allergyIntolerances/AllergyIntolerancesTable';
-import AllergyIntoleranceDetail from './client/allergyIntolerances/AllergyIntoleranceDetail';
+// import AllergyIntoleranceDetail from './client/allergyIntolerances/AllergyIntoleranceDetail';
 
 import BundlesPage from './client/bundles/BundlesPage';
 import BundlesTable from './client/bundles/BundlesTable';
-import BundleDetail from './client/bundles/BundleDetail';
+// import BundleDetail from './client/bundles/BundleDetail';
 
 import CarePlansPage from './client/carePlans/CarePlansPage';
 import CarePlansTable from './client/carePlans/CarePlansTable';
-import CarePlanDetail from './client/carePlans/CarePlanDetail';
+// import CarePlanDetail from './client/carePlans/CarePlanDetail';
 
 import CompositionsPage from './client/compositions/CompositionsPage';
 import CompositionsTable from './client/compositions/CompositionsTable';
-import CompositionDetail from './client/compositions/CompositionDetail';
+// import CompositionDetail from './client/compositions/CompositionDetail';
 
 import ConditionsPage from './client/conditions/ConditionsPage';
 import ConditionsTable from './client/conditions/ConditionsTable';
-import ConditionDetail from './client/conditions/ConditionDetail';
+// import ConditionDetail from './client/conditions/ConditionDetail';
 
 import CommunicationsPage from './client/communications/CommunicationsPage';
-import CommunicationsTable from './client/communications/CommunicationsTable';
-import CommunicationDetail from './client/communications/CommunicationDetail';
+// import CommunicationsTable from './client/communications/CommunicationsTable';
+// import CommunicationDetail from './client/communications/CommunicationDetail';
 
 import CommunicationRequestsPage from './client/communicationRequests/CommunicationRequestsPage';
-import CommunicationRequestsTable from './client/communicationRequests/CommunicationRequestsTable';
-import CommunicationRequestDetail from './client/communicationRequests/CommunicationRequestDetail';
-
-import CommunicationResponsesPage from './client/communicationResponses/CommunicationResponsesPage';
-import CommunicationResponsesTable from './client/communicationResponses/CommunicationResponsesTable';
-import CommunicationResponseDetail from './client/communicationResponses/CommunicationResponseDetail';
+// import CommunicationRequestsTable from './client/communicationRequests/CommunicationRequestsTable';
+// import CommunicationRequestDetail from './client/communicationRequests/CommunicationRequestDetail';
 
 import DevicesPage from './client/devices/DevicesPage';
 import DevicesTable from './client/devices/DevicesTable';
-import DeviceDetail from './client/devices/DeviceDetail';
+// import DeviceDetail from './client/devices/DeviceDetail';
 
 import DiagnosticReportsPage from './client/diagnosticReports/DiagnosticReportsPage';
 import DiagnosticReportsTable from './client/diagnosticReports/DiagnosticReportsTable';
-import DiagnosticReportDetail from './client/diagnosticReports/DiagnosticReportDetail';
+// import DiagnosticReportDetail from './client/diagnosticReports/DiagnosticReportDetail';
 
 import EncountersPage from './client/encounters/EncountersPage';
 import EncountersTable from './client/encounters/EncountersTable';
-import EncounterDetail from './client/encounters/EncounterDetail';
+// import EncounterDetail from './client/encounters/EncounterDetail';
 
 import ExplanationOfBenefitsPage from './client/explanationOfBenefits/ExplanationOfBenefitsPage';
 import ExplanationOfBenefitsTable from './client/explanationOfBenefits/ExplanationOfBenefitsTable';
-import ExplanationOfBenefitDetail from './client/explanationOfBenefits/ExplanationOfBenefitDetail';
+// import ExplanationOfBenefitDetail from './client/explanationOfBenefits/ExplanationOfBenefitDetail';
 
 import ImmunizationsPage from './client/immunizations/ImmunizationsPage';
 import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
-import ImmunizationDetail from './client/immunizations/ImmunizationDetail';
+// import ImmunizationDetail from './client/immunizations/ImmunizationDetail';
 
 import ListsPage from './client/lists/ListsPage';
 import ListsTable from './client/lists/ListsTable';
-import ListDetail from './client/lists/ListDetail';
+// import ListDetail from './client/lists/ListDetail';
 
 import LocationsTable from './client/locations/LocationsTable';
 import LocationsPage from './client/locations/LocationsPage';
 
 import MeasuresPage from './client/measures/MeasuresPage';
 import MeasuresTable from './client/measures/MeasuresTable';
-import MeasureDetail from './client/measures/MeasureDetail';
+// import MeasureDetail from './client/measures/MeasureDetail';
 
 import MeasureReportsPage from './client/measureReports/MeasureReportsPage';
 import MeasureReportsTable from './client/measureReports/MeasureReportsTable';
-import MeasureReportDetail from './client/measureReports/MeasureReportDetail';
+// import MeasureReportDetail from './client/measureReports/MeasureReportDetail';
 
 import MedicationsPage from './client/medications/MedicationsPage';
 import MedicationsTable from './client/medications/MedicationsTable';
-import MedicationDetail from './client/medications/MedicationDetail';
+// import MedicationDetail from './client/medications/MedicationDetail';
 
 import MedicationOrdersPage from './client/medicationOrders/MedicationOrdersPage';
 import MedicationOrdersTable from './client/medicationOrders/MedicationOrdersTable';
-import MedicationOrderDetail from './client/medicationOrders/MedicationOrderDetail';
+// import MedicationOrderDetail from './client/medicationOrders/MedicationOrderDetail';
 
 import MedicationRequestsPage from './client/medicationRequests/MedicationRequestsPage';
 import MedicationRequestsTable from './client/medicationRequests/MedicationRequestsTable';
-import MedicationRequestDetail from './client/medicationRequests/MedicationRequestDetail';
+// import MedicationRequestDetail from './client/medicationRequests/MedicationRequestDetail';
 
 import MedicationStatementsPage from './client/medicationStatements/MedicationStatementsPage';
 import MedicationStatementsTable from './client/medicationStatements/MedicationStatementsTable';
-import MedicationStatementDetail from './client/medicationStatements/MedicationStatementDetail';
+// import MedicationStatementDetail from './client/medicationStatements/MedicationStatementDetail';
 
 import MessageHeadersPage from './client/messageHeaders/MessageHeadersPage';
 import MessageHeadersTable from './client/messageHeaders/MessageHeadersTable';
-import MessageHeaderDetail from './client/messageHeaders/MessageHeaderDetail';
+// import MessageHeaderDetail from './client/messageHeaders/MessageHeaderDetail';
 
 import ObservationsPage from './client/observations/ObservationsPage';
 import ObservationsTable from './client/observations/ObservationsTable';
-import ObservationDetail from './client/observations/ObservationDetail';
+// import ObservationDetail from './client/observations/ObservationDetail';
 
 import OrganizationsPage from './client/organizations/OrganizationsPage';
 import OrganizationsTable from './client/organizations/OrganizationsTable';
-import OrganizationDetail from './client/organizations/OrganizationDetail';
+// import OrganizationDetail from './client/organizations/OrganizationDetail';
 
 import PatientsPage from './client/patients/PatientsPage';
 
 import PractitionersPage from './client/practitioners/PractitionersPage';
 import PractitionersTable from './client/practitioners/PractitionersTable';
-import PractitionerDetail from './client/practitioners/PractitionerDetail';
+// import PractitionerDetail from './client/practitioners/PractitionerDetail';
 
 import ProceduresPage from './client/procedures/ProceduresPage';
 import ProceduresTable from './client/procedures/ProceduresTable';
-import ProcedureDetail from './client/procedures/ProcedureDetail';
+// import ProcedureDetail from './client/procedures/ProcedureDetail';
 
 import QuestionnairesPage from './client/questionnaires/QuestionnairesPage';
 import QuestionnairesTable from './client/questionnaires/QuestionnairesTable';
@@ -122,15 +118,15 @@ import QuestionnaireDetailExpansionPanels from './client/questionnaires/Question
 
 import QuestionnaireResponsesPage from './client/questionnaireResponses/QuestionnaireResponsesPage';
 import QuestionnaireResponsesTable from './client/questionnaireResponses/QuestionnaireResponsesTable';
-import QuestionnaireResponseDetail from './client/questionnaireResponses/QuestionnaireResponseDetail';
+// import QuestionnaireResponseDetail from './client/questionnaireResponses/QuestionnaireResponseDetail';
 
 import TasksPage from './client/tasks/TasksPage';
 import TasksTable from './client/tasks/TasksTable';
-import TaskDetail from './client/tasks/TaskDetail';
+// import TaskDetail from './client/tasks/TaskDetail';
 
 import ValueSetsPage from './client/valuesets/ValueSetsPage';
 import ValueSetsTable from './client/valuesets/ValueSetsTable';
-import ValueSetDetail from './client/valuesets/ValueSetDetail';
+// import ValueSetDetail from './client/valuesets/ValueSetDetail';
 
 import DynamicSpacer from './ui/DynamicSpacer';
 
@@ -179,11 +175,6 @@ let DynamicRoutes = [{
   'name': 'CommunicationRequestsPage',
   'path': '/communication-requests',
   'component': CommunicationRequestsPage,
-  'requireAuth': true
-}, {
-  'name': 'CommunicationResponsesPage',
-  'path': '/communication-responses',
-  'component': CommunicationResponsesPage,
   'requireAuth': true
 }, {
   'name': 'DiagnosticReportsPage',
@@ -526,104 +517,100 @@ export {
 
   AuditEventsPage,
   AuditEventsTable,
-  AuditEventDetail,
+  // AuditEventDetail,
 
   BundlesPage,
   BundlesTable,
-  BundleDetail,
+  // BundleDetail,
 
   CarePlansPage,
   CarePlansTable,
-  CarePlanDetail,
+  // CarePlanDetail,
 
   CompositionsPage,
   CompositionsTable,
-  CompositionDetail,
+  // CompositionDetail,
 
   ConditionsPage,
   ConditionsTable,
-  ConditionDetail,
+  // ConditionDetail,
 
   CommunicationsPage,
-  CommunicationsTable,
-  CommunicationDetail,
-
-  CommunicationResponsesPage,
-  CommunicationResponsesTable,
-  CommunicationResponseDetail,
+  // CommunicationsTable,
+  // CommunicationDetail,
 
   CommunicationRequestsPage,
-  CommunicationRequestsTable,
-  CommunicationRequestDetail,
+  // CommunicationRequestsTable,
+  // CommunicationRequestDetail,
 
   DevicesPage,
   DevicesTable,
-  DeviceDetail,
+  // DeviceDetail,
 
   DiagnosticReportsPage,
   DiagnosticReportsTable,
-  DiagnosticReportDetail,
+  // DiagnosticReportDetail,
 
   EncountersPage,
   EncountersTable,
-  EncounterDetail,
+  // EncounterDetail,
 
   ExplanationOfBenefitsPage,
   ExplanationOfBenefitsTable,
-  ExplanationOfBenefitDetail,
+  // ExplanationOfBenefitDetail,
 
   ImmunizationsPage,
   ImmunizationsTable,
-  ImmunizationDetail,
+  // ImmunizationDetail,
 
   ListsPage,
   ListsTable,
-  ListDetail,
+  // ListDetail,
 
   LocationsTable,
   LocationPage,
 
   MeasuresPage,
   MeasuresTable,
-  MeasureDetail,
+  // MeasureDetail,
 
   MeasureReportsPage,
   MeasureReportsTable,
-  MeasureReportDetail,
+  // MeasureReportDetail,
 
   MedicationsPage,
   MedicationsTable,
-  MedicationDetail,
+  // MedicationDetail,
 
   MedicationOrdersPage,
   MedicationOrdersTable,
-  MedicationOrderDetail,
+  // MedicationOrderDetail,
 
   MedicationRequestsPage,
   MedicationRequestsTable,
-  MedicationRequestDetail,
+  // MedicationRequestDetail,
 
   MedicationStatementsPage,
   MedicationStatementsTable,
-  MedicationStatementDetail,
+  // MedicationStatementDetail,
 
   ObservationsPage,
   ObservationsTable,
-  ObservationDetail,
+  // ObservationDetail,
 
   OrganizationsPage,
   OrganizationsTable,
-  OrganizationDetail,
+  // OrganizationDetail,
 
   PatientsPage,
 
   PractitionersPage,
   PractitionersTable,
-  PractitionerDetail,
+  // PractitionerDetail,
 
   ProceduresPage,
   ProceduresTable,
-  ProcedureDetail,
+  // ProcedureDetail,
 
   QuestionnairesPage,
   QuestionnairesTable,
@@ -632,15 +619,15 @@ export {
 
   QuestionnaireResponsesPage,
   QuestionnaireResponsesTable,
-  QuestionnaireResponseDetail,
+  // QuestionnaireResponseDetail,
 
   TasksPage,
   TasksTable,
-  TaskDetail,
+  // TaskDetail,
 
   ValueSetsPage,
   ValueSetsTable,
-  ValueSetDetail,
+  // ValueSetDetail,
 
   FhirDehydrator,
   FhirUtilities,

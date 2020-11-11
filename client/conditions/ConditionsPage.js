@@ -17,7 +17,7 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
@@ -28,14 +28,6 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { get } from 'lodash';
 
-
-//=============================================================================================================================================
-// SESSION VARIABLES
-
-
-Session.setDefault('fhirVersion', 'v1.0.2');
-Session.setDefault('selectedConditionId', false);
-Session.setDefault('conditionPageTabIndex', 1);
 
 
 //=============================================================================================================================================
@@ -111,86 +103,60 @@ const muiTheme = createMuiTheme({
   }
 });
 
+//=============================================================================================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedConditionId', false);
+
+
 
 //=============================================================================================================================================
 // MAIN COMPONENT
 
-export class ConditionsPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      tabIndex: Session.get('conditionPageTabIndex'),
-      conditionSearchFilter: Session.get('conditionSearchFilter'),
-      currentConditionId: Session.get('selectedConditionId'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedCondition: false,
-      conditions: [],
-      conditionsCount: 0
-    };
+export function ConditionsPage(props){
 
-    data.conditions = Conditions.find().fetch();
-    data.conditionsCount = Conditions.find().count();
+  let data = {
+    currentConditionId: '',
+    selectedCondition: null,
+    conditions: []
+  };
 
-    if (Session.get('selectedConditionId')){
-      data.selectedCondition = Conditions.findOne({_id: Session.get('selectedConditionId')});
-    } else {
-      data.selectedCondition = false;
-    }
+  data.selectedConditionId = useTracker(function(){
+    return Session.get('selectedConditionId');
+  }, [])
+  data.selectedCondition = useTracker(function(){
+    return Conditions.findOne({_id: Session.get('selectedConditionId')});
+  }, [])
+  data.conditions = useTracker(function(){
+    return Conditions.find().fetch();
+  }, [])
 
-    return data;
-  }
-  handleTabChange(index){
-    Session.set('conditionPageTabIndex', index);
-  }
-  onNewTab(){
-    Session.set('selectedConditionId', false);
-  }
-  onInsert(conditionId){
-    //HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
-    Session.set('conditionPageTabIndex', 1);
-    Session.set('selectedConditionId', false);
-  }
-  onUpdate(conditionId){
-    //HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
-    Session.set('conditionPageTabIndex', 1);
-    Session.set('selectedConditionId', false);
-  }
-  onRemove(conditionId){
-    //HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Conditions", recordId: conditionId});
-    Session.set('conditionPageTabIndex', 1);
-    Session.set('selectedConditionId', false);
-  }
-  onCancel(){
-    Session.set('conditionPageTabIndex', 1);
-  }
-  render() {
-    // if(get(Meteor, 'settings.public.logging') === "debug") console.log('In ConditionsPage render');
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
-    let cardWidth = window.innerWidth - paddingWidth;
-    
-    return (
-      <PageCanvas id="conditionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height="auto" scrollable={true} margin={20}>
-          <CardHeader title={ this.data.conditionsCount + " Conditions"} />
-          <CardContent>
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
+  let cardWidth = window.innerWidth - paddingWidth;
+  
+  return (
+    <PageCanvas id="conditionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <StyledCard height="auto" scrollable={true} margin={20}>
+        <CardHeader title={ this.data.conditions.length + " Conditions"} />
+        <CardContent>
 
-            <ConditionsTable 
-              id='conditionsTable'
-              conditions={this.data.conditions}
-              count={this.data.conditionsCount}  
-              formFactorLayout={formFactor}
-              rowsPerPage={LayoutHelpers.calcTableRows()}
-            />
-          </CardContent>
-        </StyledCard>
-      </PageCanvas>
-    );
-  }
+          <ConditionsTable 
+            id='conditionsTable'
+            conditions={this.data.conditions}
+            count={this.data.conditions.length}  
+            formFactorLayout={formFactor}
+            rowsPerPage={LayoutHelpers.calcTableRows()}
+          />
+        </CardContent>
+      </StyledCard>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(ConditionsPage.prototype, ReactMeteorData);
+
 
 export default ConditionsPage;

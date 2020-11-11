@@ -14,10 +14,10 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import TaskDetail from './TaskDetail';
+// import TaskDetail from './TaskDetail';
 import TasksTable from './TasksTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -117,111 +117,69 @@ Session.setDefault('TasksPage.onePageLayout', true)
 // `;
 
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
 
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
+//===========================================================================
+// MAIN COMPONENT  
 
 Session.setDefault('taskChecklistMode', false)
 
-export class TasksPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      taskId: false,
-      task: {}
-    }
-  }
-  getMeteorData() {
-    let data = {
-      tabIndex: Session.get('taskPageTabIndex'),
-      taskSearchFilter: Session.get('taskSearchFilter'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedTaskId: Session.get("selectedTaskId"),
-      selectedTask: Session.get("selectedTask"),
-      selected: [],
-      tasks: [],
-      query: {},
-      options: {
-        sort: {
-          'focus.display': -1,
-          lastModified: -1
-        }
-      },
-      tabIndex: Session.get('taskPageTabIndex'),
-      taskChecklistMode: Session.get('taskChecklistMode'),
-      onePageLayout: true
-    };
+export function TasksPage(props){
 
-    data.onePageLayout = Session.get('TasksPage.onePageLayout');
+  let data = {
+    selectedAuditEventId: '',
+    selectedAuditEvent: null,
+    tasks: [],
+    onePageLayout: true,
+    taskSearchFilter: '',
+    options: {
+      sort: {
+        'focus.display': -1,
+        lastModified: -1
+      }
+    },
+    taskChecklistMode: false
+  };
+
+  
 
 
-
-    // if(Session.get('tasksTableQuery')){
-    //   data.query = Session.get('tasksTableQuery')
-    // }
-
-    // if (Session.get('selectedTaskId')){
-    //   data.selectedTask = Tasks.findOne({_id: Session.get('selectedTaskId')});
-    //   this.state.task = Tasks.findOne({_id: Session.get('selectedTaskId')});
-    //   this.state.taskId = Session.get('selectedTaskId');
-    // } else {
-    //   data.selectedTask = false;
-    //   this.state.taskId = false;
-    //   this.state.task = {};
-    // }
-
-    console.log('TasksPage.data.query', data.query);
-    console.log('TasksPage.data.options', data.options);
-
-    data.tasks = Tasks.find(data.query, data.options).fetch();
-    data.tasksCount = Tasks.find(data.query, data.options).count();
-
+  data.onePageLayout = useTracker(function(){
+    return Session.get('AuditEventsPage.onePageLayout');
+  }, [])
+  data.selectedTaskId = useTracker(function(){
+    return Session.get('selectedTaskId');
+  }, [])
+  data.selectedTask = useTracker(function(){
+    return AuditEvents.findOne(Session.get('selectedTaskId'));
+  }, [])
+  data.tasks = useTracker(function(){
+    let results = [];
     if(Session.get('taskChecklistMode')){
-      data.tasks = Tasks.find({
+      results = Tasks.find({
         'focus.display': "Patient Correction"
       }, {
         limit: 10,
         sort: {lastModified: -1}
-      }).fetch();
-
-      data.tasksCount = Tasks.find({
-        'focus.display': "Patient Correction"
-      }, {
-        limit: 10,
-        sort: {lastModified: -1}
-      }).count();
+      }).fetch();      
+    } else {
+      results = Tasks.find().fetch();
     }
 
+    return results;
+  }, [])
+  data.taskSearchFilter = useTracker(function(){
+    return Session.get('taskSearchFilter')
+  }, [])
+  data.taskChecklistMode = useTracker(function(){
+    return Session.get('taskChecklistMode')
+  }, [])
 
-    // console.log("TasksPage[data]", data);
-    return data;
-  }
 
-  // this could be a mixin
-  handleTabChange(index){
-    Session.set('taskPageTabIndex', index);
-  }
-  handleActive(index){
-
-  }
-  onCancelUpsertTask(context){
+  function onCancelUpsertTask(context){
     Session.set('taskPageTabIndex', 1);
   }
-  onDeleteTask(context){
+  function onDeleteTask(context){
     Tasks._collection.remove({_id: get(context, 'state.taskId')}, function(error, result){
       if (error) {
         if(process.env.NODE_ENV === "test") console.log('Tasks.insert[error]', error);
@@ -234,7 +192,7 @@ export class TasksPage extends React.Component {
     });
     Session.set('taskPageTabIndex', 1);
   }
-  onUpsertTask(context){
+  function onUpsertTask(context){
     //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
     console.log('Saving a new Task...', context.state)
 
@@ -295,153 +253,118 @@ export class TasksPage extends React.Component {
     } 
     Session.set('taskPageTabIndex', 1);
   }
-  handleRowClick(taskId, foo, bar){
+  function handleRowClick(taskId, foo, bar){
     console.log('TasksPage.handleRowClick', taskId)
     let task = Tasks.findOne({id: taskId});
 
     Session.set('selectedTaskId', get(task, 'id'));
     Session.set('selectedTask', task);
   }
-  onTableCellClick(id){
-    Session.set('tasksUpsert', false);
-    Session.set('selectedTaskId', id);
-    Session.set('taskPageTabIndex', 2);
-  }
-  tableActionButtonClick(_id){
-    let task = Tasks.findOne({_id: _id});
-
-    // console.log("TasksTable.onSend()", task);
-
-    var httpEndpoint = "http://localhost:8080";
-    if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
-      httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
-    }
-    HTTP.post(httpEndpoint + '/Task', {
-      data: task
-    }, function(error, result){
-      if (error) {
-        console.log("error", error);
-      }
-      if (result) {
-        console.log("result", result);
-      }
-    });
-  }
-  onInsert(taskId){
+  function onInsert(taskId){
     Session.set('selectedTaskId', '');
     Session.set('taskPageTabIndex', 1);
     HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
   }
-  onUpdate(taskId){
-    Session.set('selectedTaskId', '');
-    Session.set('taskPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
-  }
-  onRemove(taskId){
-    Session.set('taskPageTabIndex', 1);
-    Session.set('selectedTaskId', '');
-    HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
-  }
-  onCancel(){
+  function onCancel(){
     Session.set('taskPageTabIndex', 1);
   } 
-  render() {
-    // console.log('TasksPage.data', this.data)
 
-    function handleChange(event, newValue) {
-      Session.set('taskPageTabIndex', newValue)
-    }
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
+  // console.log('TasksPage.data', this.data)
 
-    let layoutContents;
-    if(this.data.onePageLayout){
-      layoutContents = <StyledCard height="auto" margin={20} >
-        <CardHeader title={this.data.tasksCount + " Task History Records"} />
-        <CardContent>
+  function handleChange(event, newValue) {
+    Session.set('taskPageTabIndex', newValue)
+  }
 
-          <TasksTable 
-            tasks={ this.data.tasks }
-            hideCheckbox={false} 
-            hideActionIcons={true}
-            hideIdentifier={true} 
-            hideTitle={false} 
-            hideDescription={false} 
-            hideApprovalDate={false}
-            hideLastReviewed={false}
-            hideVersion={false}
-            hideStatus={false}
-            hideAuthor={true}
-            hidePublisher={false}
-            hideReviewer={false}
-            hideEditor={false}
-            hideEndorser={false}
-            hideType={false}
-            hideRiskAdjustment={true}
-            hideRateAggregation={true}
-            hideScoring={false}
-            hideBarcode={false}
-            showMinutes={true}
-            paginationLimit={10}     
-            checklist={this.data.taskChecklistMode}
-            />
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+
+  let layoutContents;
+  if(this.data.onePageLayout){
+    layoutContents = <StyledCard height="auto" margin={20} >
+      <CardHeader title={this.data.tasksCount + " Task History Records"} />
+      <CardContent>
+
+        <TasksTable 
+          tasks={ this.data.tasks }
+          hideCheckbox={false} 
+          hideActionIcons={true}
+          hideIdentifier={true} 
+          hideTitle={false} 
+          hideDescription={false} 
+          hideApprovalDate={false}
+          hideLastReviewed={false}
+          hideVersion={false}
+          hideStatus={false}
+          hideAuthor={true}
+          hidePublisher={false}
+          hideReviewer={false}
+          hideEditor={false}
+          hideEndorser={false}
+          hideType={false}
+          hideRiskAdjustment={true}
+          hideRateAggregation={true}
+          hideScoring={false}
+          hideBarcode={false}
+          showMinutes={true}
+          paginationLimit={10}     
+          checklist={this.data.taskChecklistMode}
+          />
+        </CardContent>
+      </StyledCard>
+  } else {
+    layoutContents = <Grid container spacing={3}>
+      <Grid item lg={6}>
+        <StyledCard height="auto" margin={20} >
+          <CardHeader title={this.data.tasksCount + " Tasks"} />
+          <CardContent>
+            <TasksTable 
+              tasks={ this.data.tasks }
+              selectedTaskId={ this.data.selectedTaskId }
+              hideIdentifier={true} 
+              hideCheckbox={false}
+              hideActionIcons={true}
+              hideBarcode={true}
+              onRowClick={this.handleRowClick.bind(this) }
+              count={this.data.tasksCount}
+              />
           </CardContent>
         </StyledCard>
-    } else {
-      layoutContents = <Grid container spacing={3}>
-        <Grid item lg={6}>
-          <StyledCard height="auto" margin={20} >
-            <CardHeader title={this.data.tasksCount + " Tasks"} />
-            <CardContent>
-              <TasksTable 
-                tasks={ this.data.tasks }
-                selectedTaskId={ this.data.selectedTaskId }
-                hideIdentifier={true} 
-                hideCheckbox={false}
-                hideActionIcons={true}
-                hideBarcode={true}
-                onRowClick={this.handleRowClick.bind(this) }
-                count={this.data.tasksCount}
-                />
-            </CardContent>
-          </StyledCard>
-        </Grid>
-        <Grid item lg={4}>
-          <StyledCard height="auto" margin={20} scrollable>
-            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedTaskId }</h1>
-            {/* <CardHeader title={this.data.selectedTaskId } className="helveticas barcode" /> */}
-            <CardContent>
-              <CardContent>
-                <TaskDetail 
-                  id='taskDetails' 
-                  
-                  displayDatePicker={true} 
-                  displayBarcodes={false}
-                  task={ this.data.selectedTask }
-                  taskId={ this.data.selectedTaskId } 
-                  showTaskInputs={true}
-                  showHints={false}
-                  // onInsert={ this.onInsert }
-                  // onDelete={ this.onDeleteTask }
-                  // onUpsert={ this.onUpsertTask }
-                  // onCancel={ this.onCancelUpsertTask } 
-                />
-              </CardContent>
-            </CardContent>
-          </StyledCard>
-        </Grid>
       </Grid>
-    }
-
-    return (
-      <PageCanvas id="tasksPage" headerHeight={headerHeight}>
-        <MuiThemeProvider theme={muiTheme} >
-          { layoutContents }
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
+      <Grid item lg={4}>
+        <StyledCard height="auto" margin={20} scrollable>
+          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedTaskId }</h1>
+          {/* <CardHeader title={this.data.selectedTaskId } className="helveticas barcode" /> */}
+          <CardContent>
+            <CardContent>
+              <TaskDetail 
+                id='taskDetails' 
+                
+                displayDatePicker={true} 
+                displayBarcodes={false}
+                task={ this.data.selectedTask }
+                taskId={ this.data.selectedTaskId } 
+                showTaskInputs={true}
+                showHints={false}
+                // onInsert={ this.onInsert }
+                // onDelete={ this.onDeleteTask }
+                // onUpsert={ this.onUpsertTask }
+                // onCancel={ this.onCancelUpsertTask } 
+              />
+            </CardContent>
+          </CardContent>
+        </StyledCard>
+      </Grid>
+    </Grid>
   }
+
+  return (
+    <PageCanvas id="tasksPage" headerHeight={headerHeight}>
+      <MuiThemeProvider theme={muiTheme} >
+        { layoutContents }
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(TasksPage.prototype, ReactMeteorData);
+
 export default TasksPage;

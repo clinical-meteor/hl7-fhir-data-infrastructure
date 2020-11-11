@@ -16,10 +16,10 @@ import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import ObservationDetail from './ObservationDetail';
+// import ObservationDetail from './ObservationDetail';
 import ObservationsTable from './ObservationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -34,76 +34,30 @@ Session.setDefault('observationSearchFilter', '');
 Session.setDefault('selectedObservationId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 
-export class ObservationsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      observationId: false,
-      observation: {}
-    }
-  } 
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('observationPageTabIndex'),
-      observationSearchFilter: Session.get('observationSearchFilter'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedObservationId: Session.get("selectedObservationId"),
-      paginationLimit: 100,
-      selectedObservation: false,
-      selected: [],
-      observations: [],
-      observationsCount: 0
-    };
+export function ObservationsPage(props){
 
-    // number of items in the table should be set globally
-    if (get(Meteor, 'settings.public.defaults.paginationLimit')) {
-      data.paginationLimit = get(Meteor, 'settings.public.defaults.paginationLimit');
-    }
+  let data = {
+    selectedObservationId: '',
+    selectedObservation: null,
+    observations: [],
+    onePageLayout: true
+  };
 
-    if (Session.get('selectedObservationId')){
-      data.selectedObservation = Observations.findOne({_id: Session.get('selectedObservationId')});
-      this.state.observation = Observations.findOne({_id: Session.get('selectedObservationId')});
-      this.state.observationId = Session.get('selectedObservationId');
-    } else {
-      data.selectedObservation = false;
-      this.state.observationId = false;
-      this.state.observation = {}
-    }
+  data.onePageLayout = useTracker(function(){
+    return Session.get('ObservationsPage.onePageLayout');
+  }, [])
+  data.selectedObservationId = useTracker(function(){
+    return Session.get('selectedObservationId');
+  }, [])
+  data.selectedObservation = useTracker(function(){
+    return Observations.findOne({_id: Session.get('selectedObservationId')});
+  }, [])
+  data.observations = useTracker(function(){
+    return Observations.find().fetch();
+  }, [])
 
-    data.observations = Observations.find().fetch();
-    data.observationsCount = Observations.find().count();
 
-    // data.style = Glass.blur(data.style);
-    // data.style.appbar = Glass.darkroom(data.style.appbar);
-    // data.style.tab = Glass.darkroom(data.style.tab);
-
-    if(get(Meteor, 'settings.public.logging') === "debug") console.log("ObservationsPage[data]", data);
-    return data;
-  }
-
-  // this could be a mixin
-  handleTabChange(index){
-    Session.set('observationPageTabIndex', index);
-  }
-  handleActive(index){
-  }
-  // this could be a mixin
-  onNewTab(){
-    console.log("onNewTab; we should clear things...");
-
-    Session.set('selectedObservationId', false);
-  }
-  onCancelUpsertObservation(context){
-    Session.set('observationPageTabIndex', 1);
-  }
-  onDeleteObservation(context){
+  function onDeleteObservation(context){
     Observations._collection.remove({_id: get(context, 'state.observationId')}, function(error, result){
       if (error) {
         if(process.env.NODE_ENV === "test") console.log('Observations.insert[error]', error);
@@ -117,7 +71,7 @@ export class ObservationsPage extends React.Component {
     });
     Session.set('observationPageTabIndex', 1);
   }
-  onUpsertObservation(context){
+  function onUpsertObservation(context){
     //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
     console.log('Saving a new Observation...', context.state)
 
@@ -181,16 +135,16 @@ export class ObservationsPage extends React.Component {
     } 
     Session.set('observationPageTabIndex', 1);
   }
-  onTableRowClick(observationId){
+  function onTableRowClick(observationId){
     Session.set('selectedObservationId', observationId);
     Session.set('selectedPatient', Observations.findOne({_id: observationId}));
   }
-  onTableCellClick(id){
+  function onTableCellClick(id){
     Session.set('observationsUpsert', false);
     Session.set('selectedObservationId', id);
     Session.set('observationPageTabIndex', 2);
   }
-  tableActionButtonClick(_id){
+  function tableActionButtonClick(_id){
     let observation = Observations.findOne({_id: _id});
 
     // console.log("ObservationTable.onSend()", observation);
@@ -210,56 +164,40 @@ export class ObservationsPage extends React.Component {
       }
     });
   }
-  onInsert(observationId){
-    Session.set('selectedObservationId', false);
-    Session.set('observationPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Observations", recordId: observationId});
-  }
-  onUpdate(observationId){
-    Session.set('selectedObservationId', false);
-    Session.set('observationPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Observations", recordId: observationId});
-  }
-  onRemove(observationId){
+  function onRemove(observationId){
     Session.set('observationPageTabIndex', 1);
     Session.set('selectedObservationId', false);
     HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Observations", recordId: observationId});
   }
-  onCancel(){
-    Session.set('observationPageTabIndex', 1);
-  }
-  render() {
-    
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
-    let cardWidth = window.innerWidth - paddingWidth;
 
-    return (
-      <PageCanvas id="observationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={this.data.observationsCount + " Observations"} />
-            <CardContent>
-              <ObservationsTable 
-                formFactorLayout={formFactor}
-                observations={ this.data.observations }
-                count={ this.data.observationsCount }
-                rowsPerPage={LayoutHelpers.calcTableRows()}
-                actionButtonLabel="Send"
-                onRowClick={ this.onTableRowClick }
-                onCellClick={ this.onTableCellClick }
-                onActionButtonClick={this.tableActionButtonClick}
-                onRemoveRecord={ this.onDeleteObservation }
-                tableRowSize="medium"
-              />
-            </CardContent>            
-        </StyledCard>
-      </PageCanvas>
-    );
-  }
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
+  let cardWidth = window.innerWidth - paddingWidth;
+
+  return (
+    <PageCanvas id="observationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <CardHeader title={this.data.observationsCount + " Observations"} />
+          <CardContent>
+            <ObservationsTable 
+              formFactorLayout={formFactor}
+              observations={ this.data.observations }
+              count={ this.data.observationsCount }
+              rowsPerPage={LayoutHelpers.calcTableRows()}
+              actionButtonLabel="Send"
+              onRowClick={ this.onTableRowClick }
+              onCellClick={ this.onTableCellClick }
+              onActionButtonClick={this.tableActionButtonClick}
+              onRemoveRecord={ this.onDeleteObservation }
+              tableRowSize="medium"
+            />
+          </CardContent>            
+      </StyledCard>
+    </PageCanvas>
+  );
 }
 
 
-ReactMixin(ObservationsPage.prototype, ReactMeteorData);
 export default ObservationsPage;

@@ -1,6 +1,6 @@
 import React  from 'react';
 import ReactMixin  from 'react-mixin';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { 
@@ -110,94 +110,56 @@ const muiTheme = createMuiTheme({
   }
 });
 
-//=============================================================================================================================================
-// TABS
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 //=============================================================================================================================================
 // COMPONENTS
 
-export class DevicesPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        }
-      },
-      tabIndex: Session.get('devicePageTabIndex'),
-      deviceSearchFilter: Session.get('deviceSearchFilter'),
-      currentDeviceId: Session.get('selectedDeviceId'),
-      fhirVersion: Session.get('fhirVersion'),
-      selectedDevice: false,
-      devices: Devices.find().fetch(),
-      devicesCount: Devices.find().count()
-    };
+export function DevicesPage(props){
+  if(process.env.NODE_ENV === "test") console.log('In DevicesPage render');
 
-    if (Session.get('selectedDeviceId')){
-      data.selectedDevice = Devices.findOne({_id: Session.get('selectedDeviceId')});
-    } else {
-      data.selectedDevice = false;
-    }
+  let data = {
+    selectedDeviceId: '',
+    selectedDevice: false,
+    devices: []
+  };
 
-    return data;
-  }
 
-  handleTabChange(index){
-    Session.set('devicePageTabIndex', index);
-  }
+  data.selectedDeviceId = useTracker(function(){
+    return Session.get('selectedDeviceId');
+  }, [])
+  data.selectedDevice = useTracker(function(){
+    return Devices.findOne(Session.get('selectedDeviceId'));
+  }, [])
+  data.devices = useTracker(function(){
+    return Devices.find().fetch()
+  }, [])
 
-  onNewTab(){
-    Session.set('selectedDeviceId', false);
-    Session.set('deviceUpsert', false);
-  }
 
-  render() {
-    if(process.env.NODE_ENV === "test") console.log('In DevicesPage render');
-
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
-    let formFactor = LayoutHelpers.determineFormFactor();
-    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
-    let cardWidth = window.innerWidth - paddingWidth;
-    
-    return (
-      <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={this.data.devicesCount + ' Devices'} />
-            <CardContent>
-              <DevicesTable 
-                devices={this.data.devices}
-                count={this.data.devicesCount}
-                formFactorLayout={formFactor}
-                rowsPerPage={LayoutHelpers.calcTableRows()}
-              />
-            </CardContent>
-        </StyledCard>
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
-  }
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
+  let cardWidth = window.innerWidth - paddingWidth;
+  
+  return (
+    <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <MuiThemeProvider theme={muiTheme} >
+        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+          <CardHeader title={this.data.devices.length + ' Devices'} />
+          <CardContent>
+            <DevicesTable 
+              devices={this.data.devices}
+              count={this.data.devices.length}
+              formFactorLayout={formFactor}
+              rowsPerPage={LayoutHelpers.calcTableRows()}
+            />
+          </CardContent>
+      </StyledCard>
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
-ReactMixin(DevicesPage.prototype, ReactMeteorData);
+
 export default DevicesPage;

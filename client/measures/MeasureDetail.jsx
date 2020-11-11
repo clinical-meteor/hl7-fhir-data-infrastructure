@@ -14,7 +14,7 @@ import {
 
 
 import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
 
@@ -60,9 +60,6 @@ function MeasureDetail(props){
     measure,
     ...otherProps 
   } = props;
-
-
-
 
   let renderElements = [];
   let groups = get(measure, 'group');
@@ -442,5 +439,5 @@ MeasureDetail.propTypes = {
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
-ReactMixin(MeasureDetail.prototype, ReactMeteorData);
+
 export default MeasureDetail;
