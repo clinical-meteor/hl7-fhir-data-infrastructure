@@ -11,7 +11,7 @@ import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
 
 import React  from 'react';
 import ReactMixin  from 'react-mixin';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
 import MedicationDetail from './MedicationDetail';
 import MedicationsTable from './MedicationsTable';
@@ -99,7 +99,7 @@ export class MedicationsPage extends React.Component {
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
     let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
+
     let cardWidth = window.innerWidth - paddingWidth;
 
     return (

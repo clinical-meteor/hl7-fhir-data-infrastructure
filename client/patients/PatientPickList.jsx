@@ -19,7 +19,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import PatientsTable from './PatientsTable';
 import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
 import { Patients } from '../../lib/Patients';

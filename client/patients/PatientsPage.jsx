@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { PatientsTable, PatientDetail, PageCanvas, StyledCard } from 'material-fhir-ui';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
@@ -336,7 +336,7 @@ export class PatientsPage extends React.Component {
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
     let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
+
     let cardWidth = window.innerWidth - paddingWidth;
     
 

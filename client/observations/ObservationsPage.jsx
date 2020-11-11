@@ -16,7 +16,7 @@ import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 import ObservationDetail from './ObservationDetail';
@@ -233,7 +233,7 @@ export class ObservationsPage extends React.Component {
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
     let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
+
     let cardWidth = window.innerWidth - paddingWidth;
 
     return (

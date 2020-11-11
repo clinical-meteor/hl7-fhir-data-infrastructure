@@ -1,3 +1,8 @@
+import React  from 'react';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import ReactMixin  from 'react-mixin';
+
+
 import { 
   Grid, 
   Container,
@@ -6,17 +11,14 @@ import {
   CardContent,
   Button
 } from '@material-ui/core';
-import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 
 // import AuditEventDetail from './AuditEventDetail';
 import AuditEventsTable from './AuditEventsTable';
 
-import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { Meteor } from 'meteor/meteor';
+import { Session } from 'meteor/session';
 import { get } from 'lodash';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
@@ -91,11 +93,8 @@ export class AuditEventsPage extends React.Component {
 
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
-
-    let paddingWidth = 84;
-    if(Meteor.isCordova){
-      paddingWidth = 20;
-    }
+    let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+    
     let cardWidth = window.innerWidth - paddingWidth;
 
     return (
@@ -108,21 +107,6 @@ export class AuditEventsPage extends React.Component {
               count={this.data.auditEvents.length}
               formFactorLayout={formFactor}
             />
-
-            {/* <Tabs id="auditEventsPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-              <Tab className='newAuditEventTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
-                <AuditEventDetail id='newAuditEvent' />
-              </Tab>
-              <Tab className="auditEventListTab" label='AuditEvents' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-              <AuditEventsTable />
-              </Tab>
-              <Tab className="auditEventDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
-                <AuditEventDetail 
-                id='auditEventDetails'
-                showDatePicker={true} 
-                />
-              </Tab>
-            </Tabs> */}
           </CardContent>
         </StyledCard>
       </PageCanvas>
@@ -131,5 +115,4 @@ export class AuditEventsPage extends React.Component {
 }
 
 ReactMixin(AuditEventsPage.prototype, ReactMeteorData);
-
 export default AuditEventsPage;

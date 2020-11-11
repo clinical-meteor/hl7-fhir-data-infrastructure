@@ -24,7 +24,7 @@ import OrganizationsTable from './OrganizationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 

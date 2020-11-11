@@ -1,6 +1,6 @@
 import React  from 'react';
 import ReactMixin  from 'react-mixin';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { 
@@ -176,7 +176,7 @@ export class DevicesPage extends React.Component {
     let headerHeight = LayoutHelpers.calcHeaderHeight();
     let formFactor = LayoutHelpers.determineFormFactor();
     let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-    
+
     let cardWidth = window.innerWidth - paddingWidth;
     
     return (

@@ -22,7 +22,7 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 import { get, cloneDeep } from 'lodash';

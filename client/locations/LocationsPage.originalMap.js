@@ -16,7 +16,7 @@ import { Session } from 'meteor/session';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 import { ScatterplotChart } from 'react-easy-chart';
