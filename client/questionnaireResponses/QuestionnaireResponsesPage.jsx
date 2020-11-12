@@ -180,13 +180,13 @@ export function QuestionnaireResponsesPage(props){
   let cardWidth = window.innerWidth - paddingWidth;
 
   let layoutContents;
-  if(this.data.onePageLayout){
+  if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={this.data.responsesCount + " Questionnaire Responses"} />
+      <CardHeader title={data.responsesCount + " Questionnaire Responses"} />
       <CardContent>
         <QuestionnaireResponsesTable 
-          questionnaireResponses={this.data.responses}
-          count={this.data.responsesCount}
+          questionnaireResponses={data.responses}
+          count={data.responsesCount}
           onCellClick={function(responseId){
             console.log('responseId', responseId)
             Session.set('selectedQuestionnaireResponse', responseId)
@@ -209,11 +209,11 @@ export function QuestionnaireResponsesPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6} style={{width: '100%'}} >
         <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.responsesCount + " Responses"} />
+          <CardHeader title={data.responsesCount + " Responses"} />
           <CardContent>
             <QuestionnaireResponsesTable 
-              questionnaireResponses={this.data.responses}
-              count={this.data.responsesCount}
+              questionnaireResponses={data.responses}
+              count={data.responsesCount}
               onCellClick={function(responseId){
                 console.log('responseId', responseId)
                 Session.set('selectedQuestionnaireResponse', responseId)
@@ -236,17 +236,17 @@ export function QuestionnaireResponsesPage(props){
       </Grid>
       <Grid item lg={4} style={{width: '100%', marginBottom: '80px'}} >
         <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.questionnaireResponseId }</h1>
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.questionnaireResponseId }</h1>
           <CardContent>
             <CardContent>
               {/* <code>
-                {JSON.stringify(this.data.questionnaireResponse)}
+                {JSON.stringify(data.questionnaireResponse)}
               </code> */}
 
               <SurveyResponseSummary 
                 id='surveyResponseSummary' 
-                selectedResponse={this.data.questionnaireResponse} 
-                selectedResponseId={this.data.questionnaireResponse.id}
+                selectedResponse={data.questionnaireResponse} 
+                selectedResponseId={data.questionnaireResponse.id}
                 />
 
             </CardContent>

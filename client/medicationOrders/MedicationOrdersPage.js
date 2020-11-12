@@ -139,16 +139,16 @@ export function MedicationOrdersPage(props){
     <PageCanvas id="medicationOrdersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
         <StyledCard height="auto" scrollable={true} margin={20} >
-          <CardHeader title={this.data.medicationOrdersCount + ' Medication Orders'} />
+          <CardHeader title={data.medicationOrdersCount + ' Medication Orders'} />
           <CardContent>
             <MedicationOrdersTable 
-              medicationOrders={this.data.medicationOrders}
+              medicationOrders={data.medicationOrders}
               rowsPerPage={20}
               hideBarcodes={true}
               hidePatient={true}
               hideActionIcons={false}
               hideCheckbox={true}
-              count={this.data.medicationOrdersCount}
+              count={data.medicationOrdersCount}
             />
           </CardContent>
         </StyledCard>

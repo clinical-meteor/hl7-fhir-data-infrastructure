@@ -163,16 +163,16 @@ export function OrganizationsPage(props){
   let cardWidth = window.innerWidth - paddingWidth;
   
   let layoutContents;
-  if(this.data.onePageLayout){
+  if(data.onePageLayout){
     layoutContents = <Grid container>
       <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={this.data.organizationsCount + " Organizations"} />
+      <CardHeader title={data.organizationsCount + " Organizations"} />
       <CardContent>
         <OrganizationsTable        
           formFactorLayout={formFactor}  
-          organizations={this.data.organizations}
-          count={this.data.organizationsCount}
-          selectedOrganizationId={ this.data.selectedOrganizationId }
+          organizations={data.organizations}
+          count={data.organizationsCount}
+          selectedOrganizationId={ data.selectedOrganizationId }
           onRowClick={this.handleRowClick.bind(this) }
           hideCheckbox={true}
           hideBarcode={false}
@@ -187,17 +187,17 @@ export function OrganizationsPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.organizationsCount + " Organizations"} />
+          <CardHeader title={data.organizationsCount + " Organizations"} />
           <CardContent>
             <OrganizationsTable
-              organizations={this.data.organizations}
-              count={this.data.organizationsCount}
+              organizations={data.organizations}
+              count={data.organizationsCount}
               hideCheckbox={true}
               hideBarcode={true}
               hidePhone={true}
               hideEmail={true}
               hideActionIcons={true}
-              selectedOrganizationId={ this.data.selectedOrganizationId }
+              selectedOrganizationId={ data.selectedOrganizationId }
               onRowClick={this.handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
               size="medium"
@@ -207,12 +207,12 @@ export function OrganizationsPage(props){
       </Grid>
       <Grid item lg={4}>
         <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedOrganizationId }</h1>
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedOrganizationId }</h1>
           <CardContent>
             <CardContent>
               <OrganizationDetail 
-                organizationId={this.data.selectedOrganizationId}
-                organization={this.data.selectedOrganization}
+                organizationId={data.selectedOrganizationId}
+                organization={data.selectedOrganization}
               />
             </CardContent>
           </CardContent>

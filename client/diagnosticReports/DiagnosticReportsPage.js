@@ -141,12 +141,12 @@ export function DiagnosticReportsPage(props){
     <PageCanvas id="measuresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme}>
         <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.diagnosticReport.length + ' Diagnostic Reports'} />
+          <CardHeader title={data.diagnosticReports.length + ' Diagnostic Reports'} />
           <CardContent>
             <DiagnosticReportsTable 
-              diagnosticReports={this.data.diagnosticReports}
-              count={this.data.diagnosticReport.length}
-              fhirVersion={ this.data.fhirVersion }
+              diagnosticReports={data.diagnosticReports}
+              count={data.diagnosticReports.length}
+              fhirVersion={ data.fhirVersion }
               hideCheckbox={true}
               hideActionIcons={true}
               rowsPerPage={LayoutHelpers.calcTableRows()}

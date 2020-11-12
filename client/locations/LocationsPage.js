@@ -169,17 +169,17 @@ export function LocationsPage(props){
 
 
   let layoutContents;
-  if(this.data.onePageLayout){
+  if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" scrollable={true} margin={20}  >
       <CardHeader
         title="Locations"
       />
       <CardContent>
         <LocationsTable 
-          locations={this.data.locations}
+          locations={data.locations}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
           tableRowSize="medium"
-          count={this.data.locations.length}      
+          count={data.locations.length}      
         />
       </CardContent>
     </StyledCard>
@@ -192,17 +192,17 @@ export function LocationsPage(props){
           />
           <CardContent>
             <LocationsTable 
-              locations={this.data.locations}
+              locations={data.locations}
               rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
               // tableRowSize="medium"
-              count={this.data.locations.length}       
+              count={data.locations.length}       
             />
           </CardContent>
         </StyledCard>
       </Grid>
       <Grid item lg={4}>
         <StyledCard height="auto" margin={20}  scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureReportId }</h1>
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureReportId }</h1>
           <CardContent>
             <CardContent>
               <LocationDetail 

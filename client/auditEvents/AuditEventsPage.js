@@ -21,9 +21,6 @@ import AuditEventsTable from './AuditEventsTable';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
 
 import { get } from 'lodash';
@@ -78,8 +75,8 @@ export function AuditEventsPage(props){
         <CardHeader title='Audit Events' />
         <CardContent>
           <AuditEventsTable 
-            auditEvents={this.data.auditEvents}
-            count={this.data.auditEvents.length}
+            auditEvents={data.auditEvents}
+            count={data.auditEvents.length}
             formFactorLayout={formFactor}
           />
         </CardContent>

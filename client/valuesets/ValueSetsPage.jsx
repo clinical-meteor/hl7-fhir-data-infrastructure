@@ -162,13 +162,13 @@ export function ValueSetsPage(props){
 
 
   let layoutContents;
-  if(this.data.onePageLayout){
+  if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={this.data.valueSetsCount + " ValueSets"} />
+      <CardHeader title={data.valueSetsCount + " ValueSets"} />
       <CardContent>
 
         <ValueSetsTable 
-          valueSets={ this.data.valueSets }
+          valueSets={ data.valueSets }
           formFactorLayout={formFactor}
           paginationLimit={10}     
           />
@@ -178,31 +178,31 @@ export function ValueSetsPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.valueSetsCount + " Value Sets"} />
+          <CardHeader title={data.valueSetsCount + " Value Sets"} />
           <CardContent>
             <ValueSetsTable 
-              valueSets={ this.data.valueSets }
-              selectedValueSetId={ this.data.selectedValueSetId }
+              valueSets={ data.valueSets }
+              selectedValueSetId={ data.selectedValueSetId }
               formFactorLayout={formFactor}
               paginationLimit={10}            
               onRowClick={this.handleRowClick.bind(this) }
-              count={this.data.valueSetsCount}
+              count={data.valueSetsCount}
               />
           </CardContent>
         </StyledCard>
       </Grid>
       <Grid item lg={4}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedValueSetId }</h1>
-          {/* <CardHeader title={this.data.selectedValueSetId } className="helveticas barcode" /> */}
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedValueSetId }</h1>
+          {/* <CardHeader title={data.selectedValueSetId } className="helveticas barcode" /> */}
           <CardContent>
             <CardContent>
               <ValueSetDetail 
                 id='valueSetDetails' 
                 displayDatePicker={true} 
                 displayBarcodes={false}
-                valueSet={ this.data.selectedValueSet }
-                valueSetId={ this.data.selectedValueSetId } 
+                valueSet={ data.selectedValueSet }
+                valueSetId={ data.selectedValueSetId } 
                 showValueSetInputs={true}
                 showHints={false}
               />

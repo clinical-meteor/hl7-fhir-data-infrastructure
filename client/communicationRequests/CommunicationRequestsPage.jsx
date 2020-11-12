@@ -87,8 +87,8 @@ export function CommunicationRequestPage(props){
           {/* <CommunicationRequestsTable 
             showBarcodes={true} 
             hideIdentifier={true}
-            communicationRequests={this.data.communicationRequests}
-            count={this.data.communicationRequests.length}
+            communicationRequests={data.communicationRequests}
+            count={data.communicationRequests.length}
             hideIdentifier={false}
             hideCheckbox={true}
             hideActionIcons={true}

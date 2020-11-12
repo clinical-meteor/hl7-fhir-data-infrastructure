@@ -146,11 +146,11 @@ export function DevicesPage(props){
     <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
         <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.devices.length + ' Devices'} />
+          <CardHeader title={data.devices.length + ' Devices'} />
           <CardContent>
             <DevicesTable 
-              devices={this.data.devices}
-              count={this.data.devices.length}
+              devices={data.devices}
+              count={data.devices.length}
               formFactorLayout={formFactor}
               rowsPerPage={LayoutHelpers.calcTableRows()}
             />

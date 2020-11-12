@@ -179,12 +179,12 @@ export function ObservationsPage(props){
   return (
     <PageCanvas id="observationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.observationsCount + " Observations"} />
+          <CardHeader title={data.observations.length + " Observations"} />
           <CardContent>
             <ObservationsTable 
               formFactorLayout={formFactor}
-              observations={ this.data.observations }
-              count={ this.data.observationsCount }
+              observations={ data.observations }
+              count={ data.observations.length }
               rowsPerPage={LayoutHelpers.calcTableRows()}
               actionButtonLabel="Send"
               onRowClick={ this.onTableRowClick }

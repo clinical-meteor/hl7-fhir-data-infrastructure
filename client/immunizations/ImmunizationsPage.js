@@ -53,7 +53,7 @@ export function ImmunizationsPage(props){
   }, [])
 
 
-  if(process.env.NODE_ENV === "test") console.log('ImmunizationsPage.render()', this.data);
+  if(process.env.NODE_ENV === "test") console.log('ImmunizationsPage.render()', data);
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
@@ -64,13 +64,13 @@ export function ImmunizationsPage(props){
   return (
     <PageCanvas id='immunizationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.immunizations.length + ' Immunizations'} />
+          <CardHeader title={data.immunizations.length + ' Immunizations'} />
           <CardContent>
             <Grid container>
               <Grid item md={12}>
                 <ImmunizationsTable 
-                  immunizations={this.data.immunizations }    
-                  count={this.data.immunizations.length }    
+                  immunizations={data.immunizations }    
+                  count={data.immunizations.length }    
                   formFactorLayout={formFactor}
                 />
               </Grid>

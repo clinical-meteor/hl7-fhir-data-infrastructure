@@ -52,11 +52,11 @@ function CarePlansPage(props){
   return (
     <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
-        <CardHeader title={this.data.carePlans.length + ' CarePlans'} />
+        <CardHeader title={ data.carePlans.length + ' CarePlans'} />
         <CardContent>
           <CarePlansTable 
-            carePlans={this.data.carePlans}
-            count={this.data.carePlans.length}
+            carePlans={ data.carePlans}
+            count={ data.carePlans.length}
             formFactorLayout={formFactor}
             rowsPerPage={LayoutHelpers.calcTableRows()}
           />

@@ -64,13 +64,13 @@ export function MedicationsPage(props){
     <PageCanvas id='medicationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
           <CardHeader
-            title={this.data.medicationsCount + " Medications"}
+            title={data.medications.length + " Medications"}
           />
           <CardContent>
             <MedicationsTable 
-              medications={this.data.medications}
-              count={this.data.medicationsCount}
-              selectedMedicationId={this.data.selectedMedicationId}
+              medications={data.medications}
+              count={data.medications.length}
+              selectedMedicationId={data.selectedMedicationId}
               rowsPerPage={LayoutHelpers.calcTableRows()}
             />
           </CardContent>

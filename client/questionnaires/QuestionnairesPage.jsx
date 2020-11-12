@@ -334,7 +334,7 @@ export function QuestionnairesPage(props){
     console.log('Going to try to add the following item: ');
     console.log(Session.get('questionnaireDesignerCurrentQuestion'));
     console.log(' ')
-    console.log('ActiveQuestionLinkId', this.data.activeQuestionLinkId);
+    console.log('ActiveQuestionLinkId', data.activeQuestionLinkId);
     console.log(' ')
 
     let currentItemsArray = get(this, 'data.currentQuestionnaire.item', []);
@@ -560,11 +560,11 @@ export function QuestionnairesPage(props){
           <Grid item lg={6} style={{width: '100%'}} >
             <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
               <CardHeader
-                title={this.data.questionnairesCount + " Questionnaires"}
+                title={data.questionnairesCount + " Questionnaires"}
               />
               <QuestionnairesTable 
-                questionnaires={ this.data.questionnaires }
-                selectedQuestionnaireId={this.data.selectedQuestionnaireId}                  
+                questionnaires={ data.questionnaires }
+                selectedQuestionnaireId={data.selectedQuestionnaireId}                  
                 onRemoveRecord={function(questionnaireId){
                   Questionnaires.remove({_id: questionnaireId})
                 }}
@@ -578,7 +578,7 @@ export function QuestionnairesPage(props){
             </StyledCard>
           </Grid>
           <Grid item lg={secondaryGridSize} style={secondaryGridStyle}>
-              <h1 className="barcode helveticas">{this.data.selectedQuestionnaireId}</h1>
+              <h1 className="barcode helveticas">{data.selectedQuestionnaireId}</h1>
             <StyledCard margin={20} width={cardWidth + 'px'}>
               <CardContent>
                 <FormControl style={{width: '100%', marginTop: '20px'}}>
@@ -640,16 +640,16 @@ export function QuestionnairesPage(props){
                 </Grid>
               </CardContent>
               {/* <CardActions>
-                <Button id='isActiveButton' onClick={this.toggleActiveStatus.bind(this)} primary={ this.data.isActive } >{isActiveLabel}</Button>
-                <Button id='isSortingButton' onClick={this.toggleSortStatus.bind(this)} primary={ this.data.isSorting } >Sort</Button>
+                <Button id='isActiveButton' onClick={this.toggleActiveStatus.bind(this)} primary={ data.isActive } >{isActiveLabel}</Button>
+                <Button id='isSortingButton' onClick={this.toggleSortStatus.bind(this)} primary={ data.isSorting } >Sort</Button>
               </CardActions> */}
             </StyledCard>
             <DynamicSpacer />
 
             <QuestionnaireExpansionPanels 
               id='questionnaireDetails' 
-              selectedQuestionnaire={this.data.selectedQuestionnaire} 
-              selectedQuestionnaireId={this.data.selectedQuestionnaireId}
+              selectedQuestionnaire={data.selectedQuestionnaire} 
+              selectedQuestionnaireId={data.selectedQuestionnaireId}
               />
 
 

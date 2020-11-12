@@ -245,7 +245,7 @@ export function CompositionsPage(props){
                 hideSubjects={false}
                 noDataMessagePadding={100}
                 actionButtonLabel="Send"
-                compositions={ this.data.compositions }
+                compositions={ data.compositions }
                 paginationLimit={10}
                 hideSubjects={true}
                 hideClassCode={false}

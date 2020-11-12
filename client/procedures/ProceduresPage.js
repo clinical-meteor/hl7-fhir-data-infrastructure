@@ -141,7 +141,7 @@ export function ProceduresPage(props){
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
-  let proceduresTitle = this.data.proceduresCount + " Procedures";
+  let proceduresTitle = data.procedures.length + " Procedures";
 
   return (
     <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -150,8 +150,8 @@ export function ProceduresPage(props){
             <CardHeader title={proceduresTitle} />
             <CardContent>
               <ProceduresTable 
-                procedures={this.data.procedures}
-                count={this.data.proceduresCount}
+                procedures={data.procedures}
+                count={data.procedures.length}
                 rowsPerPage={25}
                 tableRowSize="medium"
                 formFactorLayout={formFactor}

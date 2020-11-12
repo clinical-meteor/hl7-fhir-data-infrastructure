@@ -77,8 +77,8 @@ export function AllergyIntolerancesPage(props){
           <CardContent>
             <AllergyIntolerancesTable 
               id='allergyIntolerancesTable' 
-              fhirVersion={ this.data.fhirVersion } 
-              allergyIntolerances={this.data.allergyIntolerances}
+              fhirVersion={ data.fhirVersion } 
+              allergyIntolerances={data.allergyIntolerances}
               formFactorLayout={formFactor}
               />
           </CardContent>

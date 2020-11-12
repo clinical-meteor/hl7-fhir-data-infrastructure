@@ -69,12 +69,12 @@ export function MedicationStatementsPage(props){
   return (
     <PageCanvas id="medicationStatementsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.medicationStatementsCount + ' Medication Statements'} />
+          <CardHeader title={data.medicationStatementsCount + ' Medication Statements'} />
           <CardContent>
             <MedicationStatementsTable 
-              fhirVersion={ this.data.fhirVersion } 
-              medicationStatements={this.data.medicationStatements} 
-              count={this.data.medicationStatementsCount}
+              fhirVersion={ data.fhirVersion } 
+              medicationStatements={data.medicationStatements} 
+              count={data.medicationStatementsCount}
               rowsPerPage={20}
               medicationsCursor={Medications}
             />

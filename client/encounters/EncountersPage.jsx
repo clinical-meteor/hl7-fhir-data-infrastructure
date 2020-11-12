@@ -146,7 +146,7 @@ export function EncountersPage(props){
       <MuiThemeProvider theme={muiTheme} >
         <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader
-              title={ this.data.encountersCount + " Encounters"}
+              title={ data.encounters.length + " Encounters"}
             />
             <CardContent>
               <EncountersTable 
@@ -159,9 +159,9 @@ export function EncountersPage(props){
                 hideReasonCode={false}
                 hideReason={false}
                 hideHistory={false}
-                encounters={ this.data.encounters }
+                encounters={ data.encounters }
                 rowsPerPage={rowsPerPage}
-                count={this.data.encountersCount}      
+                count={data.encountersCount}      
                 showMinutes={true}
                 hideActionIcons={true}
                 hideBarcode={false}

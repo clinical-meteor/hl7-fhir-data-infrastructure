@@ -229,13 +229,13 @@ export function MessageHeadersPage(props){
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
     let layoutContents;
-    if(this.data.onePageLayout){
+    if(data.onePageLayout){
       layoutContents = <StyledCard height="auto" margin={20} >
-        <CardHeader title={this.data.messageHeadersCount + " MessageHeaders"} />
+        <CardHeader title={data.messageHeadersCount + " MessageHeaders"} />
         <CardContent>
 
           <MessageHeadersTable 
-            messageHeaders={ this.data.messageHeaders }
+            messageHeaders={ data.messageHeaders }
             hideCheckbox={true} 
             hideActionIcons={true}
             hideIdentifier={true} 
@@ -262,11 +262,11 @@ export function MessageHeadersPage(props){
       layoutContents = <Grid container spacing={3}>
         <Grid item lg={6}>
           <StyledCard height="auto" margin={20} >
-            <CardHeader title={this.data.messageHeadersCount + " MessageHeaders"} />
+            <CardHeader title={data.messageHeadersCount + " MessageHeaders"} />
             <CardContent>
               <MessageHeadersTable 
-                messageHeaders={ this.data.messageHeaders }
-                selectedMessageHeaderId={ this.data.selectedMessageHeaderId }
+                messageHeaders={ data.messageHeaders }
+                selectedMessageHeaderId={ data.selectedMessageHeaderId }
                 hideIdentifier={true} 
                 hideCheckbox={true} 
                 hideApprovalDate={false}
@@ -280,23 +280,23 @@ export function MessageHeadersPage(props){
                 paginationLimit={10}            
                 hideActionIcons={true}
                 onRowClick={this.handleRowClick.bind(this) }
-                count={this.data.messageHeadersCount}
+                count={data.messageHeadersCount}
                 />
             </CardContent>
           </StyledCard>
         </Grid>
         <Grid item lg={4}>
           <StyledCard height="auto" margin={20} scrollable>
-            <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMessageHeaderId }</h1>
-            {/* <CardHeader title={this.data.selectedMessageHeaderId } className="helveticas barcode" /> */}
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMessageHeaderId }</h1>
+            {/* <CardHeader title={data.selectedMessageHeaderId } className="helveticas barcode" /> */}
             <CardContent>
               <CardContent>
                 <MessageHeaderDetail 
                   id='messageHeaderDetails' 
                   displayDatePicker={true} 
                   displayBarcodes={false}
-                  messageHeader={ this.data.selectedMessageHeader }
-                  messageHeaderId={ this.data.selectedMessageHeaderId } 
+                  messageHeader={ data.selectedMessageHeader }
+                  messageHeaderId={ data.selectedMessageHeaderId } 
                   showMessageHeaderInputs={true}
                   showHints={false}
                   // onInsert={ this.onInsert }

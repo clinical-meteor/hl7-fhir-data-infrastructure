@@ -233,9 +233,9 @@ export function MeasureReportsPage(props){
 
 
   let layoutContents;
-  if(this.data.onePageLayout){
+  if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
+      <CardHeader title={data.measureReportsCount + " Measure Reports"} />
       <CardContent>
         <MeasureReportsTable 
           hideIdentifier={true} 
@@ -243,9 +243,9 @@ export function MeasureReportsPage(props){
           hideSubjects={false}
           noDataMessagePadding={100}
           actionButtonLabel="Send"
-          measureReports={ this.data.measureReports }
-          count={ this.data.measureReportsCount }
-          selectedMeasureReportId={ this.data.selectedMeasureReportId }
+          measureReports={ data.measureReports }
+          count={ data.measureReportsCount }
+          selectedMeasureReportId={ data.selectedMeasureReportId }
           hideMeasureUrl={false}
           paginationLimit={10}
           hideSubjects={true}
@@ -263,7 +263,7 @@ export function MeasureReportsPage(props){
     layoutContents = <Grid container spacing={3}>
     <Grid item lg={6}>
       <StyledCard height="auto" margin={20} >
-        <CardHeader title={this.data.measureReportsCount + " Measure Reports"} />
+        <CardHeader title={data.measureReportsCount + " Measure Reports"} />
         <CardContent>
           <MeasureReportsTable 
             hideIdentifier={true} 
@@ -271,9 +271,9 @@ export function MeasureReportsPage(props){
             hideSubjects={false}
             noDataMessagePadding={100}
             actionButtonLabel="Send"
-            measureReports={ this.data.measureReports }
-            count={ this.data.measureReportsCount }
-            selectedMeasureReportId={ this.data.selectedMeasureReportId }
+            measureReports={ data.measureReports }
+            count={ data.measureReportsCount }
+            selectedMeasureReportId={ data.selectedMeasureReportId }
             paginationLimit={10}
             hideMeasureUrl={false}
             hideSubjects={true}
@@ -293,15 +293,15 @@ export function MeasureReportsPage(props){
     </Grid>
     <Grid item lg={4}>
       <StyledCard height="auto" margin={20}  scrollable>
-        <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureReportId }</h1>
+        <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureReportId }</h1>
         <CardContent>
           <CardContent>
             <MeasureReportDetail 
               id='measureReportDetails' 
               displayDatePicker={true} 
               displayBarcodes={false}
-              measureReport={ this.data.selectedMeasureReport }
-              measureReportId={ this.data.selectedMeasureReportId } 
+              measureReport={ data.selectedMeasureReport }
+              measureReportId={ data.selectedMeasureReportId } 
               showMeasureReportInputs={true}
               showHints={false}
               showPopulationCode={false}

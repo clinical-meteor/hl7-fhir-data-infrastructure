@@ -145,30 +145,30 @@ export class ConsentsPage extends React.Component {
               title="Consents"
             />
             <CardText>
-              <Tabs id='consentsPageTabs' default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
-                 <Tab className="newConsentTab" label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
+              <Tabs id='consentsPageTabs' default value={data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
+                 <Tab className="newConsentTab" label='New' style={data.style.tab} onActive={ this.onNewTab } value={0}>
                    <ConsentDetail 
                    id='newConsent' 
-                   fhirVersion={ this.data.fhirVersion }
-                   consent={ this.data.selectedConsent }
-                   consentId={ this.data.selectedConsentId } />       
+                   fhirVersion={ data.fhirVersion }
+                   consent={ data.selectedConsent }
+                   consentId={ data.selectedConsentId } />       
                  </Tab>
-                 <Tab className="consentListTab" label='Consents' onActive={this.handleActive} style={this.data.style.tab} value={1}>
+                 <Tab className="consentListTab" label='Consents' onActive={this.handleActive} style={data.style.tab} value={1}>
                    <ConsentTable 
                     showBarcodes={true} 
                     noDataMessagePadding={100}
                     hideIdentifier={true}
-                    patient={ this.data.consentSearchFilter }
-                    query={ this.data.consentSearchQuery }
+                    patient={ data.consentSearchFilter }
+                    query={ data.consentSearchQuery }
                     sort="periodStart"
                     />
                  </Tab>
-                 <Tab className="consentDetailTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
+                 <Tab className="consentDetailTab" label='Detail' onActive={this.handleActive} style={data.style.tab} value={2}>
                    <ConsentDetail 
                     id='consentDetails' 
-                    fhirVersion={ this.data.fhirVersion }
-                    consent={ this.data.selectedConsent }
-                    consentId={ this.data.selectedConsentId } 
+                    fhirVersion={ data.fhirVersion }
+                    consent={ data.selectedConsent }
+                    consentId={ data.selectedConsentId } 
                     />   
                  </Tab>
              </Tabs>
@@ -180,7 +180,7 @@ export class ConsentsPage extends React.Component {
             title="Search Consent Records"
             actions={actions}
             modal={false}
-            open={this.data.dialogOpen}
+            open={data.dialogOpen}
             onRequestClose={this.handleClose}
           >
             <Row>

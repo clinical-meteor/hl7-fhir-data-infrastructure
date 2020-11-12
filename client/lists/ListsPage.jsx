@@ -152,13 +152,13 @@ export function ListsPage(props){
   let cardWidth = window.innerWidth - paddingWidth;
 
   let layoutContents;
-  if(this.data.onePageLayout){
+  if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={this.data.lists.length + " Lists"} />
+      <CardHeader title={data.lists.length + " Lists"} />
       <CardContent>
 
         <ListsTable 
-          lists={ this.data.lists }
+          lists={ data.lists }
           hideCheckbox={true} 
           hideActionIcons={true}
           hideIdentifier={true} 
@@ -185,11 +185,11 @@ export function ListsPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.lists.length + " Lists"} />
+          <CardHeader title={data.lists.length + " Lists"} />
           <CardContent>
             <ListsTable 
-              lists={ this.data.lists }
-              selectedListId={ this.data.selectedListId }
+              lists={ data.lists }
+              selectedListId={ data.selectedListId }
               hideIdentifier={true} 
               hideCheckbox={true} 
               hideApprovalDate={false}
@@ -203,22 +203,22 @@ export function ListsPage(props){
               paginationLimit={10}            
               hideActionIcons={true}
               onRowClick={this.handleRowClick.bind(this) }
-              count={this.data.listsCount}
+              count={data.listsCount}
               />
           </CardContent>
         </StyledCard>
       </Grid>
       <Grid item lg={4}>
         <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedListId }</h1>
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedListId }</h1>
           <CardContent>
             <CardContent>
               {/* <ListDetail 
                 id='listDetails' 
                 displayDatePicker={true} 
                 displayBarcodes={false}
-                list={ this.data.selectedList }
-                listId={ this.data.selectedListId } 
+                list={ data.selectedList }
+                listId={ data.selectedListId } 
                 showListInputs={true}
                 showHints={false}
               /> */}

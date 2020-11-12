@@ -141,13 +141,13 @@ export function ConditionsPage(props){
   return (
     <PageCanvas id="conditionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20}>
-        <CardHeader title={ this.data.conditions.length + " Conditions"} />
+        <CardHeader title={ data.conditions.length + " Conditions"} />
         <CardContent>
 
           <ConditionsTable 
             id='conditionsTable'
-            conditions={this.data.conditions}
-            count={this.data.conditions.length}  
+            conditions={data.conditions}
+            count={data.conditions.length}  
             formFactorLayout={formFactor}
             rowsPerPage={LayoutHelpers.calcTableRows()}
           />

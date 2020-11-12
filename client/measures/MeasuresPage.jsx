@@ -15,10 +15,6 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-<<<<<<< HEAD
-import ReactMixin  from 'react-mixin';
-=======
->>>>>>> 0d390686ceac348d71fca9fe76834a3a0977bba5
 
 import MeasureDetail from './MeasureDetail';
 import MeasuresTable from './MeasuresTable';
@@ -248,13 +244,13 @@ export function MeasuresPage(props){
 
 
   let layoutContents;
-  if(this.data.onePageLayout){
+  if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={this.data.measuresCount + " Measures"} />
+      <CardHeader title={data.measuresCount + " Measures"} />
       <CardContent>
 
         <MeasuresTable 
-          measures={ this.data.measures }
+          measures={ data.measures }
           hideCheckbox={true} 
           hideActionIcons={true}
           hideIdentifier={true} 
@@ -278,7 +274,7 @@ export function MeasuresPage(props){
           paginationLimit={10}     
           onRowClick={this.handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
-          count={this.data.measuresCount}
+          count={data.measuresCount}
           />
         </CardContent>
       </StyledCard>
@@ -286,11 +282,11 @@ export function MeasuresPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} >
-          <CardHeader title={this.data.measuresCount + " Measures"} />
+          <CardHeader title={data.measuresCount + " Measures"} />
           <CardContent>
             <MeasuresTable 
-              measures={ this.data.measures }
-              selectedMeasureId={ this.data.selectedMeasureId }
+              measures={ data.measures }
+              selectedMeasureId={ data.selectedMeasureId }
               hideIdentifier={true} 
               hideCheckbox={true} 
               hideApprovalDate={false}
@@ -306,23 +302,23 @@ export function MeasuresPage(props){
               hideBarcode={true}
               onRowClick={this.handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
-              count={this.data.measuresCount}
+              count={data.measuresCount}
               />
           </CardContent>
         </StyledCard>
       </Grid>
       <Grid item lg={4}>
         <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedMeasureId }</h1>
-          {/* <CardHeader title={this.data.selectedMeasureId } className="helveticas barcode" /> */}
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureId }</h1>
+          {/* <CardHeader title={data.selectedMeasureId } className="helveticas barcode" /> */}
           <CardContent>
             <CardContent>
               <MeasureDetail 
                 id='measureDetails' 
                 displayDatePicker={true} 
                 displayBarcodes={false}
-                measure={ this.data.selectedMeasure }
-                measureId={ this.data.selectedMeasureId } 
+                measure={ data.selectedMeasure }
+                measureId={ data.selectedMeasureId } 
                 showMeasureInputs={true}
                 showHints={false}
                 // onInsert={ this.onInsert }

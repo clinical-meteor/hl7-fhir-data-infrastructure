@@ -185,14 +185,14 @@ export function PatientsPage(props){
     <PageCanvas id="patientsPageClass" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
         <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.patients.length + " Patients"} />
+          <CardHeader title={data.patients.length + " Patients"} />
           <CardContent>
             <PatientsTable 
               noDataMessagePadding={100}
-              patients={ this.data.patients }
-              count={this.data.patients.length}
+              patients={ data.patients }
+              count={data.patients.length}
               onRowClick={ this.onTableRowClick }
-              // cursors={this.data.dataCursors}
+              // cursors={data.dataCursors}
               formFactorLayout={formFactor}    
               rowsPerPage={LayoutHelpers.calcTableRows()}      
             />   

@@ -145,13 +145,13 @@ export function ExplanationOfBenefitsPage(props){
   let cardWidth = window.innerWidth - paddingWidth;
 
   let layoutContents;
-  if(this.data.onePageLayout){
+  if( data.onePageLayout){
     layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={this.data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
+      <CardHeader title={ data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
       <CardContent>
 
         <ExplanationOfBenefitsTable 
-          explanationOfBenefits={ this.data.explanationOfBenefits }
+          explanationOfBenefits={  data.explanationOfBenefits }
           hideCheckbox={true} 
           hideActionIcons={true}
           hideStatus={false}
@@ -176,7 +176,7 @@ export function ExplanationOfBenefitsPage(props){
           hidePaymentAmount={true}
           hidePaymentDate={true}
           hideBarcode={false}
-          count={this.data.explanationOfBenefitsCount}
+          count={ data.explanationOfBenefitsCount}
       
           paginationLimit={10}     
           />
@@ -186,11 +186,11 @@ export function ExplanationOfBenefitsPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={this.data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
+          <CardHeader title={ data.explanationOfBenefitsCount + " Explanation Of Benefits"} />
           <CardContent>
             <ExplanationOfBenefitsTable 
-              explanationOfBenefits={ this.data.explanationOfBenefits }
-              selectedExplanationOfBenefitId={ this.data.selectedExplanationOfBenefitId }
+              explanationOfBenefits={  data.explanationOfBenefits }
+              selectedExplanationOfBenefitId={  data.selectedExplanationOfBenefitId }
               hideStatus={false}
               hideIdentifier={false}    
               hideType={true}
@@ -213,11 +213,11 @@ export function ExplanationOfBenefitsPage(props){
               hidePaymentAmount={true}
               hidePaymentDate={true}
               hideBarcode={true}
-              count={this.data.explanationOfBenefitsCount}
+              count={ data.explanationOfBenefitsCount}
                   
               hideActionIcons={true}
               onRowClick={this.handleRowClick.bind(this) }
-              count={this.data.explanationOfBenefitsCount}
+              count={ data.explanationOfBenefitsCount}
               rowsPerPage={LayoutHelpers.calcTableRows()}
               />
           </CardContent>
@@ -225,15 +225,15 @@ export function ExplanationOfBenefitsPage(props){
       </Grid>
       <Grid item lg={4}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedExplanationOfBenefitId }</h1>
+          <h1 className="barcode" style={{fontWeight: 100}}>{ data.selectedExplanationOfBenefitId }</h1>
           <CardContent>
             <CardContent>
               <ExplanationOfBenefitDetail 
                 id='ExplanationOfBenefitDetails' 
                 displayDatePicker={true} 
                 displayBarcodes={false}
-                explanationOfBenefit={ this.data.selectedExplanationOfBenefit }
-                explanationOfBenefitId={ this.data.selectedExplanationOfBenefitId } 
+                explanationOfBenefit={  data.selectedExplanationOfBenefit }
+                explanationOfBenefitId={  data.selectedExplanationOfBenefitId } 
                 showexplanationOfBenefitInputs={true}
                 showHints={false}
                 

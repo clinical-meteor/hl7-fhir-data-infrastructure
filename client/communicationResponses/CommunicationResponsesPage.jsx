@@ -98,8 +98,8 @@ export class CommunicationResponsesPage extends React.Component {
               <CommunicationResponsesTable 
                 showBarcodes={true} 
                 hideIdentifier={true}
-                communicationResponses={this.data.communicationResponses}
-                count={this.data.communicationResponsesCounts}
+                communicationResponses={data.communicationResponses}
+                count={data.communicationResponsesCounts}
                 onRemoveRecord={function(recordId){
                   CommunicationResponses.remove({_id: recordId})
                 }}

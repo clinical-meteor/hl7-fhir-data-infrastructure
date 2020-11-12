@@ -270,7 +270,7 @@ export function TasksPage(props){
   } 
 
 
-  // console.log('TasksPage.data', this.data)
+  // console.log('TasksPage.data', data)
 
   function handleChange(event, newValue) {
     Session.set('taskPageTabIndex', newValue)
@@ -279,13 +279,13 @@ export function TasksPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
 
   let layoutContents;
-  if(this.data.onePageLayout){
+  if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={this.data.tasksCount + " Task History Records"} />
+      <CardHeader title={data.tasksCount + " Task History Records"} />
       <CardContent>
 
         <TasksTable 
-          tasks={ this.data.tasks }
+          tasks={ data.tasks }
           hideCheckbox={false} 
           hideActionIcons={true}
           hideIdentifier={true} 
@@ -307,7 +307,7 @@ export function TasksPage(props){
           hideBarcode={false}
           showMinutes={true}
           paginationLimit={10}     
-          checklist={this.data.taskChecklistMode}
+          checklist={data.taskChecklistMode}
           />
         </CardContent>
       </StyledCard>
@@ -315,25 +315,25 @@ export function TasksPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} >
-          <CardHeader title={this.data.tasksCount + " Tasks"} />
+          <CardHeader title={data.tasksCount + " Tasks"} />
           <CardContent>
             <TasksTable 
-              tasks={ this.data.tasks }
-              selectedTaskId={ this.data.selectedTaskId }
+              tasks={ data.tasks }
+              selectedTaskId={ data.selectedTaskId }
               hideIdentifier={true} 
               hideCheckbox={false}
               hideActionIcons={true}
               hideBarcode={true}
               onRowClick={this.handleRowClick.bind(this) }
-              count={this.data.tasksCount}
+              count={data.tasksCount}
               />
           </CardContent>
         </StyledCard>
       </Grid>
       <Grid item lg={4}>
         <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{this.data.selectedTaskId }</h1>
-          {/* <CardHeader title={this.data.selectedTaskId } className="helveticas barcode" /> */}
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedTaskId }</h1>
+          {/* <CardHeader title={data.selectedTaskId } className="helveticas barcode" /> */}
           <CardContent>
             <CardContent>
               <TaskDetail 
@@ -341,8 +341,8 @@ export function TasksPage(props){
                 
                 displayDatePicker={true} 
                 displayBarcodes={false}
-                task={ this.data.selectedTask }
-                taskId={ this.data.selectedTaskId } 
+                task={ data.selectedTask }
+                taskId={ data.selectedTaskId } 
                 showTaskInputs={true}
                 showHints={false}
                 // onInsert={ this.onInsert }

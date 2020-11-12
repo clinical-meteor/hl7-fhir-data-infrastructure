@@ -163,11 +163,11 @@ export function MedicationRequestsPage(props){
           <CardHeader title='Medication Requests' />
           <CardContent>
            <MedicationRequestsTable 
-              medicationRequests={this.data.medicationRequests}
+              medicationRequests={data.medicationRequests}
               rowsPerPage={20}
               hideBarcodes={true}
               hidePatient={true}
-              count={this.data.medicationRequestsCount}
+              count={data.medicationRequestsCount}
             />
           </CardContent>
         </StyledCard>

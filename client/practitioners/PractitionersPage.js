@@ -84,8 +84,8 @@ export function PractitionersPage(props){
 
   let blockchainTab;
   if (get(Meteor, 'settings.public.defaults.displayBlockchainComponents')){
-    blockchainTab = <Tab className="practitionerBlockchainHisotryTab" label='Blockchain' onActive={this.handleActive} style={this.data.style.tab} value={3}>
-      <PractitionersTable showBarcodes={false} data={ this.data.blockchainData } />
+    blockchainTab = <Tab className="practitionerBlockchainHisotryTab" label='Blockchain' onActive={this.handleActive} style={data.style.tab} value={3}>
+      <PractitionersTable showBarcodes={false} data={ data.blockchainData } />
     </Tab>                 
   }
 
@@ -101,25 +101,25 @@ export function PractitionersPage(props){
           <CardHeader title='Practitioners' />
           <CardContent>
             <PractitionersTable 
-                practitioners={this.data.practitioners}
-                fhirVersion={this.data.fhirVersion} 
+                practitioners={data.practitioners}
+                fhirVersion={data.fhirVersion} 
                 formFactorLayout={formFactor}
                 showBarcodes={false} />
 
-            {/* <Tabs id="practitionersPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
+            {/* <Tabs id="practitionersPageTabs" value={data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
               <Tab label="Practitioners" value={0} />
               <Tab label="New" value={1} />
             </Tabs>
             <TabPanel >
               <PractitionersTable 
-                fhirVersion={this.data.fhirVersion} 
+                fhirVersion={data.fhirVersion} 
                 showBarcodes={false} />
             </TabPanel>              
             <TabPanel >
               <PractitionerDetail 
                 id='practitionerDetails' 
-                practitioner={ this.data.selectedPractitioner }
-                practitionerId={ this.data.selectedPractitionerId } />  
+                practitioner={ data.selectedPractitioner }
+                practitionerId={ data.selectedPractitionerId } />  
             </TabPanel>               */}
           </CardContent>
           { blockchainTab }
