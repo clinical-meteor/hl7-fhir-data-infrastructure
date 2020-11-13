@@ -150,6 +150,8 @@ function MedicationsTable(props){
     showMinutes,
     formFactorLayout,
 
+    selectedMedicationId,
+
     ...otherProps 
   } = props;
 
