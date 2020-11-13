@@ -34,8 +34,8 @@ import { get } from 'lodash';
 
 Session.setDefault('patientDialogOpen', false);
 Session.setDefault('selectedPatient', false);
-Session.setDefault('selectedPatientId', false);
-Session.setDefault('selectedCarePlanId', false);
+Session.setDefault('selectedPatientId', '');
+Session.setDefault('selectedCarePlanId', '');
 
 export class CarePlanDesignerPage extends React.Component {
   constructor(props) {

@@ -115,7 +115,7 @@ let defaultPatient = {
 
 Session.setDefault('patientFormData', defaultPatient);
 Session.setDefault('patientSearchFilter', '');
-Session.setDefault('selectedPatientId', false);
+Session.setDefault('selectedPatientId', '');
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('patientPageTabIndex', 0)
 
