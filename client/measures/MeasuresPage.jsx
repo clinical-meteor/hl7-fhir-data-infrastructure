@@ -246,7 +246,7 @@ export function MeasuresPage(props){
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={data.measuresCount + " Measures"} />
+      <CardHeader title={data.measures.length + " Measures"} />
       <CardContent>
 
         <MeasuresTable 
@@ -272,8 +272,8 @@ export function MeasuresPage(props){
           hideScoring={false}
           hideBarcode={false}
           paginationLimit={10}     
-          onRowClick={this.handleRowClick.bind(this) }
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+          onRowClick={ handleRowClick.bind(this) }
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           count={data.measuresCount}
           />
         </CardContent>
@@ -282,7 +282,7 @@ export function MeasuresPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.measuresCount + " Measures"} />
+          <CardHeader title={data.measures.length + " Measures"} />
           <CardContent>
             <MeasuresTable 
               measures={ data.measures }
@@ -300,8 +300,8 @@ export function MeasuresPage(props){
               paginationLimit={10}            
               hideActionIcons={true}
               hideBarcode={true}
-              onRowClick={this.handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+              onRowClick={ handleRowClick.bind(this) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               count={data.measuresCount}
               />
           </CardContent>
@@ -321,10 +321,10 @@ export function MeasuresPage(props){
                 measureId={ data.selectedMeasureId } 
                 showMeasureInputs={true}
                 showHints={false}
-                // onInsert={ this.onInsert }
-                // onDelete={ this.onDeleteMeasure }
-                // onUpsert={ this.onUpsertMeasure }
-                // onCancel={ this.onCancelUpsertMeasure } 
+                // onInsert={  onInsert }
+                // onDelete={  onDeleteMeasure }
+                // onUpsert={  onUpsertMeasure }
+                // onCancel={  onCancelUpsertMeasure } 
               />
             </CardContent>
           </CardContent>

@@ -128,8 +128,8 @@ export function LocationsPage(props){
         position: 'fixed',
         top: '0px',
         left: '0px',
-        // height: Session.get('appHeight'),
-        // width: Session.get('appWidth')
+        height: Session.get('appHeight'),
+        width: Session.get('appWidth')
       },
       canvas: {
         left: '0px',
@@ -142,6 +142,13 @@ export function LocationsPage(props){
     locations: [],
     onePageLayout: false
   };
+
+  data.style.page.height = useTracker(function(){
+    return Session.get('appHeight');
+  }, [])
+  data.style.page.width = useTracker(function(){
+    return Session.get('appWidth');
+  }, [])
 
   data.onePageLayout = useTracker(function(){
     return Session.get('LocationsPage.onePageLayout');
@@ -177,7 +184,7 @@ export function LocationsPage(props){
       <CardContent>
         <LocationsTable 
           locations={data.locations}
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
           tableRowSize="medium"
           count={data.locations.length}      
         />
@@ -193,7 +200,7 @@ export function LocationsPage(props){
           <CardContent>
             <LocationsTable 
               locations={data.locations}
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
               // tableRowSize="medium"
               count={data.locations.length}       
             />

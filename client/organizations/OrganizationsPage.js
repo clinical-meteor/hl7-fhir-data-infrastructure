@@ -166,18 +166,18 @@ export function OrganizationsPage(props){
   if(data.onePageLayout){
     layoutContents = <Grid container>
       <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={data.organizationsCount + " Organizations"} />
+      <CardHeader title={data.organizations.length + " Organizations"} />
       <CardContent>
         <OrganizationsTable        
           formFactorLayout={formFactor}  
           organizations={data.organizations}
-          count={data.organizationsCount}
+          count={data.organizations.length}
           selectedOrganizationId={ data.selectedOrganizationId }
-          onRowClick={this.handleRowClick.bind(this) }
+          onRowClick={ handleRowClick.bind(this) }
           hideCheckbox={true}
           hideBarcode={false}
           hideActionIcons={true}
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           size="small"
         />                                
         </CardContent>
@@ -187,19 +187,19 @@ export function OrganizationsPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.organizationsCount + " Organizations"} />
+          <CardHeader title={data.organizations.length + " Organizations"} />
           <CardContent>
             <OrganizationsTable
               organizations={data.organizations}
-              count={data.organizationsCount}
+              count={data.organizations.length}
               hideCheckbox={true}
               hideBarcode={true}
               hidePhone={true}
               hideEmail={true}
               hideActionIcons={true}
               selectedOrganizationId={ data.selectedOrganizationId }
-              onRowClick={this.handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+              onRowClick={ handleRowClick.bind(this) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               size="medium"
             />              
           </CardContent>

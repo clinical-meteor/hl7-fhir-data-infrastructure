@@ -175,6 +175,7 @@ function LocationsTable(props){
     count,
 
     formFactorLayout,
+    tableRowSize,
 
     ...otherProps 
   } = props;
@@ -470,7 +471,7 @@ function LocationsTable(props){
   if(!props.disablePagination){
     paginationFooter = <TablePagination
       component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
+      // rowsPerPageOptions={[5, 10, 25, 100]}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}
@@ -536,7 +537,8 @@ LocationsTable.propTypes = {
   extensionUnit: PropTypes.string,
   multiline: PropTypes.bool,
 
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+  tableRowSize: PropTypes.string
 }
 
 LocationsTable.defaultProps = {
@@ -556,6 +558,7 @@ LocationsTable.defaultProps = {
   extensionUnit: '',
   simplifiedAddress: true,
   multiline: false,
+  tableRowSize: 'medium',
   rowsPerPage: 5
 }
 

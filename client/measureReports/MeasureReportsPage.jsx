@@ -235,7 +235,7 @@ export function MeasureReportsPage(props){
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={data.measureReportsCount + " Measure Reports"} />
+      <CardHeader title={data.measureReports.length + " Measure Reports"} />
       <CardContent>
         <MeasureReportsTable 
           hideIdentifier={true} 
@@ -244,7 +244,7 @@ export function MeasureReportsPage(props){
           noDataMessagePadding={100}
           actionButtonLabel="Send"
           measureReports={ data.measureReports }
-          count={ data.measureReportsCount }
+          count={ data.measureReports.length }
           selectedMeasureReportId={ data.selectedMeasureReportId }
           hideMeasureUrl={false}
           paginationLimit={10}
@@ -253,8 +253,8 @@ export function MeasureReportsPage(props){
           hideReasonCode={false}
           hideReason={false}
           hideHistory={false}
-          onRowClick={this.handleRowClick.bind(this) }
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+          onRowClick={ handleRowClick.bind(this) }
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           tableRowSize="medium"
         />
         </CardContent>
@@ -263,7 +263,7 @@ export function MeasureReportsPage(props){
     layoutContents = <Grid container spacing={3}>
     <Grid item lg={6}>
       <StyledCard height="auto" margin={20} >
-        <CardHeader title={data.measureReportsCount + " Measure Reports"} />
+        <CardHeader title={data.measureReports.length + " Measure Reports"} />
         <CardContent>
           <MeasureReportsTable 
             hideIdentifier={true} 
@@ -272,7 +272,7 @@ export function MeasureReportsPage(props){
             noDataMessagePadding={100}
             actionButtonLabel="Send"
             measureReports={ data.measureReports }
-            count={ data.measureReportsCount }
+            count={ data.measureReports.length }
             selectedMeasureReportId={ data.selectedMeasureReportId }
             paginationLimit={10}
             hideMeasureUrl={false}
@@ -284,8 +284,8 @@ export function MeasureReportsPage(props){
             hideBarcode={true}
             hideNumerator={true}
             hideDenominator={true}
-            onRowClick={this.handleRowClick.bind(this) }
-            rowsPerPage={ LayoutHelpers.calcTableRows("medium", this.props.appHeight) }
+            onRowClick={ handleRowClick.bind(this) }
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
             tableRowSize="medium"
             />
         </CardContent>
@@ -305,10 +305,10 @@ export function MeasureReportsPage(props){
               showMeasureReportInputs={true}
               showHints={false}
               showPopulationCode={false}
-              // onInsert={ this.onInsert }
-              // onDelete={ this.onDeleteMeasureReport }
-              // onUpsert={ this.onUpsertMeasureReport }
-              // onCancel={ this.onCancelUpsertMeasureReport } 
+              // onInsert={  onInsert }
+              // onDelete={  onDeleteMeasureReport }
+              // onUpsert={  onUpsertMeasureReport }
+              // onCancel={  onCancelUpsertMeasureReport } 
             />
             
           </CardContent>
