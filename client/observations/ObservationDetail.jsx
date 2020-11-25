@@ -32,7 +32,7 @@ export class ObservationDetail extends React.Component {
           text: ''
         },
         effectiveDateTime: '',
-        subject: {                        C
+        subject: {                        
           display: '',
           reference: ''
         },

@@ -8,7 +8,8 @@ import {
   Tab, 
   Tabs,
   Typography,
-  Box
+  Box,
+  Grid
 } from '@material-ui/core';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
@@ -212,9 +213,9 @@ export function LocationsPage(props){
           <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureReportId }</h1>
           <CardContent>
             <CardContent>
-              <LocationDetail 
+              {/* <LocationDetail 
 
-              />                
+              />                 */}
             </CardContent>
           </CardContent>
         </StyledCard>

@@ -9,7 +9,8 @@ import {
   Input,
   InputAdornment,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  TextField
 } from '@material-ui/core';
 
 
@@ -21,7 +22,7 @@ import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 
 import moment from 'moment';
-import { get, set } from 'lodash';
+import { get, has } from 'lodash';
 // import { setFlagsFromString } from 'v8';
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
@@ -94,7 +95,7 @@ function MeasureDetail(props){
       let populations = get(group, 'population');
       if(Array.isArray(populations)){
         populations.forEach(function(subPopulation){
-          renderElements.push(<Grid item xs={3}>
+          renderElements.push(<Grid item xs={3} style={{paddingLeft: '40px'}}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
               <InputAdornment className={classes.label}>Population Code</InputAdornment>
               <Input
@@ -106,7 +107,7 @@ function MeasureDetail(props){
               />       
             </FormControl>   
           </Grid>)
-          renderElements.push(<Grid item xs={9}>
+          renderElements.push(<Grid item xs={9} style={{paddingLeft: '40px'}}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
               <InputAdornment className={classes.label}>Population Description</InputAdornment>
               <Input
@@ -144,8 +145,8 @@ function MeasureDetail(props){
           //   </FormControl>   
           // </Grid>)
 
-
-          renderElements.push(<Grid item xs={3} style={{paddingLeft: '40px'}}>
+          if(has(subPopulation, 'criteria')){
+            renderElements.push(<Grid item xs={3} style={{paddingLeft: '80px'}}>
             <FormControl style={{width: '100%', marginTop: '10px'}}>
               <InputLabel className={classes.label}>Criteria Name</InputLabel>
               <Input
@@ -183,9 +184,9 @@ function MeasureDetail(props){
             </FormControl>   
             </Grid>)
 
-          renderElements.push(<Grid item xs={12} style={{paddingLeft: '40px', marginTop: '0px'}} >
+          renderElements.push(<Grid item xs={12} style={{paddingLeft: '80px', marginTop: '0px'}} >
             <FormControl style={{width: '100%', marginTop: '10px'}}>
-              <InputLabel className={classes.label}>Criteria Expression</InputLabel>
+              <InputLabel shrunk={true} className={classes.label}>Criteria Expression</InputLabel>
               <Input
                 id={"criteriaExpressionInput-" + get(subPopulation, 'id')}
                 name={"criteriaExpressionInput-" + get(subPopulation, 'id')}
@@ -196,18 +197,29 @@ function MeasureDetail(props){
             </FormControl>   
             </Grid>)
 
-          renderElements.push(<Grid item xs={12} style={{paddingLeft: '40px', marginTop: '0px'}}>
-            <FormControl style={{width: '100%', marginTop: '10px'}}>
-              <InputLabel className={classes.label}>Criteria URL</InputLabel>
-              <Input
-                id={"criteriaUrl-" + get(subPopulation, 'id')}
-                name={"criteriaUrl-" + get(subPopulation, 'id')}
-                className={classes.compactInput}       
-                value={get(subPopulation, 'criteria.reference')}
-                fullWidth              
-              />       
-            </FormControl>   
+          renderElements.push(<Grid item xs={12} style={{paddingLeft: '80px', marginTop: '0px'}}>
+            {/* <TextField 
+              id={"criteriaUrl-" + get(subPopulation, 'id')}
+              name={"criteriaUrl-" + get(subPopulation, 'id')}
+              label="Criteria URL" 
+              value={get(subPopulation, 'criteria.reference')}
+              fullWidth
+            /> */}
+
+              <FormControl style={{width: '100%', marginTop: '10px'}}>
+                <InputLabel className={classes.label}>Criteria URL</InputLabel>
+                <Input
+                  id={"criteriaUrl-" + get(subPopulation, 'id')}
+                  name={"criteriaUrl-" + get(subPopulation, 'id')}
+                  className={classes.compactInput}       
+                  value={get(subPopulation, 'criteria.reference')}
+                  fullWidth              
+                />       
+              </FormControl>   
             </Grid>)
+          }
+
+          
 
 
         })
@@ -226,6 +238,37 @@ function MeasureDetail(props){
   let lastReviewDate = '';
   if(get(measure, 'lastReviewDate')){
     lastReviewDate = moment(get(measure, 'lastReviewDate')).format("YYYY-MM-DD")
+  }
+
+  let descriptionElements = '';
+  if(get(measure, 'description')){
+    descriptionElements = <Grid item xs={12}>
+    <FormControl style={{width: '100%', marginTop: '20px'}}>
+      <InputAdornment className={classes.label}>Description</InputAdornment>
+      <Input
+        id="descriptionInput"
+        name="descriptionInput"
+        className={classes.input}
+        placeholder="Lorem ipsum."              
+        value={get(measure, 'description')}
+        //onChange={handleFhirEndpointChange}
+        fullWidth           
+        multiline   
+      />
+    </FormControl>
+                     
+  </Grid>
+  }
+
+  let artifactsElements = '';
+  if(Array.isArray(measure.relatedArtifact)){
+    artifactsElements = <Grid item xs={12}>
+    <FormControl style={{width: '100%', marginTop: '20px'}}>
+      <InputAdornment className={classes.label}>Artifacts</InputAdornment>
+
+    </FormControl>
+                     
+  </Grid>
   }
 
 
@@ -299,22 +342,8 @@ function MeasureDetail(props){
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Description</InputAdornment>
-              <Input
-                id="descriptionInput"
-                name="descriptionInput"
-                className={classes.input}
-                placeholder="Lorem ipsum."              
-                value={get(measure, 'description')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth           
-                multiline   
-              />
-            </FormControl>
-                             
-          </Grid>
+          { descriptionElements }
+
           <Grid item xs={6} style={{paddingLeft: '40px'}}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
               <InputAdornment className={classes.label}>Editor</InputAdornment>
@@ -415,9 +444,7 @@ function MeasureDetail(props){
               />          
             </FormControl>   
           </Grid>
-          <Grid item xs={6}>
 
-          </Grid>
 
 
           { renderElements }
