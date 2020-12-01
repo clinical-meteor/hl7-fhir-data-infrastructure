@@ -347,9 +347,9 @@ export class ObservationDetail extends React.Component {
           </Grid>
 
         </CardContent>
-        <CardActions>
+        {/* <CardActions>
           { this.determineButtons(this.data.observationId) }
-        </CardActions>
+        </CardActions> */}
       </div>
     );
   }
@@ -357,13 +357,13 @@ export class ObservationDetail extends React.Component {
     if (observationId) {
       return (
         <div>
-          <Button id="updateObservationButton" className="saveObservationButton" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} >Save</Button>
+          <Button id="updateObservationButton" className="saveObservationButton" color='primary' variant='contained' onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} >Save</Button>
           <Button id="deleteObservationButton" onClick={this.handleDeleteButton.bind(this)} >Delete</Button>
         </div>        
       );
     } else {
       return (
-        <Button id="saveObservationButton" primary={true} onClick={this.handleSaveButton.bind(this)} >Save</Button>
+        <Button id="saveObservationButton" color='primary' variant='contained' onClick={this.handleSaveButton.bind(this)} >Save</Button>
       );
     }
   }
