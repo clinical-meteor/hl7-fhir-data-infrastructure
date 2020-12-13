@@ -17,8 +17,8 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-// import ProcedureDetail from './ProcedureDetail';
-import ProceduresTable from './ProceduresTable';
+// import ProvenanceDetail from './ProvenanceDetail';
+import ProvenancesTable from './ProvenancesTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
@@ -109,39 +109,39 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 
 
-Session.setDefault('selectedProcedureId', false);
+Session.setDefault('selectedProvenanceId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
-Session.setDefault('ProceduresPage.onePageLayout', true)
+Session.setDefault('ProvenancesPage.onePageLayout', true)
 
-export function ProceduresPage(props){
+export function ProvenancesPage(props){
   let data = {
-    selectedProcedureId: '',
-    selectedProcedure: null,
+    selectedProvenanceId: '',
+    selectedProvenances: null,
     procedures: [],
     onePageLayout: true
   };
 
   data.onePageLayout = useTracker(function(){
-    return Session.get('ProceduresPage.onePageLayout');
+    return Session.get('ProvenancesPage.onePageLayout');
   }, [])
-  data.selectedProcedureId = useTracker(function(){
-    return Session.get('selectedProcedureId');
+  data.selectedProvenanceId = useTracker(function(){
+    return Session.get('selectedProvenanceId');
   }, [])
-  data.selectedProcedure = useTracker(function(){
-    return Procedures.findOne(Session.get('selectedProcedureId'));
+  data.selectedProvenance = useTracker(function(){
+    return Provenances.findOne(Session.get('selectedProvenanceId'));
   }, [])
   data.procedures = useTracker(function(){
-    return Procedures.find().fetch();
+    return Provenances.find().fetch();
   }, [])
 
-  if(process.env.NODE_ENV === "test") console.log('In ProceduresPage render');
+  if(process.env.NODE_ENV === "test") console.log('In ProvenancesPage render');
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
-  let proceduresTitle = data.procedures.length + " Procedures";
+  let proceduresTitle = data.procedures.length + " Provenances";
 
   return (
     <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -149,9 +149,10 @@ export function ProceduresPage(props){
           <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title={proceduresTitle} />
             <CardContent>
-              <ProceduresTable 
+              <ProvenancesTable 
                 procedures={data.procedures}
                 count={data.procedures.length}
+                rowsPerPage={25}
                 tableRowSize="medium"
                 formFactorLayout={formFactor}
                 rowsPerPage={LayoutHelpers.calcTableRows()}
@@ -163,4 +164,4 @@ export function ProceduresPage(props){
   );
 }
 
-export default ProceduresPage;
+export default ProvenancesPage;

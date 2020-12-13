@@ -46,6 +46,10 @@ import DiagnosticReportsPage from './client/diagnosticReports/DiagnosticReportsP
 import DiagnosticReportsTable from './client/diagnosticReports/DiagnosticReportsTable';
 // import DiagnosticReportDetail from './client/diagnosticReports/DiagnosticReportDetail';
 
+import DocumentReferencesPage from './client/documentReferences/DocumentReferencesPage';
+import DocumentReferencesTable from './client/documentReferences/DocumentReferencesTable';
+
+
 import EncountersPage from './client/encounters/EncountersPage';
 import EncountersTable from './client/encounters/EncountersTable';
 // import EncounterDetail from './client/encounters/EncounterDetail';
@@ -110,6 +114,9 @@ import PractitionersTable from './client/practitioners/PractitionersTable';
 import ProceduresPage from './client/procedures/ProceduresPage';
 import ProceduresTable from './client/procedures/ProceduresTable';
 // import ProcedureDetail from './client/procedures/ProcedureDetail';
+
+import ProvenancesPage from './client/provenances/ProvenancesPage';
+import ProvenancesTable from './client/provenances/ProvenancesTable';
 
 import QuestionnairesPage from './client/questionnaires/QuestionnairesPage';
 import QuestionnairesTable from './client/questionnaires/QuestionnairesTable';
@@ -180,6 +187,11 @@ let DynamicRoutes = [{
   'name': 'DiagnosticReportsPage',
   'path': '/diagnostic-reports',
   'component': DiagnosticReportsPage,
+  'requireAuth': true
+}, {
+  'name': 'DocumentReferencesPage',
+  'path': '/document-references',
+  'component': DocumentReferencesPage,
   'requireAuth': true
 }, {
   'name': 'EncountersPage',
@@ -262,6 +274,11 @@ let DynamicRoutes = [{
   'component': ProceduresPage,
   'requireAuth': true
 }, {
+  'name': 'ProvenancesPage',
+  'path': '/provenances',
+  'component': ProvenancesPage,
+  'requireAuth': true
+}, {
   'name': 'QuestionnairesPage',
   'path': '/questionnaires',
   'component': QuestionnairesPage,
@@ -331,6 +348,11 @@ let SidebarElements = [{
   'primaryText': 'Diagnostic Reports',
   'to': '/diagnostic-reports',
   'href': '/diagnostic-reports',
+  'iconName': 'notepad'
+}, {
+  'primaryText': 'Document References',
+  'to': '/document-references',
+  'href': '/document-references',
   'iconName': 'notepad'
 }, {
   'primaryText': 'Encounters',
@@ -412,6 +434,11 @@ let SidebarElements = [{
   'to': '/procedures',
   'href': '/procedures',
   'iconName': 'bath'
+}, {
+  'primaryText': 'Provenances',
+  'to': '/provenances',
+  'href': '/provenances',
+  'iconName': 'fire'
 }, {
   'primaryText': 'Questionnaires',
   'to': '/questionnaires',
@@ -551,6 +578,9 @@ export {
   DiagnosticReportsTable,
   // DiagnosticReportDetail,
 
+  DocumentReferencesPage,
+  DocumentReferencesTable,
+
   EncountersPage,
   EncountersTable,
   // EncounterDetail,
@@ -611,6 +641,9 @@ export {
   ProceduresPage,
   ProceduresTable,
   // ProcedureDetail,
+
+  ProvenancesPage,
+  ProvenancesTable,
 
   QuestionnairesPage,
   QuestionnairesTable,

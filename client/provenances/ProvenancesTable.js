@@ -30,9 +30,8 @@ let set = _.set;
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
-import LayoutHelpers from '../../lib/LayoutHelpers';
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenProcedure } from '../../lib/FhirDehydrator';
+import { flattenProvenance } from '../../lib/FhirDehydrator';
 
 //===========================================================================
 // THEMING
@@ -54,20 +53,20 @@ const useStyles = makeStyles(theme => ({
 // //===========================================================================
 // // FLATTENING / MAPPING
 
-// flattenProcedure = function(procedure, internalDateFormat){
+// flattenProvenance = function(procedure, internalDateFormat){
 //   let result = {
 //     _id: '',
 //     id: '',
 //     meta: '',
 //     identifier: '',
 //     status: '',
-//     categoryDisplay: '',
+//     targetReferenceDisplay: '',
 //     code: '',
 //     codeDisplay: '',
 //     subject: '',
 //     subjectReference: '',
 //     performerDisplay: '',
-//     performedStart: '',
+//     occurredDateTime: '',
 //     performedEnd: '',
 //     notesCount: '',
 //     bodySiteDisplay: ''
@@ -81,11 +80,11 @@ const useStyles = makeStyles(theme => ({
 
 //   result.id = get(procedure, 'id', '');
 //   result.status = get(procedure, 'status', '');
-//   result.categoryDisplay = get(procedure, 'category.coding[0].display', '');
+//   result.targetReferenceDisplay = get(procedure, 'targetReference.coding[0].display', '');
 //   result.identifier = get(procedure, 'identifier[0].value');
 //   result.code = get(procedure, 'code.coding[0].code');
 //   result.codeDisplay = get(procedure, 'code.coding[0].display');
-//   result.categoryDisplay = get(procedure, 'category.coding[0].display')    
+//   result.targetReferenceDisplay = get(procedure, 'targetReference.coding[0].display')    
 
 //   if(get(procedure, 'subject')){
 //     result.subject = get(procedure, 'subject.display', '');
@@ -95,13 +94,13 @@ const useStyles = makeStyles(theme => ({
 //     result.subjectReference = get(procedure, 'patient.reference', '');
 //   }
 
-//   result.performedStart = moment(get(procedure, 'performedDateTime')).format(internalDateFormat);      
+//   result.occurredDateTime = moment(get(procedure, 'performedDateTime')).format(internalDateFormat);      
 //   result.performerDisplay = moment(get(procedure, 'performer.display')).format(internalDateFormat);
 //   result.performerReference = get(procedure, 'performer.reference');
 //   result.bodySiteDisplay = get(procedure, 'bodySite.display');
 
 //   if(get(procedure, 'performedPeriod')){
-//     result.performedStart = moment(get(procedure, 'performedPeriod.start')).format(internalDateFormat);      
+//     result.occurredDateTime = moment(get(procedure, 'performedPeriod.start')).format(internalDateFormat);      
 //     result.performedEnd = moment(get(procedure, 'performedPeriod.end')).format(internalDateFormat);      
 //   }
 
@@ -116,18 +115,18 @@ const useStyles = makeStyles(theme => ({
 // }
 
 
-function ProceduresTable(props){
-  logger.info('Rendering the ProceduresTable');
-  logger.verbose('clinical:hl7-resource-encounter.client.ProceduresTable');
-  logger.data('ProceduresTable.props', {data: props}, {source: "ProceduresTable.jsx"});
+function ProvenancesTable(props){
+  logger.info('Rendering the ProvenancesTable');
+  logger.verbose('clinical:hl7-resource-encounter.client.ProvenancesTable');
+  logger.data('ProvenancesTable.props', {data: props}, {source: "ProvenancesTable.jsx"});
 
   let { 
     id,
     children, 
 
     data,
-    procedures,
-    selectedProcedureId,
+    provenances,
+    selectedProvenanceId,
     query,
     paginationLimit,
     disablePagination,
@@ -135,17 +134,17 @@ function ProceduresTable(props){
     hideCheckbox,
     hideIdentifier,
     hideActionIcons,
-    hideCategory,
-    hideStatus,
+    hideTargetReference,
+    hideTargetDisplay,
     hideSubject,
     hideSubjectReference,
-    hidePerformedDate,
-    hidePerformedDateEnd,
-    hidePerformer,
-    hideBodySite,
-    hideNotes,
-    hideCode,
-    hideCodeDisplay,
+    hideOccurredDateTime,
+    hideOccurredDateTimeEnd,
+    hideEntity,
+    hideSignature,
+    hideLocation,
+    hideActivity,
+    hideActivityDisplay,
     hideBarcode,
     filterEnteredInError,
   
@@ -189,57 +188,57 @@ function ProceduresTable(props){
       case "phone":
         hideSubject = true;
         hideSubjectReference = true;
-        hideCode = true;
-        hideStatus = true;
-        hidePerformedDate = true;
-        hidePerformedDateEnd = true;
-        hidePerformer = true;
-        hideBodySite = true;
-        hideNotes = true;
+        hideActivity = true;
+        hideTargetDisplay = true;
+        hideOccurredDateTime = true;
+        hideOccurredDateTimeEnd = true;
+        hideEntity = true;
+        hideSignature = true;
+        hideLocation = true;
         multiline = true;
         hideBarcode = true;
         break;
       case "tablet":
-        hideCode = false;
-        hideStatus = false;
-        hidePerformedDate = false;
-        hidePerformedDateEnd = true;
-        hidePerformer = true;
-        hideBodySite = true;
-        hideNotes = true;
+        hideActivity = false;
+        hideTargetDisplay = false;
+        hideOccurredDateTime = false;
+        hideOccurredDateTimeEnd = true;
+        hideEntity = true;
+        hideSignature = true;
+        hideLocation = true;
         multiline = false;
         hideBarcode = true;
         break;
       case "web":
-        hideCode = false;
-        hideStatus = false;
-        hidePerformedDate = false;
-        hidePerformedDateEnd = true;
-        hidePerformer = false;
-        hideBodySite = false;
-        hideNotes = true;
+        hideActivity = false;
+        hideTargetDisplay = false;
+        hideOccurredDateTime = false;
+        hideOccurredDateTimeEnd = true;
+        hideEntity = false;
+        hideSignature = false;
+        hideLocation = true;
         multiline = false;
         hideBarcode = true;
         break;
       case "desktop":
-        hideCode = false;
-        hideStatus = false;
-        hidePerformedDate = false;
-        hidePerformedDateEnd = false;
-        hidePerformer = false;
-        hideBodySite = false;
-        hideNotes = false;
+        hideActivity = false;
+        hideTargetDisplay = false;
+        hideOccurredDateTime = false;
+        hideOccurredDateTimeEnd = false;
+        hideEntity = false;
+        hideSignature = false;
+        hideLocation = false;
         multiline = false;
         hideBarcode = true;
         break;
       case "hdmi":
-        hideCode = false;
-        hideStatus = false;
-        hidePerformedDate = false;
-        hidePerformedDateEnd = false;
-        hidePerformer = false;
-        hideBodySite = false;
-        hideNotes = false;
+        hideActivity = false;
+        hideTargetDisplay = false;
+        hideOccurredDateTime = false;
+        hideOccurredDateTimeEnd = false;
+        hideEntity = false;
+        hideSignature = false;
+        hideLocation = false;
         multiline = false;
         hideBarcode = true;
         break;            
@@ -279,9 +278,9 @@ function ProceduresTable(props){
   // Helper Functions
 
   function rowClick(id){
-    // logger.info('ProceduresTable.rowClick', id);
+    // logger.info('ProvenancesTable.rowClick', id);
 
-    // Session.set("selectedProcedureId", id);
+    // Session.set("selectedProvenanceId", id);
     // Session.set('procedurePageTabIndex', 1);
     // Session.set('procedureDetailState', false);
 
@@ -345,7 +344,7 @@ function ProceduresTable(props){
       );
     }
   }
-  function renderSubject(name, type, date){
+  function renderAgent(name, type, date){
     if (!hideSubject) {
       let result;
       return (
@@ -353,14 +352,14 @@ function ProceduresTable(props){
       );
     }
   }
-  function renderSubjectHeader(){
+  function renderAgentHeader(){
     if (!hideSubject) {
       return (
         <TableCell className='name'>Subject</TableCell>
       );
     }
   }
-  function renderSubjectReference(referenceString){
+  function renderAgentReference(referenceString){
     if (!hideSubjectReference) {
       return (
         <TableCell className='patientReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
@@ -369,38 +368,38 @@ function ProceduresTable(props){
       );
     }
   }
-  function renderSubjectReferenceHeader(){
+  function renderAgentReferenceHeader(){
     if (!hideSubjectReference) {
       return (
         <TableCell className='subjectReference'>Subject Reference</TableCell>
       );
     }
   }
-  function renderStatus(valueString){
-    if (!hideStatus) {
+  function renderTargetDisplay(targetDisplay){
+    if (!hideTargetDisplay) {
       return (
-        <TableCell className='status'>{ valueString }</TableCell>
+        <TableCell className='targetDisplay'>{ targetDisplay }</TableCell>
       );
     }
   }
-  function renderStatusHeader(){
-    if (!hideStatus) {
+  function renderTargetDisplayHeader(){
+    if (!hideTargetDisplay) {
       return (
-        <TableCell className='status'>Status</TableCell>
+        <TableCell className='targetDisplay'>Target</TableCell>
       );
     }
   }
-  function renderCategoryHeader(){
-    if (!hideCategory) {
+  function renderTargetReferenceHeader(){
+    if (!hideTargetReference) {
       return (
-        <TableCell className='category'>Category</TableCell>
+        <TableCell className='targetReference'>Target Reference</TableCell>
       );
     }
   }
-  function renderCategory(category){
-    if (!hideCategory) {
+  function renderTargetReference(targetReference){
+    if (!hideTargetReference) {
       return (
-        <TableCell className='category'>{ category }</TableCell>
+        <TableCell className='targetReference'>{ targetReference }</TableCell>
       );
     }
   }
@@ -422,37 +421,20 @@ function ProceduresTable(props){
       );
     }
   }
-  function renderPerformedStartHeader(){
-    if (!hidePerformedDate) {
+  function renderOcurredDateTimeHeader(){
+    if (!hideOccurredDateTime) {
       return (
-        <TableCell className='performedStart' style={{minWidth: '140px'}}>Performed</TableCell>
+        <TableCell className='occurredDateTime' style={{minWidth: '140px'}}>Occurred</TableCell>
       );
     }
   }
-  function renderPerformedStart(performedStart){
-    if (!hidePerformedDate) {
-      if(typeof performedStart === "object"){
-        performedStart = moment(performedStart).format(internalDateFormat);
+  function renderOcurredDateTime(occurredDateTime){
+    if (!hideOccurredDateTime) {
+      if(typeof occurredDateTime === "object"){
+        occurredDateTime = moment(occurredDateTime).format(internalDateFormat);
       }
       return (
-        <TableCell className='performedStart' style={{minWidth: '140px'}}>{ performedStart }</TableCell>
-      );
-    }
-  }
-  function renderPerformedEndHeader(){
-    if (!hidePerformedDateEnd) {
-      return (
-        <TableCell className='performedEnd' style={{minWidth: '140px'}}>End</TableCell>
-      );
-    }
-  }
-  function renderPerformedEnd(performedEnd){
-    if (!hidePerformedDateEnd) {
-      if(typeof performedEnd === "object"){
-        performedEnd = moment(performedEnd).format(internalDateFormat);
-      }
-      return (
-        <TableCell className='performedEnd' style={{minWidth: '140px'}}>{ performedEnd }</TableCell>
+        <TableCell className='occurredDateTime' style={{minWidth: '140px'}}>{ occurredDateTime }</TableCell>
       );
     }
   }
@@ -486,94 +468,87 @@ function ProceduresTable(props){
       );
     }
   }
-  function renderCodeHeader(){
-    if (!hideCode) {
+  function renderActivityHeader(){
+    if (!hideActivity) {
       return (
-        <TableCell className='code'>Code</TableCell>
+        <TableCell className='activity'>Activity Code</TableCell>
       );
     }
   }
-  function renderCode(code){
-    if (!hideCode) {
+  function renderActivity(activity){
+    if (!hideActivity) {
       return (
-        <TableCell className='code'>{ code }</TableCell>
+        <TableCell className='activity'>{ activity }</TableCell>
       );  
     }
   }
-  function renderCodeDisplayHeader(){
-    if (!hideCodeDisplay) {
+  function renderActivityDisplayHeader(){
+    if (!hideActivityDisplay) {
       return (
-        <TableCell className='codeDisplay'>Display</TableCell>
+        <TableCell className='activityDisplay'>Activity</TableCell>
       );
     }
   }
-  function renderCodeDisplay(codeDisplay, codeValue, date){
-    if (!hideCodeDisplay) {
-      if(multiline){
-        return (<TableCell className='codeDisplay'>
-          <span style={{overflowY: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{ codeDisplay }</span><br/>
-          <span style={{float: 'left'}}>{ codeValue }</span><span style={{float: 'right'}}>{ date }</span>
-        </TableCell>)
-      } else {
-        return (
-          <TableCell className='codeDisplay'>{ codeDisplay }</TableCell>
-        );  
-      }
+  function renderActivityDisplay(activityDisplay, codeValue, date){
+    if (!hideActivityDisplay) {
+      return (
+        <TableCell className='activityDisplay'>{ activityDisplay }</TableCell>
+      );  
     }
   }
-  function renderNotes(notesCount){
-    if (!hideNotes) {
+  function renderLocation(locationDisplay){
+    if (!hideLocation) {
       return (
-        <TableCell className='notes'>{ notesCount }</TableCell>
+        <TableCell className='location'>{ locationDisplay }</TableCell>
       );
     }
   }
-  function renderNotesHeader(){
-    if (!hideNotes) {
+  function renderLocationHeader(){
+    if (!hideLocation) {
       return (
-        <TableCell className='notes'>Notes</TableCell>
+        <TableCell className='location'>Location</TableCell>
       );
     }
   }
-  function renderPerformer(text){
-    if (!hidePerformer) {
+  function renderEntity(entity){
+    if (!hideEntity) {
       return (
-        <TableCell className='performer'>{ text }</TableCell>
+        <TableCell className='entity'>{ entity }</TableCell>
       );
     }
   }
-  function renderPerformerHeader(){
-    if (!hidePerformer) {
+  function renderEntityHeader(){
+    if (!hideEntity) {
       return (
-        <TableCell className='performer'>Performer</TableCell>
+        <TableCell className='entity'>Entity</TableCell>
       );
     }
   }
-  function renderBodySite(text){
-    if (!hideBodySite) {
+  function renderSignature(signature){
+    if (!hideSignature) {
       return (
-        <TableCell className='bodysite'>{ text }</TableCell>
+        <TableCell className='signature'>{ signature }</TableCell>
       );
     }
   }
-  function renderBodySiteHeader(){
-    if (!hideBodySite) {
+  function renderSignatureHeader(){
+    if (!hideSignature) {
       return (
-        <TableCell className='bodysite'>Body Site</TableCell>
+        <TableCell className='signature'>Signature</TableCell>
       );
     }
   }
 
 
   let tableRows = [];
-  let proceduresToRender = [];
+  let provenancesToRender = [];
 
-  if(procedures){
-    if(procedures.length > 0){     
+  if(provenances){
+    if(provenances.length > 0){     
       let count = 0;    
-      procedures.forEach(function(procedure){
+      provenances.forEach(function(procedure){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          proceduresToRender.push(flattenProcedure(procedure, internalDateFormat));
+          provenancesToRender.push(flattenProvenance(procedure, internalDateFormat));
         }
         count++;
       });  
@@ -584,16 +559,16 @@ function ProceduresTable(props){
     cursor: 'pointer', 
     height: '52px'
   }
-  if(proceduresToRender.length === 0){
-    logger.trace('ProceduresTable:  No procedures to render.');
+  if(provenancesToRender.length === 0){
+    logger.trace('ProvenancesTable:  No provenances to render.');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
-    for (var i = 0; i < proceduresToRender.length; i++) {
+    for (var i = 0; i < provenancesToRender.length; i++) {
       let selected = false;
-      if(proceduresToRender[i].id === selectedProcedureId){
+      if(provenancesToRender[i].id === selectedProvenanceId){
         selected = true;
       }
-      if(get(proceduresToRender[i], 'modifierExtension[0]')){
+      if(get(provenancesToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
       if(tableRowSize === "small"){
@@ -601,23 +576,22 @@ function ProceduresTable(props){
       }
 
       tableRows.push(
-        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, proceduresToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
+        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, provenancesToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
           { renderToggle() }
-          { renderActionIcons(proceduresToRender[i]) }
-          { renderIdentifier(proceduresToRender.identifier ) }
-          { renderStatus(proceduresToRender[i].status)}
-          { renderCategory(proceduresToRender[i].categoryDisplay)}
-          { renderCode(proceduresToRender[i].code)}
-          { renderCodeDisplay(proceduresToRender[i].codeDisplay, proceduresToRender[i].code, proceduresToRender[i].performedStart)}          
-          { renderSubject(proceduresToRender[i].subject)}
-          { renderSubjectReference(proceduresToRender[i].subjectReference)}
-          { renderPerformer(proceduresToRender[i].performerDisplay)}
-          { renderBodySite()}
-          { renderPerformedStart(proceduresToRender[i].performedStart)}
-          { renderPerformedEnd(proceduresToRender[i].performedEnd)}
-          { renderNotes(proceduresToRender[i].notesCount)}
-          { renderBarcode(proceduresToRender[i]._id)}
-          { renderActionButton(proceduresToRender[i]) }
+          { renderActionIcons(provenancesToRender[i]) }
+          { renderIdentifier(provenancesToRender.identifier ) }
+          { renderTargetDisplay(provenancesToRender[i].status)}
+          { renderTargetReference(provenancesToRender[i].targetReferenceDisplay)}
+          { renderActivity(provenancesToRender[i].code)}
+          { renderActivityDisplay(provenancesToRender[i].codeDisplay, provenancesToRender[i].code, provenancesToRender[i].occurredDateTime)}          
+          { renderAgent(provenancesToRender[i].subject)}
+          { renderAgentReference(provenancesToRender[i].subjectReference)}
+          { renderEntity(provenancesToRender[i].performerDisplay)}
+          { renderSignature()}
+          { renderOcurredDateTime(provenancesToRender[i].occurredDateTime)}
+          { renderLocation(provenancesToRender[i].notesCount)}
+          { renderBarcode(provenancesToRender[i]._id)}
+          { renderActionButton(provenancesToRender[i]) }
         </TableRow>
       );    
     }
@@ -644,23 +618,22 @@ function ProceduresTable(props){
 
   return(
     <div>
-      <Table id="proceduresTable" size={tableRowSize} aria-label="a dense table" { ...otherProps } >
+      <Table id="provenancesTable" size={tableRowSize} aria-label="a dense table" { ...otherProps } >
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
-            { renderStatusHeader() }
-            { renderCategoryHeader() }
-            { renderCodeHeader() }
-            { renderCodeDisplayHeader() }
-            { renderSubjectHeader() }
-            { renderSubjectReferenceHeader() }
-            { renderPerformerHeader() }
-            { renderBodySiteHeader() }
-            { renderPerformedStartHeader() }
-            { renderPerformedEndHeader() }
-            { renderNotesHeader() }
+            { renderTargetDisplayHeader() }
+            { renderTargetReferenceHeader() }
+            { renderActivityHeader() }
+            { renderActivityDisplayHeader() }
+            { renderAgentHeader() }
+            { renderAgentReferenceHeader() }
+            { renderEntityHeader() }
+            { renderSignatureHeader() }
+            { renderOcurredDateTimeHeader() }
+            { renderLocationHeader() }
             { renderBarcodeHeader() }
             { renderActionButtonHeader() }
           </TableRow>
@@ -674,28 +647,28 @@ function ProceduresTable(props){
   );
 }
 
-ProceduresTable.propTypes = {
+ProvenancesTable.propTypes = {
   id: PropTypes.string,
 
-  procedures: PropTypes.array,
-  selectedProcedureId: PropTypes.string,
+  provenances: PropTypes.array,
+  selectedProvenanceId: PropTypes.string,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
 
   hideCheckbox: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
-  hideCategory: PropTypes.bool,
-  hideStatus: PropTypes.bool,
+  hideTargetReference: PropTypes.bool,
+  hideTargetDisplay: PropTypes.bool,
   hideSubject: PropTypes.bool,
   hideSubjectReference: PropTypes.bool,
-  hidePerformedDate: PropTypes.bool,
-  hidePerformedDateEnd: PropTypes.bool,
-  hidePerformer: PropTypes.bool,
-  hideBodySite: PropTypes.bool,
-  hideNotes: PropTypes.bool,
-  hideCode: PropTypes.bool,
-  hideCodeDisplay: PropTypes.bool,
+  hideOccurredDateTime: PropTypes.bool,
+  hideOccurredDateTimeEnd: PropTypes.bool,
+  hideEntity: PropTypes.bool,
+  hideSignature: PropTypes.bool,
+  hideLocation: PropTypes.bool,
+  hideActivity: PropTypes.bool,
+  hideActivityDisplay: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   filterEnteredInError: PropTypes.bool,
 
@@ -716,16 +689,16 @@ ProceduresTable.propTypes = {
 
   formFactorLayout: PropTypes.string
 };
-ProceduresTable.defaultProps = {
+ProvenancesTable.defaultProps = {
   rowsPerPage: 5,
   hideCheckbox: true,
   hideActionIcons: true,
   hideActionButton: true,
   hideIdentifier: true,
-  hideCategory: true,
-  hideBodySite: true,
+  hideTargetReference: true,
+  hideSignature: true,
   multiline: false,
   tableRowSize: 'medium'
 }
 
-export default ProceduresTable;
+export default ProvenancesTable;

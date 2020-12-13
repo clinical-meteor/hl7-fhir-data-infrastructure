@@ -17,9 +17,9 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
+import LayoutHelpers from '../../lib/LayoutHelpers';
 import FhirUtilities from '../../lib/FhirUtilities';
-// import { flattenValueSet } from '../../lib/FhirDehydrator';
-
+import { flattenProcedure } from '../../lib/FhirDehydrator';
 
 //===========================================================================
 // THEMING
@@ -127,32 +127,50 @@ function ValueSetsTable(props){
         hideActionIcons = true;
         hideIdentifier = true;
         hideTitle = false;
-        hideDescription = false;
-        hideApprovalDate = false;
-        hideLastReviewed = false;
+        hideDescription = false;        
         hideVersion = false;
         hideStatus = false;
-        hideAuthor = true;
-        hidePublisher = false;
-        hideReviewer = false;
-        hideEditor = false;
-        hideEndorser = false;
-        hideType = false;
-        hideRiskAdjustment = true;
-        hideRateAggregation = true;
-        hideScoring = false;
+        hideBarcode = true;
         break;
       case "tablet":
-      
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideTitle = false;
+        hideDescription = false;        
+        hideVersion = false;
+        hideStatus = false;
+        hideBarcode = false;
         break;
       case "web":
-    
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideTitle = false;
+        hideDescription = false;        
+        hideVersion = false;
+        hideStatus = false;
+        hideBarcode = false;
         break;
       case "desktop":
-  
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideTitle = false;
+        hideDescription = false;        
+        hideVersion = false;
+        hideStatus = false;
+        hideBarcode = false;
         break;
       case "videowall":
-
+        hideCheckbox = true;
+        hideActionIcons = true;
+        hideIdentifier = true;
+        hideTitle = false;
+        hideDescription = false;        
+        hideVersion = false;
+        hideStatus = false;
+        hideBarcode = false;s
         break;            
     }
   }

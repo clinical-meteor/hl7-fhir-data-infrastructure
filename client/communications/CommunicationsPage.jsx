@@ -11,7 +11,7 @@ import {
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
-// import CommunicationsTable from './CommunicationsTable';
+import CommunicationsTable from './CommunicationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
@@ -65,7 +65,7 @@ export function CommunicationsPage(props){
         />
         <CardContent>
           <CommunicationsTable 
-            communications={communications}
+            communications={data.communications}
             hideIdentifier={true}
             hideCheckbox={true}
             hideActionIcons={true}

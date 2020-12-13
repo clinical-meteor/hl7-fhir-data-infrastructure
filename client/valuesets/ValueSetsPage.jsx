@@ -1,29 +1,24 @@
 import { 
-  Container,
-  Divider,
-  Card,
   CardHeader,
   CardContent,
-  Button,
-  Typography,
-  Box,
   Grid
 } from '@material-ui/core';
-import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
-// import ValueSetDetail from './ValueSetDetail';
+import ValueSetDetail from './ValueSetDetail';
 import ValueSetsTable from './ValueSetsTable';
+
 import LayoutHelpers from '../../lib/LayoutHelpers';
+import FhirUtilities from '../../lib/FhirUtilities';
+import { flattenProcedure } from '../../lib/FhirDehydrator';
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
-import { get, cloneDeep } from 'lodash';
+import { get } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
@@ -125,7 +120,8 @@ export function ValueSetsPage(props){
     selectedValueSet: null,
     valueSets: [],
     onePageLayout: true,
-    valueSetSearchFilter: ''
+    valueSetSearchFilter: '',
+    appHeight: window.innerHeight
   };
 
   data.onePageLayout = useTracker(function(){
@@ -135,15 +131,17 @@ export function ValueSetsPage(props){
     return Session.get('selectedValueSetId');
   }, [])
   data.selectedValueSet = useTracker(function(){
-    return AuditEvents.findOne(Session.get('selectedValueSetId'));
+    return ValueSets.findOne({id: Session.get('selectedValueSetId')});
   }, [])
   data.valueSets = useTracker(function(){
-    return AuditEvents.find().fetch();
+    return ValueSets.find().fetch();
   }, [])
   data.valueSetSearchFilter = useTracker(function(){
     return Session.get('valueSetSearchFilter')
   }, [])
-
+  data.appHeight = useTracker(function(){
+    return Session.get('appHeight')
+  }, [props.lastUpdated])
 
   function handleRowClick(valueSetId){
     console.log('ValueSetsPage.handleRowClick', valueSetId)
@@ -155,7 +153,7 @@ export function ValueSetsPage(props){
   }
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
+  let formFactor = LayoutHelpers.determineFormFactor(2);
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
@@ -164,13 +162,14 @@ export function ValueSetsPage(props){
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={data.valueSetsCount + " ValueSets"} />
+      <CardHeader title={data.valueSets.length + " ValueSets"} />
       <CardContent>
 
         <ValueSetsTable 
           valueSets={ data.valueSets }
-          formFactorLayout={formFactor}
-          paginationLimit={10}     
+          formFactorLayout={formFactor} 
+          count={data.valueSets.length}
+          rowsPerPage={LayoutHelpers.calcTableRows()}  
           />
         </CardContent>
       </StyledCard>
@@ -178,20 +177,20 @@ export function ValueSetsPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.valueSetsCount + " Value Sets"} />
+          <CardHeader title={data.valueSets.length + " Value Sets"} />
           <CardContent>
             <ValueSetsTable 
               valueSets={ data.valueSets }
               selectedValueSetId={ data.selectedValueSetId }
-              formFactorLayout={formFactor}
-              paginationLimit={10}            
-              onRowClick={this.handleRowClick.bind(this) }
-              count={data.valueSetsCount}
+              formFactorLayout={formFactor}         
+              onRowClick={ handleRowClick.bind(this) }
+              count={data.valueSets.length}
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  data.appHeight) }
               />
           </CardContent>
         </StyledCard>
       </Grid>
-      <Grid item lg={4}>
+      <Grid item lg={5}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
           <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedValueSetId }</h1>
           {/* <CardHeader title={data.selectedValueSetId } className="helveticas barcode" /> */}

@@ -45,7 +45,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/CommunicationResponses.js', ['client', 'server']);
   api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
-  // api.addFiles('lib/schemas/DocumentReferences.js', ['client', 'server']);
+  api.addFiles('lib/schemas/DocumentReferences.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
   api.addFiles('lib/schemas/Endpoints.js', ['client', 'server']);
   api.addFiles('lib/schemas/ExplanationOfBenefit.js', ['client', 'server']);
@@ -63,6 +63,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Organizations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
   api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Provenances.js', ['client', 'server']);
   api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
   api.addFiles('lib/schemas/Questionnaires.js', ['client', 'server']);
   api.addFiles('lib/schemas/QuestionnaireResponses.js', ['client', 'server']);

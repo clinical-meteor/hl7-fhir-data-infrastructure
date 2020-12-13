@@ -281,7 +281,7 @@ export function TasksPage(props){
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={data.tasksCount + " Task History Records"} />
+      <CardHeader title={data.tasks.length + " Task History Records"} />
       <CardContent>
 
         <TasksTable 
@@ -315,7 +315,7 @@ export function TasksPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.tasksCount + " Tasks"} />
+          <CardHeader title={data.tasks.length + " Tasks"} />
           <CardContent>
             <TasksTable 
               tasks={ data.tasks }
@@ -325,7 +325,7 @@ export function TasksPage(props){
               hideActionIcons={true}
               hideBarcode={true}
               onRowClick={this.handleRowClick.bind(this) }
-              count={data.tasksCount}
+              count={data.tasks.length}
               />
           </CardContent>
         </StyledCard>

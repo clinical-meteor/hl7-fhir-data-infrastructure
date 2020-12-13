@@ -17,7 +17,7 @@ import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 
 // import CommunicationRequestDetail from './CommunicationRequestDetail';
-// import CommunicationRequestsTable from './CommunicationRequestsTable';
+import CommunicationRequestsTable from './CommunicationRequestsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
@@ -82,9 +82,7 @@ export function CommunicationRequestPage(props){
           title="Communication Requests"
         />
         <CardContent>
-          CommunicationRequestsTable needs refactoring into a function component.
-
-          {/* <CommunicationRequestsTable 
+          <CommunicationRequestsTable 
             showBarcodes={true} 
             hideIdentifier={true}
             communicationRequests={data.communicationRequests}
@@ -97,7 +95,7 @@ export function CommunicationRequestPage(props){
               CommunicationRequest.remove({_id: recordId})
             }}
             actionButtonLabel="Enroll"
-          /> */}
+          />
         </CardContent>
       </StyledCard>
     </PageCanvas>

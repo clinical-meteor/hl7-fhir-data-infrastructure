@@ -9,7 +9,8 @@ import {
   Input,
   InputAdornment,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  TextField
 } from '@material-ui/core';
 
 
@@ -65,153 +66,51 @@ function ValueSetDetail(props){
 
 
   let renderElements = [];
-  let groups = get(valueSet, 'group');
+  let composeIncludes = get(valueSet, 'compose.include');
 
-  if(Array.isArray(groups)){
-    groups.forEach(function(group){
-      renderElements.push(<Grid item xs={3}>
-        <FormControl style={{width: '100%', marginTop: '20px'}}>
-          <InputAdornment className={classes.label}>Group Code</InputAdornment>
-          <Input
-            id="groupCodeInput"
-            name="groupCodeInput"
-            className={classes.input}       
-            value={get(group, 'code.text')}
-            fullWidth              
-          />       
-        </FormControl>   
-      </Grid>)
-      renderElements.push(<Grid item xs={9}>
-        <FormControl style={{width: '100%', marginTop: '20px'}}>
-          <InputAdornment className={classes.label}>Group Description</InputAdornment>
-          <Input
-            id="groupDescriptionInput"
-            name="groupDescriptionInput"
-            className={classes.input}       
-            value={get(group, 'description')}
-            fullWidth              
-          />       
-        </FormControl>     
+  if(Array.isArray(composeIncludes)){
+    composeIncludes.forEach(function(includeSystem, includeSystemIndex){
+      renderElements.push(<Grid item xs={12}>
+        <TextField
+          id={"includeSystem-" + includeSystemIndex}
+          name={"includeSystem-" + includeSystemIndex}
+          type='text'
+          label='Group Code'
+          value={get(includeSystem, 'system')}
+          fullWidth          
+          style={{marginTop: '20px'}}
+        />
+
       </Grid>)
 
-      let populations = get(group, 'population');
-      if(Array.isArray(populations)){
-        populations.forEach(function(subPopulation){
+      let includeConcepts = get(includeSystem, 'concept');
+      if(Array.isArray(includeConcepts)){
+        includeConcepts.forEach(function(concept, index){          
           renderElements.push(<Grid item xs={3}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Population Code</InputAdornment>
-              <Input
-                id={"populationCodeInput-" + get(subPopulation, 'id')}
-                name={"populationCodeInput-" + get(subPopulation, 'id')}
-                className={classes.input}       
-                value={get(subPopulation, 'code.text')}
-                fullWidth              
-              />       
-            </FormControl>   
+            <TextField
+              id={"concecptCode-" + get(concept, 'code')}
+              name={"concecptCode-" + get(concept, 'code')}
+              type='text'
+              label={index === 0 ? 'Concept Code' : ''}
+              value={get(concept, 'code')}
+              fullWidth   
+              InputLabelProps={index === 0 ? {shrink: true} : null }
+              // style={index === 0 ? {marginBottom: '20px'} : null }
+            />  
+
           </Grid>)
           renderElements.push(<Grid item xs={9}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Population Description</InputAdornment>
-              <Input
-                id={"populationDescriptionInput-" + get(subPopulation, 'id')}
-                name={"populationDescriptionInput-" + get(subPopulation, 'id')}
-                className={classes.input}       
-                value={get(subPopulation, 'description')}
-                fullWidth              
-              />       
-            </FormControl>   
+            <TextField
+              id={"conceptDisplay-" + get(concept, 'code')}
+              name={"conceptDisplay-" + get(concept, 'code')}
+              type='text'
+              label={index === 0 ? 'Concept Display' : ''}
+              value={get(concept, 'display')}
+              fullWidth   
+              InputLabelProps={index === 0 ? {shrink: true} : null }
+              // style={index === 0 ? {marginBottom: '20px'} : null }         
+            />  
           </Grid>)
-
-          // renderElements.push(<Grid item xs={3} style={{paddingLeft: '40px', borderLeft: '2px double lightgray'}}>
-          //   <FormControl style={{width: '100%', marginTop: '20px'}}>
-          //     <InputAdornment className={classes.label}>Population Code</InputAdornment>
-          //     <Input
-          //       id={"populationCodeInput-" + get(subPopulation, 'id')}
-          //       name={"populationCodeInput-" + get(subPopulation, 'id')}
-          //       className={classes.input}       
-          //       value={get(subPopulation, 'code.text')}
-          //       fullWidth              
-          //     />       
-          //   </FormControl>   
-          // </Grid>)
-          // renderElements.push(<Grid item xs={9}>
-          //   <FormControl style={{width: '100%', marginTop: '20px'}}>
-          //     <InputAdornment className={classes.label}>Population Description</InputAdornment>
-          //     <Input
-          //       id={"populationCodeInput-" + get(subPopulation, 'id')}
-          //       name={"populationCodeInput-" + get(subPopulation, 'id')}
-          //       className={classes.input}       
-          //       value={get(subPopulation, 'description')}
-          //       fullWidth              
-          //     />       
-          //   </FormControl>   
-          // </Grid>)
-
-
-          renderElements.push(<Grid item xs={3} style={{paddingLeft: '40px'}}>
-            <FormControl style={{width: '100%', marginTop: '10px'}}>
-              <InputLabel className={classes.label}>Criteria Name</InputLabel>
-              <Input
-                id={"criteriaNameInput-" + get(subPopulation, 'id')}
-                name={"criteriaNameInput-" + get(subPopulation, 'id')}
-                className={classes.compactInput}       
-                value={get(subPopulation, 'criteria.name')}
-                fullWidth              
-              />       
-            </FormControl>   
-            </Grid>)
-          renderElements.push(<Grid item xs={3} >
-            <FormControl style={{width: '100%', marginTop: '10px'}}>
-              <InputLabel className={classes.label}>Criteria Language</InputLabel>
-              <Input
-                id={"criteriaLanguageInput-" + get(subPopulation, 'id')}
-                name={"criteriaLanguageInput-" + get(subPopulation, 'id')}
-                className={classes.compactInput}       
-                value={get(subPopulation, 'criteria.language')}
-                fullWidth              
-              />       
-            </FormControl>   
-            </Grid>)
-
-          renderElements.push(<Grid item xs={6}>
-            <FormControl style={{width: '100%', marginTop: '10px'}}>
-              <InputLabel className={classes.label}>Criteria Description</InputLabel>
-              <Input
-                id={"criteriaDescriptionInput-" + get(subPopulation, 'id')}
-                name={"criteriaDescriptionInput-" + get(subPopulation, 'id')}
-                className={classes.compactInput}       
-                value={get(subPopulation, 'criteria.description')}
-                fullWidth              
-              />       
-            </FormControl>   
-            </Grid>)
-
-          renderElements.push(<Grid item xs={12} style={{paddingLeft: '40px', marginTop: '0px'}} >
-            <FormControl style={{width: '100%', marginTop: '10px'}}>
-              <InputLabel className={classes.label}>Criteria Expression</InputLabel>
-              <Input
-                id={"criteriaExpressionInput-" + get(subPopulation, 'id')}
-                name={"criteriaExpressionInput-" + get(subPopulation, 'id')}
-                className={classes.compactInput}       
-                value={get(subPopulation, 'criteria.expression')}
-                fullWidth              
-              />       
-            </FormControl>   
-            </Grid>)
-
-          renderElements.push(<Grid item xs={12} style={{paddingLeft: '40px', marginTop: '0px'}}>
-            <FormControl style={{width: '100%', marginTop: '10px'}}>
-              <InputLabel className={classes.label}>Criteria URL</InputLabel>
-              <Input
-                id={"criteriaUrl-" + get(subPopulation, 'id')}
-                name={"criteriaUrl-" + get(subPopulation, 'id')}
-                className={classes.compactInput}       
-                value={get(subPopulation, 'criteria.reference')}
-                fullWidth              
-              />       
-            </FormControl>   
-            </Grid>)
-
 
         })
       }
@@ -231,198 +130,89 @@ function ValueSetDetail(props){
     lastReviewDate = moment(get(valueSet, 'lastReviewDate')).format("YYYY-MM-DD")
   }
 
-
   return(
     <div className='ValueSetDetails'>
 
         <Grid container spacing={3}>
           <Grid item xs={6}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Title</InputAdornment>
-              <Input
-                id="titleInput"
-                name="titleInput"
-                className={classes.input}
-                placeholder="Lorem ipsum."              
-                value={get(valueSet, 'title')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />       
-            </FormControl>   
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Publisher</InputAdornment>
-              <Input
-                id="publisherInput"
-                name="publisherInput"
-                className={classes.input}
-                value={get(valueSet, 'publisher')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />       
-            </FormControl>      
+            <TextField
+              id="titleInput"
+              name="titleInput"
+              type='text'
+              label='Title'
+              value={get(valueSet, 'title')}
+              fullWidth  
+              InputLabelProps={{
+                shrink: true,
+              }}
+              style={{marginBottom: '20px'}}        
+            />
+            <TextField
+              id="publisherInput"
+              name="publisherInput"
+              type='text'
+              label='Publisher'
+              value={get(valueSet, 'publisher')}
+              fullWidth   
+              InputLabelProps={{
+                shrink: true,
+              }}
+              style={{marginBottom: '20px'}}             
+            />  
           </Grid>
           <Grid item xs={3}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Version</InputAdornment>
-              <Input
-                id="versionInput"
-                name="versionInput"
-                className={classes.input}
-                placeholder="2020.2"              
-                value={get(valueSet, 'version')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />          
-            </FormControl>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Identifier</InputAdornment>
-              <Input
+            <TextField
+              id="versionInput"
+              name="versionInput"
+              type='text'
+              label='Version'
+              value={get(valueSet, 'version')}
+              fullWidth   
+              InputLabelProps={{
+                shrink: true,
+              }}
+              style={{marginBottom: '20px'}}             
+            /> 
+            <TextField
                 id="identifierInput"
                 name="identifierInput"
-                className={classes.input}
-                placeholder="XYZ.1"              
-                value={get(valueSet, 'identifier[0].value')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />
-            </FormControl>     
+              type='text'
+              label='Identifier'
+              value={get(valueSet, 'identifier[0].value')}
+              fullWidth   
+              InputLabelProps={{
+                shrink: true,
+              }}
+              style={{marginBottom: '20px'}}             
+            /> 
           </Grid>
           <Grid item xs={3}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Status</InputAdornment>
-              <Input
-                id="statusInput"
-                name="statusInput"
-                className={classes.input}
-                placeholder="active"              
-                value={get(valueSet, 'status')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />    
-            </FormControl>
+            <TextField
+              id="statusInput"
+              name="statusInput"
+              type='text'
+              label='Status'
+              value={get(valueSet, 'status')}
+              fullWidth   
+              InputLabelProps={{
+                shrink: true,
+              }}
+              style={{marginBottom: '20px'}}             
+            /> 
           </Grid>
-
-          <Grid item xs={12}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Description</InputAdornment>
-              <Input
-                id="descriptionInput"
-                name="descriptionInput"
-                className={classes.input}
-                placeholder="Lorem ipsum."              
-                value={get(valueSet, 'description')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth           
-                multiline   
-              />
-            </FormControl>                             
+          <Grid item xs={12}>            
+            <TextField
+              id="descriptionInput"
+              name="descriptionInput"
+              type='text'
+              label='Description'
+              value={get(valueSet, 'description')}
+              fullWidth   
+              InputLabelProps={{
+                shrink: true,
+              }}                     
+            />                          
           </Grid>
-
-
-          {/* <Grid item xs={6} style={{paddingLeft: '40px'}}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Editor</InputAdornment>
-              <Input
-                id="editorInput"
-                name="editorInput"
-                className={classes.input}            
-                value={get(valueSet, 'editor[0].name')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />
-            </FormControl>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Reviewer</InputAdornment>
-              <Input
-                id="reviewerInput"
-                name="reviewerInput"
-                className={classes.input}
-                value={get(valueSet, 'reviewer[0].name')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />
-            </FormControl>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Endorser</InputAdornment>
-              <Input
-                id="endorserInput"
-                name="endorserInput"
-                className={classes.input}         
-                value={get(valueSet, 'endorser[0].name')}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />
-            </FormControl>     
-          </Grid>
-          <Grid item xs={3}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Last Edited</InputAdornment>
-              <Input
-                id="editedDateInput"
-                name="editedDateInput"
-                className={classes.input}
-                placeholder="YYYY-MM-DD"              
-                value={lastEditedDate}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />
-            </FormControl>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Last Reviewed</InputAdornment>
-              <Input
-                id="reviewedDateInput"
-                name="reviewedDateInput"
-                className={classes.input}
-                placeholder="YYYY-MM-DD"              
-                value={lastReviewDate}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />
-            </FormControl>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Approved On</InputAdornment>
-              <Input
-                id="approvedDateInput"
-                name="approvedDateInput"
-                className={classes.input}
-                placeholder="YYYY-MM-DD"                   
-                value={approvedOnDate}
-                //onChange={handleFhirEndpointChange}
-                fullWidth              
-              />
-            </FormControl>     
-                   
-          </Grid>
-          <Grid item xs={3}></Grid>
-
-          <Grid item xs={3}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Scoring</InputAdornment>
-              <Input
-                id="scoringInput"
-                name="scoringInput"
-                className={classes.input}              
-                value={get(valueSet, 'scoring.text')}
-                fullWidth              
-              />       
-            </FormControl>        
-          </Grid>
-          <Grid item xs={3}>
-            <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Type</InputAdornment>
-              <Input
-                id="typeInput"
-                name="typeInput"
-                className={classes.input}
-                value={get(valueSet, 'type[0].text')}
-                fullWidth              
-              />          
-            </FormControl>   
-          </Grid>
-          <Grid item xs={6}>
-
-          </Grid> */}
-
 
           { renderElements }
           
@@ -443,5 +233,5 @@ ValueSetDetail.propTypes = {
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
-ReactMixin(ValueSetDetail.prototype, ReactMeteorData);
+
 export default ValueSetDetail;
