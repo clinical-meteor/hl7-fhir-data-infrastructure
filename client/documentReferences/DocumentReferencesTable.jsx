@@ -73,7 +73,7 @@ function DocumentReferencesTable(props){
     id,
 
     data,
-    devices,
+    documentReferences,
     query,
     paginationLimit,
     disablePagination,
@@ -409,11 +409,11 @@ function DocumentReferencesTable(props){
     internalDateFormat = props.dateFormat;
   }
 
-  if(props.devices){
-    if(props.devices.length > 0){     
+  if(props.documentReferences){
+    if(props.documentReferences.length > 0){     
       let count = 0;    
 
-      props.devices.forEach(function(device){
+      props.documentReferences.forEach(function(device){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
           devicesToRender.push(flattenDocumentReference(device, internalDateFormat));
         }
@@ -426,7 +426,7 @@ function DocumentReferencesTable(props){
     cursor: 'pointer'
   }
   if(devicesToRender.length === 0){
-    logger.trace('ConditionsTable: No devices to render.');
+    logger.trace('ConditionsTable: No documentReferences to render.');
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < devicesToRender.length; i++) {
@@ -492,7 +492,7 @@ DocumentReferencesTable.propTypes = {
   id: PropTypes.string,
 
   data: PropTypes.array,
-  devices: PropTypes.array,
+  documentReferences: PropTypes.array,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,

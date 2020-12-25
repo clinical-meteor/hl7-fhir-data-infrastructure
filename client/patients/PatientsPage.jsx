@@ -148,7 +148,8 @@ export function PatientsPage(props){
     console.log('onTableRowClick', patientId);
 
     Session.set('selectedPatientId', patientId);
-    Session.set('selectedPatient', Patients.findOne(patientId));
+    Session.set('selectedPatient', Patients.findOne({id: patientId}));
+    Session.set('currentUser', Patients.findOne({id: patientId}));
   }
 
   // Patients.find().forEach(function(patient){
@@ -191,7 +192,7 @@ export function PatientsPage(props){
               noDataMessagePadding={100}
               patients={ data.patients }
               count={data.patients.length}
-              onRowClick={ this.onTableRowClick }
+              onRowClick={ onTableRowClick.bind(this) }
               // cursors={data.dataCursors}
               formFactorLayout={formFactor}    
               rowsPerPage={LayoutHelpers.calcTableRows()}      
