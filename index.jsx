@@ -453,7 +453,7 @@ let SidebarElements = [{
   'primaryText': 'Tasks',
   'to': '/tasks',
   'href': '/tasks',
-  'iconName': 'notepad'
+  'iconName': 'ic_format_list_bulleted'
 }, {
   'primaryText': 'Value Sets',
   'to': '/valuesets',

@@ -1,12 +1,6 @@
 import { 
-  Container,
-  Divider,
-  Card,
   CardHeader,
   CardContent,
-  Button,
-  Typography,
-  Box,
   Grid
 } from '@material-ui/core';
 import styled from 'styled-components';
@@ -14,7 +8,7 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import MeasureDetail from './MeasureDetail';
 import MeasuresTable from './MeasuresTable';

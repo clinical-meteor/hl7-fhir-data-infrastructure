@@ -1,7 +1,7 @@
 import { 
   Grid, 
+  Button, 
   Container,
-  Button,
   Typography,
   DatePicker,
   FormControl,
@@ -60,6 +60,7 @@ function TaskDetail(props){
     task,
     ...otherProps 
   } = props;
+
 
 
 
@@ -153,7 +154,7 @@ function TaskDetail(props){
             </FormControl>
                              
           </Grid>
-          
+
           
         </Grid>
     </div>

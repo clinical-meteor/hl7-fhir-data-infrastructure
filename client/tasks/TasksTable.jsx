@@ -91,6 +91,7 @@ flattenTask = function(task, internalDateFormat){
 
   result.description = get(task, 'description', '');
   result.status = get(task, 'status', '');
+  result.businessStatus = get(task, 'businessStatus.coding[0].display', '');
   result.intent = get(task, 'intent', '');
   result.focus = get(task, 'focus.display', '');
   result.for = get(task, 'for.display', '');
@@ -125,6 +126,7 @@ function TasksTable(props){
     hideActionIcons,
     hideVersion,
     hideStatus,
+    hideBusinessStatus,
     hidePublisher,
     hideTitle,
     hideDescription,
@@ -159,6 +161,8 @@ function TasksTable(props){
 
     formFactorLayout,
     checklist,
+    count,
+    tableRowSize,
 
     ...otherProps 
   } = props;
@@ -169,19 +173,79 @@ function TasksTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        
+        hideCheckbox = true;
+        hideActionIcons = false;
+        hideAuthoredOn = false;
+        hideLastModified = false;
+        hideDescription = true;
+        hideFocus = false;
+        hideFor = false;
+        hideIntent = true;
+        hideRequestor = false;
+        hideStatus = false;
+        hideBusinessStatus = false;
+        hideCode = false;
+        hideBarcode = false;
         break;
       case "tablet":
-      
+        hideCheckbox = true;
+        hideActionIcons = false;
+        hideAuthoredOn = false;
+        hideLastModified = false;
+        hideDescription = true;
+        hideFocus = false;
+        hideFor = false;
+        hideIntent = true;
+        hideRequestor = false;
+        hideStatus = false;
+        hideBusinessStatus = false;
+        hideCode = false;
+        hideBarcode = false;
         break;
       case "web":
-    
+        hideCheckbox = true;
+        hideActionIcons = false;
+        hideAuthoredOn = false;
+        hideLastModified = false;
+        hideDescription = true;
+        hideFocus = false;
+        hideFor = false;
+        hideIntent = true;
+        hideRequestor = false;
+        hideStatus = false;
+        hideBusinessStatus = false;
+        hideCode = false;
+        hideBarcode = false;
         break;
       case "desktop":
-  
+        hideCheckbox = false;
+        hideActionIcons = false;
+        hideAuthoredOn = false;
+        hideLastModified = false;
+        hideDescription = true;
+        hideFocus = false;
+        hideFor = false;
+        hideIntent = false;
+        hideRequestor = false;
+        hideStatus = false;
+        hideBusinessStatus = false;
+        hideCode = false;
+        hideBarcode = false;
         break;
       case "videowall":
-
+        hideCheckbox = false;
+        hideActionIcons = false;
+        hideAuthoredOn = false;
+        hideLastModified = false;
+        hideDescription = true;
+        hideFocus = false;
+        hideFor = false;
+        hideIntent = false;
+        hideRequestor = false;
+        hideStatus = false;
+        hideBusinessStatus = false;
+        hideCode = false;
+        hideBarcode = false;
         break;            
     }
   }
@@ -192,31 +256,31 @@ function TasksTable(props){
 
   function handleRowClick(id){
     console.log('Clicking row ' + id)
-    if(props.onRowClick){
-      props.onRowClick(id);
+    if(onRowClick){
+      onRowClick(id);
     }
   }
 
   function removeRecord(_id){
     console.log('Remove task ', _id)
-    if(props.onRemoveRecord){
-      props.onRemoveRecord(_id);
+    if(onRemoveRecord){
+      onRemoveRecord(_id);
     }
   }
   function handleActionButtonClick(id){
-    if(typeof props.onActionButtonClick === "function"){
-      props.onActionButtonClick(id);
+    if(typeof onActionButtonClick === "function"){
+      onActionButtonClick(id);
     }
   }
   function cellClick(id){
-    if(typeof props.onCellClick === "function"){
-      props.onCellClick(id);
+    if(typeof onCellClick === "function"){
+      onCellClick(id);
     }
   }
   function handleMetaClick(patient){
     let self = this;
-    if(props.onMetaClick){
-      props.onMetaClick(self, patient);
+    if(onMetaClick){
+      onMetaClick(self, patient);
     }
   }
 
@@ -224,14 +288,14 @@ function TasksTable(props){
   // Column Rendering
 
   function renderCheckboxHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderCheckbox(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             <Checkbox
@@ -242,14 +306,14 @@ function TasksTable(props){
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
   function renderActionIcons(task ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -267,28 +331,42 @@ function TasksTable(props){
   } 
 
   function renderStatus(status){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status'>{ status }</TableCell>
       );
     }
   }
+  function renderBusinessStatusHeader(){
+    if (!hideBusinessStatus) {
+      return (
+        <TableCell className='businessStatus'>Business Status</TableCell>
+      );
+    }
+  }
+  function renderBusinessStatus(businessStatus){
+    if (!hideBusinessStatus) {
+      return (
+        <TableCell className='businessStatus'>{ businessStatus }</TableCell>
+      );
+    }
+  }
   function renderStatusHeader(){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status'>Status</TableCell>
       );
     }
   }
   function renderDescription(description){
-    if (!props.hideDescription) {
+    if (!hideDescription) {
       return (
         <TableCell className='description'>{ description }</TableCell>
       );
     }
   }
   function renderDescriptionHeader(){
-    if (!props.hideDescription) {
+    if (!hideDescription) {
       return (
         <TableCell className='description'>Description</TableCell>
       );
@@ -296,28 +374,28 @@ function TasksTable(props){
   }
 
   function renderAuthoredOn(approvalDate){
-    if (!props.hideAuthoredOn) {
+    if (!hideAuthoredOn) {
       return (
         <TableCell className='approvalDate'>{ approvalDate }</TableCell>
       );
     }
   }
   function renderAuthoredOnHeader(){
-    if (!props.hideAuthoredOn) {
+    if (!hideAuthoredOn) {
       return (
         <TableCell className='approvalDate' style={{minWidth: '140px'}}>Authored Date</TableCell>
       );
     }
   }
   function renderLastModified(lastModified){
-    if (!props.hideLastModified) {
+    if (!hideLastModified) {
       return (
         <TableCell className='lastModified'>{ lastModified }</TableCell>
       );
     }
   }
   function renderLastModifiedHeader(){
-    if (!props.hideLastModified) {
+    if (!hideLastModified) {
       return (
         <TableCell className='lastModified' style={{minWidth: '140px'}}>Last Modified</TableCell>
       );
@@ -325,42 +403,42 @@ function TasksTable(props){
   }
 
   function renderFocus(focus){
-    if (!props.hideFocus) {
+    if (!hideFocus) {
       return (
         <TableCell className='focus'>{ focus }</TableCell>
       );
     }
   }
   function renderFocusHeader(){
-    if (!props.hideFocus) {
+    if (!hideFocus) {
       return (
         <TableCell className='focus'>Focus</TableCell>
       );
     }
   }
   function renderFor(text){
-    if (!props.hideFor) {
+    if (!hideFor) {
       return (
         <TableCell className='for'>{ text }</TableCell>
       );
     }
   }
   function renderForHeader(){
-    if (!props.hideFor) {
+    if (!hideFor) {
       return (
         <TableCell className='for'>For</TableCell>
       );
     }
   }
   function renderRequestor(requester){
-    if (!props.hideRequestor) {
+    if (!hideRequestor) {
       return (
         <TableCell className='requester'>{ requester }</TableCell>
       );
     }
   }
   function renderRequestorHeader(){
-    if (!props.hideRequestor) {
+    if (!hideRequestor) {
       return (
         <TableCell className='requester'>Requestor</TableCell>
       );
@@ -368,28 +446,28 @@ function TasksTable(props){
   }
 
   function renderIntent(intent){
-    if (!props.hideIntent) {
+    if (!hideIntent) {
       return (
         <TableCell className='intent'>{ intent }</TableCell>
       );
     }
   }
   function renderIntentHeader(){
-    if (!props.hideIntent) {
+    if (!hideIntent) {
       return (
         <TableCell className='intent'>Intent</TableCell>
       );
     }
   }
   function renderCode(code){
-    if (!props.hideCode) {
+    if (!hideCode) {
       return (
         <TableCell className='code'>{ code }</TableCell>
       );
     }
   }
   function renderCodeHeader(){
-    if (!props.hideCode) {
+    if (!hideCode) {
       return (
         <TableCell className='code'>Code</TableCell>
       );
@@ -398,14 +476,14 @@ function TasksTable(props){
 
 
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helveticas">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
@@ -421,8 +499,8 @@ function TasksTable(props){
 
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
   }
@@ -432,7 +510,7 @@ function TasksTable(props){
   };
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       rowsPerPageOptions={[5, 10, 25, 100]}
@@ -455,25 +533,30 @@ function TasksTable(props){
   let tasksToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.internalDateFormat){
-    internalDateFormat = props.dateFormat;
+  if(dateFormat){
+    internalDateFormat = dateFormat;
   }
 
 
-  if(props.tasks){
-    if(props.tasks.length > 0){              
-      props.tasks.forEach(function(task){
+  if(tasks){
+    if(tasks.length > 0){              
+      tasks.forEach(function(task){
         tasksToRender.push(flattenTask(task, internalDateFormat));
       });  
     }
   }
 
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '52px'
+  }
+
   if(tasksToRender.length === 0){
     console.log('No tasks to render');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < tasksToRender.length; i++) {
 
@@ -481,6 +564,13 @@ function TasksTable(props){
       if(tasksToRender[i].id === selectedTaskId){
         selected = true;
       }
+      if(get(tasksToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+
       tableRows.push(
         <TableRow 
           className="taskRow" 
@@ -493,6 +583,7 @@ function TasksTable(props){
           { renderCheckbox() }
           { renderActionIcons(tasksToRender[i]) }
           { renderStatus(tasksToRender[i].status) }
+          { renderBusinessStatus(tasksToRender[i].businessStatus) }
           { renderDescription(tasksToRender[i].description) }          
           { renderAuthoredOn(tasksToRender[i].authoredOn) }
           { renderLastModified(tasksToRender[i].lastModified) }
@@ -516,6 +607,7 @@ function TasksTable(props){
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
             { renderStatusHeader() }
+            { renderBusinessStatusHeader() }
             { renderDescriptionHeader() }
             { renderAuthoredOnHeader() }
             { renderLastModifiedHeader() }
@@ -555,6 +647,7 @@ TasksTable.propTypes = {
   hideIntent: PropTypes.bool,
   hideRequestor: PropTypes.bool,
   hideStatus: PropTypes.bool,
+  hideBusinessStatus: PropTypes.bool,
   hideCode: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
@@ -564,6 +657,7 @@ TasksTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
+  tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
   checklist: PropTypes.bool
@@ -573,17 +667,19 @@ TasksTable.defaultProps = {
   hideActionIcons: true,
   hideAuthoredOn: false,
   hideLastModified: false,
-  hideDescription: false,
+  hideDescription: true,
   hideFocus: false,
   hideFor: false,
   hideIntent: false,
   hideRequestor: false,
   hideStatus: false,
+  hideBusinessStatus: false,
   hideCode: false,
   hideBarcode: true,
   checklist: true,
   selectedTaskId: '',
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  tableRowSize: 'medium'
 }
 
 export default TasksTable; 

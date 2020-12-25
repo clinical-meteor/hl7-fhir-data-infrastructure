@@ -277,10 +277,12 @@ export function TasksPage(props){
   }
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let layoutContents;
   if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} >
+    layoutContents = <StyledCard height="auto" margin={20} scrollable >
       <CardHeader title={data.tasks.length + " Task History Records"} />
       <CardContent>
 
@@ -308,6 +310,8 @@ export function TasksPage(props){
           showMinutes={true}
           paginationLimit={10}     
           checklist={data.taskChecklistMode}
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          count={data.tasks.length}
           />
         </CardContent>
       </StyledCard>
@@ -324,7 +328,8 @@ export function TasksPage(props){
               hideCheckbox={false}
               hideActionIcons={true}
               hideBarcode={true}
-              onRowClick={this.handleRowClick.bind(this) }
+              onRowClick={ handleRowClick.bind(this) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               count={data.tasks.length}
               />
           </CardContent>
@@ -345,10 +350,10 @@ export function TasksPage(props){
                 taskId={ data.selectedTaskId } 
                 showTaskInputs={true}
                 showHints={false}
-                // onInsert={ this.onInsert }
-                // onDelete={ this.onDeleteTask }
-                // onUpsert={ this.onUpsertTask }
-                // onCancel={ this.onCancelUpsertTask } 
+                // onInsert={  onInsert }
+                // onDelete={  onDeleteTask }
+                // onUpsert={  onUpsertTask }
+                // onCancel={  onCancelUpsertTask } 
               />
             </CardContent>
           </CardContent>

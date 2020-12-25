@@ -25,7 +25,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 Session.setDefault('valueSetPageTabIndex', 0);
 Session.setDefault('valueSetSearchFilter', '');
 Session.setDefault('selectedValueSetId', '');
-Session.setDefault('selectedValueSet', '');
+Session.setDefault('selectedValueSet', null);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('valueSetsArray', []);
 Session.setDefault('ValueSetsPage.onePageLayout', true)

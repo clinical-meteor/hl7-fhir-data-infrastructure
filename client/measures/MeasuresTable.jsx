@@ -624,17 +624,17 @@ function MeasuresTable(props){
   let measuresToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.internalDateFormat){
-    internalDateFormat = props.dateFormat;
+  if(dateFormat){
+    internalDateFormat = dateFormat;
   }
 
 
-  if(props.measures){
-    if(props.measures.length > 0){              
-      props.measures.forEach(function(measure){
+  if(measures){
+    if(measures.length > 0){              
+      measures.forEach(function(measure){
         measuresToRender.push(flattenMeasure(measure, internalDateFormat));
       });  
     }
@@ -647,7 +647,7 @@ function MeasuresTable(props){
   }
   if(measuresToRender.length === 0){
     console.log('No measures to render');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < measuresToRender.length; i++) {
 
