@@ -1,6 +1,5 @@
-import React  from 'react';
-import ReactMixin  from 'react-mixin';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import React, { useState }  from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { 
@@ -35,7 +34,9 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('selectedDocumentReferenceId', false);
-
+Session.setDefault('DocumentReferencesPage.onePageLayout', true)
+Session.setDefault('selectedDocumentReferenceId', '');
+Session.setDefault('selectedDocumentReference', false);
 
 //=============================================================================================================================================
 // GLOBAL THEMING
@@ -121,41 +122,95 @@ export function DocumentReferencesPage(props){
   let data = {
     selectedDocumentReferenceId: '',
     selectedDocumentReference: false,
-    documentReferences: []
+    documentReferences: [],
+    onePageLayout: false
   };
 
-
+  data.onePageLayout = useTracker(function(){
+    return Session.get('DocumentReferencesPage.onePageLayout');
+  }, [])
   data.selectedDocumentReferenceId = useTracker(function(){
     return Session.get('selectedDocumentReferenceId');
   }, [])
   data.selectedDocumentReference = useTracker(function(){
-    return DocumentReferences.findOne(Session.get('selectedDocumentReferenceId'));
+    return DocumentReferences.findOne({id: Session.get('selectedDocumentReferenceId')});
   }, [])
   data.documentReferences = useTracker(function(){
     return DocumentReferences.find().fetch()
   }, [])
 
 
+  function handleRowClick(){
+
+  }
+
+
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
   
-  let cardWidth = window.innerWidth - paddingWidth;
+  let layoutContents;
+  if(data.onePageLayout){
+    layoutContents = <StyledCard height="auto" margin={20} >
+      <CardHeader title={data.documentReferences.length + " Documents"} />
+      <CardContent>
+
+        <DocumentReferencesTable 
+          documentReferences={ data.documentReferences }
+          hideCheckbox={true} 
+          hideActionIcons={true}
+          hideIdentifier={true}           
+          hideBarcode={false}
+          paginationLimit={10}     
+          onRowClick={ handleRowClick.bind(this) }
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          count={data.documentReferences.length}
+          formFactorLayout={formFactor}
+          />
+        </CardContent>
+      </StyledCard>
+  } else {
+    layoutContents = <Grid container spacing={3}>
+      <Grid item lg={6}>
+        <StyledCard height="auto" margin={20} >
+          <CardHeader title={data.documentReferences.length + " Documents"} />
+          <CardContent>
+            <DocumentReferencesTable 
+              documentReferences={ data.documentReferences }
+              hideCheckbox={true} 
+              hideActionIcons={true}
+              hideIdentifier={true}           
+              hideBarcode={false}
+              paginationLimit={10}     
+              onRowClick={ handleRowClick.bind(this) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              count={data.documentReferences.length}
+              formFactorLayout={formFactor}
+            />
+          </CardContent>
+        </StyledCard>
+      </Grid>
+      <Grid item lg={4}>
+        <StyledCard height="auto" margin={20} scrollable>
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureId }</h1>
+          {/* <CardHeader title={data.selectedMeasureId } className="helveticas barcode" /> */}
+          <CardContent>
+            <CardContent>
+              <pre>
+                { JSON.stringify(data.selectedTask, null, 2) }
+              </pre>
+            </CardContent>
+          </CardContent>
+        </StyledCard>
+      </Grid>
+    </Grid>
+  }
+
   
   return (
     <PageCanvas id="documentReferencesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.documentReferences.length + ' Document References'} />
-          <CardContent>
-            <DocumentReferencesTable 
-              documentReferences={data.documentReferences}
-              count={data.documentReferences.length}
-              formFactorLayout={formFactor}
-              rowsPerPage={LayoutHelpers.calcTableRows()}
-            />
-          </CardContent>
-      </StyledCard>
+        { layoutContents }
       </MuiThemeProvider>
     </PageCanvas>
   );

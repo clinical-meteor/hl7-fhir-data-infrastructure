@@ -112,6 +112,9 @@ function ValueSetsTable(props){
   
     rowsPerPage,
     formFactorLayout,
+    count,
+    showMinutes,
+    dateFormat,
 
     ...otherProps 
   } = props;
@@ -331,7 +334,7 @@ function ValueSetsTable(props){
   if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(internalDateFormat){
+  if(dateFormat){
     internalDateFormat = dateFormat;
   }
 
@@ -404,6 +407,7 @@ ValueSetsTable.propTypes = {
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   showMinutes: PropTypes.bool,
+  dateFormat: PropTypes.string,
 
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
@@ -416,13 +420,15 @@ ValueSetsTable.propTypes = {
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
 
-  formFactorLayout: PropTypes.string
+  tableRowSize: PropTypes.string,
+  formFactorLayout: PropTypes.string,
+  count: PropTypes.number,
 };
 ValueSetsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
-  selectedValueSetId: false,
+  selectedValueSetId: '',
   rowsPerPage: 5
 }
 
