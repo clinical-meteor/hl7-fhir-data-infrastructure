@@ -26,7 +26,7 @@ import { FhirUtilities } from '../../lib/FhirUtilities';
 //===========================================================================
 // THEMING
 
-import { ThemeProvider, makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
   button: {
     background: theme.background,
@@ -36,10 +36,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.buttonText,
     height: 48,
     padding: '0 30px',
-  }
-}));
-
-let styles = {
+  },
   hideOnPhone: {
     visibility: 'visible',
     hide: 'table'
@@ -53,7 +50,8 @@ let styles = {
   cell: {
     paddingTop: '16px'
   }
-}
+}));
+
 
 
 //===========================================================================
@@ -304,7 +302,7 @@ function CommunicationsTable(props){
           <TableCell className='category' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].category }</TableCell>
           <TableCell className='payload' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].payload }</TableCell>
           <TableCell className='status' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].status }</TableCell>
-          <TableCell className='sent' style={style.cell}>{ communications[i].sent }</TableCell>
+          <TableCell className='sent' style={classes.cell}>{ communications[i].sent }</TableCell>
           <TableCell className='actionButton' onClick={ rowClick.bind('this', communications[i]._id)} >
             <Button color="primary" onClick={ sendCommunication.bind(this, communications[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
           </TableCell>
