@@ -295,15 +295,15 @@ function CommunicationsTable(props){
           { renderCheckbox(communications[i]) }
           { renderActionIcons(communications[i]) }
           { renderIdentifier(communications[i]) }
-          <TableCell className='subject' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].subject }</TableCell>
-          <TableCell className='recipient' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].recipient }</TableCell>
-          <TableCell className='telecom' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].telecom }</TableCell>
-          <TableCell className='received' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].received }</TableCell>
-          <TableCell className='category' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].category }</TableCell>
-          <TableCell className='payload' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].payload }</TableCell>
-          <TableCell className='status' onClick={ rowClick.bind('this', communications[i]._id)} >{communications[i].status }</TableCell>
-          <TableCell className='sent' style={classes.cell}>{ communications[i].sent }</TableCell>
-          <TableCell className='actionButton' onClick={ rowClick.bind('this', communications[i]._id)} >
+          <TableCell className='subject' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].subject }</TableCell>
+          <TableCell className='recipient' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].recipient }</TableCell>
+          <TableCell className='telecom' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].telecom }</TableCell>
+          <TableCell className='received' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].received }</TableCell>
+          <TableCell className='category' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].category }</TableCell>
+          <TableCell className='payload' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].payload }</TableCell>
+          <TableCell className='status' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].status }</TableCell>
+          <TableCell className='sent'>{ communications[i].sent }</TableCell>
+          <TableCell className='actionButton' onClick={ rowClick.bind(this, communications[i]._id)} >
             <Button color="primary" onClick={ sendCommunication.bind(this, communications[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
           </TableCell>
         </TableRow>
