@@ -10,8 +10,6 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import CommunicationsTable from './CommunicationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { useTracker } from 'meteor/react-meteor-data';
-
 import React, { useState }  from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
