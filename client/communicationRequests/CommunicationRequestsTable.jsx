@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
@@ -21,37 +21,39 @@ import { get } from 'lodash';
 import moment from 'moment';
 
 
-//===========================================================================
-// THEMING
+import FhirDehydrator, { flattenCommunicationRequest } from '../../lib/FhirDehydrator';
+import { FhirUtilities } from '../../lib/FhirUtilities';
+import { Theming } from '../../lib/Theming';
 
-import { ThemeProvider, makeStyles } from '@material-ui/styles';
-const useStyles = makeStyles(theme => ({
-  button: {
-    background: theme.background,
-    border: 0,
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: theme.buttonText,
-    height: 48,
-    padding: '0 30px',
-  }
-}));
+// //===========================================================================
+// // THEMING
 
-let styles = {
-  hideOnPhone: {
-    visibility: 'visible',
-    hide: 'table'
-  },
-  cellHideOnPhone: {
-    visibility: 'visible',
-    hide: 'table',
-    paddingTop: '16px',
-    maxWidth: '120px'
-  },
-  cell: {
-    paddingTop: '16px'
-  }
-}
+// import { ThemeProvider, makeStyles } from '@material-ui/styles';
+// const useStyles = makeStyles(theme => ({
+//   button: {
+//     background: theme.background,
+//     border: 0,
+//     borderRadius: 3,
+//     boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+//     color: theme.buttonText,
+//     height: 48,
+//     padding: '0 30px',
+//   },
+//   hideOnPhone: {
+//     visibility: 'visible',
+//     hide: 'table'
+//   },
+//   cellHideOnPhone: {
+//     visibility: 'visible',
+//     hide: 'table',
+//     paddingTop: '16px',
+//     maxWidth: '120px'
+//   },
+//   cell: {
+//     paddingTop: '16px'
+//   }
+// }));
+
 
 //===========================================================================
 // MAIN COMPONENT
@@ -60,8 +62,6 @@ function CommunicationRequestsTable(props){
   logger.info('Rendering the CommunicationRequestsTable');
   logger.verbose('clinical:hl7-fhir-data-infrastructure.client.CommunicationRequestsTable');
   logger.data('CommunicationRequestsTable.props', {data: props}, {source: "CommunicationRequestsTable.jsx"});
-
-  const classes = useStyles();
 
   let { 
     id,
@@ -334,87 +334,170 @@ function CommunicationRequestsTable(props){
     }
   }
 
+    //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
   //--------------------------------------------------
   // Render
 
   let tableRows = [];
-    for (var i = 0; i < communicationRequests.length; i++) {
+  let communicationRequestsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(dateFormat){
+    internalDateFormat = dateFormat;
+  }
+
+  if(communicationRequests){
+    if(communicationRequests.length > 0){     
+      let count = 0;    
+
+      communicationRequests.forEach(function(communicationRequest){
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          communicationRequestsToRender.push(flattenCommunicationRequest(communicationRequest, internalDateFormat));
+        }
+        count++;
+      });  
+    }
+  }
+
+  let rowStyle = {
+    cursor: 'pointer',
+    height: '52px'
+  }
+
+
+
+  if(communicationRequestsToRender.length === 0){
+    logger.trace('ConditionsTable: No conditions to render.');
+  } else {
+    for (var i = 0; i < communicationRequestsToRender.length; i++) {
+
+      let selected = false;
+      if(communicationRequestsToRender[i].id === selectedConditionId){
+        selected = true;
+      }
+      if(get(communicationRequestsToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+      logger.trace('communicationRequestsToRender[i]', communicationRequestsToRender[i])
 
       let sendButton;
       let buttonLabel = "Send";
-
-      if(props.actionButtonLabel){
-        buttonLabel = props.actionButtonLabel;
+  
+      if(actionButtonLabel){
+        buttonLabel = actionButtonLabel;
       }
       
       let statusCell = {
         fontWeight: 400,
         color: 'black'
       }
-
-      if(communicationRequests[i].status === "completed"){
+  
+      if(communicationRequestsToRender[i].status === "completed"){
         statusCell.color = "green";
       }
-      if(communicationRequests[i].status === "in-progress"){
+      if(communicationRequestsToRender[i].status === "in-progress"){
         statusCell.color = "darkgoldenrod";
       }  
-
-      if(communicationRequests[i].sent){
+  
+      if(communicationRequestsToRender[i].sent){
         buttonLabel = "Resend";
       } 
-
+  
       tableRows.push(
         <TableRow key={i} className="communicationRequestRow" style={{cursor: "pointer"}} hover={true}>
-          { renderCheckbox(communicationRequests[i]) }
-          { renderActionIcons(communicationRequests[i]) }
-          { renderAuthoredOn(communicationRequests[i].authoredOn) }
-          { renderStatus(communicationRequests[i].status) }
-          { renderCategory(communicationRequests[i].category) }
-          { renderRequestor(communicationRequests[i].requester) }
+          {/* { renderCheckbox(communicationRequestsToRender[i]) } */}
+          {/* { renderActionIcons(communicationRequestsToRender[i]) } */}
+          { renderAuthoredOn(get(communicationRequestsToRender[i], 'authoredOn', '')) }
+          { renderStatus(get(communicationRequestsToRender[i], 'status', '')) }
+          {/* { renderCategory(communicationRequestsToRender[i].category) } */}
+          { renderRequestor(get(communicationRequestsToRender[i], 'requestor.display', '')) }
           
-          {/* <TableCell className='subject' onClick={ rowClick.bind('this', communicationRequests[i]._id)} style={style.cell}>{communicationRequests[i].subject }</TableCell>
-          <TableCell className='recipient' onClick={ rowClick.bind('this', communicationRequests[i]._id)} style={style.cell}>{communicationRequests[i].recipient }</TableCell>
-          <TableCell className='telecom' onClick={ rowClick.bind('this', communicationRequests[i]._id)} style={style.cell}>{communicationRequests[i].telecom }</TableCell>
-          <TableCell className='received' onClick={ rowClick.bind('this', communicationRequests[i]._id)} style={style.cell}>{communicationRequests[i].received }</TableCell>
-          <TableCell className='payload' onClick={ rowClick.bind('this', communicationRequests[i]._id)} style={style.cell}>{communicationRequests[i].payload }</TableCell>
-          <TableCell className='sent' style={style.cell}>{ communicationRequests[i].sent }</TableCell>
-          <TableCell className='actionButton' onClick={ rowClick.bind('this', communicationRequests[i]._id)} style={style.cell}>
-            <Button primary={false} onClick={ sendCommunicationRequest.bind(this, communicationRequests[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
+          {/* <TableCell className='subject' onClick={ rowClick.bind('this', communicationRequestsToRender[i]._id)} style={style.cell}>{communicationRequestsToRender[i].subject }</TableCell>
+          <TableCell className='recipient' onClick={ rowClick.bind('this', communicationRequestsToRender[i]._id)} style={style.cell}>{communicationRequestsToRender[i].recipient }</TableCell>
+          <TableCell className='telecom' onClick={ rowClick.bind('this', communicationRequestsToRender[i]._id)} style={style.cell}>{communicationRequestsToRender[i].telecom }</TableCell>
+          <TableCell className='received' onClick={ rowClick.bind('this', communicationRequestsToRender[i]._id)} style={style.cell}>{communicationRequestsToRender[i].received }</TableCell>
+          <TableCell className='payload' onClick={ rowClick.bind('this', communicationRequestsToRender[i]._id)} style={style.cell}>{communicationRequestsToRender[i].payload }</TableCell>
+          <TableCell className='sent' style={style.cell}>{ communicationRequestsToRender[i].sent }</TableCell>
+          <TableCell className='actionButton' onClick={ rowClick.bind('this', communicationRequestsToRender[i]._id)} style={style.cell}>
+            <Button primary={false} onClick={ sendCommunicationRequest.bind(this, communicationRequestsToRender[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
           </TableCell> */}
-          { renderIdentifier(communicationRequests[i]) }
-          { renderBarcode(communicationRequests[i].id) }
+          { renderIdentifier(get(communicationRequestsToRender[i], 'identifier[0].value', '')) }
+          { renderBarcode(get(communicationRequestsToRender[i], 'id', '')) }
         </TableRow>
       );
     }
+  }
 
 
-    return(
-      <Table id='communicationRequestsTable' >
-        <TableHead>
-          <TableRow>
-            { renderCheckboxHeader() }
-            { renderActionIconsHeader() }
-            { renderAuthoredOnHeader() }
-            { renderStatusHeader() }
-            { renderCategoryHeader() }
-            { renderRequestorHeader() }
-            {/* <TableCell className='subject'>Subject</TableCell>
-            <TableCell className='recipient'>Recipient</TableCell>
-            <TableCell className='telecom'>Telecom</TableCell>
-            <TableCell className='received' style={{minWidth: '100px'}}>Received</TableCell>
-            <TableCell className='payload' style={style.hideOnPhone}>Payload</TableCell>
-            <TableCell className='sent' style={{minWidth: '100px'}}>Sent</TableCell>
-            <TableCell className='actionButton' style={{minWidth: '100px'}}>Action</TableCell> */}
-            { renderIdentifierHeader() }
-            { renderBarcodeHeader() }
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          { tableRows }
-        </TableBody>
-      </Table>
 
-    );
+  
+
+
+  return(
+    <Table id='communicationRequestsTable' >
+      <TableHead>
+        <TableRow>
+          {/* { renderCheckboxHeader() } */}
+          {/* { renderActionIconsHeader() } */}
+          { renderAuthoredOnHeader() }
+          { renderStatusHeader() }
+          {/* { renderCategoryHeader() } */}
+          { renderRequestorHeader() }
+          {/* <TableCell className='subject'>Subject</TableCell>
+          <TableCell className='recipient'>Recipient</TableCell>
+          <TableCell className='telecom'>Telecom</TableCell>
+          <TableCell className='received' style={{minWidth: '100px'}}>Received</TableCell>
+          <TableCell className='payload' style={style.hideOnPhone}>Payload</TableCell>
+          <TableCell className='sent' style={{minWidth: '100px'}}>Sent</TableCell>
+          <TableCell className='actionButton' style={{minWidth: '100px'}}>Action</TableCell> */}
+          { renderIdentifierHeader() }
+          { renderBarcodeHeader() }
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        { tableRows }
+      </TableBody>
+    </Table>
+
+  );
 }
 
 

@@ -28,7 +28,7 @@ import FhirDehydrator, { flattenCondition } from '../../lib/FhirDehydrator';
 //===========================================================================
 // THEMING
 
-import { ThemeProvider, makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
   button: {
     background: theme.background,
@@ -38,10 +38,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.buttonText,
     height: 48,
     padding: '0 30px',
-  }
-}));
-
-let styles = {
+  },
   hideOnPhone: {
     visibility: 'visible',
     hide: 'table'
@@ -55,7 +52,8 @@ let styles = {
   cell: {
     paddingTop: '16px'
   }
-}
+}));
+
 
 
 

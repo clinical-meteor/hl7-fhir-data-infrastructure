@@ -112,6 +112,9 @@ function ValueSetsTable(props){
   
     rowsPerPage,
     formFactorLayout,
+    count,
+    showMinutes,
+    dateFormat,
 
     ...otherProps 
   } = props;
@@ -181,31 +184,31 @@ function ValueSetsTable(props){
 
   function handleRowClick(id){
     console.log('Clicking row ' + id)
-    if(props.onRowClick){
-      props.onRowClick(id);
+    if(onRowClick){
+      onRowClick(id);
     }
   }
 
   function removeRecord(_id){
     console.log('Remove valueSet ', _id)
-    if(props.onRemoveRecord){
-      props.onRemoveRecord(_id);
+    if(onRemoveRecord){
+      onRemoveRecord(_id);
     }
   }
   function handleActionButtonClick(id){
-    if(typeof props.onActionButtonClick === "function"){
-      props.onActionButtonClick(id);
+    if(typeof onActionButtonClick === "function"){
+      onActionButtonClick(id);
     }
   }
   function cellClick(id){
-    if(typeof props.onCellClick === "function"){
-      props.onCellClick(id);
+    if(typeof onCellClick === "function"){
+      onCellClick(id);
     }
   }
   function handleMetaClick(patient){
     let self = this;
-    if(props.onMetaClick){
-      props.onMetaClick(self, patient);
+    if(onMetaClick){
+      onMetaClick(self, patient);
     }
   }
 
@@ -213,14 +216,14 @@ function ValueSetsTable(props){
   // Column Rendering
 
   function renderToggleHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -231,14 +234,14 @@ function ValueSetsTable(props){
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
   function renderActionIcons(valueSet ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
         marginRight: '4px', 
@@ -256,14 +259,14 @@ function ValueSetsTable(props){
   } 
 
   function renderTitle(title){
-    if (!props.hideTitle) {
+    if (!hideTitle) {
       return (
         <TableCell className='title'>{ title }</TableCell>
       );
     }
   }
   function renderTitleHeader(){
-    if (!props.hideTitle) {
+    if (!hideTitle) {
       return (
         <TableCell className='title'>Title</TableCell>
       );
@@ -271,14 +274,14 @@ function ValueSetsTable(props){
   }
 
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helveticas">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
@@ -294,8 +297,8 @@ function ValueSetsTable(props){
 
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
   }
@@ -305,10 +308,10 @@ function ValueSetsTable(props){
   };
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}
@@ -328,17 +331,17 @@ function ValueSetsTable(props){
   let valueSetsToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.internalDateFormat){
-    internalDateFormat = props.dateFormat;
+  if(dateFormat){
+    internalDateFormat = dateFormat;
   }
 
 
-  if(props.valueSets){
-    if(props.valueSets.length > 0){              
-      props.valueSets.forEach(function(valueSet){
+  if(valueSets){
+    if(valueSets.length > 0){              
+      valueSets.forEach(function(valueSet){
         valueSetsToRender.push(flattenValueSet(valueSet, internalDateFormat));
       });  
     }
@@ -346,7 +349,7 @@ function ValueSetsTable(props){
 
   if(valueSetsToRender.length === 0){
     console.log('No valueSets to render');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < valueSetsToRender.length; i++) {
 
@@ -404,6 +407,7 @@ ValueSetsTable.propTypes = {
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   showMinutes: PropTypes.bool,
+  dateFormat: PropTypes.string,
 
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
@@ -416,13 +420,15 @@ ValueSetsTable.propTypes = {
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
 
-  formFactorLayout: PropTypes.string
+  tableRowSize: PropTypes.string,
+  formFactorLayout: PropTypes.string,
+  count: PropTypes.number,
 };
 ValueSetsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
-  selectedValueSetId: false,
+  selectedValueSetId: '',
   rowsPerPage: 5
 }
 

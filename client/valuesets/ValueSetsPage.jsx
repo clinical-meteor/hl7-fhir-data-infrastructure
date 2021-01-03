@@ -25,10 +25,10 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 Session.setDefault('valueSetPageTabIndex', 0);
 Session.setDefault('valueSetSearchFilter', '');
 Session.setDefault('selectedValueSetId', '');
-Session.setDefault('selectedValueSet', '');
+Session.setDefault('selectedValueSet', null);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('valueSetsArray', []);
-Session.setDefault('ValueSetsPage.onePageLayout', true)
+Session.setDefault('ValueSetsPage.onePageLayout', false)
 
 // Global Theming 
   // This is necessary for the Material UI component render layer
@@ -119,7 +119,7 @@ export function ValueSetsPage(props){
     selectedValueSetId: '',
     selectedValueSet: null,
     valueSets: [],
-    onePageLayout: true,
+    onePageLayout: false,
     valueSetSearchFilter: '',
     appHeight: window.innerHeight
   };
