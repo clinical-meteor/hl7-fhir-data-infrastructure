@@ -152,7 +152,7 @@ function DocumentReferencesTable(props){
         hideCheckbox = true;
         hideActionIcons = true;
         hideMasterIdentifier = true;
-        hideIdentifier = false;
+        hideIdentifier = true;
         hideStatus = false;
         hideDocStatus = true;
         hideTypeCodingDisplay = true;
@@ -175,7 +175,7 @@ function DocumentReferencesTable(props){
         hideCheckbox = true;
         hideActionIcons = true;
         hideMasterIdentifier = false;
-        hideIdentifier = false;
+        hideIdentifier = true;
         hideStatus = false;
         hideDocStatus = false;
         hideTypeCodingDisplay = false;
@@ -198,7 +198,7 @@ function DocumentReferencesTable(props){
         hideCheckbox = true;
         hideActionIcons = true;
         hideMasterIdentifier = false;
-        hideIdentifier = false;
+        hideIdentifier = true;
         hideStatus = false;
         hideDocStatus = false;
         hideTypeCodingDisplay = false;
@@ -218,8 +218,8 @@ function DocumentReferencesTable(props){
         hideBarcode = true;
         break;
       case "hdmi":
-        hideCheckbox = false;
-        hideActionIcons = false;
+        hideCheckbox = true;
+        hideActionIcons = true;
         hideMasterIdentifier = false;
         hideIdentifier = false;
         hideStatus = false;
@@ -633,7 +633,7 @@ function DocumentReferencesTable(props){
   // Table Rows
 
   let tableRows = [];
-  let devicesToRender = [];
+  let documentReferencesToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
   if(props.showMinutes){
@@ -649,7 +649,7 @@ function DocumentReferencesTable(props){
 
       props.documentReferences.forEach(function(device){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          devicesToRender.push(FhirDehydrator.flattenDocumentReference(device, internalDateFormat));
+          documentReferencesToRender.push(FhirDehydrator.flattenDocumentReference(device, internalDateFormat));
         }
         count++;
       });  
@@ -659,39 +659,40 @@ function DocumentReferencesTable(props){
   let rowStyle = {
     cursor: 'pointer'
   }
-  if(devicesToRender.length === 0){
+  if(documentReferencesToRender.length === 0){
     logger.trace('ConditionsTable: No documentReferences to render.');
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
-    for (var i = 0; i < devicesToRender.length; i++) {
-      if(get(devicesToRender[i], 'modifierExtension[0]')){
+    for (var i = 0; i < documentReferencesToRender.length; i++) {
+      if(get(documentReferencesToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
-      logger.trace('devicesToRender[i]', devicesToRender[i])
+      logger.trace('documentReferencesToRender[i]', documentReferencesToRender[i])
       tableRows.push(
-        <TableRow className="deviceRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, devicesToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
+        <TableRow className="deviceRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, documentReferencesToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
           { renderCheckbox() }  
           { renderActionIcons() }
-          { renderMasterIdentifier(get(devicesToRender[i], 'masterIdentifier')) }
-          { renderIdentifier(get(devicesToRender[i], 'identifier')) }
-          { renderStatus(get(devicesToRender[i], 'status')) }
-          { renderDocStatus(get(devicesToRender[i], 'docStatus')) }          
-          { renderTypeDisplay(get(devicesToRender[i], 'typeDisplay')) }
-          { renderTypeCode(get(devicesToRender[i], 'typeCode')) }
-          { renderCategory(get(devicesToRender[i], 'category'))}
-          { renderSubjectReference(get(devicesToRender[i], 'subjectReference')) }
-          { renderSubjectDisplay(get(devicesToRender[i], 'subjectDisplay')) }
-          { renderDate(get(devicesToRender[i], 'date')) }
-          { renderDescription(get(devicesToRender[i], 'description')) }
-          { renderAuthor(get(devicesToRender[i], 'author')) }
-          { renderAuthorReference(get(devicesToRender[i], 'authorReference')) }
-          { renderRelatesToCode(get(devicesToRender[i], 'relatesToCode')) }
-          { renderRelatesToReference(get(devicesToRender[i], 'relatesToReference')) }
-          { renderContentAttachment(get(devicesToRender[i], 'contentAttachment')) }
-          { renderContentFormat(get(devicesToRender[i], 'contentFormat')) }
-          { renderContentCount(get(devicesToRender[i], 'relcontentCountatesToCode')) }
-          { renderBarcode(devicesToRender[i].id)}
-          { renderActionButton(devicesToRender[i]) }
+          { renderMasterIdentifier(get(documentReferencesToRender[i], 'masterIdentifier')) }
+          { renderIdentifier(get(documentReferencesToRender[i], 'identifier')) }
+          { renderStatus(get(documentReferencesToRender[i], 'status')) }
+          { renderDocStatus(get(documentReferencesToRender[i], 'docStatus')) }          
+          { renderTypeDisplay(get(documentReferencesToRender[i], 'typeDisplay')) }
+          { renderTypeCode(get(documentReferencesToRender[i], 'typeCode')) }
+          { renderCategory(get(documentReferencesToRender[i], 'category'))}
+          { renderSubjectReference(get(documentReferencesToRender[i], 'subjectReference')) }
+          { renderSubjectDisplay(get(documentReferencesToRender[i], 'subjectDisplay')) }
+          { renderDate(get(documentReferencesToRender[i], 'date')) }
+          { renderDescription(get(documentReferencesToRender[i], 'description')) }
+          { renderAuthor(get(documentReferencesToRender[i], 'author')) }
+          { renderAuthorReference(get(documentReferencesToRender[i], 'authorReference')) }
+          { renderRelatesToCode(get(documentReferencesToRender[i], 'relatesToCode')) }
+          { renderRelatesToReference(get(documentReferencesToRender[i], 'relatesToReference')) }
+          { renderContentAttachment(get(documentReferencesToRender[i], 'contentAttachment')) }
+          { renderContentCount(get(documentReferencesToRender[i], 'contentCount')) } 
+          {/* { renderContentFormat(get(documentReferencesToRender[i], 'contentFormat')) } */}
+          {/*                     
+          {/* { renderActionButton(documentReferencesToRender[i]) } */}
+          { renderBarcode(get(documentReferencesToRender[i], 'id'))}
         </TableRow>
       );    
     }
@@ -724,10 +725,11 @@ function DocumentReferencesTable(props){
             { renderRelatesToCodeHeader() }
             { renderRelatesToReferenceHeader() }
             { renderContentAttachmentHeader() }
-            { renderContentFormatHeader() }
-            { renderContentCountHeader() }
+            {/* { renderContentFormatHeader() } */}
+            { renderContentCountHeader() } 
+            {/* 
+            {/* { renderActionButtonHeader() } */}
             { renderBarcodeHeader() }
-            { renderActionButtonHeader() }
           </TableRow>
         </TableHead>
         <TableBody>
@@ -790,10 +792,7 @@ DocumentReferencesTable.propTypes = {
 
 DocumentReferencesTable.defaultProps = {
   hideCheckbox: true,
-  hideActionIcons: true,
-  hideMasterIdentifier: false,
-
-  hideCheckbox: false,
+  hideActionIcons: true,  
   hideMasterIdentifier: false,
   hideIdentifier: false,
   hideStatus: false,
