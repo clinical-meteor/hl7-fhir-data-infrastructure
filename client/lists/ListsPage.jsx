@@ -21,7 +21,7 @@ import ReactMixin  from 'react-mixin';
 import ListsTable from './ListsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 

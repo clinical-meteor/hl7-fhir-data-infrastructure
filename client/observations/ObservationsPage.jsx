@@ -11,7 +11,7 @@ import {
   Typography,
   Box
 } from '@material-ui/core';
-import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
+import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';

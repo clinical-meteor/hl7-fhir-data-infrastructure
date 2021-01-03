@@ -20,7 +20,7 @@ import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 // import ConditionDetail from './ConditionDetail';
 import ConditionsTable from './ConditionsTable';

@@ -9,13 +9,13 @@ import {
   Grid
 } from '@material-ui/core';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import CommunicationsTable from './CommunicationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
+import FhirDehydrator from '../../lib/FhirDehydrator';
 
 import { Session } from 'meteor/session';
 import moment from 'moment';

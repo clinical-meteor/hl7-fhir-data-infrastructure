@@ -24,7 +24,7 @@ import ReactMixin  from 'react-mixin';
 import CompositionsTable from './CompositionsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 

@@ -16,7 +16,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 import FhirUtilities from '../../lib/FhirUtilities';
 import { flattenProcedure } from '../../lib/FhirDehydrator';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get } from 'lodash';
 

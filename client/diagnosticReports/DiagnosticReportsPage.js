@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import styled from 'styled-components';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 // import DiagnosticReportDetail from './DiagnosticReportDetail';
 import DiagnosticReportsTable from './DiagnosticReportsTable';

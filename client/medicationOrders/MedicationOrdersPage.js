@@ -27,7 +27,7 @@ import ReactMixin  from 'react-mixin';
 
 import { get, cloneDeep } from 'lodash';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 

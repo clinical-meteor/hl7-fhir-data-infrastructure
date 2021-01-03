@@ -7,7 +7,7 @@ import {
   Dialog,
   Grid
 } from '@material-ui/core';
-import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
+import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 // import AccountCircle from 'material-ui/svg-icons/action/account-circle';
 

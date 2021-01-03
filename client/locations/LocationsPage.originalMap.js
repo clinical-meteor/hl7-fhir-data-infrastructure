@@ -2,7 +2,7 @@ import { CardContent, CardHeader } from '@material-ui/core';
 
 import { Tab, Tabs } from 'material-ui/Tabs';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import Checkbox from 'material-ui/Checkbox';
 import { EJSON } from 'meteor/ejson';

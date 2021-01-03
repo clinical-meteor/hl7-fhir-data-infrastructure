@@ -1,3 +1,5 @@
+import React  from 'react';
+
 import { 
   Card,
   CardHeader,
@@ -7,19 +9,17 @@ import {
   Typography,
   Box
 } from '@material-ui/core';
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-// import CarePlanDetail from './CarePlanDetail';
 import CarePlansTable from './CarePlansTable';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
+import FhirDehydrator from '../../lib/FhirDehydrator';
 
 import { get } from 'lodash';
 

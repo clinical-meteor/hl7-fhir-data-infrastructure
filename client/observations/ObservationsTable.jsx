@@ -23,10 +23,7 @@ let get = _.get;
 let set = _.set;
 let has = _.has;
 
-import FhirUtilities from '../../lib/FhirUtilities';
-
 import { flattenObservation } from '../../lib/FhirDehydrator';
-
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'

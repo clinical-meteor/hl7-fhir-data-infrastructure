@@ -1,5 +1,5 @@
 
-import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
+import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 
 import { Meteor } from 'meteor/meteor';

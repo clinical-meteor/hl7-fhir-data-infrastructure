@@ -16,7 +16,7 @@ import {
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 
 import OrganizationDetail from './OrganizationDetail';

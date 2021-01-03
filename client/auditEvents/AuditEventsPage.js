@@ -1,6 +1,5 @@
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
 
 import { 
@@ -14,7 +13,7 @@ import {
   Box
 } from '@material-ui/core';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 // import AuditEventDetail from './AuditEventDetail';
 import AuditEventsTable from './AuditEventsTable';
@@ -22,10 +21,7 @@ import AuditEventsTable from './AuditEventsTable';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-
 import { get } from 'lodash';
-
-import LayoutHelpers from '../../lib/LayoutHelpers';
 
 
 

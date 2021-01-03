@@ -21,7 +21,7 @@ import ReactMixin  from 'react-mixin';
 import MeasureReportDetail from './MeasureReportDetail';
 import MeasureReportsTable from './MeasureReportsTable';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 

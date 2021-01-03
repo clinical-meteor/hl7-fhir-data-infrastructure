@@ -13,7 +13,7 @@ import {
   Box
 } from '@material-ui/core';
 
-import { PageCanvas, StyledCard } from 'material-fhir-ui';
+import { PageCanvas, StyledCard } from 'fhir-starter';
 
 // import ImmunizationDetail from './ImmunizationDetail';
 import ImmunizationsTable from './ImmunizationsTable';

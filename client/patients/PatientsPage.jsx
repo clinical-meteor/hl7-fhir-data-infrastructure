@@ -12,7 +12,7 @@ import {
 import PropTypes from 'prop-types';
 
 
-import { PatientsTable, PatientDetail, PageCanvas, StyledCard } from 'material-fhir-ui';
+import { PatientsTable, PatientDetail, PageCanvas, StyledCard } from 'fhir-starter';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';

@@ -18,7 +18,7 @@ import {
   TableRow
 } from '@material-ui/core';
 
-import TableNoData from 'material-fhir-ui';
+import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
 import _ from 'lodash';

@@ -7,7 +7,7 @@ import {
   Typography,
   Box
 } from '@material-ui/core';
-import { StyledCard, PageCanvas, DynamicSpacer } from 'material-fhir-ui';
+import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 import React  from 'react';
 import ReactMixin  from 'react-mixin';

@@ -29,7 +29,7 @@ import { get, set } from 'lodash';
 
 import moment from 'moment'
 
-import { FhirUtilities } from '../../lib/FhirUtilities';
+import FhirUtilities from '../../lib/FhirUtilities';
 import FhirDehydrator, { flattenAllergyIntolerance } from '../../lib/FhirDehydrator';
 
 

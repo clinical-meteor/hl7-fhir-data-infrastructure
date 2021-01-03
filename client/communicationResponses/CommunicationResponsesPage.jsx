@@ -13,7 +13,7 @@ import {
   Grid
 } from '@material-ui/core';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 
 import CommunicationResponseDetail from './CommunicationResponseDetail';

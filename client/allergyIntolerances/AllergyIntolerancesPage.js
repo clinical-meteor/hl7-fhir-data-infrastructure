@@ -6,6 +6,8 @@
 //
 // =======================================================================
 
+import React  from 'react';
+
 import { 
   CssBaseline,
   Grid, 
@@ -20,7 +22,7 @@ import {
   Typography,
   Box
 } from '@material-ui/core';
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 // import AllergyIntoleranceDetail from './AllergyIntoleranceDetail';
 import AllergyIntolerancesTable from './AllergyIntolerancesTable';
@@ -29,10 +31,8 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
-
+import { useTracker } from 'meteor/react-meteor-data';
+import FhirDehydrator from '../../lib/FhirDehydrator';
 
 
 //=============================================================================================================================================

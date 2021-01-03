@@ -15,9 +15,9 @@ import {
   Typography,
   Box
 } from '@material-ui/core';
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { FhirDehydrator, StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
-import { useTracker, DynamicSpacer, Bundles } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { useTracker, Bundles } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 
 import moment from 'moment';
@@ -26,13 +26,9 @@ import { get, has } from 'lodash';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-// import { Bundles } from '../lib/Bundles.js';
-
-// import BundleDetail from './BundleDetail';
 import BundlesTable from './BundlesTable';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
 
 
 //=============================================================================================================================================
