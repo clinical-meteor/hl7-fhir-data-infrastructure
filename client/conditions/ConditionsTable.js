@@ -22,8 +22,8 @@ import { get } from 'lodash';
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
-import FhirDehydrator, { flattenCondition } from '../../lib/FhirDehydrator';
 
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 //===========================================================================
 // THEMING
@@ -602,7 +602,7 @@ function ConditionsTable(props){
 
       conditions.forEach(function(condition){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          conditionsToRender.push(flattenCondition(condition, internalDateFormat));
+          conditionsToRender.push(FhirDehydrator.flattenCondition(condition, internalDateFormat));
         }
         count++;
       });  

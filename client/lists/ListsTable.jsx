@@ -10,7 +10,6 @@ import {
   TablePagination
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
 import _ from 'lodash';
@@ -18,7 +17,7 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenList } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
 
 
 //===========================================================================
@@ -51,44 +50,6 @@ let styles = {
   cell: {
     paddingTop: '16px'
   }
-}
-
-//===========================================================================
-// FLATTENING / MAPPING
-
-flattenList = function(list, internalDateFormat){
-  let result = {
-    _id: '',
-    meta: '',
-    identifier: '',
-    title: '',
-    status: '',
-    itemCount: 0
-  };
-
-  if(!internalDateFormat){
-    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-  }
-
-  result._id =  get(list, 'id') ? get(list, 'id') : get(list, '_id');
-  result.id = get(list, 'id', '');
-  result.identifier = get(list, 'identifier[0].value', '');
-
-  if(get(list, 'lastReviewDate')){
-    result.lastReviewDate = moment(get(list, 'lastReviewDate', '')).format(internalDateFormat);
-  }
-
-  result.publisher = get(list, 'publisher', '');
-  result.title = get(list, 'title', '');
-  result.description = get(list, 'description', '');
-  result.status = get(list, 'status', '');
-  result.version = get(list, 'version', '');
-
-  if(Array.isArray(get(list, 'item'))){
-    result.itemCount = list.item.length;
-  }
-
-  return result;
 }
 
 
@@ -332,7 +293,7 @@ function ListsTable(props){
   if(props.lists){
     if(props.lists.length > 0){              
       props.lists.forEach(function(list){
-        listsToRender.push(flattenList(list, internalDateFormat));
+        listsToRender.push(FhirDehydrator.flattenList(list, internalDateFormat));
       });  
     }
   }

@@ -19,7 +19,7 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenOrganization } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 
 
@@ -513,7 +513,7 @@ function OrganizationsTable(props){
 
       organizations.forEach(function(organization){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          organizationsToRender.push(flattenOrganization(organization));
+          organizationsToRender.push(FhirDehydrator.flattenOrganization(organization));
         }
         count++;
       });  

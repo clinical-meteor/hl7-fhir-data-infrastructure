@@ -22,6 +22,7 @@ import moment from 'moment'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 
 //===========================================================================
@@ -60,118 +61,6 @@ let styles = {
   cell: {
     paddingTop: '16px'
   }
-}
-
-
-//===========================================================================
-// FLATTENING / MAPPING
-
-
-flattenMedicationStatement = function(statement, fhirVersion, medicationsCursor){
-  console.log('flattenMedicationStatement', statement)
-
-  var result = {
-    '_id': statement._id,
-    'status': '',
-    'asNeeded': false,
-    'category': '',
-    'medication': '',
-    'medicationReference': '',
-    'medicationDisplay': '',
-    'reasonCodeCode': '',
-    'reasonCodeDisplay': '',
-    'basedOn': '',
-    'effectiveDateTime': '',
-    'dateAsserted': null,
-    'informationSource': '',
-    'subjectDisplay': '',
-    'subjectReference': '',
-    'taken': '',
-    'reasonCodeDisplay': '',
-    'reasonReference': '',
-    'dosage': '',
-    'rxnorm': ''
-  };
-
-  if(get(statement, 'patient')){
-    result.subjectDisplay = get(statement, 'patient.display');
-  } else if(get(statement, 'subject')){
-    result.subjectDisplay = get(statement, 'subject.display');
-  }
-
-  if(get(statement, 'patient')){
-    result.subjectReference = FhirUtilities.pluckReferenceId(get(statement, 'patient.reference'));
-  } else if(get(statement, 'subject')){
-    result.subjectReference = FhirUtilities.pluckReferenceId(get(statement, 'subject.reference'));
-  }
-  
-  // DSTU2
-  if(["v1.0.2", "DSTU2"].includes(fhirVersion)){
-    result.medicationReference = get(statement, 'medicationReference.reference');
-    result.medicationDisplay = get(statement, 'medicationReference.display');
-    result.reasonCode = get(statement, 'reasonForUseCodeableConcept.coding[0].code');
-    result.reasonCodeDisplay = get(statement, 'reasonForUseCodeableConcept.coding[0].display');
-    result.identifier = get(statement, 'identifier[0].value');
-    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD hh:mm A");
-    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD hh:mm A");
-    result.informationSource = get(statement, 'supportingInformation[0].display');
-    result.reasonCodeDisplay = get(statement, 'reasonForUseCodeableConcept.coding[0].display');  
-  }
-
-  // STU3
-  if(["v3.0.1", "STU3"].includes(fhirVersion)){
-    result.medicationReference = get(statement, 'medicationReference.reference');
-    result.medicationDisplay = get(statement, 'medicationReference.display');
-    result.medicationCodeDisplay = get(statement, 'medicationCodeableConcept.coding[0].display');
-    result.medicationCode = get(statement, 'medicationCodeableConcept.coding[0].code');
-    result.identifier = get(statement, 'identifier[0].value');
-    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD hh:mm A");
-    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD hh:mm A");
-    result.informationSource = get(statement, 'informationSource.display');
-    result.taken = get(statement, 'taken');
-    result.reasonCodeDisplay = get(statement, 'reasonCode[0].coding[0].display');  
-  }
-
-  // R4
-  if(["v4.0.1", "R4"].includes(fhirVersion)){
-    result.status = get(statement, 'status');
-    result.asNeeded = get(statement, 'dosage[0].asNeeded');
-    result.medicationReference = FhirUtilities.pluckReferenceId(get(statement, 'medicationReference.reference'));
-
-    if(get(statement, 'medicationReference.display')){
-      result.medicationDisplay = get(statement, 'medicationReference.display');
-    } else if(medicationsCursor && result.medicationReference){
-
-      let medicationId = FhirUtilities.pluckReferenceId(get(statement, 'medicationReference.reference'));
-      let medication = medicationsCursor.findOne({id: medicationId});
-      if(get(medication, 'code.text')){
-        result.medicationDisplay = get(medication, 'code.text');
-        result.rxnorm = get(medication, 'code.coding[0].code');
-      }
-    }
-    result.medicationCodeDisplay = get(statement, 'medicationCodeableConcept.coding[0].display');
-    result.medicationCode = get(statement, 'medicationCodeableConcept.coding[0].code');
-    result.identifier = get(statement, 'identifier[0].value');
-    result.effectiveDateTime = moment(get(statement, 'effectiveDateTime')).format("YYYY-MM-DD hh:mm A");
-    result.dateAsserted = moment(get(statement, 'dateAsserted')).format("YYYY-MM-DD hh:mm A");
-    result.informationSource = get(statement, 'informationSource.display');
-    result.reasonReference = get(statement, 'reasonReference[0].reference');  
-    result.category = get(statement, 'category.text');  
-    if(get(statement, 'reasonCode[0].text')){
-      result.reasonCodeDisplay = get(statement, 'reasonCode[0].text');  
-    } else {
-      result.reasonCodeDisplay = get(statement, 'reasonCode[0].coding[0].display');  
-    }
-
-    if(get(statement, 'dosage[0].asNeededBoolean')){
-      result.dosage = 'As needed.'
-    } else if (get(statement, 'dosage[0]')){      
-      result.dosage = get(statement, 'dosage[0].doseAndRate[0].doseQuantity.value') + ' dose @ ' + get(statement, 'dosage[0].timing.repeat.frequency') + 'x per ' + get(statement, 'dosage[0].timing.repeat.period') + get(statement, 'dosage[0].timing.repeat.periodUnit');      
-    }
-  }
-
-  logger.debug('flattenedMedicationStatement', result)
-  return result;
 }
 
 
@@ -581,7 +470,7 @@ function MedicationStatementsTable(props){
 
       props.medicationStatements.forEach(function(medicationStatement){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          medicationStatementsToRender.push(flattenMedicationStatement(medicationStatement, "R4", medicationsCursor));
+          medicationStatementsToRender.push(FhirDehydrator.flattenMedicationStatement(medicationStatement, "R4", medicationsCursor));
         }
         count++;
       });  

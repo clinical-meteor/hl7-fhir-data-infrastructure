@@ -21,7 +21,8 @@ let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
-import { flattenDocumentReference } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+
 
 
 //===========================================================================
@@ -415,7 +416,7 @@ function DocumentReferencesTable(props){
 
       props.documentReferences.forEach(function(device){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          devicesToRender.push(flattenDocumentReference(device, internalDateFormat));
+          devicesToRender.push(FhirDehydrator.flattenDocumentReference(device, internalDateFormat));
         }
         count++;
       });  

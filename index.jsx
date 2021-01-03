@@ -340,6 +340,11 @@ let SidebarElements = [{
   'href': '/communication-requests',
   'iconName': 'envelopeO'  
 }, {
+  'primaryText': 'Compositions',
+  'to': '/compositions',
+  'href': '/compositions',
+  'iconName': 'notepad'  
+}, {
   'primaryText': 'Devices',
   'to': '/devices',
   'href': '/devices',

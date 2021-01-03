@@ -9,6 +9,8 @@ import { has, get } from 'lodash';
 import { TableNoData } from 'meteor/clinical:glass-ui';
 import PropTypes from 'prop-types';
 
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+
 Session.setDefault('selectedDocumentSource', '');
 
 export class ConsentTable extends React.Component {

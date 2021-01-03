@@ -12,7 +12,6 @@ import {
   TablePagination,
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
 import _ from 'lodash';
@@ -22,6 +21,8 @@ let set = _.set;
 // import { Icon } from 'react-icons-kit'
 // import {tag} from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+
+import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
 
 
 
@@ -54,104 +55,6 @@ let styles = {
   }
 }
 
-
-flattenEncounter = function(encounter, internalDateFormat){
-  let result = {
-    _id: '',
-    id: '',
-    meta: '',
-    subject: '',
-    subjectId: '',
-    status: '',
-    statusHistory: 0,
-    periodStart: '',
-    periodEnd: '',
-    reasonCode: '', 
-    reasonDisplay: '', 
-    typeCode: '',
-    typeDisplay: '',
-    classCode: '',
-    duration: ''
-  };
-
-  if(!internalDateFormat){
-    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-  }
-
-  result._id =  get(encounter, '_id');
-  result.id =  get(encounter, 'id');
-
-  if(get(encounter, 'subject')){
-    if(get(encounter, 'subject.display', '')){
-      result.subject = get(encounter, 'subject.display', '');
-    } else {
-      result.subject = get(encounter, 'subject.reference', '');
-    }
-  }  
-  if(get(encounter, 'patient')){
-    if(get(encounter, 'patient.display', '')){
-      result.subject = get(encounter, 'patient.display', '');
-    } else {
-      result.subject = get(encounter, 'patient.reference', '');
-    }
-  }  
-
-  result.subjectId = get(encounter, 'subject.reference', '');
-
-  result.status = get(encounter, 'status', '');
-
-  if(get(encounter, 'reasonCode[0].coding[0].code')){
-    result.reasonCode = get(encounter, 'reasonCode[0].coding[0].code', '');
-  } else if(get(encounter, 'reason[0].coding[0].code')){
-    result.reasonCode = get(encounter, 'reason[0].coding[0].code', '');
-  }
-
-  if(get(encounter, 'reasonCode[0].coding[0].code')){
-    result.reasonDisplay = get(encounter, 'reasonCode[0].coding[0].display', '');
-  } else if(get(encounter, 'reason[0].coding[0].code')){
-    result.reasonDisplay = get(encounter, 'reason[0].coding[0].display', '');
-  }
-
-  result.typeCode = get(encounter, 'type[0].coding[0].code', '');
-  result.typeDisplay = get(encounter, 'type[0].coding[0].display', '');
-
-  if(get(encounter, 'class.code')){
-    result.classCode = get(encounter, 'class.code', '');
-  } else if(get(encounter, 'class')){
-    result.classCode = get(encounter, 'class', '');
-  }
-
-  let statusHistory = get(encounter, 'statusHistory', []);
-
-  result.statusHistory = statusHistory.length;
-
-  let momentStart = moment(get(encounter, 'period.start', ''))
-  if(get(encounter, 'period.start')){
-    momentStart = moment(get(encounter, 'period.start', ''))
-  } else if(get(encounter, 'performedPeriod.start')){
-    momentStart = moment(get(encounter, 'performedPeriod.start', ''))
-  }
-  if(momentStart){
-    result.periodStart = momentStart.format(internalDateFormat);
-  } 
-
-
-  let momentEnd;
-  if(get(encounter, 'period.end')){
-    momentEnd = moment(get(encounter, 'period.end', ''))
-  } else if(get(encounter, 'performedPeriod.end')){
-    momentEnd = moment(get(encounter, 'performedPeriod.end', ''))
-  }
-  if(momentEnd){
-    result.periodEnd = momentEnd.format(internalDateFormat);
-  } 
-
-  if(momentStart && momentEnd){
-    result.duration = Math.abs(momentStart.diff(momentEnd, 'minutes', true))
-  }
-
-  return result;
-}
 
 
 
@@ -535,7 +438,7 @@ function EncountersTable(props){
       let count = 0;    
       props.encounters.forEach(function(encounter){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          encountersToRender.push(flattenEncounter(encounter, internalDateFormat));
+          encountersToRender.push(FhirDehydrator.flattenEncounter(encounter, internalDateFormat));
         }
         count++;
       });  

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+
 import { 
   CssBaseline,
   Grid, 
@@ -58,102 +60,6 @@ let styles = {
 }
 
 
-flattenComposition = function(composition){
-  let result = {
-    _id: '',
-    meta: '',
-    subject: '',
-    subjectId: '',
-    status: '',
-    statusHistory: 0,
-    periodStart: '',
-    periodEnd: '',
-    reasonCode: '', 
-    reasonDisplay: '', 
-    typeCode: '',
-    typeDisplay: '',
-    classCode: ''
-  };
-
-  result._id =  get(composition, 'id') ? get(composition, 'id') : get(composition, '_id');
-
-
-  if(get(composition, 'subject.display', '')){
-    result.subject = get(composition, 'subject.display', '');
-  } else {
-    result.subject = get(composition, 'subject.reference', '');
-  }
-  result.subjectId = get(composition, 'subject.reference', '');
-
-  result.status = get(composition, 'status', '');
-  result.periodStart = moment(get(composition, 'period.start', '')).format("YYYY-MM-DD hh:mm");
-  result.periodEnd = moment(get(composition, 'period.end', '')).format("YYYY-MM-DD hh:ss");
-  result.reasonCode = get(composition, 'reason[0].coding[0].code', '');
-  result.reasonDisplay = get(composition, 'reason[0].coding[0].display', '');
-  result.typeCode = get(composition, 'type[0].coding[0].code', '');
-  result.typeDisplay = get(composition, 'type[0].coding[0].display', '');
-
-  if(get(composition, 'class.code')){
-    result.classCode = get(composition, 'class.code', '');
-  } else if(get(composition, 'class')){
-    result.classCode = get(composition, 'class', '');
-  }
-
-  let statusHistory = get(composition, 'statusHistory', []);
-
-  result.statusHistory = statusHistory.length;
-
-  return result;
-}
-
-
-// export class CompositionsTable extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       selected: [],
-//       compositions: []
-//     }
-//   }
-//   getMeteorData() {
-
-//     // this should all be handled by props
-//     // or a mixin!
-//     let data = {
-//       style: {
-//         text: Glass.darkroom()
-//       },
-//       selected: [],
-//       compositions: []
-//     };
-
-//     if(props.data){
-//       console.log('props.data', props.data);
-
-//       if(props.data.length > 0){              
-//         props.data.forEach(function(composition){
-//           data.compositions.push(flattenComposition(composition));
-//         });  
-//       }
-//     } else {
-//       let query = {};
-//       if(props.query){
-//         query = props.query
-//       }
-//       if(props.hideEnteredInError){
-//         query['verificationStatus'] = {
-//           $nin: ['entered-in-error']  // unconfirmed | provisional | differential | confirmed | refuted | entered-in-error
-//         }
-//       }
-
-//       data.compositions = Compositions.find(query).map(function(composition){
-//         return flattenComposition(composition);
-//       });
-//     }
-
-//     if(process.env.NODE_ENV === "test") console.log("CompositionsTable[data]", data);
-//     return data;
-//   }
 
 
 
@@ -394,7 +300,7 @@ function CompositionsTable(props){
   if(props.compositions){
     if(props.compositions.length > 0){              
       props.compositions.forEach(function(composition){
-        compositionsToRender.push(flattenComposition(composition));
+        compositionsToRender.push(FhirDehydrator.flattenComposition(composition));
       });  
     }
   }

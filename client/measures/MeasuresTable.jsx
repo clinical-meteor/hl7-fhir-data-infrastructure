@@ -10,16 +10,13 @@ import {
   TablePagination
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
-
 import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenMeasure } from '../../lib/FhirDehydrator';
-
+import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
 
 //===========================================================================
 // THEMING
@@ -635,7 +632,7 @@ function MeasuresTable(props){
   if(measures){
     if(measures.length > 0){              
       measures.forEach(function(measure){
-        measuresToRender.push(flattenMeasure(measure, internalDateFormat));
+        measuresToRender.push(FhirDehydrator.flattenMeasure(measure, internalDateFormat));
       });  
     }
   }

@@ -18,7 +18,7 @@ import { get } from 'lodash';
 import moment from 'moment'
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
-import { flattenQuestionnaireResponse } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 
 //===========================================================================
@@ -479,7 +479,7 @@ function QuestionnaireResponsesTable(props){
   if(questionnaireResponses){
     if(questionnaireResponses.length > 0){              
       questionnaireResponses.forEach(function(questionnaireResponse){
-        responsesToRender.push(flattenQuestionnaireResponse(questionnaireResponse, internalDateFormat));
+        responsesToRender.push(FhirDehydrator.flattenQuestionnaireResponse(questionnaireResponse, internalDateFormat));
       });  
     }
   }

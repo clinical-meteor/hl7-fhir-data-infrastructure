@@ -30,6 +30,7 @@ let set = _.set;
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 
 import { Meteor } from 'meteor/meteor';
@@ -69,66 +70,7 @@ let styles = {
 }
 
 //===========================================================================
-// FLATTENING / MAPPING
 
-flattenMedicationRequest = function(medicationRequest, dateFormat){
-  let result = {
-    _id: medicationRequest._id,
-    status: '',
-    identifier: '',
-    patientDisplay: '',
-    patientReference: '',
-    prescriberDisplay: '',
-    asserterDisplay: '',
-    clinicalStatus: '',
-    snomedCode: '',
-    snomedDisplay: '',
-    evidenceDisplay: '',
-    barcode: '',
-    dateWritten: '',
-    dosageInstructionText: '',
-    medicationCodeableConcept: '',
-    medicationCode: '',
-    medicationReference: '',
-    dosage: ''
-  };
-
-  if(!dateFormat){
-    dateFormat = get(Meteor, "settings.public.defaults.dateFormat", "YYYY-MM-DD");
-  }
-
-  if (get(medicationRequest, 'medicationReference.display')){
-    result.medicationCodeableConcept = get(medicationRequest, 'medicationReference.display');
-  } else if(get(medicationRequest, 'medicationCodeableConcept')){
-    result.medicationCodeableConcept = get(medicationRequest, 'medicationCodeableConcept.text');
-    result.medicationCode = get(medicationRequest, 'medicationCodeableConcept.coding[0].code');
-  } 
-
-  result.medicationReference = get(medicationRequest, 'medicationReference.reference');
-
-  result.status = get(medicationRequest, 'status');
-  result.identifier = get(medicationRequest, 'identifier[0].value');
-
-  if(get(medicationRequest, 'patient')){
-    result.patientDisplay = get(medicationRequest, 'patient.display');
-  } else if(get(medicationRequest, 'subject')){
-    result.patientDisplay = get(medicationRequest, 'subject.display');
-  }
-
-  if(get(medicationRequest, 'patient')){
-    result.patientReference = get(medicationRequest, 'patient.reference');
-  } else if(get(medicationRequest, 'subject')){
-    result.patientReference = get(medicationRequest, 'subject.reference');
-  }
-  
-  result.prescriberDisplay = get(medicationRequest, 'prescriber.display');
-  result.dateWritten = moment(get(medicationRequest, 'dateWritten')).format(dateFormat);
-  
-  result.dosage = get(medicationRequest, 'dosageInstruction[0].text');
-  result.barcode = get(medicationRequest, '_id');
-
-  return result;
-}
 
 // ===============================================================================================
 // FUNCTIONAL COMPONENT
@@ -424,7 +366,7 @@ function MedicationRequestsTable(props){
       let count = 0;    
       props.medicationRequests.forEach(function(medicationRequest){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          medicationRequestsToRender.push(flattenMedicationRequest(medicationRequest, dateFormat));
+          medicationRequestsToRender.push(FhirDehydrator.flattenMedicationRequest(medicationRequest, dateFormat));
         }
         count++;
       });  

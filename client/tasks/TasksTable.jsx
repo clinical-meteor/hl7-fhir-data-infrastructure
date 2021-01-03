@@ -19,7 +19,7 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenTask } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 
 //===========================================================================
@@ -53,54 +53,6 @@ let styles = {
     paddingTop: '16px'
   }
 }
-
-//===========================================================================
-// FLATTENING / MAPPING
-
-flattenTask = function(task, internalDateFormat){
-  let result = {
-    _id: '',
-    meta: '',
-    identifier: '',
-    publisher: '',
-    status: '',
-    title: '',
-    authoredOn: '',
-    lastModified: '',
-    focus: '',
-    for: '',
-    intent: '',
-    code: '',
-    requester: ''
-  };
-
-  if(!internalDateFormat){
-    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-  }
-
-  result._id =  get(task, 'id') ? get(task, 'id') : get(task, '_id');
-  result.id = get(task, 'id', '');
-  result.identifier = get(task, 'identifier[0].value', '');
-
-  if(get(task, 'authoredOn')){
-    result.authoredOn = moment(get(task, 'authoredOn', '')).format(internalDateFormat);
-  }
-  if(get(task, 'lastModified')){
-    result.lastModified = moment(get(task, 'lastModified', '')).format(internalDateFormat);
-  }
-
-  result.description = get(task, 'description', '');
-  result.status = get(task, 'status', '');
-  result.businessStatus = get(task, 'businessStatus.coding[0].display', '');
-  result.intent = get(task, 'intent', '');
-  result.focus = get(task, 'focus.display', '');
-  result.for = get(task, 'for.display', '');
-  result.requester = get(task, 'requester.display', '');
-  result.code = get(task, 'code.text', '');
-
-  return result;
-}
-
 
 
 
@@ -544,7 +496,7 @@ function TasksTable(props){
   if(tasks){
     if(tasks.length > 0){              
       tasks.forEach(function(task){
-        tasksToRender.push(flattenTask(task, internalDateFormat));
+        tasksToRender.push(FhirDehydrator.flattenTask(task, internalDateFormat));
       });  
     }
   }

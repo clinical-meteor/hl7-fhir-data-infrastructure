@@ -10,8 +10,6 @@ import {
   TablePagination
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
-
 import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
@@ -19,7 +17,7 @@ let set = _.set;
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenProcedure } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
 
 //===========================================================================
 // THEMING
@@ -53,29 +51,6 @@ let styles = {
   }
 }
 
-//===========================================================================
-// FLATTENING / MAPPING
-
-flattenValueSet = function(valueSet, internalDateFormat){
-  let result = {
-    _id: '',
-    meta: '',
-    identifier: '',
-    title: '',
-  };
-
-  if(!internalDateFormat){
-    internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-  }
-
-  result._id =  get(valueSet, 'id') ? get(valueSet, 'id') : get(valueSet, '_id');
-  result.id = get(valueSet, 'id', '');
-  result.identifier = get(valueSet, 'identifier[0].value', '');
-  result.title = get(valueSet, 'title', '');
-
-
-  return result;
-}
 
 
 
@@ -342,7 +317,7 @@ function ValueSetsTable(props){
   if(valueSets){
     if(valueSets.length > 0){              
       valueSets.forEach(function(valueSet){
-        valueSetsToRender.push(flattenValueSet(valueSet, internalDateFormat));
+        valueSetsToRender.push(FhirDehydrator.flattenValueSet(valueSet, internalDateFormat));
       });  
     }
   }
