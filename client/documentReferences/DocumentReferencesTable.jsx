@@ -91,6 +91,7 @@ function DocumentReferencesTable(props){
     hideSubjectReference,
     hideSubjectDisplay,
     hideDescription,
+    hideDate,
     hideAuthor,
     hideAuthorReference,
     hideRelatesToCode,
@@ -137,6 +138,7 @@ function DocumentReferencesTable(props){
         hideSubjectReference = true;
         hideSubjectDisplay = true;
         hideDescription = true;
+        hideDate = true;
         hideAuthor = true;
         hideAuthorReference = true;
         hideRelatesToCode = true;
@@ -159,6 +161,7 @@ function DocumentReferencesTable(props){
         hideSubjectReference = true;
         hideSubjectDisplay = true;
         hideDescription = true;
+        hideDate = false;
         hideAuthor = true;
         hideAuthorReference = true;
         hideRelatesToCode = true;
@@ -181,6 +184,7 @@ function DocumentReferencesTable(props){
         hideSubjectReference = true;
         hideSubjectDisplay = false;
         hideDescription = false;
+        hideDate = false;
         hideAuthor = false;
         hideAuthorReference = true;
         hideRelatesToCode = false;
@@ -203,6 +207,7 @@ function DocumentReferencesTable(props){
         hideSubjectReference = true;
         hideSubjectDisplay = false;
         hideDescription = false;
+        hideDate = false;
         hideAuthor = false;
         hideAuthorReference = true;
         hideRelatesToCode = false;
@@ -225,6 +230,7 @@ function DocumentReferencesTable(props){
         hideSubjectReference = false;
         hideSubjectDisplay = false;
         hideDescription = false;
+        hideDate = false;
         hideAuthor = false;
         hideAuthorReference = false;
         hideRelatesToCode = false;
@@ -757,6 +763,7 @@ DocumentReferencesTable.propTypes = {
   hideSubjectReference: PropTypes.bool,
   hideSubjectDisplay: PropTypes.bool,
   hideDescription: PropTypes.bool,
+  hideDate: PropTypes.bool,
   hideAuthor: PropTypes.bool,
   hideAuthorReference: PropTypes.bool,
   hideRelatesToCode: PropTypes.bool,
@@ -797,6 +804,7 @@ DocumentReferencesTable.defaultProps = {
   hideSubjectReference: false,
   hideSubjectDisplay: false,
   hideDescription: false,
+  hideDate: false,
   hideAuthor: false,
   hideAuthorReference: false,
   hideRelatesToCode: false,
