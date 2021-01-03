@@ -430,6 +430,20 @@ function DocumentReferencesTable(props){
       );
     }
   }
+  function renderDate(date){
+    if (!hideDate) {
+      return (
+        <TableCell className="date">{date}</TableCell>
+      );
+    }
+  }
+  function renderDateHeader(){
+    if (!hideDate) {
+      return (
+        <TableCell className="date">Date</TableCell>
+      );
+    }
+  }
   function renderAuthor(author){
     if (!hideAuthor) {
       return (
