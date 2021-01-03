@@ -230,33 +230,32 @@ export function CompositionsPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  
 
   return (
-    <div id="compositionsPage" style={{paddingLeft: '100px', paddingRight: '100px', paddingBottom: '100px'}}>
-      <MuiThemeProvider theme={muiTheme} >
-          <StyledCard>
-            <CardHeader
-              title="Compositions"
+    <PageCanvas id="compositionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <StyledCard height="auto" scrollable={true} margin={20}>
+        <CardHeader
+          title="Compositions"
+        />
+        <CardContent>
+          <CompositionsTable 
+            hideIdentifier={true} 
+            hideCheckboxes={true} 
+            hideSubjects={false}
+            noDataMessagePadding={100}
+            actionButtonLabel="Send"
+            compositions={ data.compositions }
+            paginationLimit={10}
+            hideSubjects={true}
+            hideClassCode={false}
+            hideReasonCode={false}
+            hideReason={false}
+            hideHistory={false}
             />
-            <CardContent>
-              <CompositionsTable 
-                hideIdentifier={true} 
-                hideCheckboxes={true} 
-                hideSubjects={false}
-                noDataMessagePadding={100}
-                actionButtonLabel="Send"
-                compositions={ data.compositions }
-                paginationLimit={10}
-                hideSubjects={true}
-                hideClassCode={false}
-                hideReasonCode={false}
-                hideReason={false}
-                hideHistory={false}
-                />
-            </CardContent>
-          </StyledCard>
-      </MuiThemeProvider>
-    </div>
+        </CardContent>
+      </StyledCard>
+    </PageCanvas>
   );
 }
 

@@ -80,16 +80,24 @@ function DocumentReferencesTable(props){
     disablePagination,
   
     hideCheckbox,
-    hideIdentifier,
     hideActionIcons,
-    hideDocumentReferenceName,
+    hideMasterIdentifier,
+    hideIdentifier,
     hideStatus,
-    hideMake,
     hideDocStatus,
-    hideAuthor,
-    hideSerialNumber,
     hideTypeCodingDisplay,
+    hideTypeCode,
     hideCategory,
+    hideSubjectReference,
+    hideSubjectDisplay,
+    hideDescription,
+    hideAuthor,
+    hideAuthorReference,
+    hideRelatesToCode,
+    hideRelatesToReference,
+    hideContentAttachment,
+    hideContentFormat,
+    hideContentCount,
     hideBarcode,
 
     onCellClick,
@@ -118,69 +126,112 @@ function DocumentReferencesTable(props){
     switch (formFactorLayout) {
       case "phone":
         hideCheckbox = true;
-        hideIdentifier = true;
         hideActionIcons = true;
-        hideDocumentReferenceName = false;
+        hideMasterIdentifier = true;
+        hideIdentifier = false;
         hideStatus = false;
-        hideMake = true;
         hideDocStatus = true;
-        hideAuthor = true;
-        hideSerialNumber = true;
         hideTypeCodingDisplay = true;
-        hideCategory = true;
+        hideTypeCode = true;
+        hideCategory = false;
+        hideSubjectReference = true;
+        hideSubjectDisplay = true;
+        hideDescription = true;
+        hideAuthor = true;
+        hideAuthorReference = true;
+        hideRelatesToCode = true;
+        hideRelatesToReference = true;
+        hideContentAttachment = false;
+        hideContentFormat = false;
+        hideContentCount = false;
         hideBarcode = true;
         break;
       case "tablet":
         hideCheckbox = true;
-        hideIdentifier = true;
         hideActionIcons = true;
-        hideDocumentReferenceName = false;
+        hideMasterIdentifier = true;
+        hideIdentifier = false;
         hideStatus = false;
-        hideMake = true;
-        hideDocStatus = false;
-        hideAuthor = true;
-        hideSerialNumber = true;
+        hideDocStatus = true;
         hideTypeCodingDisplay = true;
-        hideCategory = true;
+        hideTypeCode = true;
+        hideCategory = false;
+        hideSubjectReference = true;
+        hideSubjectDisplay = true;
+        hideDescription = true;
+        hideAuthor = true;
+        hideAuthorReference = true;
+        hideRelatesToCode = true;
+        hideRelatesToReference = true;
+        hideContentAttachment = false;
+        hideContentFormat = false;
+        hideContentCount = false;
         hideBarcode = true;
         break;
       case "web":
         hideCheckbox = true;
-        hideIdentifier = true;
         hideActionIcons = true;
-        hideDocumentReferenceName = false;
-        hideMake = true;
+        hideMasterIdentifier = false;
+        hideIdentifier = false;
+        hideStatus = false;
         hideDocStatus = false;
-        hideAuthor = false;
-        hideSerialNumber = false;
         hideTypeCodingDisplay = false;
-        hideCategory = true;
+        hideTypeCode = false;
+        hideCategory = false;
+        hideSubjectReference = true;
+        hideSubjectDisplay = false;
+        hideDescription = false;
+        hideAuthor = false;
+        hideAuthorReference = true;
+        hideRelatesToCode = false;
+        hideRelatesToReference = false;
+        hideContentAttachment = false;
+        hideContentFormat = false;
+        hideContentCount = false;
         hideBarcode = true;
         break;
       case "desktop":
         hideCheckbox = true;
-        hideIdentifier = true;
         hideActionIcons = true;
-        hideDocumentReferenceName = false;
-        hideMake = true;
+        hideMasterIdentifier = false;
+        hideIdentifier = false;
+        hideStatus = false;
         hideDocStatus = false;
-        hideAuthor = false;
-        hideSerialNumber = false;
         hideTypeCodingDisplay = false;
-        hideCategory = true;
-        hideBarcode = false;
+        hideTypeCode = false;
+        hideCategory = false;
+        hideSubjectReference = true;
+        hideSubjectDisplay = false;
+        hideDescription = false;
+        hideAuthor = false;
+        hideAuthorReference = true;
+        hideRelatesToCode = false;
+        hideRelatesToReference = false;
+        hideContentAttachment = false;
+        hideContentFormat = false;
+        hideContentCount = false;
+        hideBarcode = true;
         break;
       case "hdmi":
-        hideCheckbox = true;
-        hideActionIcons = true;
+        hideCheckbox = false;
+        hideActionIcons = false;
+        hideMasterIdentifier = false;
         hideIdentifier = false;
-        hideDocumentReferenceName = false;
-        hideMake = false;
+        hideStatus = false;
         hideDocStatus = false;
-        hideAuthor = false;
-        hideSerialNumber = false;
         hideTypeCodingDisplay = false;
+        hideTypeCode = false;
         hideCategory = false;
+        hideSubjectReference = false;
+        hideSubjectDisplay = false;
+        hideDescription = false;
+        hideAuthor = false;
+        hideAuthorReference = false;
+        hideRelatesToCode = false;
+        hideRelatesToReference = false;
+        hideContentAttachment = false;
+        hideContentFormat = false;
+        hideContentCount = false;
         hideBarcode = false;
         break;            
     }
@@ -280,6 +331,20 @@ function DocumentReferencesTable(props){
       );
     }
   } 
+  function renderMasterIdentifierHeader(){
+    if (!hideMasterIdentifier) {
+      return (
+        <TableCell className='masterIdentifier'>Master Identifier</TableCell>
+      );
+    }
+  }
+  function renderMasterIdentifier(masterIdentifier ){
+    if (!hideMasterIdentifier) {
+      return (
+        <TableCell className='masterIdentifier'>{ masterIdentifier }</TableCell>
+      );
+    }
+  } 
   function renderIdentifierHeader(){
     if (!hideIdentifier) {
       return (
@@ -308,6 +373,21 @@ function DocumentReferencesTable(props){
       );
     }
   }
+  function renderTypeCode(typeCode){
+    if (!hideTypeCode) {
+      return (
+        <TableCell className='typeCode'>{typeCode}</TableCell>
+      );
+    }
+  }
+  function renderTypeCodeHeader(){
+    if (!hideTypeCode) {
+      return (
+        <TableCell className='typeCode'>Type Code</TableCell>
+      );
+    }
+  }
+  
   function renderCategory(category){
     if (!hideCategory) {
       return (
@@ -319,6 +399,20 @@ function DocumentReferencesTable(props){
     if (!hideCategory) {
       return (
         <TableCell className="category">Category</TableCell>
+      );
+    }
+  }
+  function renderDescription(description){
+    if (!hideDescription) {
+      return (
+        <TableCell className="description">{description}</TableCell>
+      );
+    }
+  }
+  function renderDescriptionHeader(){
+    if (!hideDescription) {
+      return (
+        <TableCell className="description">Description</TableCell>
       );
     }
   }
@@ -350,7 +444,49 @@ function DocumentReferencesTable(props){
       );
     }
   }
+  function renderAuthorReference(authorReference){
+    if (!hideAuthorReference) {
+      return (
+        <TableCell className="authorReference">{authorReference}</TableCell>
+      );
+    }
+  }
+  function renderAuthorReferenceHeader(){
+    if (!hideAuthorReference) {
+      return (
+        <TableCell className="authorReference">Author Reference</TableCell>
+      );
+    }
+  }
 
+  function renderSubjectReference(subjectReference){
+    if (!hideSubjectReference) {
+      return (
+        <TableCell className="subjectReference">{subjectReference}</TableCell>
+      );
+    }
+  }
+  function renderSubjectReferenceHeader(){
+    if (!hideSubjectReference) {
+      return (
+        <TableCell className="subjectReference">Subject Reference</TableCell>
+      );
+    }
+  }
+  function renderSubjectDisplay(subjectDisplay){
+    if (!hideSubjectDisplay) {
+      return (
+        <TableCell className="subjectDisplay">{subjectDisplay}</TableCell>
+      );
+    }
+  }
+  function renderSubjectDisplayHeader(){
+    if (!hideSubjectDisplay) {
+      return (
+        <TableCell className="subjectDisplay">Subject</TableCell>
+      );
+    }
+  }  
   function renderDocStatus(docStatus){
     if (!hideDocStatus) {
       return (
@@ -365,6 +501,83 @@ function DocumentReferencesTable(props){
       );
     }
   }
+
+
+  function renderRelatesToCode(relatesToCode){
+    if (!hideRelatesToCode) {
+      return (
+        <TableCell className="relatesToCode">{relatesToCode}</TableCell>
+      );
+    }
+  }
+  function renderRelatesToCodeHeader(){
+    if (!hideRelatesToCode) {
+      return (
+        <TableCell className="relatesToCode">Relates To Code</TableCell>
+      );
+    }
+  }
+  function renderRelatesToReference(relatesToReference){
+    if (!hideRelatesToReference) {
+      return (
+        <TableCell className="relatesToReference">{relatesToReference}</TableCell>
+      );
+    }
+  }
+  function renderRelatesToReferenceHeader(){
+    if (!hideRelatesToReference) {
+      return (
+        <TableCell className="relatesToReference">Relates To Reference</TableCell>
+      );
+    }
+  }
+
+
+  function renderContentAttachment(contentAttachment){
+    if (!hideContentAttachment) {
+      return (
+        <TableCell className="contentAttachment">{contentAttachment}</TableCell>
+      );
+    }
+  }
+  function renderContentAttachmentHeader(){
+    if (!hideContentAttachment) {
+      return (
+        <TableCell className="contentAttachment">Content Attachment</TableCell>
+      );
+    }
+  }
+
+  function renderContentFormat(contentFormat){
+    if (!hideContentFormat) {
+      return (
+        <TableCell className="contentFormat">{contentFormat}</TableCell>
+      );
+    }
+  }
+  function renderContentFormatHeader(){
+    if (!hideContentFormat) {
+      return (
+        <TableCell className="contentFormat">Content Format</TableCell>
+      );
+    }
+  }
+  function renderContentCount(contentCount){
+    if (!hideContentCount) {
+      return (
+        <TableCell className="contentCount">{contentCount}</TableCell>
+      );
+    }
+  }
+  function renderContentCountHeader(){
+    if (!hideContentCount) {
+      return (
+        <TableCell className="contentCount">Content Count</TableCell>
+      );
+    }
+  }
+
+
   function renderBarcode(id){
     if (!hideBarcode) {
       return (
@@ -439,21 +652,30 @@ function DocumentReferencesTable(props){
         <TableRow className="deviceRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, devicesToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} >            
           { renderCheckbox() }  
           { renderActionIcons() }
+          { renderMasterIdentifier(get(devicesToRender[i], 'masterIdentifier')) }
           { renderIdentifier(get(devicesToRender[i], 'identifier')) }
-          { renderTypeDisplay(get(devicesToRender[i], 'type')) }
-
           { renderStatus(get(devicesToRender[i], 'status')) }
-          { renderAuthor(get(devicesToRender[i], 'author')) }
-          { renderDocStatus(get(devicesToRender[i], 'docStatus')) }
-
+          { renderDocStatus(get(devicesToRender[i], 'docStatus')) }          
+          { renderTypeDisplay(get(devicesToRender[i], 'typeDisplay')) }
+          { renderTypeCode(get(devicesToRender[i], 'typeCode')) }
           { renderCategory(get(devicesToRender[i], 'category'))}
+          { renderSubjectReference(get(devicesToRender[i], 'subjectReference')) }
+          { renderSubjectDisplay(get(devicesToRender[i], 'subjectDisplay')) }
+          { renderDate(get(devicesToRender[i], 'date')) }
+          { renderDescription(get(devicesToRender[i], 'description')) }
+          { renderAuthor(get(devicesToRender[i], 'author')) }
+          { renderAuthorReference(get(devicesToRender[i], 'authorReference')) }
+          { renderRelatesToCode(get(devicesToRender[i], 'relatesToCode')) }
+          { renderRelatesToReference(get(devicesToRender[i], 'relatesToReference')) }
+          { renderContentAttachment(get(devicesToRender[i], 'contentAttachment')) }
+          { renderContentFormat(get(devicesToRender[i], 'contentFormat')) }
+          { renderContentCount(get(devicesToRender[i], 'relcontentCountatesToCode')) }
           { renderBarcode(devicesToRender[i].id)}
           { renderActionButton(devicesToRender[i]) }
         </TableRow>
       );    
     }
   }
-
 
 
   //---------------------------------------------------------------------
@@ -466,12 +688,24 @@ function DocumentReferencesTable(props){
           <TableRow>
             { renderCheckboxHeader() }  
             { renderActionIconsHeader() }
+            { renderMasterIdentifierHeader() }
             { renderIdentifierHeader() }
-            { renderTypeDisplayHeader() }
             { renderStatusHeader() }
-            { renderAuthorHeader() }
             { renderDocStatusHeader() }
+            { renderTypeDisplayHeader() }
+            { renderTypeCodeHeader() }
             { renderCategoryHeader() }
+            { renderSubjectReferenceHeader() }
+            { renderSubjectDisplayHeader() }
+            { renderDateHeader() }
+            { renderDescriptionHeader() }
+            { renderAuthorHeader() }
+            { renderAuthorReferenceHeader() }
+            { renderRelatesToCodeHeader() }
+            { renderRelatesToReferenceHeader() }
+            { renderContentAttachmentHeader() }
+            { renderContentFormatHeader() }
+            { renderContentCountHeader() }
             { renderBarcodeHeader() }
             { renderActionButtonHeader() }
           </TableRow>
@@ -499,15 +733,23 @@ DocumentReferencesTable.propTypes = {
   disablePagination: PropTypes.bool,
 
   hideCheckbox: PropTypes.bool,
+  hideMasterIdentifier: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideStatus: PropTypes.bool,
-  hideDocumentReferenceName: PropTypes.bool,
-  hideMake: PropTypes.bool,
   hideDocStatus: PropTypes.bool,
-  hideAuthor: PropTypes.bool,
-  hideSerialNumber: PropTypes.bool,
   hideTypeCodingDisplay: PropTypes.bool,
+  hideTypeCode: PropTypes.bool,
   hideCategory: PropTypes.bool,
+  hideSubjectReference: PropTypes.bool,
+  hideSubjectDisplay: PropTypes.bool,
+  hideDescription: PropTypes.bool,
+  hideAuthor: PropTypes.bool,
+  hideAuthorReference: PropTypes.bool,
+  hideRelatesToCode: PropTypes.bool,
+  hideRelatesToReference: PropTypes.bool,
+  hideContentAttachment: PropTypes.bool,
+  hideContentFormat: PropTypes.bool,
+  hideContentCount: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -528,15 +770,27 @@ DocumentReferencesTable.propTypes = {
 DocumentReferencesTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
-  hideIdentifier: true,
-  hideDocumentReferenceName: false,
+  hideMasterIdentifier: false,
+
+  hideCheckbox: false,
+  hideMasterIdentifier: false,
+  hideIdentifier: false,
   hideStatus: false,
-  hideMake: true,
-  hideDocStatus: true,
-  hideAuthor: true,
-  hideSerialNumber: false,
-  hideTypeCodingDisplay: true,
-  hideCategory: true,
+  hideDocStatus: false,
+  hideTypeCodingDisplay: false,
+  hideTypeCode: false,
+  hideCategory: false,
+  hideSubjectReference: false,
+  hideSubjectDisplay: false,
+  hideDescription: false,
+  hideAuthor: false,
+  hideAuthorReference: false,
+  hideRelatesToCode: false,
+  hideRelatesToReference: false,
+  hideContentAttachment: false,
+  hideContentFormat: false,
+  hideContentCount: false,
+  
   hideBarcode: true,
   disablePagination: false,
   hideActionButton: true,
