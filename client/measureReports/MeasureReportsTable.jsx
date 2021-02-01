@@ -10,8 +10,6 @@ import {
   TablePagination
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
-
 import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
@@ -19,7 +17,7 @@ let set = _.set;
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
 
-import { flattenMeasureReport } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
 
 
 //===========================================================================
@@ -55,85 +53,7 @@ let styles = {
 }
 
 //===========================================================================
-// FLATTENING / MAPPING
-
-// flattenMeasureReport = function(measureReport, measuresCursor, internalDateFormat, measureShorthand){
-//   let result = {
-//     _id: '',
-//     id: '',
-//     meta: '',
-//     identifier: '',
-//     type: '',
-//     measureUrl: '',
-//     measureTitle: '',
-//     date: '',
-//     reporter: '',
-//     periodStart: '',
-//     periodEnd: '',
-//     groupCode: '',
-//     populationCode: '',
-//     populationCount: '',
-//     measureScore: '',
-//     stratifierCount: '',
-//     numerator: '',
-//     denominator: ''
-//   };
-
-//   if(!internalDateFormat){
-//     internalDateFormat = get(Meteor, "settings.public.defaults.internalDateFormat", "YYYY-MM-DD");
-//   }
-
-//   result._id =  get(measureReport, 'id') ? get(measureReport, 'id') : get(measureReport, '_id');
-//   result.id = get(measureReport, 'id', '');
-//   result.identifier = get(measureReport, 'identifier[0].value', '');
-//   result.type = get(measureReport, 'type', '');
-
-//   result.measureUrl = get(measureReport, 'measure', ''); 
-
-//   if(measuresCursor && result.measureUrl){
-//     let measure = measuresCursor.findOne({id: FhirUtilities.pluckReferenceId(result.measureUrl)});
-//     if(measureShorthand){
-//       result.measureTitle = get(measure, 'id');
-//     } else {
-//       result.measureTitle = get(measure, 'title');
-//     }
-//   }
-
-//   result.date = moment(get(measureReport, 'date', '')).format(internalDateFormat);
-//   if(get(measureReport, 'reporter.display', '')){
-//     result.reporter = get(measureReport, 'reporter.display', '');
-//   } else {
-//     result.reporter = get(measureReport, 'reporter.reference', '');
-//   }
-
-//   result.periodStart = moment(get(measureReport, 'period.start', '')).format(internalDateFormat);
-//   result.periodEnd = moment(get(measureReport, 'period.end', '')).format(internalDateFormat);
-
-//   result.groupCode = get(measureReport, 'group[0].coding[0].code', '');
-//   result.populationCode = get(measureReport, 'group[0].population[0].coding[0].code', '');
-//   result.populationCount = get(measureReport, 'group[0].population[0].count', '');
-
-//   if(get(measureReport, 'group[0].population')){
-//     let population = get(measureReport, 'group[0].population');
-//     population.forEach(function(pop){
-//       if(get(pop, 'code.text') === "numerator"){
-//         result.numerator = get(pop, 'count');
-//       }
-//       if(get(pop, 'code.text') === "denominator"){
-//         result.denominator = get(pop, 'count');        
-//       }
-//     })
-//   }
-
-//   result.measureScore = get(measureReport, 'group[0].measureScore.value', '');
-
-//   let stratifierArray = get(measureReport, 'group[0].stratifier', []);
-//   result.stratifierCount = stratifierArray.length;
-
-//   return result;
-// }
-
-
+// MAIN COMPONENT
 
 
 function MeasureReportsTable(props){
@@ -590,7 +510,7 @@ function MeasureReportsTable(props){
 
       props.measureReports.forEach(function(measureReport){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          measureReportsToRender.push(flattenMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand, measureScoreType));
+          measureReportsToRender.push(FhirDehydrator.flattenMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand, measureScoreType));
         }
         count++;
       }); 

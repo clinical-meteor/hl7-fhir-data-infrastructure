@@ -23,8 +23,7 @@ let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
-import { flattenBundle } from '../../lib/FhirDehydrator';
-
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 
 //===========================================================================
@@ -403,7 +402,7 @@ function BundlesTable(props){
 
   if(Array.isArray(bundles)){
     bundles.forEach(function(bundle){
-      bundlesToRender.push(flattenBundle(bundle, internalDateFormat));
+      bundlesToRender.push(FhirDehydrator.flattenBundle(bundle, internalDateFormat));
     });    
   }
 

@@ -17,7 +17,7 @@ import { has, get } from 'lodash';
 import moment from 'moment'
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
-import { flattenQuestionnaire } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 
 //===========================================================================
@@ -357,7 +357,7 @@ function QuestionnaireTable(props){
   if(questionnaires){
     if(questionnaires.length > 0){              
       questionnaires.forEach(function(questionnaire){
-        questionnairesToRender.push(flattenQuestionnaire(questionnaire, internalDateFormat));
+        questionnairesToRender.push(FhirDehydrator.flattenQuestionnaire(questionnaire, internalDateFormat));
       });  
     }
   }

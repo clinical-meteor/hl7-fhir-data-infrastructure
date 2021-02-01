@@ -31,6 +31,8 @@ let set = _.set;
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -69,52 +71,7 @@ let styles = {
 }
 
 //===========================================================================
-// FLATTENING / MAPPING
-
-flattenMedicationOrder = function(medicationOrder, dateFormat){
-  let result = {
-    _id: medicationOrder._id,
-    status: '',
-    identifier: '',
-    patientDisplay: '',
-    patientReference: '',
-    prescriberDisplay: '',
-    asserterDisplay: '',
-    clinicalStatus: '',
-    snomedCode: '',
-    snomedDisplay: '',
-    evidenceDisplay: '',
-    barcode: '',
-    dateWritten: '',
-    dosageInstructionText: '',
-    medicationCodeableConcept: '',
-    medicationCode: '',
-    dosage: ''
-  };
-
-  if(!dateFormat){
-    dateFormat = get(Meteor, "settings.public.defaults.dateFormat", "YYYY-MM-DD");
-  }
-
-  if (get(medicationOrder, 'medicationReference.display')){
-    result.medicationCodeableConcept = get(medicationOrder, 'medicationReference.display');
-  } else if(get(medicationOrder, 'medicationCodeableConcept')){
-    result.medicationCodeableConcept = get(medicationOrder, 'medicationCodeableConcept.text');
-    result.medicationCode = get(medicationOrder, 'medicationCodeableConcept.coding[0].code');
-  } 
-
-  result.status = get(medicationOrder, 'status');
-  result.identifier = get(medicationOrder, 'identifier[0].value');
-  result.patientDisplay = get(medicationOrder, 'patient.display');
-  result.patientReference = get(medicationOrder, 'patient.reference');
-  result.prescriberDisplay = get(medicationOrder, 'prescriber.display');
-  result.dateWritten = moment(get(medicationOrder, 'dateWritten')).format(dateFormat);
-  
-  result.dosage = get(medicationOrder, 'dosageInstruction[0].text');
-  result.barcode = get(medicationOrder, '_id');
-
-  return result;
-}
+// 
 
 // ===============================================================================================
 // FUNCTIONAL COMPONENT
@@ -410,7 +367,7 @@ function MedicationOrdersTable(props){
       let count = 0;    
       props.medicationOrders.forEach(function(medicationOrder){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          medicationOrdersToRender.push(flattenMedicationOrder(medicationOrder, dateFormat));
+          medicationOrdersToRender.push(FhirDehydrator.flattenMedicationOrder(medicationOrder, dateFormat));
         }
         count++;
       });  

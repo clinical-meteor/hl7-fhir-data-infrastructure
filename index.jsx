@@ -342,6 +342,7 @@ let DynamicRoutes = [{
 
 
 let SidebarElements = [{
+<<<<<<< HEAD
   primaryText: 'Allergy Intolerances',
   to: '/allergy-intolerances',
   href: '/allergy-intolerances',

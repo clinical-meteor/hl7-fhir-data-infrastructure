@@ -17,6 +17,8 @@ import moment from 'moment'
 import { get, has, findIndex } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
+import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+
 
 //===========================================================================
 // THEMING
@@ -44,90 +46,7 @@ let styles = {
 
 
 //===========================================================================
-// FLATTENING / MAPPING
-
-flattenLocation = function(location, simplifiedAddress, preferredExtensionUrl){
-
-  let result = {
-    _id: '',
-    id: '',
-    meta: '',
-    identifier: '',
-    name: '',
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: '',
-    type: '',
-    latitude: '',
-    longitude: '',
-    selectedExtension: '',
-    distance: ''
-  };
-
-  result.severity = get(location, 'severity.text', '');
-
-  if (get(location, '_id')){
-    result._id = get(location, '_id');
-  }
-  if (get(location, 'name')) {
-    result.name = get(location, 'name');
-  }
-  if (get(location, 'address')) {
-    if(simplifiedAddress){
-      result.address = FhirUtilities.stringifyAddress(get(location, 'address'), {noPrefix: true});
-    } else {
-      result.address = get(location, 'address');
-    }
-  }
-  if (get(location, 'address.city')) {
-    result.city = get(location, 'address.city');
-  }
-  if (get(location, 'address.state')) {
-    result.state = get(location, 'address.state');
-  }
-  if (get(location, 'address.postalCode')) {
-    result.postalCode = get(location, 'address.postalCode');
-  }
-  if (get(location, 'address.country')) {
-    result.country = get(location, 'address.country');
-  }
-  if (get(location, 'type[0].text')) {
-    result.type = get(location, 'type[0].text');
-  }
-  if (get(location, 'position.latitude')) {
-    result.latitude = get(location, 'position.latitude', null);
-  } else if(get(location, '_location.coordinates[1]')){
-    result.latitude = get(location, '_location.coordinates[1]');
-  }
-  if (get(location, 'position.longitude')) {
-    result.longitude = get(location, 'position.longitude', null);
-  } else if(get(location, '_location.coordinates[0]')){
-    result.longitude = get(location, '_location.coordinates[0]');
-  }
-
-  if (Array.isArray(get(location, 'extension'))) {
-
-    let extensionIndex = findIndex(location.extension, {'url': preferredExtensionUrl});
-    // console.log('flattenLocation', location, preferredExtensionUrl, extensionIndex);
-
-    if(extensionIndex > -1){
-      result.selectedExtension = location.extension[extensionIndex].valueDecimal.toString();
-    }
-  }
-
-  if (Array.isArray(get(location, 'extension'))) {
-    location.extension.forEach(function(extension){
-      if(extension.url === "distance"){
-        result.distance = extension.valueDecimal;
-      }
-    })
-  }
-
-  return result;
-}
-
+// MAIN COMPONENT
 
 
 
@@ -426,7 +345,7 @@ function LocationsTable(props){
 
       props.locations.forEach(function(location){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          locationsToRender.push(flattenLocation(location, simplifiedAddress, extensionUrl));
+          locationsToRender.push(FhirDehydrator.flattenLocation(location, simplifiedAddress, extensionUrl));
         }
         count++;
       });  

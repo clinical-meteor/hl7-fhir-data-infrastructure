@@ -16,6 +16,7 @@ import {
 import { get } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 //===========================================================================
 // THEMING
@@ -53,60 +54,6 @@ let styles = {
   }
 }
 
-//===========================================================================
-// FLATTENING / MAPPING
-
-
-flattenMedication = function(medication, internalDateFormat, fhirVersion){
-  let result = {
-    _id: '',
-    status: '',
-    code: '',
-    name: '',
-    manufacturer: '',
-    activeIngredient: '',
-    form: '',
-    amount: '',
-    activeIngredient: ''
-  };
-
-  result._id = get(medication, '_id');
-  result.status = get(medication, 'status');
-
-  if(get(medication, 'code.text')){
-    result.name = get(medication, 'code.text');
-  } else {
-    result.name = get(medication, 'code.coding[0].display');
-  }
-
-  result.code = get(medication, 'code.coding[0].code');
-
-  result.form = get(medication, 'product.form.coding[0].display');
-  result.activeIngredient = get(medication, 'product.ingredient[0].item.display');
-  result.amount = get(medication, 'package.content[0].amount.value');
-  result.manufacturer = get(medication, 'manufacturer.display');
-
-  // if we get a specific fhirVersion, be explicit about where to get the value
-  switch (fhirVersion) {
-    case '1.0.2':
-      result.activeIngredient = get(medication, 'product.ingredient[0].item.display');            
-      break;      
-    case '3.0.1':
-      result.activeIngredient = get(medication, 'product.ingredient[0].itemReference.display');            
-      break;      
-    default:
-      // otherwise, walk through the likely steps, if possible
-      // may be worth extracting to Medication.prototype.getPrimaryIngredient()
-      if(get(medication, 'product.ingredient[0].item.display')){
-        result.activeIngredient = get(medication, 'product.ingredient[0].item.display');            
-      } else if(get(medication, 'product.ingredient[0].itemReference.display')){
-        result.activeIngredient = get(medication, 'product.ingredient[0].itemReference.display');
-      }
-      break;
-  }
-
-  return result;
-}
 
 //===========================================================================
 // SESSION VARIABLES
@@ -393,7 +340,7 @@ function MedicationsTable(props){
 
       props.medications.forEach(function(medication){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          medicationsToRender.push(flattenMedication(medication, internalDateFormat, "R4"));
+          medicationsToRender.push(FhirDehydrator.flattenMedication(medication, internalDateFormat, "R4"));
         }
         count++;
       });  

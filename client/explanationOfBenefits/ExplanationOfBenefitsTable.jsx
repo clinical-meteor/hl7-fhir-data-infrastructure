@@ -10,15 +10,13 @@ import {
   TablePagination
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
-
 import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenExplanationOfBenefit } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
 
 
 //===========================================================================
@@ -649,7 +647,7 @@ function ExplanationOfBenefitsTable(props){
   if(props.explanationOfBenefits){
     if(props.explanationOfBenefits.length > 0){              
       props.explanationOfBenefits.forEach(function(explanationOfBenefit){
-        explanationOfBenefitsToRender.push(flattenExplanationOfBenefit(explanationOfBenefit, internalDateFormat));
+        explanationOfBenefitsToRender.push(FhirDehydrator.flattenExplanationOfBenefit(explanationOfBenefit, internalDateFormat));
       });  
     }
   }

@@ -21,7 +21,7 @@ import { get } from 'lodash';
 import moment from 'moment';
 
 
-import FhirDehydrator, { flattenCommunicationRequest } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 import { FhirUtilities } from '../../lib/FhirUtilities';
 import { Theming } from '../../lib/Theming';
 
@@ -387,7 +387,7 @@ function CommunicationRequestsTable(props){
 
       communicationRequests.forEach(function(communicationRequest){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          communicationRequestsToRender.push(flattenCommunicationRequest(communicationRequest, internalDateFormat));
+          communicationRequestsToRender.push(FhirDehydrator.flattenCommunicationRequest(communicationRequest, internalDateFormat));
         }
         count++;
       });  

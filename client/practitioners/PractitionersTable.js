@@ -29,8 +29,7 @@ import moment from 'moment';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
-import { flattenPractitioner } from '../../lib/FhirDehydrator';
-
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 //===========================================================================
 // SESSION VARIABLES  
@@ -751,7 +750,7 @@ function PractitionersTable(props){
 
       practitioners.forEach(function(practitioner){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          practitionersToRender.push(flattenPractitioner(practitioner));
+          practitionersToRender.push(FhirDehydrator.flattenPractitioner(practitioner));
         }
         count++;
       });  

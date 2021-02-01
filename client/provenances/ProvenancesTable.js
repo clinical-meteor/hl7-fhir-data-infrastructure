@@ -31,7 +31,7 @@ let set = _.set;
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenProvenance } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 //===========================================================================
 // THEMING
@@ -548,7 +548,7 @@ function ProvenancesTable(props){
       let count = 0;    
       provenances.forEach(function(procedure){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          provenancesToRender.push(flattenProvenance(procedure, internalDateFormat));
+          provenancesToRender.push(FhirDehydrator.flattenProvenance(procedure, internalDateFormat));
         }
         count++;
       });  

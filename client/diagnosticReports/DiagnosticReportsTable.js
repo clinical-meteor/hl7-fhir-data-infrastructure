@@ -27,7 +27,8 @@ import { get } from 'lodash';
 import moment from 'moment';
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import FhirDehydrator from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+
 
 
 //===========================================================================
@@ -62,79 +63,6 @@ let styles = {
   }
 }
 
-
-
-//===========================================================================
-// FLATTENING / MAPPING
-
-flattenDiagnosticReport = function(report, internalDateFormat){
-  //console.log('report', report)
-  
-  var result = {
-    _id: '',
-    meta: '',
-    identifier: '',
-    subjectDisplay: '',
-    subjectReference: '',
-    reportCodeDisplay: '',
-    reportCode: '',
-    status: '',
-    issued: '',
-    performerDisplay: '',
-    performerReference: '',
-    identifier: '',
-    category: '',
-    effectiveDate: ''
-  };
-  
-  if(!internalDateFormat){
-    internalDateFormat = "YYYY-MM-DD";
-  }
-
-  result.id = get(report, 'id', '');
-  result.identifier = get(report, 'identifier[0].value', '');
-
-  if(get(report, 'patient')){
-    result.subjectDisplay = get(report, 'patient.display', '');
-    result.subjectReference = get(report, 'patient.reference', '');
-  } else if (get(report, 'subject')){
-    result.subjectDisplay = get(report, 'subject.display', '');
-    result.subjectReference = get(report, 'subject.reference', '');
-  }
-
-  if(get(report, 'performer[0].actor')){
-    result.performerDisplay = get(report, 'performer[0].actor.display');
-    result.performerReference = get(report, 'performer[0].actor.reference');          
-  } else if(get(report, 'performer[0]')){
-    result.performerDisplay = get(report, 'performer[0].display');
-    result.performerReference = get(report, 'performer[0].reference');
-  } else if(get(report, 'performer')){
-    result.performerDisplay = get(report, 'performer.display');
-    result.performerReference = get(report, 'performer.reference');
-  }      
-
-  if(get(report, 'category.text')){
-    result.category = get(report, 'category.text');
-  } else if(get(report, 'category[0].coding[0].display')){
-    result.category = get(report, 'category[0].coding[0].display');
-  } else {
-    result.category = get(report, 'category[0].coding[0].code');
-  }
-
-  if(get(report, 'code.text')){
-    result.reportCodeDisplay = get(report, 'code.text');
-  } else {
-    result.reportCodeDisplay = get(report, 'code.coding[0].display');
-  }
-  result.reportCode = get(report, 'code.coding[0].code');
-
-  result.identifier = get(report, 'identifier[0].value', '');
-  result.status = get(report, 'status', '');
-  result.effectiveDate = moment(get(report, 'effectiveDateTime')).format("YYYY-MM-DD");
-  result.issued = moment(get(report, 'issued')).format("YYYY-MM-DD"); 
-
-  return result;  
-}
 
 
 //===========================================================================
@@ -435,7 +363,7 @@ function DiagnosticReportsTable(props){
       let count = 0;    
       props.diagnosticReports.forEach(function(diagnosticReport){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          diagnosticReportsToRender.push(flattenDiagnosticReport(diagnosticReport, internalDateFormat));
+          diagnosticReportsToRender.push(FhirDehydrator.flattenDiagnosticReport(diagnosticReport, internalDateFormat));
         }
         count++;
       });  

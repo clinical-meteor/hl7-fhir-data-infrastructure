@@ -32,7 +32,7 @@ let set = _.set;
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
 import FhirUtilities from '../../lib/FhirUtilities';
-import { flattenProcedure } from '../../lib/FhirDehydrator';
+import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 //===========================================================================
 // THEMING
@@ -573,7 +573,7 @@ function ProceduresTable(props){
       let count = 0;    
       procedures.forEach(function(procedure){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          proceduresToRender.push(flattenProcedure(procedure, internalDateFormat));
+          proceduresToRender.push(FhirDehydrator.flattenProcedure(procedure, internalDateFormat));
         }
         count++;
       });  
