@@ -46,7 +46,7 @@ import FhirDehydrator, { flattenAllergyIntolerance } from '../../lib/FhirDehydra
 // THEMING
 
 
-import { ThemeProvider, makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
   button: {
     background: theme.background,
@@ -586,6 +586,8 @@ function AllergyIntolerancesTable(props){
       if(tableRowSize === "small"){
         rowStyle.height = '32px';
       }
+
+      logger.trace('allergyIntolerancesToRender[i]', allergyIntolerancesToRender[i])
       tableRows.push(
         <TableRow className="allergyIntoleranceRow" key={i} onClick={ handleRowClick.bind(this, allergyIntolerancesToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
           { renderToggle() }
@@ -614,7 +616,7 @@ function AllergyIntolerancesTable(props){
 
   return(
     <div id={id} className="tableWithPagination">
-      <Table size={tableRowSize} aria-label="a dense table">
+      <Table className='allergiessTable'  size={tableRowSize} aria-label="a dense table" { ...otherProps }>
         <TableHead>
           <TableRow>
             { renderToggleHeader() }
@@ -803,7 +805,7 @@ function AllergyIntolerancesTable(props){
 AllergyIntolerancesTable.propTypes = {
   data: PropTypes.array,
   allergyIntolerances: PropTypes.array,
-  selectedAllergyIntoleranceId: PropTypes.array,
+  selectedAllergyIntoleranceId: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
@@ -846,6 +848,8 @@ AllergyIntolerancesTable.propTypes = {
 
 AllergyIntolerancesTable.defaultProps = {
   allergyIntolerances: [],
+  selectedAllergyIntoleranceId: '',
+  
   hideCheckbox: false,
   hideActionIcons: false,
   hideIdentifier: false,

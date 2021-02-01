@@ -1,6 +1,40 @@
 import BaseModel from './lib/BaseModel';
 import { useTracker, withTracker } from './lib/Tracker';
 
+
+import {AllergyIntolerances} from './lib/schemas/AllergyIntolerances';
+import {AuditEvents} from './lib/schemas/AuditEvents';
+import {Bundles} from './lib/schemas/Bundles';
+import {CarePlans} from './lib/schemas/CarePlans';
+import {Conditions} from './lib/schemas/Conditions';
+import {Communications} from './lib/schemas/Communications';
+import {CommunicationRequests} from './lib/schemas/CommunicationRequests';
+import {Devices} from './lib/schemas/Devices';
+import {DiagnosticReports} from './lib/schemas/DiagnosticReports';
+import {DocumentReferences} from './lib/schemas/DocumentReferences';
+import {Encounters} from './lib/schemas/Encounters';
+// import {ExplanationOfBenefits} from './lib/schemas/ExplanationOfBenefits';
+import {Immunizations} from './lib/schemas/Immunizations';
+import {Locations} from './lib/schemas/Locations';
+import {Lists} from './lib/schemas/Lists';
+import {Measures} from './lib/schemas/Measures';
+import {MeasureReports} from './lib/schemas/MeasureReports';
+import {Medications} from './lib/schemas/Medications';
+import {MedicationOrders} from './lib/schemas/MedicationOrders';
+import {MedicationStatements} from './lib/schemas/MedicationStatements';
+import {MessageHeaders} from './lib/schemas/MessageHeaders';
+import {Observations} from './lib/schemas/Observations';
+import {Organizations} from './lib/schemas/Organizations';
+import {Patients} from './lib/schemas/Patients';
+import {Practitioners} from './lib/schemas/Practitioners';
+import {Procedures} from './lib/schemas/Procedures';
+import {Provenances} from './lib/schemas/Provenances';
+import {Questionnaires} from './lib/schemas/Questionnaires';
+import {QuestionnaireResponses} from './lib/schemas/QuestionnaireResponses';
+import {Tasks} from './lib/schemas/Tasks';
+import {ValueSets} from './lib/schemas/ValueSets';
+
+
 import FhirUtilities from './lib/FhirUtilities';
 import FhirDehydrator from './lib/FhirDehydrator';
 import LayoutHelpers from './lib/LayoutHelpers';
@@ -138,399 +172,431 @@ import ValueSetsTable from './client/valuesets/ValueSetsTable';
 import DynamicSpacer from './ui/DynamicSpacer';
 
 
+
+
+
+
 let DynamicRoutes = [{
-  'name': 'AllergyIntolerancesPage',
-  'path': '/allergy-intolerances',
-  'component': AllergyIntolerancesPage,
-  'requireAuth': true
+  name: 'AllergyIntolerancesPage',
+  path: '/allergy-intolerances',
+  component: AllergyIntolerancesPage,
+  requireAuth: true
 }, {
-  'name': 'AuditEventPage',
-  'path': '/audit-events',
-  'component': AuditEventsPage,
-  'requireAuth': true
+  name: 'AuditEventPage',
+  path: '/audit-events',
+  component: AuditEventsPage,
+  requireAuth: true
 }, {
-  'name': 'BundlePage',
-  'path': '/bundles',
-  'component': BundlesPage,
-  'requireAuth': true
+  name: 'BundlePage',
+  path: '/bundles',
+  component: BundlesPage,
+  requireAuth: true
 }, {
-  'name': 'CarePlansPage',
-  'path': '/careplans',
-  'component': CarePlansPage,
-  'requireAuth': true
+  name: 'CarePlansPage',
+  path: '/careplans',
+  component: CarePlansPage,
+  requireAuth: true
 }, {
-  'name': 'CompositionsPage',
-  'path': '/compositions',
-  'component': CompositionsPage,
-  'requireAuth': true
+  name: 'CompositionsPage',
+  path: '/compositions',
+  component: CompositionsPage,
+  requireAuth: true
 }, {
-  'name': 'DevicesPage',
-  'path': '/devices',
-  'component': DevicesPage,
-  'requireAuth': true
+  name: 'DevicesPage',
+  path: '/devices',
+  component: DevicesPage,
+  requireAuth: true
 }, {
-  'name': 'ConditionsPage',
-  'path': '/conditions',
-  'component': ConditionsPage,
-  'requireAuth': true
+  name: 'ConditionsPage',
+  path: '/conditions',
+  component: ConditionsPage,
+  requireAuth: true
 }, {
-  'name': 'CommunicationsPage',
-  'path': '/communications',
-  'component': CommunicationsPage,
-  'requireAuth': true
+  name: 'CommunicationsPage',
+  path: '/communications',
+  component: CommunicationsPage,
+  requireAuth: true
 }, {
-  'name': 'CommunicationRequestsPage',
-  'path': '/communication-requests',
-  'component': CommunicationRequestsPage,
-  'requireAuth': true
+  name: 'CommunicationRequestsPage',
+  path: '/communication-requests',
+  component: CommunicationRequestsPage,
+  requireAuth: true
 }, {
-  'name': 'DiagnosticReportsPage',
-  'path': '/diagnostic-reports',
-  'component': DiagnosticReportsPage,
-  'requireAuth': true
+  name: 'DiagnosticReportsPage',
+  path: '/diagnostic-reports',
+  component: DiagnosticReportsPage,
+  requireAuth: true
 }, {
-  'name': 'DocumentReferencesPage',
-  'path': '/document-references',
-  'component': DocumentReferencesPage,
-  'requireAuth': true
+  name: 'DocumentReferencesPage',
+  path: '/document-references',
+  component: DocumentReferencesPage,
+  requireAuth: true
 }, {
-  'name': 'EncountersPage',
-  'path': '/encounters',
-  'component': EncountersPage,
-  'requireAuth': true
+  name: 'EncountersPage',
+  path: '/encounters',
+  component: EncountersPage,
+  requireAuth: true
 }, {
-  'name': 'ExplanationOfBenefitsPage',
-  'path': '/explanation-of-benefits',
-  'component': ExplanationOfBenefitsPage,
-  'requireAuth': true
+  name: 'ExplanationOfBenefitsPage',
+  path: '/explanation-of-benefits',
+  component: ExplanationOfBenefitsPage,
+  requireAuth: true
 }, {
-  'name': 'ImmunizationsPage',
-  'path': '/immunizations',
-  'component': ImmunizationsPage,
-  'requireAuth': true
+  name: 'ImmunizationsPage',
+  path: '/immunizations',
+  component: ImmunizationsPage,
+  requireAuth: true
 }, {
-  'name': 'LocationsPage',
-  'path': '/locations',
-  'component': LocationsPage,
-  'requireAuth': true
+  name: 'LocationsPage',
+  path: '/locations',
+  component: LocationsPage,
+  requireAuth: true
 }, {
-  'name': 'ListsPage',
-  'path': '/lists',
-  'component': ListsPage,
-  'requireAuth': true
+  name: 'ListsPage',
+  path: '/lists',
+  component: ListsPage,
+  requireAuth: true
 }, {
-  'name': 'MeasuresPage',
-  'path': '/measures',
-  'component': MeasuresPage,
-  'requireAuth': true
+  name: 'MeasuresPage',
+  path: '/measures',
+  component: MeasuresPage,
+  requireAuth: true
 }, {
-  'name': 'MeasureReportsPage',
-  'path': '/measure-reports',
-  'component': MeasureReportsPage,
-  'requireAuth': true
+  name: 'MeasureReportsPage',
+  path: '/measure-reports',
+  component: MeasureReportsPage,
+  requireAuth: true
 }, {
-  'name': 'MedicationsPage',
-  'path': '/medications',
-  'component': MedicationsPage,
-  'requireAuth': true
+  name: 'MedicationsPage',
+  path: '/medications',
+  component: MedicationsPage,
+  requireAuth: true
 }, {
-  'name': 'MedicationOrdersPage',
-  'path': '/medication-orders',
-  'component': MedicationOrdersPage,
-  'requireAuth': true
+  name: 'MedicationOrdersPage',
+  path: '/medication-orders',
+  component: MedicationOrdersPage,
+  requireAuth: true
 }, {
-  'name': 'MedicationStatementsPage',
-  'path': '/medication-statements',
-  'component': MedicationStatementsPage,
-  'requireAuth': true
+  name: 'MedicationStatementsPage',
+  path: '/medication-statements',
+  component: MedicationStatementsPage,
+  requireAuth: true
 }, {
-  'name': 'MessageHeadersPage',
-  'path': '/message-headers',
-  'component': MessageHeadersPage,
-  'requireAuth': true
+  name: 'MessageHeadersPage',
+  path: '/message-headers',
+  component: MessageHeadersPage,
+  requireAuth: true
 }, {
-  'name': 'ObservationsPage',
-  'path': '/observations',
-  'component': ObservationsPage,
-  'requireAuth': true
+  name: 'ObservationsPage',
+  path: '/observations',
+  component: ObservationsPage,
+  requireAuth: true
 }, {
-  'name': 'OrganizationsPage',
-  'path': '/organizations',
-  'component': OrganizationsPage,
-  'requireAuth': true
+  name: 'OrganizationsPage',
+  path: '/organizations',
+  component: OrganizationsPage,
+  requireAuth: true
 }, {
-  'name': 'PatientPage',
-  'path': '/patients',
-  'component': PatientsPage,
-  'requireAuth': true
+  name: 'PatientPage',
+  path: '/patients',
+  component: PatientsPage,
+  requireAuth: true
 }, {
-  'name': 'PractitionersPage',
-  'path': '/practitioners',
-  'component': PractitionersPage,
-  'requireAuth': true
+  name: 'PractitionersPage',
+  path: '/practitioners',
+  component: PractitionersPage,
+  requireAuth: true
 }, {
-  'name': 'ProceduresPage',
-  'path': '/procedures',
-  'component': ProceduresPage,
-  'requireAuth': true
+  name: 'ProceduresPage',
+  path: '/procedures',
+  component: ProceduresPage,
+  requireAuth: true
 }, {
-  'name': 'ProvenancesPage',
-  'path': '/provenances',
-  'component': ProvenancesPage,
-  'requireAuth': true
+  name: 'ProvenancesPage',
+  path: '/provenances',
+  component: ProvenancesPage,
+  requireAuth: true
 }, {
-  'name': 'QuestionnairesPage',
-  'path': '/questionnaires',
-  'component': QuestionnairesPage,
-  'requireAuth': true
+  name: 'QuestionnairesPage',
+  path: '/questionnaires',
+  component: QuestionnairesPage,
+  requireAuth: true
 }, {
-  'name': 'QuestionnaireResponsesPage',
-  'path': '/questionnaire-responses',
-  'component': QuestionnaireResponsesPage,
-  'requireAuth': true
+  name: 'QuestionnaireResponsesPage',
+  path: '/questionnaire-responses',
+  component: QuestionnaireResponsesPage,
+  requireAuth: true
 }, {
-  'name': 'TasksPage',
-  'path': '/tasks',
-  'component': TasksPage,
-  'requireAuth': true
+  name: 'TasksPage',
+  path: '/tasks',
+  component: TasksPage,
+  requireAuth: true
 }, {
-  'name': 'ValueSetsPage',
-  'path': '/valuesets',
-  'component': ValueSetsPage,
-  'requireAuth': true
+  name: 'ValueSetsPage',
+  path: '/valuesets',
+  component: ValueSetsPage,
+  requireAuth: true
 } ];
 
+
+
+
 let SidebarElements = [{
-  'primaryText': 'Allergies & Intolerances',
-  'to': '/allergy-intolerances',
-  'href': '/allergy-intolerances',
-  'iconName': 'ic_warning'
+  primaryText: 'Allergy Intolerances',
+  to: '/allergy-intolerances',
+  href: '/allergy-intolerances',
+  iconName: 'ic_warning',
+  collectionName: 'AllergyIntolerances'
 }, {
-  'primaryText': 'Audit Events',
-  'to': '/audit-events',
-  'href': '/audit-events'
+  primaryText: 'Audit Events',
+  to: '/audit-events',
+  href: '/audit-events',
+  collectionName: 'AuditEvents'
 }, {
-  'primaryText': 'Bundles',
-  'to': '/bundles',
-  'href': '/bundles',
-  'iconName': 'suitcase'  
+  prmaryText: 'Bundles',
+  to: '/bundles',
+  href: '/bundles',
+  iconName: 'suitcase',
+  collectionName: 'Bundles'
 }, {
-  'primaryText': 'Care Plans',
-  'to': '/careplans',
-  'href': '/careplans',
-  'iconName': 'notepad'  
+  primaryText: 'Care Plans',
+  to: '/careplans',
+  href: '/careplans',
+  iconName: 'notepad',
+  collectionName: 'CarePlans'
 }, {
-  'primaryText': 'Conditions',
-  'to': '/conditions',
-  'href': '/conditions',
-  'iconName': 'heartbeat'  
+  primaryText: 'Conditions',
+  to: '/conditions',
+  href: '/conditions',
+  iconName: 'heartbeat',
+  collectionName: 'Conditions'  
 }, {
-  'primaryText': 'Communications',
-  'to': '/communications',
-  'href': '/communications',
-  'iconName': 'envelopeO'  
+  primaryText: 'Communications',
+  to: '/communications',
+  href: '/communications',
+  iconName: 'envelopeO',
+  collectionName: 'Communications'  
 }, {
-  'primaryText': 'Communication Responses',
-  'to': '/communication-responses',
-  'href': '/communication-responses',
-  'iconName': 'envelopeO'  
+  primaryText: 'Communication Requests',
+  to: '/communication-requests',
+  href: '/communication-requests',
+  iconName: 'envelopeO',
+  collectionName: 'CommunicationRequests'    
 }, {
-  'primaryText': 'Communication Requests',
-  'to': '/communication-requests',
-  'href': '/communication-requests',
-  'iconName': 'envelopeO'  
+  primaryText: 'Devices',
+  to: '/devices',
+  href: '/devices',
+  iconName: 'ic_devices',
+  collectionName: 'Devices'    
 }, {
-  'primaryText': 'Devices',
-  'to': '/devices',
-  'href': '/devices',
-  'iconName': 'ic_devices'  
+  primaryText: 'Diagnostic Reports',
+  to: '/diagnostic-reports',
+  href: '/diagnostic-reports',
+  iconName: 'notepad',
+  collectionName: 'DiagnosticReports' 
 }, {
-  'primaryText': 'Diagnostic Reports',
-  'to': '/diagnostic-reports',
-  'href': '/diagnostic-reports',
-  'iconName': 'notepad'
+  primaryText: 'Document References',
+  to: '/document-references',
+  href: '/document-references',
+  iconName: 'notepad',
+  collectionName: 'DocumentReferences'  
 }, {
-  'primaryText': 'Document References',
-  'to': '/document-references',
-  'href': '/document-references',
-  'iconName': 'notepad'
+  primaryText: 'Encounters',
+  to: '/encounters',
+  href: '/encounters',
+  iconName: 'ic_transfer_within_a_station',
+  collectionName: Encounters
 }, {
-  'primaryText': 'Encounters',
-  'to': '/encounters',
-  'href': '/encounters',
-  'iconName': 'ic_transfer_within_a_station'
+  primaryText: 'Explanation Of Benefits',
+  to: '/explanation-of-benefits',
+  href: '/explanation-of-benefits',
+  iconName: 'notepad',
+  // collectionName: ExplanationOfBenefits
 }, {
-  'primaryText': 'Explanation Of Benefits',
-  'to': '/explanation-of-benefits',
-  'href': '/explanation-of-benefits',
-  'iconName': 'notepad'
+  primaryText: 'Immunizations',
+  to: '/immunizations',
+  href: '/immunizations',
+  iconName: 'eyedropper',
+  collectionName: 'Immunizations'  
 }, {
-  'primaryText': 'Immunizations',
-  'to': '/immunizations',
-  'href': '/immunizations',
-  'iconName': 'eyedropper'  
+  primaryText: 'Locations',
+  to: '/locations',
+  href: '/locations',
+  iconName: 'location',
+  collectionName: 'Locations' 
 }, {
-  'primaryText': 'Locations',
-  'to': '/locations',
-  'href': '/locations',
-  'iconName': 'location' 
+  primaryText: 'Lists',
+  to: '/lists',
+  href: '/lists',
+  iconName: 'notepad',
+  collectionName: Lists 
 }, {
-  'primaryText': 'Lists',
-  'to': '/lists',
-  'href': '/lists',
-  'iconName': 'notepad' 
+  primaryText: 'Measures',
+  to: '/measures',
+  href: '/measures',
+  iconName: 'dashboard',
+  collectionName: 'Measures'
 }, {
-  'primaryText': 'Measures',
-  'to': '/measures',
-  'href': '/measures',
-  "iconName": 'dashboard'
+  primaryText: 'Measure Reports',
+  to: '/measure-reports',
+  href: '/measure-reports',
+  iconName: 'dashboard',
+  collectionName: 'MeasureReports'
 }, {
-  'primaryText': 'Measure Reports',
-  'to': '/measure-reports',
-  'href': '/measure-reports',
-  "iconName": 'dashboard'
+  primaryText: 'Medications',
+  to: '/medications',
+  href: '/medications',
+  iconName: 'erlenmeyerFlask',
+  collectionName: 'Medications'  
 }, {
-  'primaryText': 'Medications',
-  'to': '/medications',
-  'href': '/medications',
-  'iconName': 'erlenmeyerFlask'  
+  primaryText: 'Medication Orders',
+  to: '/medication-orders',
+  href: '/medication-orders',
+  iconName: 'ic_local_pharmacy',
+  collectionName: 'MedicationOrders'  
 }, {
-  'primaryText': 'Medication Orders',
-  'to': '/medication-orders',
-  'href': '/medication-orders',
-  'iconName': 'ic_local_pharmacy'  
+  primaryText: 'Medication Statements',
+  to: '/medication-statements',
+  href: '/medication-statements',
+  iconName: 'ic_local_pharmacy',
+  collectionName: 'MedicationStatements'  
 }, {
-  'primaryText': 'Medication Statements',
-  'to': '/medication-statements',
-  'href': '/medication-statements',
-  'iconName': 'ic_local_pharmacy'  
+  primaryText: 'Message Headers',
+  to: '/message-headers',
+  href: '/message-headers',
+  iconName: 'envelopeO',
+  collectionName: 'MessageHeaders'  
 }, {
-  'primaryText': 'Message Headers',
-  'to': '/message-headers',
-  'href': '/message-headers',
-  'iconName': 'envelopeO'  
+  primaryText: 'Observations',
+  to: '/observations',
+  href: '/observations',
+  iconName: 'iosPulseStrong',
+  collectionName: 'Observations' 
 }, {
-  'primaryText': 'Observations',
-  'to': '/observations',
-  'href': '/observations',
-  'iconName': 'iosPulseStrong' 
+  primaryText: 'Organizations',
+  to: '/organizations',
+  href: '/organizations',
+  iconName: 'hospitalO',
+  collectionName: 'Organizations'
 }, {
-  'primaryText': 'Organizations',
-  'to': '/organizations',
-  'href': '/organizations',
-  'iconName': 'hospitalO'
+  primaryText: 'Patients',
+  to: '/patients',
+  href: '/patients',
+  iconName: 'users',
+  collectionName: 'Patients'
 }, {
-  'primaryText': 'Patients',
-  'to': '/patients',
-  'href': '/patients',
-  'iconName': 'users'
+  primaryText: 'Practitioners',
+  to: '/practitioners',
+  href: '/practitioners',
+  iconName: 'userMd',
+  collectionName: 'Practitioners'
 }, {
-  'primaryText': 'Practitioners',
-  'to': '/practitioners',
-  'href': '/practitioners',
-  'iconName': 'userMd'
+  primaryText: 'Procedures',
+  to: '/procedures',
+  href: '/procedures',
+  iconName: 'bath',
+  collectionName: 'Procedures'
 }, {
-  'primaryText': 'Procedures',
-  'to': '/procedures',
-  'href': '/procedures',
-  'iconName': 'bath'
+  primaryText: 'Provenances',
+  to: '/provenances',
+  href: '/provenances',
+  iconName: 'fire',
+  collectionName: 'Provenances'
 }, {
-  'primaryText': 'Provenances',
-  'to': '/provenances',
-  'href': '/provenances',
-  'iconName': 'fire'
+  primaryText: 'Questionnaires',
+  to: '/questionnaires',
+  href: '/questionnaires',
+  iconName: 'ic_question_answer',
+  collectionName: 'Questionnaires'
 }, {
-  'primaryText': 'Questionnaires',
-  'to': '/questionnaires',
-  'href': '/questionnaires',
-  'iconName': 'ic_question_answer'
+  primaryText: 'Questionnaire Responses',
+  to: '/questionnaire-responses',
+  href: '/questionnaire-responses',
+  iconName: 'ic_question_answer',
+  collectionName: 'QuestionnaireResponses'
 }, {
-  'primaryText': 'Questionnaire Responses',
-  'to': '/questionnaire-responses',
-  'href': '/questionnaire-responses',
-  'iconName': 'ic_question_answer'
+  primaryText: 'Tasks',
+  to: '/tasks',
+  href: '/tasks',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'Tasks'
 }, {
-  'primaryText': 'Tasks',
-  'to': '/tasks',
-  'href': '/tasks',
-  'iconName': 'ic_format_list_bulleted'
-}, {
-  'primaryText': 'Value Sets',
-  'to': '/valuesets',
-  'href': '/valuesets',
-  'iconName': 'notepad'
+  primaryText: 'Value Sets',
+  to: '/valuesets',
+  href: '/valuesets',
+  iconName: 'notepad',
+  _collection: 'ValueSets'
 }];
   
 let AdminSidebarElements = [{
-  'primaryText': 'Allergies & Intolerances',
-  'to': '/allergies',
-  'href': '/allergies'
+  primaryText: 'Allergies & Intolerances',
+  to: '/allergies',
+  href: '/allergies'
 }, {
-  'primaryText': 'Bundles',
-  'to': '/bundles',
-  'href': '/bundles'
+  prmaryText: 'Bundles',
+  to: '/bundles',
+  href: '/bundles'
 }, {
-  'primaryText': 'Care Plans',
-  'to': '/careplans',
-  'href': '/careplans'
+  prmaryText: 'Care Plans',
+  to: '/careplans',
+  href: '/careplans'
 }, {
-  'primaryText': 'Devices',
-  'to': '/devices',
-  'href': '/devices'
+  prmaryText: 'Devices',
+  to: '/devices',
+  href: '/devices'
 }, {
-  'primaryText': 'Diagnostic Reports',
-  'to': '/diagnostic-reports',
-  'href': '/diagnostic-reports'
+  prmaryText: 'Diagnostic Reports',
+  to: '/diagnostic-reports',
+  href: '/diagnostic-reports'
 }, {
-  'primaryText': 'Encounters',
-  'to': '/encounters',
-  'href': '/encounters'
+  prmaryText: 'Encounters',
+  to: '/encounters',
+  href: '/encounters'
 }, {
-  'primaryText': 'Immunizations',
-  'to': '/immunizations',
-  'href': '/immunizations'
-},  {
-  'primaryText': 'Measures',
-  'to': '/measures',
-  'href': '/measures'
+  prmaryText: 'Immunizations',
+  to: '/immunizations',
+  href: '/immunizations'
 }, {
-  'primaryText': 'Measure Reports',
-  'to': '/measure-reports',
-  'href': '/measure-reports'
+  prmaryText: 'Measures',
+  to: '/measures',
+  href: '/measures'
 }, {
-  'primaryText': 'Medications',
-  'to': '/medications',
-  'href': '/medications'
+  prmaryText: 'Measure Reports',
+  to: '/measure-reports',
+  href: '/measure-reports'
 }, {
-  'primaryText': 'Medication Orders',
-  'to': '/medication-orders',
-  'href': '/medication-orders'
+  prmaryText: 'Medications',
+  to: '/medications',
+  href: '/medications'
 }, {
-  'primaryText': 'Medication Statements',
-  'to': '/medication-statements',
-  'href': '/medication-statements'
+  prmaryText: 'Medication Orders',
+  to: '/medication-orders',
+  href: '/medication-orders'
 }, {
-  'primaryText': 'Observations',
-  'to': '/observations',
-  'href': '/observations'
+  prmaryText: 'Medication Statements',
+  to: '/medication-statements',
+  href: '/medication-statements'
 }, {
-  'primaryText': 'Observations',
-  'to': '/observations',
-  'href': '/observations'
+  prmaryText: 'Observations',
+  to: '/observations',
+  href: '/observations'
 }, {
-  'primaryText': 'Patients',
-  'to': '/patients',
-  'href': '/patients'
+  prmaryText: 'Observations',
+  to: '/observations',
+  href: '/observations'
 }, {
-  'primaryText': 'Practitioners',
-  'to': '/practitioners',
-  'href': '/practitioners'
+  prmaryText: 'Patients',
+  to: '/patients',
+  href: '/patients'
 }, {
-  'primaryText': 'Procedures',
-  'to': '/procedures',
-  'href': '/procedures'
+  prmaryText: 'Practitioners',
+  to: '/practitioners',
+  href: '/practitioners'
+}, {
+  prmaryText: 'Procedures',
+  to: '/procedures',
+  href: '/procedures'
 }];
-
 
 
 export { 
