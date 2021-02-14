@@ -133,7 +133,7 @@ import MessageHeadersTable from './client/messageHeaders/MessageHeadersTable';
 
 import ObservationsPage from './client/observations/ObservationsPage';
 import ObservationsTable from './client/observations/ObservationsTable';
-// import ObservationDetail from './client/observations/ObservationDetail';
+import ObservationDetail from './client/observations/ObservationDetail';
 
 import OrganizationsPage from './client/organizations/OrganizationsPage';
 import OrganizationsTable from './client/organizations/OrganizationsTable';
@@ -692,7 +692,7 @@ export {
 
   ObservationsPage,
   ObservationsTable,
-  // ObservationDetail,
+  ObservationDetail,
 
   OrganizationsPage,
   OrganizationsTable,
