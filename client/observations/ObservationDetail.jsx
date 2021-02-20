@@ -260,7 +260,7 @@ export function ObservationDetail(props){
           <TextField
             id='subjectDisplayInput'                
             name='subjectDisplay'
-            label='Subject Name'
+            label='Patient Name'
             // TimelineSidescrollPage dialog popup
             // Getting the following when passing an observation in via props
             // A component is changing a controlled input of type text to be uncontrolled. Input elements should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled input element for the lifetime of the component. 
@@ -278,9 +278,9 @@ export function ObservationDetail(props){
           <TextField
             id='subjectIdInput'                
             name='subjectReference'
-            label='Subject ID'
+            label='Patient ID'
             value={ get(data, 'form.subjectReference') }
-            label={ setHint('Patient/12345') }
+            // label={ setHint('Patient/12345') }
             // onChange={ changeState.bind(data, 'subjectReference')}
             //floatingLabelFixed={true}
             fullWidth
@@ -304,7 +304,7 @@ export function ObservationDetail(props){
             label='Device'
             value={ get(data, 'form.device') }
             //onChange={ changeState.bind(data, 'deviceDisplay')}
-            label={ setHint('iHealth Blood Pressure Cuff') }
+            // label={ setHint('iHealth Blood Pressure Cuff') }
             //floatingLabelFixed={true}
             fullWidth
             InputLabelProps={{
@@ -319,7 +319,7 @@ export function ObservationDetail(props){
             label='Device Reference'
             value={ get(data, 'form.deviceReference') }
             // onChange={ changeState.bind(data, 'deviceReference')}
-            label={ setHint('Device/444') }
+            // label={ setHint('Device/444') }
             //floatingLabelFixed={true}
             fullWidth
             InputLabelProps={{
@@ -346,7 +346,7 @@ export function ObservationDetail(props){
               name='category'
               label='Category'
               value={ get(data, 'form.category') }
-              label={ setHint('Vital Signs') }
+              // label={ setHint('Vital Signs') }
               fullWidth
               InputLabelProps={{
                 shrink: true
@@ -359,7 +359,7 @@ export function ObservationDetail(props){
               name='status'
               label='Status'
               value={ get(data, 'form.status') }
-              label={ setHint('preliminary | final') }
+              // label={ setHint('preliminary | final') }
               fullWidth
               InputLabelProps={{
                 shrink: true
@@ -372,7 +372,7 @@ export function ObservationDetail(props){
               name='effectiveDateTime'
               label='Effective Date'
               value={ get(data, 'form.effectiveDateTime') }
-              label={ setHint('preliminary | final') }
+              // label={ setHint('Effective Date') }
               fullWidth
               InputLabelProps={{
                 shrink: true
@@ -399,7 +399,7 @@ export function ObservationDetail(props){
               label='LOINC Code'
               value={ get(data, 'form.codeValue') }
               //onChange={ changeState.bind(data, 'loincCode')}
-              label={ setHint('4548-4') }
+              label='LOINC Code'
               //floatingLabelFixed={true}
               fullWidth
               InputLabelProps={{
@@ -414,7 +414,7 @@ export function ObservationDetail(props){
               label='LOINC Display'
               value={ get(data, 'form.codeDisplay') }
               //onChange={ changeState.bind(data, 'loincCodeText')}
-              label={ setHint('4548-4') }
+              label='LOINC Description'
               //floatingLabelFixed={true}
               fullWidth
               InputLabelProps={{
@@ -488,7 +488,7 @@ export function ObservationDetail(props){
               id='valueStringInput'                
               name='value'
               label='Value'
-              label={ setHint('AB+; pos; neg') }
+              // label={ setHint('AB+; pos; neg') }
               value={ get(data, 'form.value') }
               //onChange={ changeState.bind(data, 'value')}
               //floatingLabelFixed={true}
