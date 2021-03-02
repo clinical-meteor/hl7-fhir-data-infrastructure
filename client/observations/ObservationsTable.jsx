@@ -96,6 +96,7 @@ function ObservationsTable(props){
     hideSubjects,
     hideSubjectReference,
     hideEffectiveDateTime,
+    hideIssued,
     hideStatus,
     hideCodeValue,
     hideCode,
@@ -155,6 +156,7 @@ function ObservationsTable(props){
         hideSubjects = true;
         hideSubjectReference = true;
         hideEffectiveDateTime = true;
+        hideIssued = true;
         hideStatus = true;
         hideCodeValue = true;
         hideCode = false;
@@ -173,6 +175,7 @@ function ObservationsTable(props){
         hideSubjects = true;
         hideSubjectReference = true;
         hideEffectiveDateTime = false;
+        hideIssued = false;
         hideStatus = false;
         hideCodeValue = true;
         hideCode = false;
@@ -191,6 +194,7 @@ function ObservationsTable(props){
         hideSubjects = true;
         hideSubjectReference = true;
         hideEffectiveDateTime = false;
+        hideIssued = false;
         hideStatus = false;
         hideCodeValue = false;
         hideCode = false;
@@ -209,6 +213,7 @@ function ObservationsTable(props){
         hideSubjects = true;
         hideSubjectReference = true;
         hideEffectiveDateTime = false;
+        hideIssued = false;
         hideStatus = false;
         hideCodeValue = false;
         hideCode = false;
@@ -503,6 +508,22 @@ function ObservationsTable(props){
       );
     }
   }
+
+  function renderIssuedHeader(){
+    if (!hideIssued) {
+      return (
+        <TableCell className='issued' style={{minWidth: '180px'}}>Issued</TableCell>
+      );
+    }
+  }
+  function renderIssued(issued){
+    if (!hideIssued) {
+      return (
+        <TableCell className='issued' style={{minWidth: '180px'}}>{ issued }</TableCell>
+      );
+    }
+  }
+
   function renderComponentNumerator(numerator){
     if (!hideNumerator) {
       return (
@@ -644,6 +665,7 @@ function ObservationsTable(props){
             { renderStatus(observationsToRender[i].status) }
             { renderDevice(observationsToRender[i].device)}
             { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
+            { renderIssued(observationsToRender[i].effectiveDateTime) }
             { renderComponentNumerator(observationsToRender[i].numerator)}
             { renderComponentDenominator(observationsToRender[i].denominator)}
 
@@ -670,6 +692,7 @@ function ObservationsTable(props){
             { renderStatus(observationsToRender[i].status) }
             { renderDevice(observationsToRender[i].device)}
             { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
+            { renderIssued(observationsToRender[i].effectiveDateTime) }
             { renderComponentNumerator(observationsToRender[i].numerator)}
             { renderComponentDenominator(observationsToRender[i].denominator)}
 
@@ -693,7 +716,7 @@ function ObservationsTable(props){
   if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}
@@ -719,6 +742,7 @@ function ObservationsTable(props){
             { renderStatusHeader() }
             { renderDeviceHeader() }
             { renderEffectiveDateTimeHeader() }
+            { renderIssuedHeader() }
             { renderComponentNumeratorHeader()}
             { renderComponentDenominatorHeader()}
 
@@ -758,6 +782,7 @@ ObservationsTable.propTypes = {
   hideSubjects: PropTypes.bool,
   hideSubjectReference: PropTypes.bool,
   hideEffectiveDateTime: PropTypes.bool,
+  hideIssued: PropTypes.bool,
   hideStatus: PropTypes.bool,
   hideCodeValue: PropTypes.bool,
   hideCode: PropTypes.bool,
@@ -807,9 +832,12 @@ ObservationsTable.defaultProps = {
   hideDevices: true,
   hideCode: false,
   hideCodeValue: false,
-  hideEffectiveDateTime: false,
+  hideEffectiveDateTime: true,
+  hideIssued: true,
+  hideIssued: false,
   sampledData: false,
   hideUnits: false,
+  multiline: true,
   numeratorLabel: "Systolic",
   denominatorLabel: "Diastolic",
   numeratorCode: "8480-6",

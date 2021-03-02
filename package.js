@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.10.21',
+  version: '6.11.3',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -219,10 +219,107 @@ Package.onUse(function (api) {
 
   api.export('BaseModel');
 
+  // ---------------------------------------------------------------------------
+  // Base Resources
+
+  api.addFiles('datatypes/Meta.js');
+  api.addFiles('datatypes/Base.js');
+  api.addFiles('datatypes/DomainResource.js');
+  api.addFiles('datatypes/Narrative.js');
+
+  api.export('MetaSchema');
+  api.export('BaseSchema');
+  api.export('DomainResourceSchema');
+  api.export('NarrativeSchema');
+
+  // ---------------------------------------------------------------------------
+  // Data Types
+
+  api.addFiles('datatypes/Address.js');
+  api.addFiles('datatypes/Annotation.js');
+  api.addFiles('datatypes/Attachment.js');
+  api.addFiles('datatypes/Code.js');
+  api.addFiles('datatypes/Coding.js');
+  api.addFiles('datatypes/CodableConcept.js');
+  api.addFiles('datatypes/ContactPoint.js');
+  api.addFiles('datatypes/Conformance.js');
+  api.addFiles('datatypes/Group.js');
+  api.addFiles('datatypes/HumanName.js');
+  api.addFiles('datatypes/Identifier.js');
+  api.addFiles('datatypes/Money.js');
+  api.addFiles('datatypes/Period.js');
+  api.addFiles('datatypes/Quantity.js');
+  api.addFiles('datatypes/Range.js');
+  api.addFiles('datatypes/Reference.js');
+  api.addFiles('datatypes/Ratio.js');
+  api.addFiles('datatypes/SampledData.js');
+  api.addFiles('datatypes/Signature.js');
+  api.addFiles('datatypes/Timing.js');
+
+  api.addFiles('datatypes/Basic.js');
+  api.addFiles('datatypes/OperationDefinition.js');
+  api.addFiles('datatypes/StructureDefinition.js');
+  api.addFiles('datatypes/ValueSet.js');
+
+  api.export('AddressSchema');
+  api.export('AnnotationSchema');
+  api.export('AttachmentSchema');
+  api.export('Code');
+  api.export('QuantitySchema');
+  api.export('HumanNameSchema');
+  api.export('ReferenceSchema');
+  api.export('PeriodSchema');
+  api.export('CodingSchema');
+  api.export('MoneySchema');
+  api.export('CodeableConceptSchema');
+  api.export('IdentifierSchema');
+  api.export('ContactPointSchema');
+  api.export('GroupSchema');
+  api.export('ConformanceSchema');
+  api.export('RangeSchema');
+  api.export('RatioSchema');
+  api.export('SampledDataSchema');
+  api.export('SignatureSchema');
+  api.export('TimingSchema');
+
+  api.export('BasicSchema');
+  api.export('OperationDefinitionSchema');
+  api.export('StructureDefinitionSchema');
+  api.export('ValueSetSchema');
+
+  api.export('Address');
+  api.export('Annotation');
+  api.export('Attachment');
+  api.export('Code');
+  api.export('Quantity');
+  api.export('HumanName');
+  api.export('Reference');
+  api.export('Period');
+  api.export('Coding');
+  api.export('CodeableConcept');
+  api.export('Identifier');
+  api.export('ContactPoint');
+  api.export('Group');
+  api.export('Conformance');
+  api.export('Range');
+  api.export('Ratio');
+  api.export('SampledData');
+  api.export('Signature');
+  api.export('Timing');
+
+  // ---------------------------------------------------------------------------
+  // Web Components
+
   // client side data stores, speicifically minimongo pages (aka flux, redux, etc )
   api.mainModule('index.jsx', 'client');
-  api.mainModule('server.js', 'server');
+
+  // ---------------------------------------------------------------------------
+  // Server Utilities
+
+  // medical records importer, hydrator/dehydrator, etc
+  api.mainModule('utilities.js', 'server');
 });
+
 
 Npm.depends({
   "react-sortable-hoc": "1.11.0"

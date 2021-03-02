@@ -80,7 +80,11 @@ export function ObservationDetail(props){
     data.form = FhirDehydrator.flattenObservation(get(props, 'observation'));
   }
 
+
   console.log("ObservationDetail.data", data)
+
+
+
 
 
   //--------------------------------------------------------------------------------
@@ -250,7 +254,7 @@ export function ObservationDetail(props){
   //--------------------------------------------------------------------------------
   // Render
 
-  console.log('ObservationDetail.render()', state)
+  console.log('ObservationDetail.render()', state);
     //let formData = state.form;
 
     var patientInputs;
@@ -264,9 +268,9 @@ export function ObservationDetail(props){
             // TimelineSidescrollPage dialog popup
             // Getting the following when passing an observation in via props
             // A component is changing a controlled input of type text to be uncontrolled. Input elements should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled input element for the lifetime of the component. 
-            value={ get(data, 'form.subject') }
+            value={ get(data, 'form.subject', '') }
             // onChange={ changeState.bind(data, 'subject')}
-            label={ setHint('Jane Doe') }
+            // label={ setHint('Jane Doe') }
             //floatingLabelFixed={true}
             fullWidth
             InputLabelProps={{
@@ -279,7 +283,7 @@ export function ObservationDetail(props){
             id='subjectIdInput'                
             name='subjectReference'
             label='Patient ID'
-            value={ get(data, 'form.subjectReference') }
+            value={ get(data, 'form.subjectReference', '') }
             // label={ setHint('Patient/12345') }
             // onChange={ changeState.bind(data, 'subjectReference')}
             //floatingLabelFixed={true}
@@ -302,7 +306,7 @@ export function ObservationDetail(props){
             id='deviceDisplayInput'                
             name='deviceDisplay'
             label='Device'
-            value={ get(data, 'form.device') }
+            value={ get(data, 'form.device', '') }
             //onChange={ changeState.bind(data, 'deviceDisplay')}
             // label={ setHint('iHealth Blood Pressure Cuff') }
             //floatingLabelFixed={true}
@@ -317,7 +321,7 @@ export function ObservationDetail(props){
             id='deviceReferenceInput'                
             name='deviceReference'
             label='Device Reference'
-            value={ get(data, 'form.deviceReference') }
+            value={ get(data, 'form.deviceReference', '') }
             // onChange={ changeState.bind(data, 'deviceReference')}
             // label={ setHint('Device/444') }
             //floatingLabelFixed={true}
@@ -345,7 +349,7 @@ export function ObservationDetail(props){
               id='categoryTextInput'                
               name='category'
               label='Category'
-              value={ get(data, 'form.category') }
+              value={ get(data, 'form.category', '') }
               // label={ setHint('Vital Signs') }
               fullWidth
               InputLabelProps={{
@@ -358,7 +362,7 @@ export function ObservationDetail(props){
               id='statusInput'                
               name='status'
               label='Status'
-              value={ get(data, 'form.status') }
+              value={ get(data, 'form.status', '') }
               // label={ setHint('preliminary | final') }
               fullWidth
               InputLabelProps={{
@@ -371,7 +375,7 @@ export function ObservationDetail(props){
               id='effectiveDateTimeInput'                
               name='effectiveDateTime'
               label='Effective Date'
-              value={ get(data, 'form.effectiveDateTime') }
+              value={ get(data, 'form.effectiveDateTime', '') }
               // label={ setHint('Effective Date') }
               fullWidth
               InputLabelProps={{
@@ -397,7 +401,7 @@ export function ObservationDetail(props){
               id='loincCodeInput'                
               name='loincCode'
               label='LOINC Code'
-              value={ get(data, 'form.codeValue') }
+              value={ get(data, 'form.codeValue', '') }
               //onChange={ changeState.bind(data, 'loincCode')}
               label='LOINC Code'
               //floatingLabelFixed={true}
@@ -412,7 +416,7 @@ export function ObservationDetail(props){
               id='loincDisplayInput'                
               name='loincCodeText'
               label='LOINC Display'
-              value={ get(data, 'form.codeDisplay') }
+              value={ get(data, 'form.codeDisplay', '') }
               //onChange={ changeState.bind(data, 'loincCodeText')}
               label='LOINC Description'
               //floatingLabelFixed={true}
@@ -489,7 +493,7 @@ export function ObservationDetail(props){
               name='value'
               label='Value'
               // label={ setHint('AB+; pos; neg') }
-              value={ get(data, 'form.value') }
+              value={ get(data, 'form.value', '') }
               //onChange={ changeState.bind(data, 'value')}
               //floatingLabelFixed={true}
               fullWidth
