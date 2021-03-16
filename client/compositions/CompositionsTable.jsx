@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
 import { 
-  CssBaseline,
   Grid, 
   Container,
   Divider,

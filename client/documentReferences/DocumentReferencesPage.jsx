@@ -3,7 +3,6 @@ import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { 
-  CssBaseline,
   Grid, 
   Container,
   Divider,
