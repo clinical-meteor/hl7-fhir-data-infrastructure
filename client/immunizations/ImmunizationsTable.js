@@ -186,8 +186,12 @@ function ImmunizationsTable(props){
   function removeRecord(_id){
     console.log('removeRecord')
   }
-  function rowClick(id){
-    console.log('rowClick')
+  function handleRowClick(id){
+    console.log('handleRowClick', id)
+
+    if(typeof props.onRowClick === "function"){
+      props.onRowClick(id);
+    }
   }
   function handleActionButtonClick(){
     console.log('handleActionButtonClick')
@@ -424,7 +428,7 @@ function ImmunizationsTable(props){
 
       logger.trace('immunizationsToRender[i]', immunizationsToRender[i])
       tableRows.push(
-        <TableRow className="immunizationRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, immunizationsToRender[i]._id)} hover={true} >            
+        <TableRow className="immunizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, immunizationsToRender[i].id)} hover={true} >            
           { renderCheckbox() }
           { renderActionIcons(immunizations[i]) }
           { renderIdentifier( immunizationsToRender[i].identifier ) }
