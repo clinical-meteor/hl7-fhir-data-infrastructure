@@ -5,12 +5,8 @@ import {
   Card,
   CardHeader,
   CardContent,
-  Button,
-  Tab, 
-  Tabs,
-  Typography,
-  Box
-} from '@material-ui/core';
+  Button
+} from '@material-ui/core'; 
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -61,22 +57,38 @@ export function ConditionsPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
   
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  let noDataCardStyle = {};
+
+  let conditionContent;
+  if(data.conditions.length > 0){
+    conditionContent = <StyledCard height="auto" scrollable={true} margin={20}>
+      <CardHeader title={ data.conditions.length + " Conditions"} />
+      <CardContent>
+        <ConditionsTable 
+          id='conditionsTable'
+          conditions={data.conditions}
+          count={data.conditions.length}  
+          formFactorLayout={formFactor}
+          rowsPerPage={LayoutHelpers.calcTableRows()}
+        />
+      </CardContent>
+    </StyledCard>
+  } else {
+    conditionContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Selected")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "Please import some vital sign data, and then select a biomarker type.")} 
+        />
+      </CardContent>
+    </Container>
+  }
   
   return (
     <PageCanvas id="conditionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-      <StyledCard height="auto" scrollable={true} margin={20}>
-        <CardHeader title={ data.conditions.length + " Conditions"} />
-        <CardContent>
-
-          <ConditionsTable 
-            id='conditionsTable'
-            conditions={data.conditions}
-            count={data.conditions.length}  
-            formFactorLayout={formFactor}
-            rowsPerPage={LayoutHelpers.calcTableRows()}
-          />
-        </CardContent>
-      </StyledCard>
+      { conditionContent }
     </PageCanvas>
   );
 }

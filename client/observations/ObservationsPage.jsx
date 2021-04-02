@@ -9,7 +9,8 @@ import {
   Tab, 
   Tabs,
   Typography,
-  Box
+  Box,
+  Container
 } from '@material-ui/core';
 import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
@@ -23,7 +24,7 @@ import ReactMixin  from 'react-mixin';
 import ObservationsTable from './ObservationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { get } from 'lodash';
+import { get, has } from 'lodash'; 
 
 
 //=============================================================================================================================================
@@ -176,25 +177,45 @@ export function ObservationsPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
 
+
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  let noDataCardStyle = {};
+
+  let observationContent;
+  if(data.observations.length > 0){
+    observationContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+      <CardHeader title={data.observations.length + " Observations"} />
+      <CardContent>
+        <ObservationsTable 
+          formFactorLayout={formFactor}
+          observations={ data.observations }
+          count={ data.observations.length }
+          rowsPerPage={LayoutHelpers.calcTableRows()}
+          actionButtonLabel="Send"
+          onRowClick={ this.onTableRowClick }
+          onCellClick={ this.onTableCellClick }
+          onActionButtonClick={this.tableActionButtonClick}
+          onRemoveRecord={ this.onDeleteObservation }
+          tableRowSize="medium"
+        />
+      </CardContent>            
+    </StyledCard>
+  } else {
+    observationContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />
+        <CardContent>
+          <CardHeader 
+            title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Selected")} 
+            subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "Please import some vital sign data, and then select a biomarker type.")} 
+          />
+        </CardContent>
+    </Container>
+  }
+
+
   return (
     <PageCanvas id="observationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.observations.length + " Observations"} />
-          <CardContent>
-            <ObservationsTable 
-              formFactorLayout={formFactor}
-              observations={ data.observations }
-              count={ data.observations.length }
-              rowsPerPage={LayoutHelpers.calcTableRows()}
-              actionButtonLabel="Send"
-              onRowClick={ this.onTableRowClick }
-              onCellClick={ this.onTableCellClick }
-              onActionButtonClick={this.tableActionButtonClick}
-              onRemoveRecord={ this.onDeleteObservation }
-              tableRowSize="medium"
-            />
-          </CardContent>            
-      </StyledCard>
+      { observationContent }
     </PageCanvas>
   );
 }
