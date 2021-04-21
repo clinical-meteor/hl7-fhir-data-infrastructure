@@ -468,6 +468,7 @@ function CarePlansTable(props){
     paginationFooter = <TablePagination
       component="div"
       // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}

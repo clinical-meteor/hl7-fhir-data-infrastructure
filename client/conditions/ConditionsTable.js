@@ -111,6 +111,9 @@ function ConditionsTable(props){
     hideEnteredInError,
     formFactorLayout,
     count,
+    labels,
+
+    defaultCheckboxValue,
 
     ...otherProps 
   } = props;
@@ -277,6 +280,13 @@ function ConditionsTable(props){
   //---------------------------------------------------------------------
   // Helper Functions
 
+  function handleToggle(index){
+    console.log('Toggling entry ' + index)
+    if(props.onToggle){
+      props.onToggle(index);
+    }
+  }
+
   function removeRecord(_id){
     console.log('removeRecord')
   }
@@ -293,16 +303,17 @@ function ConditionsTable(props){
   function renderCheckboxHeader(){
     if (!hideCheckbox) {
       return (
-        <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
+        <TableCell className="toggle" style={{width: '60px'}} >{get(labels, 'checkbox', 'Checkbox')}</TableCell>
       );
     }
   }
-  function renderCheckbox(patientId ){
+  function renderCheckbox(index){
     if (!hideCheckbox) {
       return (
         <TableCell className="toggle">
           <Checkbox
-            defaultChecked={true}
+            defaultChecked={defaultCheckboxValue}
+            onChange={ handleToggle.bind(this, index)} 
           />
         </TableCell>
       );
@@ -439,14 +450,14 @@ function ConditionsTable(props){
   function renderSnomedCode(snomedCode){
     if (!hideSnomedCode) {
       return (
-        <TableCell className='snomedCode'>{ snomedCode }</TableCell>
+        <TableCell className='snomedCode' style={{width: '180px'}}>{ snomedCode }</TableCell>
       );
     }
   }
   function renderSnomedCodeHeader(){
     if (!hideSnomedCode) {
       return (
-        <TableCell className='snomedCode'>SNOMED Code</TableCell>
+        <TableCell className='snomedCode' style={{width: '180px'}}>{get(labels, 'snomedCode', 'SNOMED Code')}</TableCell>
       );
     }
   }
@@ -467,7 +478,7 @@ function ConditionsTable(props){
   function renderSnomedDisplayHeader(){
     if (!hideSnomedDisplay) {
       return (
-        <TableCell className='snomedDisplay'>SNOMED Display</TableCell>
+        <TableCell className='snomedDisplay'>{get(labels, 'snomedDisplay', 'SNOMED Display')}</TableCell>
       );
     }
   }
@@ -572,6 +583,7 @@ function ConditionsTable(props){
     paginationFooter = <TablePagination
       component="div"
       // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}
@@ -631,7 +643,7 @@ function ConditionsTable(props){
       logger.trace('conditionsToRender[i]', conditionsToRender[i])
       tableRows.push(
         <TableRow className="conditionRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, conditionsToRender[i]._id)} style={rowStyle} hover={true} selected={selected} >            
-          { renderCheckbox() }
+          { renderCheckbox(i) }
           { renderActionIcons(conditionsToRender[i]) }
           { renderIdentifier(conditionsToRender.identifier ) }
           { renderPatientName(conditionsToRender[i].patientDisplay ) } 
@@ -716,6 +728,8 @@ ConditionsTable.propTypes = {
   hideEndDate: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
+  defaultCheckboxValue: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
@@ -730,7 +744,9 @@ ConditionsTable.propTypes = {
   hideEnteredInError: PropTypes.bool,
   count: PropTypes.number,
   tableRowSize: PropTypes.string,
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+
+  labels: PropTypes.object
 };
 
 ConditionsTable.defaultProps = {
@@ -754,7 +770,13 @@ ConditionsTable.defaultProps = {
   hideBarcode: false,
   hideActionButton: true,
   disablePagination: false,
-  conditions: []
+  conditions: [],
+  labels: {
+    checkbox: "Checkbox",
+    snomedDisplay: "SNOMED Display",
+    snomedCode: "SNOMED Code"
+  },
+  defaultCheckboxValue: false
 }
 
 export default ConditionsTable;

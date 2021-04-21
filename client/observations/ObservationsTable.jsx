@@ -646,6 +646,10 @@ function ObservationsTable(props){
     }
   }
 
+  let rowStyle = {
+    verticalAlign: 'top'
+  }
+
   if(observationsToRender.length === 0){
     logger.trace('ObservationsTable:  No observations to render.');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
@@ -653,7 +657,7 @@ function ObservationsTable(props){
     for (var i = 0; i < observationsToRender.length; i++) {
       if(multiline){
         tableRows.push(
-          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} hover={true}>
+          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} hover={true} style={rowStyle}>
             { renderToggle() }
             { renderActionIcons(observationsToRender[i]) }
             { renderCategory(observationsToRender[i].category) }
@@ -680,7 +684,7 @@ function ObservationsTable(props){
 
       } else {
         tableRows.push(
-          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i].id)} hover={true}>            
+          <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i].id)} hover={true} style={rowStyle}>            
             { renderToggle() }
             { renderActionIcons(observationsToRender[i]) }
             { renderCategory(observationsToRender[i].category) }

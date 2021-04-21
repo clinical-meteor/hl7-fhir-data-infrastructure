@@ -54,10 +54,10 @@ let styles = {
 
 
 
-function ListsTable(props){
-  logger.info('Rendering the ListsTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ListsTable');
-  logger.data('ListsTable.props', {data: props}, {source: "ListsTable.jsx"});
+function ListsItemsTable(props){
+  logger.info('Rendering the ListsItemsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ListsItemsTable');
+  logger.data('ListsItemsTable.props', {data: props}, {source: "ListsItemsTable.jsx"});
 
   const classes = useStyles();
 
@@ -262,7 +262,8 @@ function ListsTable(props){
   if(!props.disablePagination){
     paginationFooter = <TablePagination
       component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}
@@ -350,7 +351,7 @@ function ListsTable(props){
   );
 }
 
-ListsTable.propTypes = {
+ListsItemsTable.propTypes = {
   barcodes: PropTypes.bool,
   lists: PropTypes.array,
   selectedListId: PropTypes.string,
@@ -377,7 +378,7 @@ ListsTable.propTypes = {
 
   formFactorLayout: PropTypes.string
 };
-ListsTable.defaultProps = {
+ListsItemsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideStatus: false,
@@ -388,4 +389,4 @@ ListsTable.defaultProps = {
   rowsPerPage: 5
 }
 
-export default ListsTable; 
+export default ListsItemsTable; 
