@@ -43,54 +43,7 @@ export class CarePlanDesignerPage extends React.Component {
   }
   getMeteorData() {
 
-    let data = {
-      style: {},
-      primaryContact: {
-        display: ''
-      },
-      careplan: {
-        goal: []
-      },
-      selectedMeds: [],
-      patientDialog: {
-        open: Session.get('patientDialogOpen'),
-        patient: {
-          display: '',
-          reference: ''
-        }
-      },
-      selectedPatient: Session.get('selectedPatient')
-    };
     
-
-
-    // this should all be handled by props
-    // or a mixin!
-    if (Session.get('darkroomEnabled')) {
-      data.style.color = 'black';
-      data.style.background = 'white';
-    } else {
-      data.style.color = 'white';
-      data.style.background = 'black';
-    }
-
-    // this could be another mixin
-    if (Session.get('glassBlurEnabled')) {
-      data.style.filter = 'blur(3px)';
-      data.style.WebkitFilter = 'blur(3px)';
-    }
-
-    // the following assumes that we only have a single CarePlan record in the database
-    if (CarePlans.find({'identifier.value':'alcohol-treatment-template'}).count() > 0) {
-      let carePlanTemplate = CarePlans.find({'identifier.value':'alcohol-treatment-template'}).fetch()[0];
-      //console.log("carePlanTemplate", carePlanTemplate);
-
-      if (carePlanTemplate ) {
-        data.primaryContact = carePlanTemplate.author[0];
-
-        data.careplan = carePlanTemplate;
-      }
-    }
 
     // data.style = Glass.blur(data.style);
     // data.style.tab = Glass.darkroom(data.style.tab);
@@ -136,18 +89,18 @@ export class CarePlanDesignerPage extends React.Component {
     const patientActions = [
       <Button
         primary={true}
-        onClick={this.handleClosePatients.bind(this)}
+        onClick={handleClosePatients.bind(this)}
       >Clear</Button>,
       <Button
         primary={true}
         keyboardFocused={true}
-        onClick={this.handleClosePatients.bind(this)}
+        onClick={handleClosePatients.bind(this)}
       >Select</Button>
     ];
 
     let patientPicklist;
 
-    if(!this.data.selectedPatient){
+    if(!data.selectedPatient){
       patientPicklist = <section id="patientSection" style={style.indexCardPadding} >
       <StyledCard>
         <CardHeader
@@ -159,7 +112,7 @@ export class CarePlanDesignerPage extends React.Component {
             hintText="Jane Doe"
             errorText="Patient Search"
             onChange={this.changeInput.bind(this, 'patientSearch')}
-            value={this.data.patientDialog.patient.display}
+            value={data.patientDialog.patient.display}
             fullWidth>
               <Button
                 label="Patients"
@@ -176,7 +129,7 @@ export class CarePlanDesignerPage extends React.Component {
             title="Patient Search"
             actions={patientActions}
             modal={false}
-            open={this.data.patientDialog.open}
+            open={data.patientDialog.open}
             onRequestClose={this.handleClosePatients.bind(this)}
           >
             <CardContent style={{overflowY: "auto"}}>
@@ -184,7 +137,7 @@ export class CarePlanDesignerPage extends React.Component {
               hintText="Jane Doe"
               errorText="Patient Search"
               onChange={this.changeInput.bind(this, 'description')}
-              value={this.data.patientDialog.patient.display}
+              value={data.patientDialog.patient.display}
               fullWidth />
               <PatientsTable 
                 hideToggle={true}
@@ -305,7 +258,7 @@ export class CarePlanDesignerPage extends React.Component {
             </Grid>
             <Grid item md={6} style={{position: 'sticky', top: '0px'}}>  
               <CarePlansTable 
-                onRowClick={this.selectCarePlan.bind(this) }
+                onRowClick={selectCarePlan.bind(this) }
               />
             </Grid>
           </Grid>          
