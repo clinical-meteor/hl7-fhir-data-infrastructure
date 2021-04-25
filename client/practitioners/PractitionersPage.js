@@ -63,7 +63,7 @@ export function PractitionersPage(props){
   let data = {
     selectedPractitionerId: '',
     selectedPractitioner: null,
-    auditEvents: [],
+    practitioners: [],
     onePageLayout: true
   };
 
@@ -76,7 +76,7 @@ export function PractitionersPage(props){
   data.selectedPractitioner = useTracker(function(){
     return Practitioners.findOne(Session.get('selectedPractitionerId'));
   }, [])
-  data.auditEvents = useTracker(function(){
+  data.practitioners = useTracker(function(){
     return Practitioners.find().fetch();
   }, [])
 
@@ -97,7 +97,7 @@ export function PractitionersPage(props){
   return (      
     <PageCanvas id="practitionersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title='Practitioners' />
+          <CardHeader title={data.practitioners.length + ' Practitioners'} />
           <CardContent>
             <PractitionersTable 
                 practitioners={data.practitioners}

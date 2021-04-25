@@ -56,7 +56,7 @@ let styles = {
 // MAIN COMPONENT  
 
 
-function QuestionnaireTable(props){
+function QuestionnairesTable(props){
 
   let { 
     children, 
@@ -418,7 +418,7 @@ function QuestionnaireTable(props){
 
 
 
-QuestionnaireTable.propTypes = {
+QuestionnairesTable.propTypes = {
   id: PropTypes.string,
 
   data: PropTypes.array,
@@ -450,7 +450,7 @@ QuestionnaireTable.propTypes = {
 
   formFactorLayout: PropTypes.string
 };
-QuestionnaireTable.defaultProps = {
+QuestionnairesTable.defaultProps = {
   questionnaires: [],
   tableRowSize: 'medium',
   rowsPerPage: 5,
@@ -465,4 +465,4 @@ QuestionnaireTable.defaultProps = {
   hideNumItems: false
 };
 
-export default QuestionnaireTable;
+export default QuestionnairesTable;

@@ -79,7 +79,7 @@ export function CommunicationRequestPage(props){
 
       <StyledCard height="auto" margin={20} >
         <CardHeader
-          title="Communication Requests"
+          title={data.communicationRequests.length + " Communication Requests"}
         />
         <CardContent>
           <CommunicationRequestsTable 

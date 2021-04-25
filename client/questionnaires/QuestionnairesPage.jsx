@@ -271,7 +271,7 @@ export function QuestionnairesPage(props){
 
   function toggleSortStatus(){
     if(Session.equals('questionnaireIsSorting', true)){
-      this.saveSortedQuestionnaire();
+      saveSortedQuestionnaire();
       Session.set('questionnaireIsSorting', false);
     } else {
       Session.set('questionnaireIsSorting', true);
@@ -560,7 +560,7 @@ export function QuestionnairesPage(props){
           <Grid item lg={6} style={{width: '100%'}} >
             <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
               <CardHeader
-                title={data.questionnairesCount + " Questionnaires"}
+                title={data.questionnaires.length + " Questionnaires"}
               />
               <QuestionnairesTable 
                 questionnaires={ data.questionnaires }
@@ -590,7 +590,7 @@ export function QuestionnairesPage(props){
                     name="publisherInput"
                     style={classes.input}
                     value={ get(this, 'data.selectedQuestionnaire.title', '') }
-                    onChange={ this.changeText.bind(this, 'title')}
+                    onChange={ changeText.bind(this, 'title')}
                     fullWidth              
                   />       
                 </FormControl>    
@@ -640,8 +640,8 @@ export function QuestionnairesPage(props){
                 </Grid>
               </CardContent>
               {/* <CardActions>
-                <Button id='isActiveButton' onClick={this.toggleActiveStatus.bind(this)} primary={ data.isActive } >{isActiveLabel}</Button>
-                <Button id='isSortingButton' onClick={this.toggleSortStatus.bind(this)} primary={ data.isSorting } >Sort</Button>
+                <Button id='isActiveButton' onClick={toggleActiveStatus.bind(this)} primary={ data.isActive } >{isActiveLabel}</Button>
+                <Button id='isSortingButton' onClick={toggleSortStatus.bind(this)} primary={ data.isSorting } >Sort</Button>
               </CardActions> */}
             </StyledCard>
             <DynamicSpacer />
@@ -654,7 +654,7 @@ export function QuestionnairesPage(props){
 
 
             <DynamicSpacer />
-            <Button id='saveAnswersButton' onClick={this.handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>
+            <Button id='saveAnswersButton' onClick={handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>
 
           </Grid>
         </Grid>

@@ -55,6 +55,8 @@ import BundlesTable from './client/bundles/BundlesTable';
 import CarePlansPage from './client/carePlans/CarePlansPage';
 import CarePlansTable from './client/carePlans/CarePlansTable';
 // import CarePlanDetail from './client/carePlans/CarePlanDetail';
+import GoalsTable from './client/carePlans/GoalsTable';
+import ActivitiesTable from './client/carePlans/ActivitiesTable';
 
 import CompositionsPage from './client/compositions/CompositionsPage';
 import CompositionsTable from './client/compositions/CompositionsTable';
@@ -619,6 +621,8 @@ export {
   CarePlansPage,
   CarePlansTable,
   // CarePlanDetail,
+  GoalsTable,
+  ActivitiesTable,
 
   CompositionsPage,
   CompositionsTable,

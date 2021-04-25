@@ -182,11 +182,11 @@ export function QuestionnaireResponsesPage(props){
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={data.responsesCount + " Questionnaire Responses"} />
+      <CardHeader title={data.questionnaireResponses.length + " Questionnaire Responses"} />
       <CardContent>
         <QuestionnaireResponsesTable 
-          questionnaireResponses={data.responses}
-          count={data.responsesCount}
+          questionnaireResponses={data.questionnaireResponses}
+          count={data.questionnaireResponses.length}
           onCellClick={function(responseId){
             console.log('responseId', responseId)
             Session.set('selectedQuestionnaireResponse', responseId)
@@ -209,11 +209,11 @@ export function QuestionnaireResponsesPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6} style={{width: '100%'}} >
         <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.responsesCount + " Responses"} />
+          <CardHeader title={data.questionnaireResponses.length + " Responses"} />
           <CardContent>
             <QuestionnaireResponsesTable 
-              questionnaireResponses={data.responses}
-              count={data.responsesCount}
+              questionnaireResponses={data.questionnaireResponses}
+              count={data.questionnaireResponses.length}
               onCellClick={function(responseId){
                 console.log('responseId', responseId)
                 Session.set('selectedQuestionnaireResponse', responseId)
@@ -245,8 +245,8 @@ export function QuestionnaireResponsesPage(props){
 
               <SurveyResponseSummary 
                 id='surveyResponseSummary' 
-                selectedResponse={data.questionnaireResponse} 
-                selectedResponseId={data.questionnaireResponse.id}
+                selectedResponse={get(data, 'questionnaireResponse', null)} 
+                selectedResponseId={get(data, 'questionnaireResponse.id', '')}
                 />
 
             </CardContent>

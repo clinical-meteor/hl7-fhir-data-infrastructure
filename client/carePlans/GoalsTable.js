@@ -6,9 +6,6 @@ import {
     TableBody
   } from '@material-ui/core';
   
-//   import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
-//   import { GoTrashcan } from 'react-icons/go'
-  
   import React from 'react';
   import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
   import { get } from 'lodash';
@@ -16,25 +13,24 @@ import {
 
 
 
+  export function GoalsTable(props){
 
-  export function ActivitiesTable(props){
-      
     let data = {
-        activities: []
+        goals: []
     }
+      
     //---------------------------------------------
     // Trackers
 
-    data.activities = useTracker(function(){
-        return [];
-        // return Activities.find().fetch();
-    }, [])
+    // data.goals = useTracker(function(){
+    //     return Goals.find().fetch();
+    // }, [])
 
     //---------------------------------------------
     // Helper Functions
 
     function rowClick(id){
-        Session.set('activitiesUpsert', false);
+        Session.set('goalsUpsert', false);
         Session.set('selectedGoalId', id);
         Session.set('goalPageTabIndex', 2);
       };
@@ -81,11 +77,11 @@ import {
           );
         }
       }
-    function renderIdentifier(activities ){
+    function renderIdentifier(goals ){
         if (!props.hideIdentifier) {
           
           return (
-            <TableCell className='identifier'>{ get(activities, 'identifier[0].value') }</TableCell>       );
+            <TableCell className='identifier'>{ get(goals, 'identifier[0].value') }</TableCell>       );
         }
       }
     function renderActionIconsHeader(){
@@ -129,39 +125,39 @@ import {
     // Render Method
 
     let tableRows = [];
-    for (var i = 0; i < data.activities.length; i++) {
+    for (var i = 0; i < data.goals.length; i++) {
       var newRow = {
         description: '',
         priority: '',
         status: ''
       };
 
-      if(get(data.activities[i], 'description')){
-        newRow.description = get(data.activities[i], 'description');
+      if(get(data.goals[i], 'description')){
+        newRow.description = get(data.goals[i], 'description');
       }
-      if(get(data.activities[i], 'priority.text')){
-        newRow.priority = get(data.activities[i], 'priority.text');
-      } else if(get(data.activities[i], 'priority')){
-        newRow.priority = String(get(data.activities[i], 'priority'));
+      if(get(data.goals[i], 'priority.text')){
+        newRow.priority = get(data.goals[i], 'priority.text');
+      } else if(get(data.goals[i], 'priority')){
+        newRow.priority = String(get(data.goals[i], 'priority'));
       }
-      if(get(data.activities[i], 'status')){
-        newRow.status = get(data.activities[i], 'status');
+      if(get(data.goals[i], 'status')){
+        newRow.status = get(data.goals[i], 'status');
       }
 
-      newRow.identifier = get(data.activities[i], 'identifier[0].value');
+      newRow.identifier = get(data.goals[i], 'identifier[0].value');
 
       let rowStyle = {
         cursor: 'pointer'
       }
-      if(get(data.activities[i], 'modifierExtension[0]')){
+      if(get(data.goals[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
 
       tableRows.push(
-        <TableRow key={i} className="goalRow" style={rowStyle} onClick={ rowClick.bind('this', data.activities[i]._id)} >
-          { renderCheckboxs(data.activities[i]) }
-          { renderActionIcons(data.activities[i]) }
-          { renderIdentifier(data.activities[i]) }
+        <TableRow key={i} className="goalRow" style={rowStyle} onClick={ rowClick.bind('this', data.goals[i]._id)} >
+          { renderCheckboxs(data.goals[i]) }
+          { renderActionIcons(data.goals[i]) }
+          { renderIdentifier(data.goals[i]) }
 
           <TableCell className='description'>{ newRow.description }</TableCell>
           <TableCell className='priority'>{ newRow.priority }</TableCell>
@@ -171,7 +167,7 @@ import {
     }
 
     return(
-      <Table id='ActivitiesTable' hover >
+      <Table id='goalsTable' hover >
         {/* <TableHeader>
           <TableRow>
             { renderCheckboxsHeader() }
@@ -190,7 +186,7 @@ import {
   }
   
   
-  ActivitiesTable.propTypes = {
+  GoalsTable.propTypes = {
     data: PropTypes.array,
     query: PropTypes.object,
     paginationLimit: PropTypes.number,
@@ -200,4 +196,4 @@ import {
     onRemoveRecord: PropTypes.func
   };
 
-  export default ActivitiesTable;
+  export default GoalsTable;
