@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.13.1',
+  version: '6.14.0',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -45,6 +45,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/AuditEvents.js', ['client', 'server']);
   api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
   api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
+  api.addFiles('lib/schemas/CareTeams.js', ['client', 'server']);
   api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Communications.js', ['client', 'server']);
@@ -70,8 +71,10 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Organizations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
   api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Persons.js', ['client', 'server']);
   api.addFiles('lib/schemas/Provenances.js', ['client', 'server']);
   api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
+  api.addFiles('lib/schemas/RelatedPersons.js', ['client', 'server']);
   api.addFiles('lib/schemas/Questionnaires.js', ['client', 'server']);
   api.addFiles('lib/schemas/QuestionnaireResponses.js', ['client', 'server']);
   api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
@@ -92,6 +95,10 @@ Package.onUse(function (api) {
   api.export('CarePlans');
   api.export('CarePlans');
   api.export('CarePlansSchema');
+
+  api.export('CareTeams');
+  api.export('CareTeams');
+  api.export('CareTeamsSchema');
 
   api.export('Composition');
   api.export('Compositions');
@@ -190,6 +197,10 @@ Package.onUse(function (api) {
   api.export('Patients');
   api.export('PatientSchema');
 
+  api.export('Person');
+  api.export('Persons');
+  api.export('PersonSchema');
+
   api.export('Practitioner');
   api.export('Practitioners');
   api.export('PractitionerSchema');
@@ -205,6 +216,10 @@ Package.onUse(function (api) {
   api.export('QuestionnaireResponse');
   api.export('QuestionnaireResponses');
   api.export('QuestionnaireResponseSchema');
+
+  api.export('RelatedPerson');
+  api.export('RelatedPersons');
+  api.export('RelatedPersonSchema');
 
   api.export('Substance');
   api.export('Substances');
