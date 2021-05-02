@@ -58,6 +58,9 @@ import CarePlansTable from './client/carePlans/CarePlansTable';
 import GoalsTable from './client/carePlans/GoalsTable';
 import ActivitiesTable from './client/carePlans/ActivitiesTable';
 
+import CareTeamsPage from './client/careTeams/CareTeamsPage';
+import CareTeamsTable from './client/careTeams/CareTeamsTable';
+
 import CompositionsPage from './client/compositions/CompositionsPage';
 import CompositionsTable from './client/compositions/CompositionsTable';
 // import CompositionDetail from './client/compositions/CompositionDetail';
@@ -143,6 +146,9 @@ import OrganizationsTable from './client/organizations/OrganizationsTable';
 
 import PatientsPage from './client/patients/PatientsPage';
 
+import PersonsPage from './client/persons/PersonsPage';
+import PersonsTable from './client/persons/PersonsTable';
+
 import PractitionersPage from './client/practitioners/PractitionersPage';
 import PractitionersTable from './client/practitioners/PractitionersTable';
 // import PractitionerDetail from './client/practitioners/PractitionerDetail';
@@ -162,6 +168,10 @@ import QuestionnaireDetailExpansionPanels from './client/questionnaires/Question
 import QuestionnaireResponsesPage from './client/questionnaireResponses/QuestionnaireResponsesPage';
 import QuestionnaireResponsesTable from './client/questionnaireResponses/QuestionnaireResponsesTable';
 // import QuestionnaireResponseDetail from './client/questionnaireResponses/QuestionnaireResponseDetail';
+
+import RelatedPersonsPage from './client/relatedPersons/RelatedPersonsPage';
+import RelatedPersonsTable from './client/relatedPersons/RelatedPersonsTable';
+
 
 import TasksPage from './client/tasks/TasksPage';
 import TasksTable from './client/tasks/TasksTable';
@@ -197,6 +207,11 @@ let DynamicRoutes = [{
   name: 'CarePlansPage',
   path: '/careplans',
   component: CarePlansPage,
+  requireAuth: true
+}, {
+  name: 'CareTeamsPage',
+  path: '/careteams',
+  component: CareTeamsPage,
   requireAuth: true
 }, {
   name: 'CompositionsPage',
@@ -299,7 +314,7 @@ let DynamicRoutes = [{
   component: OrganizationsPage,
   requireAuth: true
 }, {
-  name: 'PatientPage',
+  name: 'PatientsPage',
   path: '/patients',
   component: PatientsPage,
   requireAuth: true
@@ -307,6 +322,11 @@ let DynamicRoutes = [{
   name: 'PractitionersPage',
   path: '/practitioners',
   component: PractitionersPage,
+  requireAuth: true
+}, {
+  name: 'PersonsPage',
+  path: '/persons',
+  component: PersonsPage,
   requireAuth: true
 }, {
   name: 'ProceduresPage',
@@ -327,6 +347,11 @@ let DynamicRoutes = [{
   name: 'QuestionnaireResponsesPage',
   path: '/questionnaire-responses',
   component: QuestionnaireResponsesPage,
+  requireAuth: true
+}, {
+  name: 'RelatedPersonsPage',
+  path: '/related-persons',
+  component: RelatedPersonsPage,
   requireAuth: true
 }, {
   name: 'TasksPage',
@@ -366,6 +391,12 @@ let SidebarElements = [{
   href: '/careplans',
   iconName: 'notepad',
   collectionName: 'CarePlans'
+}, {
+  primaryText: 'Care Teams',
+  to: '/careteams',
+  href: '/careteams',
+  iconName: 'notepad',
+  collectionName: 'CareTeams'
 }, {
   primaryText: 'Conditions',
   to: '/conditions',
@@ -487,6 +518,12 @@ let SidebarElements = [{
   iconName: 'users',
   collectionName: 'Patients'
 }, {
+  primaryText: 'Persons',
+  to: '/persons',
+  href: '/persons',
+  iconName: 'users',
+  collectionName: 'Persons'
+}, {
   primaryText: 'Practitioners',
   to: '/practitioners',
   href: '/practitioners',
@@ -516,6 +553,12 @@ let SidebarElements = [{
   href: '/questionnaire-responses',
   iconName: 'ic_question_answer',
   collectionName: 'QuestionnaireResponses'
+}, {
+  primaryText: 'RelatedPersons',
+  to: '/related-persons',
+  href: '/related-persons',
+  iconName: 'users',
+  collectionName: 'RelatedPersons'
 }, {
   primaryText: 'Tasks',
   to: '/tasks',
@@ -623,6 +666,9 @@ export {
   // CarePlanDetail,
   GoalsTable,
   ActivitiesTable,
+
+  CareTeamsPage,
+  CareTeamsTable,
 
   CompositionsPage,
   CompositionsTable,

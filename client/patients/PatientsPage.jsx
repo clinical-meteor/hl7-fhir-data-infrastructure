@@ -196,6 +196,7 @@ export function PatientsPage(props){
               // cursors={data.dataCursors}
               formFactorLayout={formFactor}    
               rowsPerPage={LayoutHelpers.calcTableRows()}      
+              logger={window.logger ? window.logger : null}
             />   
           </CardContent>
         </StyledCard>                
