@@ -533,12 +533,12 @@ function CarePlansTable(props){
         <TableRow className="carePlanRow" key={i} onClick={ handleRowClick.bind(this, carePlansToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
           { renderToggle() }
           { renderActionIcons(carePlansToRender[i]) }
+          { renderTitle( carePlansToRender[i].title ) } 
+          { renderSubject( carePlansToRender[i].subject ) } 
           { renderCategory( carePlansToRender[i].category ) } 
 
           { renderIdentifier(carePlansToRender[i].identifier)}
           
-          { renderSubject( carePlansToRender[i].subject ) } 
-          { renderTitle( carePlansToRender[i].title ) } 
           { renderAuthor( carePlansToRender[i].author ) } 
 
           { renderActivities( carePlansToRender[i].activities ) } 
@@ -561,11 +561,11 @@ function CarePlansTable(props){
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
+            { renderTitleHeader() }
+            { renderSubjectHeader() }
             { renderCategoryHeader() }
 
             { renderIdentifierHeader() }
-            { renderSubjectHeader() }
-            { renderTitleHeader() }
             { renderAuthorHeader() }
 
             { renderActivitiesHeader() }
@@ -635,13 +635,13 @@ CarePlansTable.defaultProps = {
   hideCheckboxes: true,
   hideActionIcons: true,
   hideIdentifier: false,
-  hideSubject: true,
+  hideSubject: false,
   hideAuthor: false,
   hideTitle: false,
   hideActivities: false,
   hideGoals: false,
   hideAddresses: false,
-  hideCategory: false,
+  hideCategory: true,
   hideTemplate: false,
   hideCreated: false,
   hideStatus: false,

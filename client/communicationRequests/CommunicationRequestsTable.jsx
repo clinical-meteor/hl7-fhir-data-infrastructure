@@ -58,7 +58,7 @@ import { Theming } from '../../lib/Theming';
 //===========================================================================
 // MAIN COMPONENT
 
-function CommunicationRequestsTable(props){
+export function CommunicationRequestsTable(props){
   logger.info('Rendering the CommunicationRequestsTable');
   logger.verbose('clinical:hl7-fhir-data-infrastructure.client.CommunicationRequestsTable');
   logger.data('CommunicationRequestsTable.props', {data: props}, {source: "CommunicationRequestsTable.jsx"});
@@ -400,7 +400,7 @@ function CommunicationRequestsTable(props){
     height: '52px'
   }
 
-
+  console.log('CommunicationRequestsTable.communicationRequestsToRender', communicationRequestsToRender)
 
   if(communicationRequestsToRender.length === 0){
     logger.trace('ConditionsTable: No conditions to render.');
@@ -524,7 +524,8 @@ CommunicationRequestsTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+  count: PropTypes.number
 };
 CommunicationRequestsTable.defaultProps = {
   communicationRequests: [],

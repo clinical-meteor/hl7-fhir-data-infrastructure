@@ -212,7 +212,7 @@ function ListsItemsTable(props){
   function renderItemCountHeader(){
     if (!props.hideItemCount) {
       return (
-        <TableCell className='itemCount'>Populations</TableCell>
+        <TableCell className='itemCount'>Item Count</TableCell>
       );
     }
   }

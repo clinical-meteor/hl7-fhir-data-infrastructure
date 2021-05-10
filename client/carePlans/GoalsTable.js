@@ -3,26 +3,61 @@ import {
     Table, 
     TableRow, 
     TableCell,
-    TableBody
+    TableBody,
+    TableHead,
+    TablePagination
   } from '@material-ui/core';
   
-  import React from 'react';
+import React, { useState } from 'react';
   import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-  import { get } from 'lodash';
+  import { get, has } from 'lodash';
   import PropTypes from 'prop-types';
 
 
 
   export function GoalsTable(props){
 
-    let data = {
-        goals: []
-    }
+
+    let { 
+      goals,           
+      selectedGoalId,
+      dateFormat,
+      showMinutes,
+
+      hideIdentifier,
+      hideCheckboxes,
+      hideActionIcons,
+      hideDescription,
+      hidePriority,
+      hideLifecycleStatus,
+      hideAchievementStatus,
+      hideSubjectName,
+      hideSubjectReference,
+
+      onRowClick,
+      onRemoveRecord,
+      onActionButtonClick,
+      showActionButton,
+      actionButtonLabel,
+
+      query,
+      paginationLimit,
+      disablePagination,
+      rowsPerPage,
+      tableRowSize,
+
+      count,
+      formFactorLayout,
+
+      children 
+    } = props;
+
+    console.log('GoalsTable.tableRowSize', tableRowSize)
       
     //---------------------------------------------
     // Trackers
 
-    // data.goals = useTracker(function(){
+    // goals = useTracker(function(){
     //     return Goals.find().fetch();
     // }, [])
 
@@ -36,8 +71,8 @@ import {
       };
     function removeRecord(_id){
         console.log('Remove goal ', _id)
-        if(props.onRemoveRecord){
-          props.onRemoveRecord(_id);
+        if(onRemoveRecord){
+          onRemoveRecord(_id);
         }
       }
     function showSecurityDialog(goal){
@@ -48,67 +83,123 @@ import {
         Session.set('securityDialogResourceId', get(goal, '_id'));
         Session.set('securityDialogOpen', true);
     }
+    function handleToggle(index){
+      console.log('Toggling entry ' + index)
+      if(props.onToggle){
+        props.onToggle(index);
+      }
+    }
+
 
     //---------------------------------------------
     // Render Functions
 
-    function renderCheckboxsHeader(){
-        if (!props.hideCheckbox) {
+    function renderCheckboxesHeader(){
+        if (!hideCheckboxes) {
           return (
-            <TableCell className="Checkbox"></TableCell>
+            <TableCell className="Checkbox" style={{width: '60px', padding: '0px'}} ></TableCell>
           );
         }
       }
-    function renderCheckboxs(patientId ){
-        if (!props.hideCheckbox) {
+    function renderCheckboxes(index){
+        if (!hideCheckboxes) {
           return (
-            <TableCell className="Checkbox">
-                <Checkbox
-                  defaultChecked={true}
+            <TableCell className="Checkbox" style={{width: '60px', padding: '0px'}}>
+                <Checkbox 
+                  defaultChecked={false} 
+                  onChange={ handleToggle.bind(this, index)} 
+                  
                 />
               </TableCell>
           );
         }
       }
+    function renderDescriptionHeader(){
+        if (!hideDescription) {
+          return (
+            <TableCell className="description">Description</TableCell>
+          );
+        }
+      }
+    function renderDescription(description ){
+        if (!hideDescription) {
+          
+          return (
+            <TableCell className='description'>{ description }</TableCell>       );
+        }
+      }
+    function renderPriorityHeader(){
+      if (!hidePriority) {
+        return (
+          <TableCell className="priority">Priority</TableCell>
+        );
+      }
+    }
+    function renderPriority(priority ){
+      if (!hidePriority) {
+        
+        return (
+          <TableCell className='priority'>{ priority }</TableCell>       );
+      }
+    }
+    function renderLifecycleStatusHeader(){
+      if (!hideLifecycleStatus) {
+        return (
+          <TableCell className="status">Status</TableCell>
+        );
+      }
+    }
+    function renderLifecycleStatus(status ){
+      if (!hideLifecycleStatus) {
+        
+        return (
+          <TableCell className='status'>{ status }</TableCell>       );
+      }
+    }
+    function renderAchievementStatusHeader(){
+      if (!hideAchievementStatus) {
+        return (
+          <TableCell className="achievementStatus">Achievement</TableCell>
+        );
+      }
+    }
+    function renderAchievementStatus(achievementStatus ){
+      if (!hideAchievementStatus) {
+        
+        return (
+          <TableCell className='achievementStatus'>{ achievementStatus }</TableCell>       );
+      }
+    }
     function renderIdentifierHeader(){
-        if (!props.hideIdentifier) {
+        if (!hideIdentifier) {
           return (
             <TableCell className="identifier">Identifier</TableCell>
           );
         }
-      }
-    function renderIdentifier(goals ){
-        if (!props.hideIdentifier) {
+    }
+    function renderIdentifier(identifier ){
+        if (!hideIdentifier) {
           
           return (
-            <TableCell className='identifier'>{ get(goals, 'identifier[0].value') }</TableCell>       );
+            <TableCell className='identifier'>{ identifier }</TableCell>       );
         }
-      }
+    }
     function renderActionIconsHeader(){
-        if (!props.hideActionIcons) {
+        if (!hideActionIcons) {
           return (
             <TableCell className='actionIcons' style={{minWidth: '120px'}}>Actions</TableCell>
           );
         }
-      }
+    }
     function renderActionIcons(goal){
-        if (!props.hideActionIcons) {
-    
-          // let warningStyle = {
-          //   marginLeft: '4px', 
-          //   marginRight: '4px', 
-          //   marginTop: '4px', 
-          //   fontSize: '120%%',
-          //   opacity: 0
-          // }
-    
+        if (!hideActionIcons) {    
+
           let iconStyle = {
             marginLeft: '4px', 
             marginRight: '4px', 
             marginTop: '4px', 
             fontSize: '120%'
-          }
-    
+          }    
     
           return (
             <TableCell className='actionIcons' style={{minWidth: '120px', marginTop: '2px'}}>
@@ -118,82 +209,217 @@ import {
             </TableCell>
           );
         }
-      } 
+    } 
+    function renderSubjectNameHeader(){
+      if (!hideSubjectName) {
+        return (
+          <TableCell className='subjectDisplay'>Subject</TableCell>
+        );
+      }
+    }
+    function renderSubjectName(subjectDisplay ){
+      if (!hideSubjectName) {
+        return (
+          <TableCell className='subjectDisplay' style={{minWidth: '140px'}}>{ subjectDisplay }</TableCell>
+        );
+      }
+    }
+    function renderSubjectReferenceHeader(){
+      if (!hideSubjectReference) {
+        return (
+          <TableCell className='subjectReference'>Subject Reference</TableCell>
+        );
+      }
+    }
+    function renderSubjectReference(subjectReference ){
+      if (!hideSubjectReference) {
+        return (
+          <TableCell className='subjectReference' style={{maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis',  whiteSpace: 'nowrap'}}>
+            { FhirUtilities.pluckReferenceId(subjectReference) }
+          </TableCell>
+        );
+      }
+    }
 
 
-    //---------------------------------------------
-    // Render Method
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+
 
     let tableRows = [];
-    for (var i = 0; i < data.goals.length; i++) {
-      var newRow = {
-        description: '',
-        priority: '',
-        status: ''
-      };
+    let goalsToRender = [];
+    let internalDateFormat = "YYYY-MM-DD";
 
-      if(get(data.goals[i], 'description')){
-        newRow.description = get(data.goals[i], 'description');
-      }
-      if(get(data.goals[i], 'priority.text')){
-        newRow.priority = get(data.goals[i], 'priority.text');
-      } else if(get(data.goals[i], 'priority')){
-        newRow.priority = String(get(data.goals[i], 'priority'));
-      }
-      if(get(data.goals[i], 'status')){
-        newRow.status = get(data.goals[i], 'status');
-      }
+    if(showMinutes){
+      internalDateFormat = "YYYY-MM-DD hh:mm";
+    }
+    if(internalDateFormat){
+      internalDateFormat = dateFormat;
+    }
 
-      newRow.identifier = get(data.goals[i], 'identifier[0].value');
+    if(goals){
+      if(goals.length > 0){              
+        let count = 0;  
 
-      let rowStyle = {
-        cursor: 'pointer'
+        goals.forEach(function(goal){
+          if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+            let newRow = {
+                _id: get(goal, '_id', ''),
+                identifier: get(goal, 'identifier[0].value', ''),
+                description: get(goal, 'description.text', ''),
+                priority: get(goal, 'priority.text', ''),
+                lifecycleStatus: get(goal, 'lifecycleStatus', ''),
+                achievementStatus: get(goal, 'achievementStatus.coding[0].display', ''),
+                subjectReference: get(goal, 'subject.reference', ''),
+                subjectDisplay: get(goal, 'subject.reference', '')
+              };
+            goalsToRender.push(newRow);
+          }
+          count++;
+        }); 
       }
-      if(get(data.goals[i], 'modifierExtension[0]')){
+    }
+
+  //---------------------------------------------
+  // Render Method
+
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '52px'
+  }
+  if(goalsToRender.length === 0){
+    logger.trace('GoalsTable:  No Goals to render.');
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
+  } else {
+    for (var i = 0; i < goalsToRender.length; i++) {
+
+      let selected = false;
+      if(goalsToRender[i]._id === selectedGoalId){
+        selected = true;
+      }
+      if(get(goalsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+
 
       tableRows.push(
-        <TableRow key={i} className="goalRow" style={rowStyle} onClick={ rowClick.bind('this', data.goals[i]._id)} >
-          { renderCheckboxs(data.goals[i]) }
-          { renderActionIcons(data.goals[i]) }
-          { renderIdentifier(data.goals[i]) }
-
-          <TableCell className='description'>{ newRow.description }</TableCell>
-          <TableCell className='priority'>{ newRow.priority }</TableCell>
-          <TableCell className='status'>{ newRow.status }</TableCell>
+        <TableRow key={i} className="goalRow"  hover={true}  style={rowStyle} onClick={ rowClick.bind(this, goalsToRender[i]._id)} selected={selected} >
+          { renderCheckboxes(i) }
+          { renderActionIcons(goalsToRender[i]._id) }
+          { renderIdentifier(goalsToRender[i].identifier) }
+          { renderDescription(goalsToRender[i].description) }
+          { renderPriority(goalsToRender[i].priority) }
+          { renderLifecycleStatus(goalsToRender[i].lifecycleStatus) }
+          { renderAchievementStatus(goalsToRender[i].achievementStatus) }
+          { renderSubjectName(goalsToRender[i].subjectDisplay ) } 
+          { renderSubjectReference(goalsToRender[i].subjectReference ) }    
         </TableRow>
       )
     }
+  }
+
 
     return(
-      <Table id='goalsTable' hover >
-        {/* <TableHeader>
-          <TableRow>
-            { renderCheckboxsHeader() }
+      <Table id='goalsTable' >
+        <TableHead>
+          <TableRow style={rowStyle}>
+            { renderCheckboxesHeader() }
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
-            <TableCell className='description'>Description</TableCell>
-            <TableCell className='priority'>Priority</TableCell>
-            <TableCell className='status'>Status</TableCell>             
+            { renderDescriptionHeader() }
+            { renderPriorityHeader() }
+            { renderLifecycleStatusHeader() }      
+            { renderAchievementStatusHeader() }      
+            { renderSubjectNameHeader() }
+            { renderSubjectReferenceHeader() }
           </TableRow>
-        </TableHeader>
+        </TableHead>
         <TableBody>
           { tableRows }
-        </TableBody> */}
+        </TableBody>
       </Table>
     );
   }
   
   
   GoalsTable.propTypes = {
-    data: PropTypes.array,
+    goals: PropTypes.array,
+    selectedGoalId: PropTypes.string,
+
     query: PropTypes.object,
     paginationLimit: PropTypes.number,
+    rowsPerPage: PropTypes.number,
+    dateFormat: PropTypes.string,
+    showMinutes: PropTypes.bool,
+    
     hideIdentifier: PropTypes.bool,
-    hideCheckbox: PropTypes.bool,
+    hideCheckboxes: PropTypes.bool,
     hideActionIcons: PropTypes.bool,
-    onRemoveRecord: PropTypes.func
+    hideDescription: PropTypes.bool,
+    hidePriority: PropTypes.bool,
+    hideLifecycleStatus: PropTypes.bool,
+    hideAchievementStatus: PropTypes.bool,
+    hideSubjectName: PropTypes.bool,
+    hideSubjectReference: PropTypes.bool,
+    onRemoveRecord: PropTypes.func,
+
+    count: PropTypes.number,
+    tableRowSize: PropTypes.string,
+    formFactorLayout: PropTypes.string
+  };
+
+  GoalsTable.defaultProps = {
+    tableRowSize: 'medium',
+    rowsPerPage: 5,
+    dateFormat: "YYYY-MM-DD hh:mm:ss",
+    goals: [],
+    query: {},
+    paginationLimit: 100,
+    hideIdentifier: false,
+    hideCheckboxes: false,
+    hideActionIcons: false,
+    hideDescription: false,
+    hidePriority: false,
+    hideLifecycleStatus: false,
+    hideAchievementStatus: false,
+    hideSubjectName: false,
+    hideSubjectReference: false
   };
 
   export default GoalsTable;

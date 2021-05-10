@@ -156,11 +156,26 @@ function BundlesTable(props){
         hideBarcode = false;  
         break;
       case "desktop":
-      
+        hideCheckboxes = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideType = false;
+        hideNumLinks = false;
+        hideNumEntries = false;
+        hideTimestamp = false;
+        hideTotal = false;
+        hideBarcode = false;  
         break;
       case "videowall":
-
-      
+        hideCheckboxes = true;
+        hideIdentifier = true;
+        hideActionIcons = true;
+        hideType = false;
+        hideNumLinks = false;
+        hideNumEntries = false;
+        hideTimestamp = false;
+        hideTotal = false;
+        hideBarcode = false;        
         break;            
     }
   }
@@ -655,7 +670,7 @@ function BundlesTable(props){
 BundlesTable.propTypes = {
   id: PropTypes.string,
 
-  count: PropTypes.string,
+  count: PropTypes.number,
   data: PropTypes.array,
 
   bundles: PropTypes.array,
@@ -707,7 +722,8 @@ BundlesTable.defaultProps = {
   hideTimestamp: false,
   hideTotal: false,
   hideBarcode: false,
-  bundles: []
+  bundles: [],
+  count: 0
 }
 
 export default BundlesTable;

@@ -76,26 +76,16 @@ function TasksTable(props){
 
     hideCheckbox,
     hideActionIcons,
-    hideVersion,
+    hideAuthoredOn,
+    hideLastModified,
+    hideDescription,
+    hideFocus,
+    hideFor,
+    hideIntent,
+    hideRequestor,
     hideStatus,
     hideBusinessStatus,
-    hidePublisher,
-    hideTitle,
-    hideDescription,
-    hideAuthoredOn,
-    hideLastEditedDate,
-    hideLastReviewed,
-    hideAuthor,
-    hideEditor,
-    hideReviewer,
-    hideEndorser,
-    hideScoring,
-    hideType,
-    hideRiskAdjustment,
-    hideRateAggregation,
-    hideSupplementalData,
-    hideContext,
-    hidePopulationCount,
+    hideCode,
     hideBarcode,
 
     onCellClick,
@@ -128,7 +118,7 @@ function TasksTable(props){
         hideCheckbox = true;
         hideActionIcons = false;
         hideAuthoredOn = false;
-        hideLastModified = false;
+        hideLastModified = true;
         hideDescription = true;
         hideFocus = false;
         hideFor = false;
@@ -137,13 +127,13 @@ function TasksTable(props){
         hideStatus = false;
         hideBusinessStatus = false;
         hideCode = false;
-        hideBarcode = false;
+        hideBarcode = true;
         break;
       case "tablet":
         hideCheckbox = true;
         hideActionIcons = false;
         hideAuthoredOn = false;
-        hideLastModified = false;
+        hideLastModified = true;
         hideDescription = true;
         hideFocus = false;
         hideFor = false;
@@ -152,44 +142,44 @@ function TasksTable(props){
         hideStatus = false;
         hideBusinessStatus = false;
         hideCode = false;
-        hideBarcode = false;
+        hideBarcode = true;
         break;
       case "web":
         hideCheckbox = true;
         hideActionIcons = false;
         hideAuthoredOn = false;
-        hideLastModified = false;
+        hideLastModified = true;
         hideDescription = true;
         hideFocus = false;
         hideFor = false;
         hideIntent = true;
-        hideRequestor = false;
+        hideRequestor = true;
         hideStatus = false;
         hideBusinessStatus = false;
         hideCode = false;
-        hideBarcode = false;
+        hideBarcode = true;
         break;
       case "desktop":
-        hideCheckbox = false;
+        hideCheckbox = true;
         hideActionIcons = false;
         hideAuthoredOn = false;
-        hideLastModified = false;
+        hideLastModified = true;
         hideDescription = true;
         hideFocus = false;
         hideFor = false;
-        hideIntent = false;
-        hideRequestor = false;
+        hideIntent = true;
+        hideRequestor = true;
         hideStatus = false;
         hideBusinessStatus = false;
         hideCode = false;
-        hideBarcode = false;
+        hideBarcode = true;
         break;
       case "videowall":
         hideCheckbox = false;
         hideActionIcons = false;
         hideAuthoredOn = false;
         hideLastModified = false;
-        hideDescription = true;
+        hideDescription = false;
         hideFocus = false;
         hideFor = false;
         hideIntent = false;
@@ -197,7 +187,7 @@ function TasksTable(props){
         hideStatus = false;
         hideBusinessStatus = false;
         hideCode = false;
-        hideBarcode = false;
+        hideBarcode = true;
         break;            
     }
   }
@@ -619,16 +609,17 @@ TasksTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideAuthoredOn: false,
-  hideLastModified: false,
+  hideLastModified: true,
   hideDescription: true,
   hideFocus: false,
   hideFor: false,
-  hideIntent: false,
-  hideRequestor: false,
+  hideIntent: true,
+  hideRequestor: true,
   hideStatus: false,
   hideBusinessStatus: false,
-  hideCode: false,
+  hideCode: true,
   hideBarcode: true,
+
   checklist: true,
   selectedTaskId: '',
   rowsPerPage: 5,

@@ -159,6 +159,11 @@ export function CommunicationsPage(props){
             onRemoveRecord={function(recordId){
               Communications.remove({_id: recordId})
             }}
+            onRowClick={function(id){
+              Session.set('communicationsUpsert', false);
+              Session.set('selectedCommunication', id);
+              Session.set('communicationPageTabIndex', 2);
+            }}
             actionButtonLabel="Enroll"
           />
         </CardContent>

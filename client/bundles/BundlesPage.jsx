@@ -117,6 +117,7 @@ let defaultBundle = {
   family: '',
   gender: ''
 };
+
 Session.setDefault('bundleFormData', defaultBundle);
 Session.setDefault('bundleSearchFilter', '');
 Session.setDefault('selectedBundleId', false);
@@ -127,24 +128,26 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 function BundlesPage(props){
 
   let bundles = [];
+  let bundlesCount = 0;
+  let selectedBundle = null;
 
   bundles = useTracker(function(){
     return Bundles.find().fetch();
   }, [])
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
+  bundlesCount = useTracker(function(){
+    return Bundles.find().count();
+  }, [])
 
-  let paddingWidth = 84;
-  if(Meteor.isCordova){
-    paddingWidth = 20;
-  }
-  let cardWidth = window.innerWidth - paddingWidth;
+  selectedBundle = useTracker(function(){
+    return Session.get('selectedBundle');
+  }, [])
+
+
+
 
 
   let bundleSummary = {};
-
-  let selectedBundle = Session.get('selectedBundle');
 
   if(Array.isArray(get(selectedBundle, 'entry'))){
     selectedBundle.entry.forEach(function(entry){
@@ -156,15 +159,23 @@ function BundlesPage(props){
         }
       }
     })  
-    // console.log('bundleSummary', bundleSummary)
   }
   
   let bundleOutput = [];
 
-  Object.keys(bundleSummary).forEach(function(key){
-    bundleOutput.push(<div><h4>{bundleSummary[key]} {key}</h4></div>)
+  Object.keys(bundleSummary).forEach(function(objectKey, i){
+    bundleOutput.push(<div key={i}><h4>{bundleSummary[objectKey]} {objectKey}</h4></div>)
   })
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
+  if(Meteor.isCordova){
+    paddingWidth = 20;
+  }
+
+  let cardWidth = window.innerWidth - paddingWidth;
 
   return(
     <PageCanvas id="bundlesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -177,9 +188,13 @@ function BundlesPage(props){
               />
               <CardContent>
                 <BundlesTable 
+                  count={bundlesCount}
+
+                  hideCheckboxes={true}
+                  hideIdentifier={false}
+                  hideActionIcons={true}
+
                   showBarcodes={true} 
-                  showAvatars={true} 
-                  noDataMessagePadding={100}
                   bundles={bundles}
                   onRowClick={function(bundelId){
                     console.log('Clicked on a row.  Bundle Id: ' + bundelId)
@@ -192,7 +207,7 @@ function BundlesPage(props){
             </StyledCard>
           </Grid>
           <Grid item md={6}>
-            <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+            <StyledCard scrollable={true} margin={20} width={cardWidth + 'px'}>
               <CardHeader
                 title="Bundle Contents"
               />

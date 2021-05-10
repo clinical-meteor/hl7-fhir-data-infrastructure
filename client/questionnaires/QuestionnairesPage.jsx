@@ -594,7 +594,7 @@ export function QuestionnairesPage(props){
                     fullWidth              
                   />       
                 </FormControl>    
-                <Grid container>
+                <Grid container spacing={3}>
                   <Grid item md={6}>
                     <FormControl style={{width: '100%', marginTop: '20px'}}>
                       <InputAdornment 

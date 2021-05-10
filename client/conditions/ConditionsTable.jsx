@@ -25,6 +25,7 @@ import { FhirUtilities } from '../../lib/FhirUtilities';
 
 import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
 
+
 //===========================================================================
 // THEMING
 
@@ -310,7 +311,7 @@ function ConditionsTable(props){
   function renderCheckbox(index){
     if (!hideCheckbox) {
       return (
-        <TableCell className="toggle">
+        <TableCell className="toggle" style={{padding: '0px'}}>
           <Checkbox
             defaultChecked={defaultCheckboxValue}
             onChange={ handleToggle.bind(this, index)} 

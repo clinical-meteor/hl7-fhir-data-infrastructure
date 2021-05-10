@@ -194,14 +194,15 @@ function QuestionnairesTable(props){
   function renderToggleHeader(){
     if (!hideCheckbox) {
       return (
-        <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
+        <TableCell className="toggle" style={{width: '60px', padding: '0px'}} >Toggle</TableCell>
       );
     }
   }
+
   function renderToggle(){
     if (!hideCheckbox) {
       return (
-        <TableCell className="toggle" style={{width: '60px'}}>
+        <TableCell className="toggle" style={{width: '60px', padding: '0px'}}>
             <Checkbox
               defaultChecked={true}
             />

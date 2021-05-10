@@ -67,6 +67,7 @@ export function CommunicationRequestPage(props){
     return CommunicationRequests.find().fetch();
   }, [])
 
+  console.log('CommunicationRequestsPage.communicationRequests', data.communicationRequests);
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();

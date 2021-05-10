@@ -103,7 +103,10 @@ export function PractitionersPage(props){
                 practitioners={data.practitioners}
                 fhirVersion={data.fhirVersion} 
                 formFactorLayout={formFactor}
-                showBarcodes={false} />
+                showBarcodes={false} 
+                count={data.practitioners.length}
+                rowsPerPage={10}
+                />
 
             {/* <Tabs id="practitionersPageTabs" value={data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
               <Tab label="Practitioners" value={0} />

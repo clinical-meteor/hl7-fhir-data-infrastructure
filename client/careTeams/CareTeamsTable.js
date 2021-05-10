@@ -129,7 +129,7 @@ function CareTeamsTable(props){
         hideActionIcons = true;
         hideIdentifier = true;
         hideStatus = false;
-        hideCategory = false;
+        hideCategory = true;
         hideName = false;
         hideSubject = false;
         hideEncounter = false;
@@ -146,9 +146,9 @@ function CareTeamsTable(props){
       case "tablet":
         hideCheckboxes = true;
         hideActionIcons = true;
-        hideIdentifier = false;
+        hideIdentifier = true;
         hideStatus = false;
-        hideCategory = false;
+        hideCategory = true;
         hideName = false;
         hideSubject = false;
         hideEncounter = false;
@@ -165,9 +165,9 @@ function CareTeamsTable(props){
       case "web":
         hideCheckboxes = true;
         hideActionIcons = true;
-        hideIdentifier = false;
+        hideIdentifier = true;
         hideStatus = false;
-        hideCategory = false;
+        hideCategory = true;
         hideName = false;
         hideSubject = false;
         hideEncounter = false;
@@ -184,9 +184,9 @@ function CareTeamsTable(props){
       case "desktop":
         hideCheckboxes = true;
         hideActionIcons = true;
-        hideIdentifier = false;
+        hideIdentifier = true;
         hideStatus = false;
-        hideCategory = false;
+        hideCategory = true;
         hideName = false;
         hideSubject = false;
         hideEncounter = false;
@@ -198,7 +198,7 @@ function CareTeamsTable(props){
         hideReasonDisplay = false;
         hideReasonReference = false;
         hideManagingOrganization = false;    
-        hideBarcode = false;
+        hideBarcode = true;
         break;
       case "videowall":
         hideCheckboxes = false;
@@ -331,6 +331,36 @@ function CareTeamsTable(props){
       );
     }
   }
+  function renderNameHeader(){
+    if (!hideName) {
+      return (
+        <TableCell className='name'>Name</TableCell>
+      );
+    }
+  }
+  function renderName(name ){
+    if (!hideName) {
+      return (
+        <TableCell className='name' style={{minWidth: '140px'}}>{ name }</TableCell>
+      );
+    }
+  }
+
+  function renderParticipantCountHeader(){
+    if (!hideParticipantCount) {
+      return (
+        <TableCell className='participantCount'># Participants</TableCell>
+      );
+    }
+  }
+  function renderParticipantCount(participantCount ){
+    if (!hideParticipantCount) {
+      return (
+        <TableCell className='participantCount' style={{minWidth: '140px'}}>{ participantCount }</TableCell>
+      );
+    }
+  }
+
   function renderTitleHeader(){
     if (!hideTitle) {
       return (
@@ -360,20 +390,20 @@ function CareTeamsTable(props){
     }
   }
 
-  // function renderCreatedHeader(){
-  //   if (!hideCreated) {
-  //     return (
-  //       <TableCell className='created'>Created</TableCell>
-  //     );
-  //   }
-  // }
-  // function renderCreated(createdDate ){
-  //   if (!hideCreated) {
-  //     return (
-  //       <TableCell className='created'>{ moment(createdDate).format('YYYY-MM-DD') }</TableCell>
-  //     );
-  //   }
-  // }
+  function renderPeriodStartHeader(){
+    if (!hidePeriodStart) {
+      return (
+        <TableCell className='started'>Start</TableCell>
+      );
+    }
+  }
+  function renderPeriodStart(startDate ){
+    if (!hidePeriodStart) {
+      return (
+        <TableCell className='started'>{ moment(startDate).format('YYYY-MM-DD') }</TableCell>
+      );
+    }
+  }
 
   function renderCategory(category){
     if (!hideCategory) {
@@ -556,6 +586,7 @@ function CareTeamsTable(props){
           { renderIdentifier(careTeamsToRender[i].identifier)}
           
           { renderSubject( careTeamsToRender[i].subject ) } 
+          { renderName( careTeamsToRender[i].name ) } 
           {/* { renderTitle( careTeamsToRender[i].title ) } 
           { renderAuthor( careTeamsToRender[i].author ) } 
 
@@ -563,8 +594,9 @@ function CareTeamsTable(props){
           { renderGoals( careTeamsToRender[i].goals ) } 
           { renderAddresses( careTeamsToRender[i].addresses ) }  */}
 
-          {/* { renderCreated(careTeamsToRender[i].recorded) } */}
+          { renderPeriodStart(careTeamsToRender[i].recorded) }
           { renderStatus(careTeamsToRender[i].status) }
+          { renderParticipantCount(careTeamsToRender[i].participantCount) }
           
           { renderBarcode(careTeamsToRender[i]._id)}
         </TableRow>
@@ -583,6 +615,7 @@ function CareTeamsTable(props){
 
             { renderIdentifierHeader() }
             { renderSubjectHeader() }
+            { renderNameHeader() }
             {/* { renderTitleHeader() }
             { renderAuthorHeader() }
 
@@ -590,8 +623,9 @@ function CareTeamsTable(props){
             { renderGoalsHeader() }
             { renderAddressesHeader() } */}
 
-            {/* { renderCreatedHeader() }             */}
-            { renderStatusHeader() }            
+            { renderPeriodStartHeader() }
+            { renderStatusHeader() }           
+            { renderParticipantCountHeader() }            
   
             { renderBarcodeHeader() }
           </TableRow>

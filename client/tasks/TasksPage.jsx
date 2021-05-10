@@ -75,7 +75,7 @@ export function TasksPage(props){
 
 
   data.onePageLayout = useTracker(function(){
-    return Session.get('AuditEventsPage.onePageLayout');
+    return Session.get('TasksPage.onePageLayout');
   }, [])
   data.selectedTaskId = useTracker(function(){
     return Session.get('selectedTaskId');
@@ -206,9 +206,6 @@ export function TasksPage(props){
     Session.set('taskPageTabIndex', newValue)
   }
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let layoutContents;
   if(data.onePageLayout){
@@ -218,26 +215,19 @@ export function TasksPage(props){
 
         <TasksTable 
           tasks={ data.tasks }
-          hideCheckbox={false} 
-          hideActionIcons={true}
-          hideIdentifier={true} 
-          hideTitle={false} 
-          hideDescription={false} 
-          hideApprovalDate={false}
-          hideLastReviewed={false}
-          hideVersion={false}
-          hideStatus={false}
-          hideAuthor={true}
-          hidePublisher={false}
-          hideReviewer={false}
-          hideEditor={false}
-          hideEndorser={false}
-          hideType={false}
-          hideRiskAdjustment={true}
-          hideRateAggregation={true}
-          hideScoring={false}
-          hideBarcode={false}
-          showMinutes={true}
+          hideCheckbox={false}
+          // hideActionIcons={true}
+          // hideAuthoredOn={false}
+          // hideLastModified={true}
+          // hideDescription={true}
+          // hideFocus={false}
+          // hideFor={false}
+          // hideIntent={true}
+          // hideRequestor={true}
+          // hideStatus={false}
+          // hideBusinessStatus={false}
+          // hideCode={true}
+          // hideBarcode={true}
           paginationLimit={10}     
           checklist={data.taskChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
@@ -288,8 +278,13 @@ export function TasksPage(props){
     </Grid>
   }
 
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
   return (
-    <PageCanvas id="tasksPage" headerHeight={headerHeight}>
+    <PageCanvas id="tasksPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
         { layoutContents }
       </MuiThemeProvider>

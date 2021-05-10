@@ -17,7 +17,7 @@ import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
 // import ListDetail from './ListDetail';
-import ListsTable from './ListsTable';
+import GoalsTable from '../carePlans/GoalsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -28,14 +28,13 @@ import { get, cloneDeep } from 'lodash';
 //===============================================================================================================
 // Session Variables
 
-Session.setDefault('listPageTabIndex', 0);
-Session.setDefault('listSearchFilter', '');
-Session.setDefault('selectedListId', '');
-Session.setDefault('selectedList', false);
+Session.setDefault('goalPageTabIndex', 0);
+Session.setDefault('goalSearchFilter', '');
+Session.setDefault('selectedGoalId', '');
+Session.setDefault('selectedGoal', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
-Session.setDefault('listsArray', []);
-Session.setDefault('ListsPage.onePageLayout', true)
-
+Session.setDefault('goalsArray', []);
+Session.setDefault('GoalsPage.onePageLayout', true)
 
 
 //===============================================================================================================
@@ -116,12 +115,12 @@ const muiTheme = createMuiTheme({
 //===============================================================================================================
 // Main Component
 
-export function ListsPage(props){
+export function GoalsPage(props){
 
   let data = {
-    selectedListId: '',
-    selectedList: null,
-    lists: [],
+    selectedGoalId: '',
+    selectedGoal: null,
+    goals: [],
     query: {},
     options: {
       limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
@@ -130,16 +129,16 @@ export function ListsPage(props){
   };
 
   data.onePageLayout = useTracker(function(){
-    return Session.get('ListsPage.onePageLayout');
+    return Session.get('GoalsPage.onePageLayout');
   }, [])
-  data.selectedListId = useTracker(function(){
-    return Session.get('selectedListId');
+  data.selectedGoalId = useTracker(function(){
+    return Session.get('selectedGoalId');
   }, [])
-  data.selectedList = useTracker(function(){
-    return Lists.findOne(Session.get('selectedListId'));
+  data.selectedGoal = useTracker(function(){
+    return Goals.findOne(Session.get('selectedGoalId'));
   }, [])
-  data.lists = useTracker(function(){
-    return Lists.find().fetch();
+  data.goals = useTracker(function(){
+    return Goals.find().fetch();
   }, [])
 
 
@@ -153,16 +152,14 @@ export function ListsPage(props){
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={data.lists.length + " Lists"} />
+      <CardHeader title={data.goals.length + " Goals"} />
       <CardContent>
 
-        <ListsTable 
-          lists={ data.lists }
+        <GoalsTable 
+          goals={ data.goals }
           hideCheckbox={true} 
           hideActionIcons={true}
           hideIdentifier={true} 
-          hideTitle={false} 
-          hideItemCount={false}
           paginationLimit={10}     
           />
         </CardContent>
@@ -171,33 +168,40 @@ export function ListsPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.lists.length + " Lists"} />
+          <CardHeader title={data.goals.length + " Goals"} />
           <CardContent>
-            <ListsTable 
-              lists={ data.lists }
-              selectedListId={ data.selectedListId }
+            <GoalsTable 
+              goals={ data.goals }
+              selectedGoalId={ data.selectedGoalId }
               hideIdentifier={true} 
               hideCheckbox={true} 
-              hideItemCount={false}
+              hideApprovalDate={false}
+              hideLastReviewed={false}
+              hideVersion={false}
+              hideStatus={false}
+              hidePublisher={true}
+              hideReviewer={true}
+              hideScoring={true}
+              hideEndorser={true}
               paginationLimit={10}            
               hideActionIcons={true}
               onRowClick={this.handleRowClick.bind(this) }
-              count={data.listsCount}
+              count={data.goalsCount}
               />
           </CardContent>
         </StyledCard>
       </Grid>
       <Grid item lg={4}>
         <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedListId }</h1>
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedGoalId }</h1>
           <CardContent>
             <CardContent>
               {/* <ListDetail 
-                id='listDetails' 
+                id='goalDetails' 
                 displayDatePicker={true} 
                 displayBarcodes={false}
-                list={ data.selectedList }
-                listId={ data.selectedListId } 
+                goal={ data.selectedGoal }
+                goalId={ data.selectedGoalId } 
                 showListInputs={true}
                 showHints={false}
               /> */}
@@ -209,7 +213,7 @@ export function ListsPage(props){
   }
 
   return (
-    <PageCanvas id="listsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+    <PageCanvas id="goalsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
         { layoutContents }
       </MuiThemeProvider>
@@ -218,4 +222,4 @@ export function ListsPage(props){
 }
 
 
-export default ListsPage;
+export default GoalsPage;

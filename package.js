@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.14.0',
+  version: '6.14.2',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -41,6 +41,7 @@ Package.onUse(function (api) {
   // schemas and cursors
   api.addFiles('lib/BaseModel.js', ['client', 'server']);
 
+  api.addFiles('lib/schemas/ActivityDefinitions.js', ['client', 'server']);
   api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
   api.addFiles('lib/schemas/AuditEvents.js', ['client', 'server']);
   api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
@@ -48,6 +49,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/CareTeams.js', ['client', 'server']);
   api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Consents.js', ['client', 'server']);
   api.addFiles('lib/schemas/Communications.js', ['client', 'server']);
   api.addFiles('lib/schemas/CommunicationRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/CommunicationResponses.js', ['client', 'server']);
@@ -58,6 +60,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Endpoints.js', ['client', 'server']);
   api.addFiles('lib/schemas/ExplanationOfBenefit.js', ['client', 'server']);
   api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Goals.js', ['client', 'server']);
   api.addFiles('lib/schemas/Lists.js', ['client', 'server']);
   api.addFiles('lib/schemas/Locations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
@@ -79,6 +82,10 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/QuestionnaireResponses.js', ['client', 'server']);
   api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
   api.addFiles('lib/schemas/ValueSets.js', ['client', 'server']);
+
+  api.export('ActivityDefinition');
+  api.export('ActivityDefinitions');
+  api.export('ActivityDefinitionSchema');
 
   api.export('AllergyIntolerance');
   api.export('AllergyIntolerances');
@@ -107,6 +114,10 @@ Package.onUse(function (api) {
   api.export('Condition');
   api.export('Conditions');
   api.export('ConditionSchema');
+
+  api.export('Consent');
+  api.export('Consents');
+  api.export('ConsentSchema');
 
   api.export('Communication');
   api.export('Communications');
@@ -147,6 +158,10 @@ Package.onUse(function (api) {
   api.export('Immunization');
   api.export('Immunizations');
   api.export('ImmunizationSchema');
+
+  api.export('Goal');
+  api.export('Goals');
+  api.export('GoalSchema');
 
   api.export('List');
   api.export('Lists');

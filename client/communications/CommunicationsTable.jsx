@@ -71,27 +71,24 @@ function CommunicationsTable(props){
 
     data,
     communications,
-    selectedConditionId,
+    selectedCommunicationId,
 
     query,
     paginationLimit,
     disablePagination,
   
-    hideCheckbox,
+    hideCheckboxes,
     hideActionIcons,
     hideIdentifier,
-    hidePatientName,
-    hidePatientReference,
-    hideAsserterName,
-    hideClinicalStatus,
-    hideSnomedCode,
-    hideSnomedDisplay,
-    hideVerification,
-    hideSeverity,
-    hideEvidence,
-    hideDates,
-    hideEndDate,
-    hideBarcode,
+    hideSender,
+    hideSent,
+    hideSubject,
+    hideRecipient,
+    hidePayload,
+    hideCategory,
+    hideStatus,
+    hideTelecom,
+    hideReceived,
   
     onCellClick,
     onRowClick,
@@ -133,18 +130,117 @@ function CommunicationsTable(props){
   }
 
 
+
+  // ------------------------------------------------------------------------
+  // Helper Functions
+
+
+  function handleRowClick(_id){
+    logger.info('clicking row ' + _id)
+    if(onRowClick){
+      onRowClick(_id);
+    }
+  }
+
+  function handleRemoveRecord(_id){
+    logger.info('Remove measureReport: ' + _id)
+    if(onRemoveRecord){
+      onRemoveRecord(_id);
+    }
+  }
+  function handleActionButtonClick(id){
+    if(typeof onActionButtonClick === "function"){
+      onActionButtonClick(id);
+    }
+  }
+  function handleCellClick(id){
+    if(typeof onCellClick === "function"){
+      onCellClick(id);
+    }
+  }
+
+  function handleMetaClick(patient){
+    let self = this;
+    if(onMetaClick){
+      onMetaClick(self, patient);
+    }
+  }
+
+  // function handleRowClick(id){
+  //   Session.set('communicationsUpsert', false);
+  //   Session.set('selectedCommunication', id);
+  //   Session.set('communicationPageTabIndex', 2);
+  // }
+
+    function toggleCommunicationStatus(communication, event, toggle){
+    console.log('toggleCommunicationStatus', communication, toggle);
+    let newStatus = 'draft';
+
+    if(toggle){
+      newStatus = 'active';
+    } else {
+      newStatus = 'draft';
+    }
+
+    Communications._collection.update({_id: communication._id}, {$set: {
+      'status': newStatus
+    }}, function(error, result){
+      if(error){
+        console.error('Communication Error', error);
+      }
+    });
+  }
+
+  function onSend(id){
+      let communication = Communications.findOne({_id: id});
+    
+      var httpEndpoint = "http://localhost:8080";
+      if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
+        httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
+      }
+      HTTP.post(httpEndpoint + '/Communication', {
+        data: communication
+      }, function(error, result){
+        if (error) {
+          console.log("error", error);
+        }
+        if (result) {
+          console.log("result", result);
+        }
+      });
+  }
+  function sendCommunication(communication){
+    console.log('sendCommunication', communication)
+
+    // TODO:
+
+    switch (get(communication, 'category')) {
+      case 'SMS Text Message':
+        if(communication.telecom && (typeof communication.telecom === "string")){
+          console.log('Sending SMS Text Message', communication.payload, communication.telecom)
+          Meteor.call('sendTwilioMessage', communication.payload, communication.telecom)
+          Communications.update({_id: communication._id}, {$set: {
+            sent: new Date()
+          }})  
+        }
+        break;    
+      default:
+        break;
+    }
+  }
+
   //---------------------------------------------------------------------
   // Column Rendering
 
   function renderCheckboxHeader(){
-    if (!hideCheckbox) {
+    if (!hideCheckboxes) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(patientId ){
-    if (!hideCheckbox) {
+    if (!hideCheckboxes) {
       return (
         <TableCell className="toggle">
           <Checkbox
@@ -189,90 +285,200 @@ function CommunicationsTable(props){
       return (
         <TableCell className='actionIcons' style={{width: '120px'}}>
           {/* <Icon icon={tag} style={iconStyle} onClick={showSecurityDialog.bind(this, condition)} />
-          <Icon icon={iosTrashOutline} style={iconStyle} onClick={removeRecord.bind(this, condition._id)} /> */}
+          <Icon icon={iosTrashOutline} style={iconStyle} onClick={handleRemoveRecord.bind(this, condition._id)} /> */}
         </TableCell>
       );
     }
   } 
-
-  function rowClick(id){
-    Session.set('communicationsUpsert', false);
-    Session.set('selectedCommunication', id);
-    Session.set('communicationPageTabIndex', 2);
-  }
-  function toggleCommunicationStatus(communication, event, toggle){
-    console.log('toggleCommunicationStatus', communication, toggle);
-    let newStatus = 'draft';
-
-    if(toggle){
-      newStatus = 'active';
-    } else {
-      newStatus = 'draft';
-    }
-
-    Communications._collection.update({_id: communication._id}, {$set: {
-      'status': newStatus
-    }}, function(error, result){
-      if(error){
-        console.error('Communication Error', error);
-      }
-    });
-  }
-  function removeRecord(_id){
-    console.log('Remove communication ', _id)
-    if(props.onRemoveRecord){
-      props.onRemoveRecord(_id);
+  function renderSubjectHeader(){
+    if (!hideSubject) {
+      return (
+        <TableCell className='patientDisplay'>Patient</TableCell>
+      );
     }
   }
-  function onSend(id){
-      let communication = Communications.findOne({_id: id});
-    
-      var httpEndpoint = "http://localhost:8080";
-      if (get(Meteor, 'settings.public.interfaces.default.channel.endpoint')) {
-        httpEndpoint = get(Meteor, 'settings.public.interfaces.default.channel.endpoint');
-      }
-      HTTP.post(httpEndpoint + '/Communication', {
-        data: communication
-      }, function(error, result){
-        if (error) {
-          console.log("error", error);
-        }
-        if (result) {
-          console.log("result", result);
-        }
-      });
-  }
-  function sendCommunication(communication){
-    console.log('sendCommunication', communication)
-
-    // TODO:
-
-    switch (get(communication, 'category')) {
-      case 'SMS Text Message':
-        if(communication.telecom && (typeof communication.telecom === "string")){
-          console.log('Sending SMS Text Message', communication.payload, communication.telecom)
-          Meteor.call('sendTwilioMessage', communication.payload, communication.telecom)
-          Communications.update({_id: communication._id}, {$set: {
-            sent: new Date()
-          }})  
-        }
-        break;    
-      default:
-        break;
+  function renderSubject(subject ){
+    if (!hideSubject) {
+      return (
+        <TableCell className='subject' style={{minWidth: '140px'}}>{ subject }</TableCell>
+      );
     }
+  }
+
+
+  function renderRecipientHeader(){
+    if (!hideRecipient) {
+      return (
+        <TableCell className='recipient'>Recipient</TableCell>
+      );
+    }
+  }
+  function renderRecipient(recipient ){
+    if (!hideRecipient) {
+      return (
+        <TableCell className='recipient' style={{minWidth: '140px'}}>{ recipient }</TableCell>
+      );
+    }
+  }
+  function renderCategory(category){
+    if (!hideCategory) {
+      return (
+        <TableCell className="category">{category}</TableCell>
+      );
+    }
+  }
+  function renderCategoryHeader(){
+    if (!hideCategory) {
+      return (
+        <TableCell className="category">Category</TableCell>
+      );
+    }
+  }
+
+  function renderStatus(status){
+    if (!hideStatus) {
+      return (
+        <TableCell><span className="status">{status}</span></TableCell>
+      );
+    }
+  }
+  function renderStatusHeader(){
+    if (!hideStatus) {
+      return (
+        <TableCell className="status">Status</TableCell>
+      );
+    }
+  }
+  function renderReceivedHeader(){
+    if (!hideReceived) {
+      return (
+        <TableCell className='received'>Received</TableCell>
+      );
+    }
+  }
+  function renderReceived(received ){
+    if (!hideReceived) {
+      return (
+        <TableCell className='received' style={{minWidth: '140px'}}>{ received }</TableCell>
+      );
+    }
+  }
+
+  function renderTelecomHeader(){
+    if (!hideTelecom) {
+      return (
+        <TableCell className='telecom'>Telecom</TableCell>
+      );
+    }
+  }
+  function renderTelecom(telecom ){
+    if (!hideTelecom) {
+      return (
+        <TableCell className='telecom' style={{minWidth: '140px'}}>{ telecom }</TableCell>
+      );
+    }
+  }
+  function renderPayload(payload){
+    if (!hidePayload) {
+      return (
+        <TableCell className="payload">{payload}</TableCell>
+      );
+    }
+  }
+  function renderPayloadHeader(){
+    if (!hidePayload) {
+      return (
+        <TableCell className="payload">Payload</TableCell>
+      );
+    }
+  }
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+  const [page, setPage] = useState(0);
+  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPageToRender}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
   }
 
   //----------------------------------------------------------
   // Render
 
   let tableRows = [];
-    for (var i = 0; i < communications.length; i++) {
+  let communicationsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+
+  if(showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(internalDateFormat){
+    internalDateFormat = dateFormat;
+  }
+
+  if(communications){
+    if(communications.length > 0){              
+      let count = 0;  
+
+      communications.forEach(function(communication){
+        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          communicationsToRender.push(FhirDehydrator.flattenCommunication(communication));
+        }
+        count++;
+      }); 
+    }
+  }
+
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '52px'
+  }
+
+  if(communicationsToRender.length === 0){
+    logger.trace('CarePlansTable:  No carePlans to render.');
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
+  } else {
+    for (var i = 0; i < communicationsToRender.length; i++) {
+      let selected = false;
+      if(communicationsToRender[i]._id === selectedCommunicationId){
+        selected = true;
+      }
+      if(get(communicationsToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
 
       let sendButton;
       let buttonLabel = "Send";
 
-      if(props.actionButtonLabel){
-        buttonLabel = props.actionButtonLabel;
+      if(actionButtonLabel){
+        buttonLabel = actionButtonLabel;
       }
       
       let statusCell = {
@@ -291,25 +497,30 @@ function CommunicationsTable(props){
         buttonLabel = "Resend";
       } 
 
+      console.log('communications[' + i + ']', communicationsToRender[i])
+
       tableRows.push(
-        <TableRow key={i} className="communicationRow" style={{cursor: "pointer"}} hover={true}>
-          { renderCheckbox(communications[i]) }
-          { renderActionIcons(communications[i]) }
-          { renderIdentifier(communications[i]) }
-          <TableCell className='subject' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].subject }</TableCell>
-          <TableCell className='recipient' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].recipient }</TableCell>
-          <TableCell className='telecom' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].telecom }</TableCell>
-          <TableCell className='received' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].received }</TableCell>
-          <TableCell className='category' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].category }</TableCell>
-          <TableCell className='payload' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].payload }</TableCell>
-          <TableCell className='status' onClick={ rowClick.bind(this, communications[i]._id)} >{communications[i].status }</TableCell>
-          <TableCell className='sent'>{ communications[i].sent }</TableCell>
-          <TableCell className='actionButton' onClick={ rowClick.bind(this, communications[i]._id)} >
-            <Button color="primary" onClick={ sendCommunication.bind(this, communications[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
+        <TableRow key={i} className="communicationRow" hover={true} style={rowStyle} selected={selected} >
+          { renderCheckbox(communicationsToRender[i]) }
+          { renderActionIcons(communicationsToRender[i]) }
+          { renderIdentifier(communicationsToRender[i]) }
+          { renderSubject( communicationsToRender[i].subject ) } 
+          { renderRecipient( communicationsToRender[i].recipient ) } 
+          { renderTelecom( communicationsToRender[i].telecom ) } 
+          { renderReceived( moment(communicationsToRender[i].received).format("YYYY-MM-DD") ) } 
+          { renderCategory( communicationsToRender[i].category ) } 
+          { renderPayload( communicationsToRender[i].payload ) } 
+          { renderStatus(communicationsToRender[i].status) }
+          <TableCell className='sent'>{ communicationsToRender[i].sent }</TableCell>
+          <TableCell className='actionButton' onClick={ handleRowClick.bind(this, communicationsToRender[i]._id)} >
+            <Button color="primary" onClick={ sendCommunication.bind(this, communicationsToRender[i]) } style={{marginTop: '-16px'}}>{buttonLabel}</Button>
           </TableCell>
         </TableRow>
       );
     }
+
+  }
+
 
   return(
     <Table id='communicationsTable' >
@@ -318,13 +529,13 @@ function CommunicationsTable(props){
           { renderCheckboxHeader() }
           { renderActionIconsHeader() }
           { renderIdentifierHeader() }
-          <TableCell className='subject'>Subject</TableCell>
-          <TableCell className='recipient'>Recipient</TableCell>
-          <TableCell className='telecom'>Telecom</TableCell>
-          <TableCell className='received'>Received</TableCell>
-          <TableCell className='category'>Category</TableCell>
-          <TableCell className='payload'>Payload</TableCell>
-          <TableCell className='status'>Status</TableCell>
+          { renderSubjectHeader() }
+          { renderRecipientHeader() }
+          { renderTelecomHeader() }
+          { renderReceivedHeader() }
+          { renderCategoryHeader() }
+          { renderPayloadHeader() }
+          { renderStatusHeader() }       
           <TableCell className='sent' style={{minWidth: '100px'}}>Sent</TableCell>
           <TableCell className='actionButton' style={{minWidth: '100px'}}>Action</TableCell>
         </TableRow>
@@ -339,21 +550,62 @@ function CommunicationsTable(props){
 
 
 CommunicationsTable.propTypes = {
-  data: PropTypes.array,
-  fhirVersion: PropTypes.string,
+  barcodes: PropTypes.bool,
+  
+  communications: PropTypes.array,
+  selecteCommunicationId: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
+  rowsPerPage: PropTypes.number,
+  dateFormat: PropTypes.string,
+  showMinutes: PropTypes.bool,
+
+  hideCheckboxes: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
-  hideCheckbox: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
+
+  hideSender: PropTypes.bool,
+  hideSent: PropTypes.bool,
+  hideSubject: PropTypes.bool,
+  hideRecipient: PropTypes.bool,
+  hidePayload: PropTypes.bool,
+  hideCategory: PropTypes.bool,
+  hideStatus: PropTypes.bool,
+  hideTelecom: PropTypes.bool,
+  hideReceived: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
+  showActionButton: PropTypes.bool,
+
+  count: PropTypes.number,
+  tableRowSize: PropTypes.string,
   formFactorLayout: PropTypes.string
+};
+
+CommunicationsTable.defaultProps = {
+  tableRowSize: 'medium',
+  rowsPerPage: 5,
+  dateFormat: "YYYY-MM-DD hh:mm:ss",
+  hideCheckboxes: true,
+  hideActionIcons: true,
+  hideIdentifier: false,
+  hideSender: false,
+  hideSent: false,
+  hideSubject: false,
+  hideRecipient: false,
+  hidePayload: false,
+  hideReceived: true,
+  hideCategory: true,
+  hideStatus: false,
+  hideTelecom: false,
+  hideBarcode: true,
+  communications: []
 };
 
 export default CommunicationsTable;

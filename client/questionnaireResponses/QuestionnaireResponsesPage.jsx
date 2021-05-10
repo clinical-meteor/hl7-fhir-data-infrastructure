@@ -29,7 +29,7 @@ Session.setDefault('questionnaireResponseFormData', null);
 Session.setDefault('questionnaireResponseSearchFilter', '');
 Session.setDefault('selectedQuestionnaireResponse', null);
 Session.setDefault('selectedQuestionnaireResponseId', '');
-Session.setDefault('QuestionnaireResponsesPage.onePageLayout', false)
+Session.setDefault('QuestionnaireResponsesPage.onePageLayout', true)
 
 //===============================================================================================================
 // Global Theming 

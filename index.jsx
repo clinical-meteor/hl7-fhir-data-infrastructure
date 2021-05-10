@@ -7,14 +7,15 @@ import {AuditEvents} from './lib/schemas/AuditEvents';
 import {Bundles} from './lib/schemas/Bundles';
 import {CarePlans} from './lib/schemas/CarePlans';
 import {Conditions} from './lib/schemas/Conditions';
+import {Consents} from './lib/schemas/Consents';
 import {Communications} from './lib/schemas/Communications';
 import {CommunicationRequests} from './lib/schemas/CommunicationRequests';
 import {Devices} from './lib/schemas/Devices';
 import {DiagnosticReports} from './lib/schemas/DiagnosticReports';
 import {DocumentReferences} from './lib/schemas/DocumentReferences';
 import {Encounters} from './lib/schemas/Encounters';
-// import {ExplanationOfBenefits} from './lib/schemas/ExplanationOfBenefits';
 import {Immunizations} from './lib/schemas/Immunizations';
+import {Goals} from './lib/schemas/Goals';
 import {Locations} from './lib/schemas/Locations';
 import {Lists} from './lib/schemas/Lists';
 import {Measures} from './lib/schemas/Measures';
@@ -69,12 +70,15 @@ import ConditionsPage from './client/conditions/ConditionsPage';
 import ConditionsTable from './client/conditions/ConditionsTable';
 // import ConditionDetail from './client/conditions/ConditionDetail';
 
+import ConsentsPage from './client/consents/ConsentsPage';
+import ConsentsTable from './client/consents/ConsentsTable';
+
 import CommunicationsPage from './client/communications/CommunicationsPage';
-// import CommunicationsTable from './client/communications/CommunicationsTable';
+import CommunicationsTable from './client/communications/CommunicationsTable';
 // import CommunicationDetail from './client/communications/CommunicationDetail';
 
 import CommunicationRequestsPage from './client/communicationRequests/CommunicationRequestsPage';
-// import CommunicationRequestsTable from './client/communicationRequests/CommunicationRequestsTable';
+import CommunicationRequestsTable from './client/communicationRequests/CommunicationRequestsTable';
 // import CommunicationRequestDetail from './client/communicationRequests/CommunicationRequestDetail';
 
 import DevicesPage from './client/devices/DevicesPage';
@@ -100,6 +104,10 @@ import ExplanationOfBenefitsTable from './client/explanationOfBenefits/Explanati
 import ImmunizationsPage from './client/immunizations/ImmunizationsPage';
 import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
 // import ImmunizationDetail from './client/immunizations/ImmunizationDetail';
+
+import GoalsPage from './client/goals/GoalsPage';
+// import GoalsTable from './client/goals/GoalsTable';
+// import GoalDetail from './client/goals/GoalDetail';
 
 import ListsPage from './client/lists/ListsPage';
 import ListsTable from './client/lists/ListsTable';
@@ -229,6 +237,11 @@ let DynamicRoutes = [{
   component: ConditionsPage,
   requireAuth: true
 }, {
+  name: 'ConsentsPage',
+  path: '/consents',
+  component: ConsentsPage,
+  requireAuth: true
+}, {
   name: 'CommunicationsPage',
   path: '/communications',
   component: CommunicationsPage,
@@ -257,6 +270,11 @@ let DynamicRoutes = [{
   name: 'ExplanationOfBenefitsPage',
   path: '/explanation-of-benefits',
   component: ExplanationOfBenefitsPage,
+  requireAuth: true
+}, {
+  name: 'GoalsPage',
+  path: '/goals',
+  component: GoalsPage,
   requireAuth: true
 }, {
   name: 'ImmunizationsPage',
@@ -380,7 +398,7 @@ let SidebarElements = [{
   href: '/audit-events',
   collectionName: 'AuditEvents'
 }, {
-  prmaryText: 'Bundles',
+  primaryText: 'Bundles',
   to: '/bundles',
   href: '/bundles',
   iconName: 'suitcase',
@@ -403,6 +421,12 @@ let SidebarElements = [{
   href: '/conditions',
   iconName: 'heartbeat',
   collectionName: 'Conditions'  
+}, {
+  primaryText: 'Consents',
+  to: '/consents',
+  href: '/consents',
+  iconName: 'notepad',
+  collectionName: 'Consents'  
 }, {
   primaryText: 'Communications',
   to: '/communications',
@@ -438,13 +462,13 @@ let SidebarElements = [{
   to: '/encounters',
   href: '/encounters',
   iconName: 'ic_transfer_within_a_station',
-  collectionName: Encounters
+  collectionName: 'Encounters'
 }, {
   primaryText: 'Explanation Of Benefits',
   to: '/explanation-of-benefits',
   href: '/explanation-of-benefits',
   iconName: 'notepad',
-  // collectionName: ExplanationOfBenefits
+  collectionName: 'ExplanationOfBenefits'
 }, {
   primaryText: 'Immunizations',
   to: '/immunizations',
@@ -462,7 +486,13 @@ let SidebarElements = [{
   to: '/lists',
   href: '/lists',
   iconName: 'notepad',
-  collectionName: Lists 
+  collectionName: 'Lists' 
+}, {
+  primaryText: 'Goals',
+  to: '/goals',
+  href: '/goals',
+  iconName: 'notepad',
+  collectionName: 'Goals' 
 }, {
   primaryText: 'Measures',
   to: '/measures',
@@ -570,7 +600,7 @@ let SidebarElements = [{
   to: '/valuesets',
   href: '/valuesets',
   iconName: 'notepad',
-  _collection: 'ValueSets'
+  collectionName: 'ValueSets'
 }];
   
 let AdminSidebarElements = [{
@@ -578,67 +608,75 @@ let AdminSidebarElements = [{
   to: '/allergies',
   href: '/allergies'
 }, {
-  prmaryText: 'Bundles',
+  primaryText: 'Bundles',
   to: '/bundles',
   href: '/bundles'
 }, {
-  prmaryText: 'Care Plans',
+  primaryText: 'Care Plans',
   to: '/careplans',
   href: '/careplans'
 }, {
-  prmaryText: 'Devices',
+  primaryText: 'Devices',
   to: '/devices',
   href: '/devices'
 }, {
-  prmaryText: 'Diagnostic Reports',
+  primaryText: 'Diagnostic Reports',
   to: '/diagnostic-reports',
   href: '/diagnostic-reports'
 }, {
-  prmaryText: 'Encounters',
+  primaryText: 'Encounters',
   to: '/encounters',
   href: '/encounters'
 }, {
-  prmaryText: 'Immunizations',
+  primaryText: 'Immunizations',
   to: '/immunizations',
   href: '/immunizations'
 }, {
-  prmaryText: 'Measures',
+  primaryText: 'Lists',
+  to: '/lists',
+  href: '/lists'
+}, {
+  primaryText: 'Goals',
+  to: '/goals',
+  href: '/goals'
+}, {
+  primaryText: 'Measures',
   to: '/measures',
   href: '/measures'
 }, {
-  prmaryText: 'Measure Reports',
+  primaryText: 'Measure Reports',
   to: '/measure-reports',
   href: '/measure-reports'
 }, {
-  prmaryText: 'Medications',
+  primaryText: 'Medications',
   to: '/medications',
   href: '/medications'
 }, {
-  prmaryText: 'Medication Orders',
+  primaryText: 'Medication Orders',
   to: '/medication-orders',
   href: '/medication-orders'
 }, {
-  prmaryText: 'Medication Statements',
+  primaryText: 'Medication Statements',
   to: '/medication-statements',
   href: '/medication-statements'
 }, {
-  prmaryText: 'Observations',
+  primaryText: 'Observations',
   to: '/observations',
   href: '/observations'
 }, {
-  prmaryText: 'Observations',
+  primaryText: 'Observations',
   to: '/observations',
   href: '/observations'
 }, {
-  prmaryText: 'Patients',
+  primaryText: 'Patients',
   to: '/patients',
   href: '/patients'
 }, {
-  prmaryText: 'Practitioners',
+  primaryText: 'Practitioners',
   to: '/practitioners',
   href: '/practitioners'
 }, {
-  prmaryText: 'Procedures',
+  primaryText: 'Procedures',
   to: '/procedures',
   href: '/procedures'
 }];
@@ -678,12 +716,16 @@ export {
   ConditionsTable,
   // ConditionDetail,
 
+  ConsentsPage,
+  ConsentsTable,
+  // ConsentDetail,
+
   CommunicationsPage,
-  // CommunicationsTable,
+  CommunicationsTable,
   // CommunicationDetail,
 
   CommunicationRequestsPage,
-  // CommunicationRequestsTable,
+  CommunicationRequestsTable,
   // CommunicationRequestDetail,
 
   DevicesPage,
@@ -709,6 +751,10 @@ export {
   ImmunizationsTable,
   // ImmunizationDetail,
 
+  GoalsPage,
+  // GoalsTable,
+  // GoalDetail,
+  
   ListsPage,
   ListsTable,
   // ListDetail,
