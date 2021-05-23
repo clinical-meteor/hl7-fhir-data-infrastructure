@@ -111,6 +111,7 @@ import GoalsPage from './client/goals/GoalsPage';
 
 import ListsPage from './client/lists/ListsPage';
 import ListsTable from './client/lists/ListsTable';
+import ListItemsTable from './client/lists/ListItemsTable';
 // import ListDetail from './client/lists/ListDetail';
 
 import LocationsTable from './client/locations/LocationsTable';
@@ -757,6 +758,7 @@ export {
   
   ListsPage,
   ListsTable,
+  ListItemsTable,
   // ListDetail,
 
   LocationsTable,
