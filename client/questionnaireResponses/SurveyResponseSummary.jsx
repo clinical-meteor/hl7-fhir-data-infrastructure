@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import { 
   Button,
+  Card,
+  CardHeader,
+  CardContent,
+  Grid,
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
@@ -23,11 +27,7 @@ import {
 import { get, has, uniq, compact } from 'lodash';
 import moment from 'moment';
 
-// import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-// import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
-
-import { Questionnaires } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 import { Session } from 'meteor/session';
 import {
@@ -37,7 +37,8 @@ import {
 } from 'react-sortable-hoc';
 
 import  { useTracker } from '../../lib/Tracker';
-
+import FhirUtilities from '../../lib/FhirUtilities';
+import { Questionnaires } from '../../lib/schemas/Questionnaires';
 
 
 
@@ -149,12 +150,13 @@ function SurveyResponseSummary(props){
   let questionAnswers = [];
 
 
-
+  console.log('---------------------------------------------------------------')
+  console.log('SurveyResponseSummary.selectedResponse', selectedResponse)
 
 
   // we're going to get a question, along with the indices for where it exists in the hierarcy, up to two levels deep
   function parseAnswers(answer, answerIndex){
-    console.log('Parsing answers', answer, answerIndex, selectedResponse)
+    console.log('Parsing answers', answer, answerIndex)
     let stringToRender = ""    
 
     if(Array.isArray(answer)){
@@ -166,7 +168,7 @@ function SurveyResponseSummary(props){
 
 
   // do we have question items to display in expansion panels
-  console.log('selectedResponse (pre main render)', selectedResponse)
+  // console.log('selectedResponse (pre main render)', selectedResponse)
   if(selectedResponse){
     // should be our sections
     if(Array.isArray(selectedResponse.item)){
@@ -176,21 +178,21 @@ function SurveyResponseSummary(props){
 
         // should be the questions
         if(Array.isArray(renderItem.item)){
-          questionAnswers.push(<h3 key={'section-' + renderItemIndex} style={{width: '100%', borderTop: '1px solid lightgray', marginTop: '10px'}}>{get(renderItem, 'text')}</h3>)
+          // questionAnswers.push(<h3 key={'section-' + renderItemIndex} style={{width: '100%', borderTop: '1px solid lightgray', marginTop: '10px'}}>{get(renderItem, 'text')}</h3>)
+          
           renderItem.item.forEach(function(questionItem, questionItemIndex){
-
-            questionAnswers.push(<p key={'question-' + renderItemIndex + '-' + questionItemIndex} >Q: {get(questionItem, 'text')}</p>)
+            questionAnswers.push(<h4 key={'question-' + renderItemIndex + '-' + questionItemIndex} >Q: {get(questionItem, 'text')}</h4>)
             
             if(Array.isArray(questionItem.answer)){
-              questionAnswers.push(<h4 key={'answer-' + renderItemIndex + '-' + questionItemIndex}>{parseAnswers(questionItem.answer)}</h4>)
+              questionAnswers.push(<p key={'answer-' + renderItemIndex + '-' + questionItemIndex}>{parseAnswers(questionItem.answer)}</p>)
             }     
           });
         } else {
-          questionAnswers.push(<p key={'section-' + renderItemIndex} >Q: {get(renderItem, 'text')}</p>)
+          questionAnswers.push(<h4 key={'section-' + renderItemIndex} >Q: {get(renderItem, 'text')}</h4>)
         }
 
         if(Array.isArray(renderItem.answer)){
-          questionAnswers.push(<h4 key={'answer-' + renderItemIndex}>{parseAnswers(renderItem.answer)}</h4>)
+          questionAnswers.push(<p key={'answer-' + renderItemIndex}>{parseAnswers(renderItem.answer)}</p>)
         } 
 
       });  
@@ -199,11 +201,27 @@ function SurveyResponseSummary(props){
 
   console.log('questionAnswers', questionAnswers)
 
+  let questionnaireId = FhirUtilities.pluckReferenceId(get(selectedResponse, 'questionnaire'));
+  console.log('SurveyResponseSummary.questionnaireId', questionnaireId);
+
+  let questionnaire = Questionnaires.findOne({id: questionnaireId});
+  console.log('SurveyResponseSummary.questionnaire', questionnaire);
+
+
+
   return (
     <div id={id} className="questionnaireResponseSummary">
-      <div id='questionnaireResponseSummary'>
+      <Grid container>
+        <Grid item md={4}>
+          <CardHeader title={get(selectedResponse, 'author.display')} subheader={get(selectedResponse, 'author.reference')} />
+        </Grid>
+        <Grid item md={8}>
+          <CardHeader title={get(questionnaire, 'title')} subheader={moment(get(selectedResponse, 'authored')).format("YYYY-MM-DD")} />      
+        </Grid>
+      </Grid>
+      <CardContent id='questionnaireResponseSummary'>
         { questionAnswers }
-      </div>
+      </CardContent>
     </div>
   );
 }

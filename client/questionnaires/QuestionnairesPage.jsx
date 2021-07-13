@@ -200,7 +200,7 @@ export function QuestionnairesPage(props){
     return Session.get('selectedQuestionnaireId');
   }, [])
   data.selectedQuestionnaire = useTracker(function(){
-    return Questionnaires.findOne(Session.get('selectedQuestionnaireId'));
+    return Questionnaires.findOne({id: Session.get('selectedQuestionnaireId')});
   }, [])
   data.questionnaires = useTracker(function(){
     return Questionnaires.find().fetch();
@@ -553,6 +553,11 @@ export function QuestionnairesPage(props){
     let secondaryGridSize = 5;
   }
 
+  let constructionZoneButton;
+  if(get(Meteor, 'settings.public.defaults.sidebar.menuItems.ConstructionZone') === true){
+    constructionZoneButton = <Button id='saveAnswersButton' onClick={handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>;
+  }
+
   return (
     <PageCanvas id="questionnairesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
@@ -578,37 +583,22 @@ export function QuestionnairesPage(props){
             </StyledCard>
           </Grid>
           <Grid item lg={secondaryGridSize} style={secondaryGridStyle}>
-              <h1 className="barcode helveticas">{data.selectedQuestionnaireId}</h1>
+            <h1 className="barcode helveticas">{get(data, 'selectedQuestionnaireId')}</h1>
             <StyledCard margin={20} width={cardWidth + 'px'}>
               <CardContent>
                 <FormControl style={{width: '100%', marginTop: '20px'}}>
-                  <InputAdornment 
-                    style={classes.label}
+                  <InputAdornment style={classes.label}
                   >Questionnaire Title</InputAdornment>
                   <Input
                     id="publisherInput"
                     name="publisherInput"
                     style={classes.input}
-                    value={ get(this, 'data.selectedQuestionnaire.title', '') }
+                    value={ get(data, 'selectedQuestionnaire.title', '') }
                     onChange={ changeText.bind(this, 'title')}
                     fullWidth              
                   />       
                 </FormControl>    
                 <Grid container spacing={3}>
-                  <Grid item md={6}>
-                    <FormControl style={{width: '100%', marginTop: '20px'}}>
-                      <InputAdornment 
-                        style={classes.label}
-                      >Identifier</InputAdornment>
-                      <Input
-                        id="identifierInput"
-                        name="identifierInput"
-                        style={classes.input}
-                        value={ get(this, 'data.selectedQuestionnaire.identifier.value', '') }
-                        fullWidth              
-                      />       
-                    </FormControl>    
-                  </Grid>
                   <Grid item md={3}>
                     <FormControl style={{width: '100%', marginTop: '20px'}}>
                       <InputAdornment 
@@ -618,7 +608,7 @@ export function QuestionnairesPage(props){
                         id="dateInput"
                         name="dateInput"
                         style={classes.input}
-                        value={ moment(get(this, 'data.selectedQuestionnaire.date', '')).format("YYYY-MM-DD") }
+                        value={ moment(get(data, 'selectedQuestionnaire.date', '')).format("YYYY-MM-DD") }
                         fullWidth              
                       />       
                     </FormControl>    
@@ -632,7 +622,21 @@ export function QuestionnairesPage(props){
                         id="statusInput"
                         name="statusInput"
                         style={classes.input}
-                        value={ get(this, 'data.selectedQuestionnaire.status', '') }
+                        value={ get(data, 'selectedQuestionnaire.status', '') }
+                        fullWidth              
+                      />       
+                    </FormControl>    
+                  </Grid>
+                  <Grid item md={6}>
+                    <FormControl style={{width: '100%', marginTop: '20px'}}>
+                      <InputAdornment 
+                        style={classes.label}
+                      >Identifier</InputAdornment>
+                      <Input
+                        id="identifierInput"
+                        name="identifierInput"
+                        style={classes.input}
+                        value={ get(data, 'selectedQuestionnaire.identifier.value', '') }
                         fullWidth              
                       />       
                     </FormControl>    
@@ -650,11 +654,13 @@ export function QuestionnairesPage(props){
               id='questionnaireDetails' 
               selectedQuestionnaire={data.selectedQuestionnaire} 
               selectedQuestionnaireId={data.selectedQuestionnaireId}
-              />
+              autoExpand={true}
+            />
 
 
             <DynamicSpacer />
-            <Button id='saveAnswersButton' onClick={handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>
+            { constructionZoneButton }
+            
 
           </Grid>
         </Grid>

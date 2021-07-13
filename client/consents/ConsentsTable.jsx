@@ -29,6 +29,7 @@ import { useTracker } from 'meteor/react-meteor-data';
 // THEMING
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
+
 const useStyles = makeStyles(theme => ({
   button: {
     background: theme.background,
@@ -583,7 +584,7 @@ export function ConsentsTable(props){
   //------------------------------------------------------------------------------------
   // Rendertate
 
-  if(consents.length === 0){
+  if(consentsToRender.length === 0){
     logger.trace('ConsentsTable: No consents to render.');
 
     if(noDataMessage){
@@ -617,12 +618,6 @@ export function ConsentsTable(props){
           {renderStatus(get(consentsToRender[i], 'status'))}
           {renderPatientName(get(consentsToRender[i], 'patientName')) }
           {renderOrganization(get(consentsToRender[i], 'organization')) }
-
-          {/* <TableCell className='status' onClick={ rowClick.bind(this, consentsToRender[i]._id)} style={data.style.cell}>{consentsToRender[i].status}</TableCell> */}
-          {/* <TableCell className='patientReference' onClick={ onPatientClick.bind(this, consentsToRender[i]._id)} style={data.style.cell} >{consentsToRender[i].patientReference }</TableCell>
-          <TableCell className='organization' style={data.style.cell} >{consentsToRender[i].organization}</TableCell> */}
-
-
           {renderType( get(consentsToRender[i], 'provisionType')) }
           {renderClass( get(consentsToRender[i], 'provisionClass')) }
           {renderCategory( get(consentsToRender[i], 'category')) }
@@ -650,12 +645,6 @@ export function ConsentsTable(props){
             {renderStatusHeader() }
             {renderPatientNameHeader() }
             {renderOrganizationHeader() }
-
-            {/* <TableCell className='status'>Status</TableCell> */}
-            {/* <TableCell className='patientReference'>Patient</TableCell>
-            <TableCell className='organization' >Organization</TableCell> */}
-
- 
             {renderTypeHeader() }
             {renderClassHeader() }
             {renderCategoryHeader() }
@@ -671,7 +660,7 @@ export function ConsentsTable(props){
           { tableRows }
         </TableBody>
       </Table>
-    { footer }
+    { paginationFooter }
     </div>
   );
 }

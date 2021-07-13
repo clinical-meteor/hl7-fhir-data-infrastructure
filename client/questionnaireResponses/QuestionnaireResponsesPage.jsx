@@ -121,7 +121,7 @@ export function QuestionnaireResponsesPage(props){
     return Session.get('selectedQuestionnaireResponseId');
   }, [])
   data.selectedQuestionnaireResponse = useTracker(function(){
-    return QuestionnaireResponses.findOne(Session.get('selectedQuestionnaireResponseId'));
+    return QuestionnaireResponses.findOne({_id: Session.get('selectedQuestionnaireResponseId')});
   }, [])
   data.questionnaireResponses = useTracker(function(){
     return QuestionnaireResponses.find().fetch();
@@ -227,14 +227,14 @@ export function QuestionnaireResponsesPage(props){
               onRowClick={function(responseId){
                 console.log('onRowClick()', responseId)
                 Session.set('selectedQuestionnaireResponseId', responseId);                  
-                Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne(responseId));                  
+                Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne({id: responseId}));                  
               }}
               formFactorLayout={formFactor}
             />
           </CardContent>
         </StyledCard>
       </Grid>
-      <Grid item lg={4} style={{width: '100%', marginBottom: '80px'}} >
+      <Grid item lg={5} style={{width: '100%', marginBottom: '80px'}} >
         <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
           <h1 className="barcode" style={{fontWeight: 100}}>{data.questionnaireResponseId }</h1>
           <CardContent>
@@ -245,8 +245,8 @@ export function QuestionnaireResponsesPage(props){
 
               <SurveyResponseSummary 
                 id='surveyResponseSummary' 
-                selectedResponse={get(data, 'questionnaireResponse', null)} 
-                selectedResponseId={get(data, 'questionnaireResponse.id', '')}
+                selectedResponse={get(data, 'selectedQuestionnaireResponse', null)} 
+                selectedResponseId={get(data, 'selectedQuestionnaireResponse.id', '')}
                 />
 
             </CardContent>
