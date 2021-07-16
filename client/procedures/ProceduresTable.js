@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0 30px',
   }
 }));
-
+ 
 
 // //===========================================================================
 // // FLATTENING / MAPPING
@@ -278,12 +278,8 @@ function ProceduresTable(props){
   //---------------------------------------------------------------------
   // Helper Functions
 
-  function rowClick(id){
-    // logger.info('ProceduresTable.rowClick', id);
-
-    // Session.set("selectedProcedureId", id);
-    // Session.set('procedurePageTabIndex', 1);
-    // Session.set('procedureDetailState', false);
+  function handleRowClick(id){
+    // logger.trace('ProceduresTable.rowClick', id);
 
     if(props && (typeof onRowClick === "function")){
       onRowClick(id);
@@ -600,26 +596,49 @@ function ProceduresTable(props){
         rowStyle.height = '32px';
       }
 
-      tableRows.push(
-        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, proceduresToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
-          { renderToggle() }
-          { renderActionIcons(proceduresToRender[i]) }
-          { renderIdentifier(proceduresToRender.identifier ) }
-          { renderStatus(proceduresToRender[i].status)}
-          { renderCategory(proceduresToRender[i].categoryDisplay)}
-          { renderCode(proceduresToRender[i].code)}
-          { renderCodeDisplay(proceduresToRender[i].codeDisplay, proceduresToRender[i].code, proceduresToRender[i].performedStart)}          
-          { renderSubject(proceduresToRender[i].subject)}
-          { renderSubjectReference(proceduresToRender[i].subjectReference)}
-          { renderPerformer(proceduresToRender[i].performerDisplay)}
-          { renderBodySite()}
-          { renderPerformedStart(proceduresToRender[i].performedStart)}
-          { renderPerformedEnd(proceduresToRender[i].performedEnd)}
-          { renderNotes(proceduresToRender[i].notesCount)}
-          { renderBarcode(proceduresToRender[i]._id)}
-          { renderActionButton(proceduresToRender[i]) }
-        </TableRow>
-      );    
+      logger.trace('proceduresToRender[i]', proceduresToRender[i]);
+
+      if(get(proceduresToRender[i], "resourceType") === "OperationOutcome"){
+        tableRows.push(
+          <TableRow 
+          className="immunizationRow" 
+          key={i} 
+          style={rowStyle} 
+          onClick={ handleRowClick.bind(this, proceduresToRender[i].id)} 
+          hover={true} 
+          style={{height: '53px', background: "repeating-linear-gradient( 45deg, rgba(253,184,19, 0.9), rgba(253,184,19, 0.9) 10px, rgba(253,184,19, 0.75) 10px, rgba(253,184,19, 0.75) 20px ), url(http://s3-us-west-2.amazonaws.com/s.cdpn.io/3/old_map_@2X.png)"}} >            
+            <TableCell className='actionIcons' style={{width: '100%', whiteSpace: 'nowrap'}}>
+              {get(proceduresToRender[i], 'issue[0].text', 'OperationOutcome: No data returned.')}
+            </TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+          </TableRow>
+        ); 
+      } else {
+        tableRows.push(
+          <TableRow className="procedureRow" key={i} onClick={ handleRowClick.bind(this, proceduresToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
+            { renderToggle() }
+            { renderActionIcons(proceduresToRender[i]) }
+            { renderIdentifier(proceduresToRender.identifier ) }
+            { renderStatus(proceduresToRender[i].status)}
+            { renderCategory(proceduresToRender[i].categoryDisplay)}
+            { renderCode(proceduresToRender[i].code)}
+            { renderCodeDisplay(proceduresToRender[i].codeDisplay, proceduresToRender[i].code, proceduresToRender[i].performedStart)}          
+            { renderSubject(proceduresToRender[i].subject)}
+            { renderSubjectReference(proceduresToRender[i].subjectReference)}
+            { renderPerformer(proceduresToRender[i].performerDisplay)}
+            { renderBodySite()}
+            { renderPerformedStart(proceduresToRender[i].performedStart)}
+            { renderPerformedEnd(proceduresToRender[i].performedEnd)}
+            { renderNotes(proceduresToRender[i].notesCount)}
+            { renderBarcode(proceduresToRender[i]._id)}
+            { renderActionButton(proceduresToRender[i]) }
+          </TableRow>
+        );    
+      }      
     }
   }
 

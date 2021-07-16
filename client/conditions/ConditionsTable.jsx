@@ -291,8 +291,12 @@ function ConditionsTable(props){
   function removeRecord(_id){
     console.log('removeRecord')
   }
-  function rowClick(id){
-    console.log('rowClick')
+  function handleRowClick(id){
+    // logger.trace('ProceduresTable.rowClick', id);
+
+    if(props && (typeof onRowClick === "function")){
+      onRowClick(id);
+    }
   }
   function handleActionButtonClick(){
     console.log('handleActionButtonClick')
@@ -323,28 +327,28 @@ function ConditionsTable(props){
   function renderDateHeader(){
     if (!hideDates) {
       return (
-        <TableCell className='date' style={{minWidth: '100px'}}>Start</TableCell>
+        <TableCell className='date' style={{minWidth: '140px'}}>Start</TableCell>
       );
     }
   }
   function renderEndDateHeader(){
     if ((!hideDates && !hideEndDate)) {
       return (
-        <TableCell className='date' style={{minWidth: '100px'}}>End</TableCell>
+        <TableCell className='date' style={{minWidth: '140px'}}>End</TableCell>
       );
     }
   }
   function renderStartDate(startDate ){
     if (!hideDates) {
       return (
-        <TableCell className='date'>{ moment(startDate).format('YYYY-MM-DD') }</TableCell>
+        <TableCell className='date' style={{minWidth: '140px'}}>{ moment(startDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
   function renderEndDate(endDate ){
     if ((!hideDates && !hideEndDate)) {
       return (
-        <TableCell className='date'>{ moment(endDate).format('YYYY-MM-DD') }</TableCell>
+        <TableCell className='date' style={{minWidth: '140px'}}>{ moment(endDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
@@ -642,26 +646,47 @@ function ConditionsTable(props){
         rowStyle.height = '32px';
       }
       logger.trace('conditionsToRender[i]', conditionsToRender[i])
-      tableRows.push(
-        <TableRow className="conditionRow" key={i} style={rowStyle} onClick={ rowClick.bind(this, conditionsToRender[i]._id)} style={rowStyle} hover={true} selected={selected} >            
-          { renderCheckbox(i) }
-          { renderActionIcons(conditionsToRender[i]) }
-          { renderIdentifier(conditionsToRender.identifier ) }
-          { renderPatientName(conditionsToRender[i].patientDisplay ) } 
-          { renderPatientReference(conditionsToRender[i].patientReference ) }           
-          { renderAsserterName(conditionsToRender[i].asserterDisplay ) } 
-          { renderClinicalStatus(conditionsToRender[i].clinicalStatus)}
-          { renderSnomedCode(conditionsToRender[i].snomedCode)}
-          { renderSnomedDisplay(conditionsToRender[i].snomedDisplay, conditionsToRender[i].snomedCode)}
-          { renderVerification(conditionsToRender[i].verificationStatus ) } 
-          { renderSeverity(conditionsToRender[i].severity) }
-          { renderEvidence(conditionsToRender[i].evidenceDisplay) }
-          { renderStartDate(conditionsToRender[i].onsetDateTime) }
-          { renderEndDate(conditionsToRender[i].abatementDateTime) }
-          { renderBarcode(conditionsToRender[i]._id)}
-          { renderActionButton(conditionsToRender[i]) }
-        </TableRow>
-      );    
+
+      if(get(conditionsToRender[i], "resourceType") === "OperationOutcome"){
+        tableRows.push(
+          <TableRow 
+          className="immunizationRow" 
+          key={i} 
+          style={rowStyle} 
+          onClick={ handleRowClick.bind(this, conditionsToRender[i].id)} 
+          hover={true} 
+          style={{height: '53px', background: "repeating-linear-gradient( 45deg, rgba(253,184,19, 0.9), rgba(253,184,19, 0.9) 10px, rgba(253,184,19, 0.75) 10px, rgba(253,184,19, 0.75) 20px ), url(http://s3-us-west-2.amazonaws.com/s.cdpn.io/3/old_map_@2X.png)"}} >            
+            <TableCell className='actionIcons' style={{width: '100%', whiteSpace: 'nowrap'}}>
+              {get(conditionsToRender[i], 'issue[0].text', 'OperationOutcome: No data returned.')}
+            </TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+            <TableCell className='actionIcons' ></TableCell>           
+          </TableRow>
+        ); 
+      } else {
+        tableRows.push(
+          <TableRow className="conditionRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, conditionsToRender[i]._id)} style={rowStyle} hover={true} selected={selected} >            
+            { renderCheckbox(i) }
+            { renderActionIcons(conditionsToRender[i]) }
+            { renderIdentifier(conditionsToRender.identifier ) }
+            { renderPatientName(conditionsToRender[i].patientDisplay ) } 
+            { renderPatientReference(conditionsToRender[i].patientReference ) }           
+            { renderAsserterName(conditionsToRender[i].asserterDisplay ) } 
+            { renderClinicalStatus(conditionsToRender[i].clinicalStatus)}
+            { renderSnomedCode(conditionsToRender[i].snomedCode)}
+            { renderSnomedDisplay(conditionsToRender[i].snomedDisplay, conditionsToRender[i].snomedCode)}
+            { renderVerification(conditionsToRender[i].verificationStatus ) } 
+            { renderSeverity(conditionsToRender[i].severity) }
+            { renderEvidence(conditionsToRender[i].evidenceDisplay) }
+            { renderStartDate(conditionsToRender[i].onsetDateTime) }
+            { renderEndDate(conditionsToRender[i].abatementDateTime) }
+            { renderBarcode(conditionsToRender[i]._id)}
+            { renderActionButton(conditionsToRender[i]) }
+          </TableRow>
+        );   
+      }
+
+       
     }
   }
 

@@ -190,7 +190,7 @@ function ImmunizationsTable(props){
   function handleRowClick(id){
     console.log('handleRowClick', id)
 
-    if(typeof props.onRowClick === "function"){
+    if(props && (typeof onRowClick === "function")){
       props.onRowClick(id);
     }
   }
@@ -229,7 +229,7 @@ function ImmunizationsTable(props){
   function renderDate(newDate ){
     if (!hideDate) {
       return (
-        <TableCell className='date'>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
+        <TableCell className='date' style={{minWidth: '140px'}}>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
@@ -425,22 +425,43 @@ function ImmunizationsTable(props){
       }
       if(tableRowSize === "small"){
         rowStyle.height = '32px';
-      }
+      } 
 
       logger.trace('immunizationsToRender[i]', immunizationsToRender[i])
-      tableRows.push(
-        <TableRow className="immunizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, immunizationsToRender[i].id)} hover={true} >            
-          { renderCheckbox() }
-          { renderActionIcons(immunizations[i]) }
-          { renderIdentifier( immunizationsToRender[i].identifier ) }
-          { renderVaccineCode( immunizationsToRender[i].vaccineCode ) }
-          { renderVaccineCodeText( immunizationsToRender[i].vaccineDisplay ) }
-          { renderStatus( immunizationsToRender[i].status ) }
-          { renderPatient(immunizations[i].patientDisplay) }
-          { renderPerformer(immunizations[i].performerDisplay) }
-          { renderDate(immunizationsToRender[i].date) }
-        </TableRow>
-      );    
+
+      if(get(immunizationsToRender[i], "resourceType") === "OperationOutcome"){
+        tableRows.push(
+          <TableRow 
+          className="immunizationRow" 
+          key={i} 
+          style={rowStyle} 
+          onClick={ handleRowClick.bind(this, immunizationsToRender[i].id)} 
+          hover={true} 
+          style={{height: '53px', background: "repeating-linear-gradient( 45deg, rgba(253,184,19, 0.9), rgba(253,184,19, 0.9) 10px, rgba(253,184,19, 0.75) 10px, rgba(253,184,19, 0.75) 20px ), url(http://s3-us-west-2.amazonaws.com/s.cdpn.io/3/old_map_@2X.png)"}} >            
+            <TableCell className='actionIcons' style={{width: '100%', whiteSpace: 'nowrap'}}>
+              {get(immunizationsToRender[i], 'issue[0].text', 'OperationOutcome: No data returned.')}
+            </TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+            <TableCell className='actionIcons' ></TableCell>
+
+          </TableRow>
+        ); 
+      } else {
+        tableRows.push(
+          <TableRow className="immunizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, immunizationsToRender[i].id)} hover={true} >            
+            { renderCheckbox() }
+            { renderActionIcons(immunizationsToRender[i]) }
+            { renderIdentifier( immunizationsToRender[i].identifier ) }
+            { renderVaccineCode( immunizationsToRender[i].vaccineCode ) }
+            { renderVaccineCodeText( immunizationsToRender[i].vaccineDisplay ) }
+            { renderStatus( immunizationsToRender[i].status ) }
+            { renderPatient(immunizationsToRender[i].patientDisplay) }
+            { renderPerformer(immunizationsToRender[i].performerDisplay) }
+            { renderDate(immunizationsToRender[i].date) }
+          </TableRow>
+        ); 
+      }      
     }
   }
 
