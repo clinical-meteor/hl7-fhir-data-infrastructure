@@ -32,6 +32,8 @@ import {Procedures} from './lib/schemas/Procedures';
 import {Provenances} from './lib/schemas/Provenances';
 import {Questionnaires} from './lib/schemas/Questionnaires';
 import {QuestionnaireResponses} from './lib/schemas/QuestionnaireResponses';
+import {RiskAssessments} from './lib/schemas/RiskAssessments';
+import {ServiceRequests} from './lib/schemas/ServiceRequests';
 import {Tasks} from './lib/schemas/Tasks';
 import {ValueSets} from './lib/schemas/ValueSets';
 
@@ -72,6 +74,8 @@ import ConditionsTable from './client/conditions/ConditionsTable';
 
 import ConsentsPage from './client/consents/ConsentsPage';
 import ConsentsTable from './client/consents/ConsentsTable';
+import ConsentForm from './client/consents/ConsentForm';
+
 
 import CommunicationsPage from './client/communications/CommunicationsPage';
 import CommunicationsTable from './client/communications/CommunicationsTable';
@@ -719,6 +723,7 @@ export {
 
   ConsentsPage,
   ConsentsTable,
+  ConsentForm,
   // ConsentDetail,
 
   CommunicationsPage,

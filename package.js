@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.14.6',
+  version: '6.14.10',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -80,6 +80,8 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/RelatedPersons.js', ['client', 'server']);
   api.addFiles('lib/schemas/Questionnaires.js', ['client', 'server']);
   api.addFiles('lib/schemas/QuestionnaireResponses.js', ['client', 'server']);
+  api.addFiles('lib/schemas/RiskAssessments.js', ['client', 'server']);
+  api.addFiles('lib/schemas/ServiceRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
   api.addFiles('lib/schemas/ValueSets.js', ['client', 'server']);
 
@@ -235,6 +237,14 @@ Package.onUse(function (api) {
   api.export('RelatedPerson');
   api.export('RelatedPersons');
   api.export('RelatedPersonSchema');
+
+  api.export('RiskAssessment');
+  api.export('RiskAssessments');
+  api.export('RiskAssessmentSchema');
+
+  api.export('ServiceRequest');
+  api.export('ServiceRequests');
+  api.export('ServiceRequestSchema');
 
   api.export('Substance');
   api.export('Substances');

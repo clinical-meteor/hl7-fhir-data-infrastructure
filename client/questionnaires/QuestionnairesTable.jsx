@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 
 
-import { has, get } from 'lodash';
+import { get, has, concat, cloneDeep, findIndex, pullAt } from 'lodash';
 import moment from 'moment'
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
@@ -65,6 +65,8 @@ function QuestionnairesTable(props){
     data,
     questionnaires,
     selectedQuestionnaireId,
+    selectedIds,
+
     query,
     paginationLimit,
     disablePagination,
@@ -95,6 +97,8 @@ function QuestionnairesTable(props){
     
     ...otherProps 
   } = props;
+
+  let [ selectedRowIds, setSelectedRowIds ] = useState(selectedIds);
 
 
   // ------------------------------------------------------------------------
@@ -188,6 +192,41 @@ function QuestionnairesTable(props){
     }
   }
 
+  function handleToggle(index, objectId){
+    // console.log('Toggling entry', index, objectId)
+
+    let clonedRowIds = cloneDeep(selectedRowIds);
+    // console.log('handleToggle().clonedRowIds', selectedRowIds)
+
+
+    let trimmedRowIds = [];
+    if(Array.isArray(clonedRowIds)){
+      let undefinedIndex = findIndex(clonedRowIds, function(o) {
+        if(typeof o !== "undefined"){
+          trimmedRowIds.push(o);
+        }
+      });
+    }
+    // console.log('handleToggle().trimmedRowIds', trimmedRowIds)
+
+    let rowId = trimmedRowIds.indexOf(objectId);
+    // console.log('handleToggle().rowId', rowId)
+
+    let resultingRowIds = cloneDeep(trimmedRowIds);
+    if(rowId > -1){
+      pullAt(resultingRowIds, rowId);
+    } else {
+      resultingRowIds.push(objectId);
+    };
+    // console.log('handleToggle().resultingRowIds', resultingRowIds)
+
+    setSelectedRowIds(resultingRowIds);      
+
+    if(props.onToggle){
+      props.onToggle(resultingRowIds);
+    }
+  }
+
   // ------------------------------------------------------------------------
   // Column Rendering
 
@@ -199,12 +238,13 @@ function QuestionnairesTable(props){
     }
   }
 
-  function renderToggle(){
+  function renderToggle(index, objectId){
     if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px', padding: '0px'}}>
             <Checkbox
-              defaultChecked={true}
+              defaultChecked={false} 
+              onChange={ handleToggle.bind(this, index, objectId)} 
             />
         </TableCell>
       );
@@ -376,7 +416,7 @@ function QuestionnairesTable(props){
 
       tableRows.push(
         <TableRow key={i} selected={selected} className="questionnaireRow" style={{cursor: "pointer"}} onClick={ selectQuestionnaireRow.bind(this, questionnairesToRender[i].id )} hover={true} >
-          { renderToggle(questionnairesToRender[i]) }
+          { renderToggle(i, questionnairesToRender[i]._id) }
           { renderActionIcons(questionnairesToRender[i]) }
           { renderIdentifier(questionnairesToRender[i].identifier) }
 
@@ -425,6 +465,7 @@ QuestionnairesTable.propTypes = {
   data: PropTypes.array,
   questionnaires: PropTypes.array,
   selectedQuestionnaireId: PropTypes.string,
+  selectedIds: PropTypes.array,
 
   fhirVersion: PropTypes.string,
   query: PropTypes.object,
@@ -445,6 +486,7 @@ QuestionnairesTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   onCheck: PropTypes.func,
+  onToggle: PropTypes.func,
 
   actionButtonLabel: PropTypes.string,
   hideActionButton: PropTypes.bool,

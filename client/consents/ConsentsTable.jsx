@@ -9,7 +9,7 @@ import {
   TableRow,
   TablePagination,
   Checkbox,
-  Button
+  Button,
 } from '@material-ui/core';
 
 
@@ -102,7 +102,11 @@ export function ConsentsTable(props){
     hideScope,
     hideClass,
     hideType,
-    hideSourceReference,
+    hideSource,
+    revokeButtonType,
+    revokeColor,
+
+    onRevoke,
 
     noDataMessage,
     noDataMessagePadding,
@@ -247,7 +251,11 @@ export function ConsentsTable(props){
     Session.set('consentPageTabIndex', 2);
   }
   function handleRevoke(id){
-    console.log('handleRevoke')
+    console.log('handleRevoke', id)
+
+    if(typeof onRevoke === "function"){
+      onRevoke(id);
+    }  
   }
   function getDocumentReference(sourceReference){
     console.log('getDocumentReference...', sourceReference)
@@ -268,15 +276,26 @@ export function ConsentsTable(props){
       onIdentifierClick(id);
     } 
   }
-
+  function handleToggle(index){
+    console.log('Toggling entry ' + index)
+    if(props.onToggle){
+      props.onToggle(index);
+    }
+  }
 
   //------------------------------------------------------------------------------------
   // Render Functions
 
-  function renderSelected(provisionType){
+
+  function renderSelected(index){
     if (!hideCheckbox) {
       return (
-        <TableCell className='selected'  style={{minWidth: '100px', paddingTop: '16px'}}><Checkbox /></TableCell>
+        <TableCell className="toggle" style={{padding: '0px'}}>
+          <Checkbox
+            defaultChecked={defaultCheckboxValue}
+            onChange={ handleToggle.bind(this, index)} 
+          />
+        </TableCell>
       );
     }
   }
@@ -367,7 +386,7 @@ export function ConsentsTable(props){
   function renderDate(id, dateTime){
     if (!hideDateTime) {
       return (
-        <TableCell className='date' onClick={ rowClick.bind('this', id)} style={{minWidth: '100px', paddingTop: '16px'}}>{ moment(dateTime).format("YYYY-MM-DD") }</TableCell>
+        <TableCell className='date' onClick={ rowClick.bind('this', id)} style={{minWidth: '160px', paddingTop: '16px'}}>{ moment(dateTime).format("YYYY-MM-DD") }</TableCell>
       );
     }
   }
@@ -408,24 +427,24 @@ export function ConsentsTable(props){
   }
   function renderSource(sourceReference ){
     console.log('renderSource', sourceReference)
-    if (!hideSourceReference) {
+    if (!hideSource) {
       return (
         <TableCell className='sourceReference' onClick={ getDocumentReference.bind(this, sourceReference) } style={{minWidth: '100px', paddingTop: '16px'}}>{ sourceReference }</TableCell>
       );
     }
   }
   function renderSourceHeader(){
-    if (!hideSourceReference) {
+    if (!hideSource) {
       return (
         <TableCell className='sourceReference' style={{minWidth: '100px', marginLeft: '20px'}}> Source </TableCell>
       );
     }
   }
-  function renderRevoke(){
+  function renderRevoke(rowId){
     if (!hideRevoke) {
       return (
         <TableCell className='revoke'>
-          <Button onClick={handleRevoke.bind(this)}>Revoke</Button>
+          <Button onClick={handleRevoke.bind(this, rowId)} variant={revokeButtonType}>Revoke</Button>
         </TableCell>
       );
     }
@@ -492,7 +511,7 @@ export function ConsentsTable(props){
   function renderStatus(status){
     if (!hideStatus) {
       return (
-        <TableCell className='status' style={{minWidth: '140px'}}>{ status }</TableCell>
+        <TableCell className='status' >{ status }</TableCell>
       );
     }
   }
@@ -609,8 +628,9 @@ export function ConsentsTable(props){
           // onClick={ rowClick.bind(this, consentsToRender[i]._id)} 
           style={rowStyle} 
           hover={true} 
-          selected={selected} >            
-          {renderSelected()}
+          // selected={selected} 
+          >            
+          {renderSelected(get(consentsToRender[i], '_id'))}
           {renderIdentifier(get(consentsToRender[i], 'identifier', ''))}
           {renderDate(get(consentsToRender[i], '_id'), get(consentsToRender[i], 'dateTime'))}
           {renderPeriodStart(get(consentsToRender[i], '_id'), get(consentsToRender[i], 'start'))}
@@ -696,12 +716,17 @@ ConsentsTable.propTypes = {
   hideVerify: PropTypes.bool,
   hideRevoke: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+  hideSource: PropTypes.bool,
 
+  revokeButtonType: PropTypes.string,
+  revokeColor: PropTypes.string,
 
+  onToggle: PropTypes.func,
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
+  onRevoke: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
 
@@ -740,6 +765,7 @@ ConsentsTable.defaultProps = {
   hideScope: false,
   hideClass: true,
   hideType: true,
+  hideSource: true,
   hideRevoke: true,
 
   disablePagination: false,
@@ -749,9 +775,12 @@ ConsentsTable.defaultProps = {
   query: {},
   selectedPatientId: '',
   sort: '',
+  revokeButtonType: 'text',
+  revokeColor: '',
 
   noDataMessage: true,
   noDataMessagePadding: 100
 }
 
 export default ConsentsTable;
+

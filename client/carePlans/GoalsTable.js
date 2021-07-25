@@ -8,9 +8,9 @@ import {
     TablePagination
   } from '@material-ui/core';
   
-import React, { useState } from 'react';
+  import React, { useState } from 'react';
   import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-  import { get, has } from 'lodash';
+  import { get, has, concat, cloneDeep, findIndex, pullAt } from 'lodash';
   import PropTypes from 'prop-types';
 
 
@@ -21,6 +21,8 @@ import React, { useState } from 'react';
     let { 
       goals,           
       selectedGoalId,
+      selectedIds,
+
       dateFormat,
       showMinutes,
 
@@ -52,7 +54,9 @@ import React, { useState } from 'react';
       children 
     } = props;
 
-    console.log('GoalsTable.tableRowSize', tableRowSize)
+    let [ selectedRowIds, setSelectedRowIds ] = useState(selectedIds);
+
+    // console.log('GoalsTable.tableRowSize', tableRowSize)
       
     //---------------------------------------------
     // Trackers
@@ -83,10 +87,38 @@ import React, { useState } from 'react';
         Session.set('securityDialogResourceId', get(goal, '_id'));
         Session.set('securityDialogOpen', true);
     }
-    function handleToggle(index){
-      console.log('Toggling entry ' + index)
+    function handleToggle(index, objectId){
+      // console.log('Toggling entry', index, objectId)
+
+      let clonedRowIds = cloneDeep(selectedRowIds);
+      // console.log('handleToggle().clonedRowIds', selectedRowIds)
+
+
+      let trimmedRowIds = [];
+      if(Array.isArray(clonedRowIds)){
+        let undefinedIndex = findIndex(clonedRowIds, function(o) {
+          if(typeof o !== "undefined"){
+            trimmedRowIds.push(o);
+          }
+        });
+      }
+      // console.log('handleToggle().trimmedRowIds', trimmedRowIds)
+
+      let rowId = trimmedRowIds.indexOf(objectId);
+      // console.log('handleToggle().rowId', rowId)
+
+      let resultingRowIds = cloneDeep(trimmedRowIds);
+      if(rowId > -1){
+        pullAt(resultingRowIds, rowId);
+      } else {
+        resultingRowIds.push(objectId);
+      };
+      // console.log('handleToggle().resultingRowIds', resultingRowIds)
+
+      setSelectedRowIds(resultingRowIds);      
+
       if(props.onToggle){
-        props.onToggle(index);
+        props.onToggle(resultingRowIds);
       }
     }
 
@@ -101,13 +133,13 @@ import React, { useState } from 'react';
           );
         }
       }
-    function renderCheckboxes(index){
+    function renderCheckboxes(index, objectId){
         if (!hideCheckboxes) {
           return (
             <TableCell className="Checkbox" style={{width: '60px', padding: '0px'}}>
                 <Checkbox 
                   defaultChecked={false} 
-                  onChange={ handleToggle.bind(this, index)} 
+                  onChange={ handleToggle.bind(this, index, objectId)} 
                   
                 />
               </TableCell>
@@ -340,7 +372,7 @@ import React, { useState } from 'react';
 
       tableRows.push(
         <TableRow key={i} className="goalRow"  hover={true}  style={rowStyle} onClick={ rowClick.bind(this, goalsToRender[i]._id)} selected={selected} >
-          { renderCheckboxes(i) }
+          { renderCheckboxes(i, goalsToRender[i]._id) }
           { renderActionIcons(goalsToRender[i]._id) }
           { renderIdentifier(goalsToRender[i].identifier) }
           { renderDescription(goalsToRender[i].description) }
@@ -381,6 +413,7 @@ import React, { useState } from 'react';
   GoalsTable.propTypes = {
     goals: PropTypes.array,
     selectedGoalId: PropTypes.string,
+    selectedIds: PropTypes.array,
 
     query: PropTypes.object,
     paginationLimit: PropTypes.number,
@@ -398,6 +431,7 @@ import React, { useState } from 'react';
     hideSubjectName: PropTypes.bool,
     hideSubjectReference: PropTypes.bool,
     onRemoveRecord: PropTypes.func,
+    onToggle: PropTypes.func,
 
     count: PropTypes.number,
     tableRowSize: PropTypes.string,
@@ -409,6 +443,7 @@ import React, { useState } from 'react';
     rowsPerPage: 5,
     dateFormat: "YYYY-MM-DD hh:mm:ss",
     goals: [],
+    selectedIds: [],
     query: {},
     paginationLimit: 100,
     hideIdentifier: false,
