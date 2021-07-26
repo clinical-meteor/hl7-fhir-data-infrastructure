@@ -185,6 +185,13 @@ import QuestionnaireResponsesTable from './client/questionnaireResponses/Questio
 import RelatedPersonsPage from './client/relatedPersons/RelatedPersonsPage';
 import RelatedPersonsTable from './client/relatedPersons/RelatedPersonsTable';
 
+import RiskAssessmentsPage from './client/riskAssessments/RiskAssessmentsPage';
+import RiskAssessmentsTable from './client/riskAssessments/RiskAssessmentsTable';
+import RiskAssessmentForm from './client/riskAssessments/RiskAssessmentForm';
+
+import ServiceRequestsPage from './client/serviceRequests/ServiceRequestsPage';
+import ServiceRequestsTable from './client/serviceRequests/ServiceRequestsTable';
+import ServiceRequestForm from './client/serviceRequests/ServiceRequestForm';
 
 import TasksPage from './client/tasks/TasksPage';
 import TasksTable from './client/tasks/TasksTable';
@@ -375,6 +382,16 @@ let DynamicRoutes = [{
   name: 'RelatedPersonsPage',
   path: '/related-persons',
   component: RelatedPersonsPage,
+  requireAuth: true
+}, {
+  name: 'RiskAssessmentsPage',
+  path: '/risk-assessments',
+  component: RiskAssessmentsPage,
+  requireAuth: true
+}, {
+  name: 'ServiceRequestsPage',
+  path: '/service-requests',
+  component: ServiceRequestsPage,
   requireAuth: true
 }, {
   name: 'TasksPage',
@@ -595,6 +612,18 @@ let SidebarElements = [{
   iconName: 'users',
   collectionName: 'RelatedPersons'
 }, {
+  primaryText: 'Risk Assessments',
+  to: '/risk-assessments',
+  href: '/risk-assessments',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'RiskAssessments'
+}, {
+  primaryText: 'Service Requests',
+  to: '/service-requests',
+  href: '/service-requests',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'ServiceRequests'
+}, {
   primaryText: 'Tasks',
   to: '/tasks',
   href: '/tasks',
@@ -684,7 +713,19 @@ let AdminSidebarElements = [{
   primaryText: 'Procedures',
   to: '/procedures',
   href: '/procedures'
-}];
+}, {
+  primaryText: 'Risk Assessments',
+  to: '/risk-assessments',
+  href: '/risk-assessments',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'RiskAssessments'
+}, {
+  primaryText: 'Service Requests',
+  to: '/service-requests',
+  href: '/service-requests',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'ServiceRequests'
+}, ];
 
 
 export { 
@@ -775,23 +816,18 @@ export {
 
   MeasureReportsPage,
   MeasureReportsTable,
-  // MeasureReportDetail,
 
   MedicationsPage,
   MedicationsTable,
-  // MedicationDetail,
 
   MedicationOrdersPage,
   MedicationOrdersTable,
-  // MedicationOrderDetail,
 
   MedicationRequestsPage,
   MedicationRequestsTable,
-  // MedicationRequestDetail,
 
   MedicationStatementsPage,
   MedicationStatementsTable,
-  // MedicationStatementDetail,
 
   ObservationsPage,
   ObservationsTable,
@@ -799,17 +835,14 @@ export {
 
   OrganizationsPage,
   OrganizationsTable,
-  // OrganizationDetail,
 
   PatientsPage,
 
   PractitionersPage,
   PractitionersTable,
-  // PractitionerDetail,
 
   ProceduresPage,
   ProceduresTable,
-  // ProcedureDetail,
 
   ProvenancesPage,
   ProvenancesTable,
@@ -821,15 +854,20 @@ export {
 
   QuestionnaireResponsesPage,
   QuestionnaireResponsesTable,
-  // QuestionnaireResponseDetail,
+
+  RiskAssessmentsPage,
+  RiskAssessmentsTable,
+  RiskAssessmentForm,
+
+  ServiceRequestsPage,
+  ServiceRequestsTable,
+  ServiceRequestForm,
 
   TasksPage,
   TasksTable,
-  // TaskDetail,
 
   ValueSetsPage,
   ValueSetsTable,
-  // ValueSetDetail,
 
   FhirDehydrator,
   FhirUtilities,

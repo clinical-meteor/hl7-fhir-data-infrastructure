@@ -574,7 +574,7 @@ QuestionnaireResponsesTable.propTypes = {
 QuestionnaireResponsesTable.defaultTypes = {
   tableRowSize: 'medium',
   rowsPerPage: 5,
-  dateFormat: "YYYY-MM-DD hh:mm:ss",
+  dateFormat: "YYYY-MM-DD",
   multiline: false,
   hideQuestionnaire: false,
   hideCheckbox: true,

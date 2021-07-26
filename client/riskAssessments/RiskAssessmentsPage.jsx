@@ -12,8 +12,8 @@ import {
 
 
 
-// import ConsentDetail from './ConsentDetail';
-import ConsentsTable from './ConsentsTable';
+// import RiskAssessmentDetail from './RiskAssessmentDetail';
+import RiskAssessmentsTable from './RiskAssessmentsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Meteor } from 'meteor/meteor';
@@ -27,7 +27,7 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import { get, set } from 'lodash';
 
 
-let defaultConsent = {
+let defaultRiskAssessment = {
   index: 2,
   id: '',
   username: '',
@@ -42,11 +42,11 @@ let defaultConsent = {
 // SESSION VARIABLES
 
 
-Session.setDefault('consentFormData', defaultConsent);
-Session.setDefault('consentSearchFilter', '');
-Session.setDefault('consentSearchQuery', {});
-Session.setDefault('consentDialogOpen', false);
-Session.setDefault('selectedConsentId', false);
+Session.setDefault('riskAssessmentFormData', defaultRiskAssessment);
+Session.setDefault('riskAssessmentSearchFilter', '');
+Session.setDefault('riskAssessmentSearchQuery', {});
+Session.setDefault('riskAssessmentDialogOpen', false);
+Session.setDefault('selectedRiskAssessmentId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 
 
@@ -131,60 +131,60 @@ const muiTheme = createMuiTheme({
 //=============================================================================================================================================
 // MAIN COMPONENT
 
-export function ConsentsPage(props){
+export function RiskAssessmentsPage(props){
 
 
   //---------------------------------------------------------------------------------------------------------
   // State
 
   let data = {
-    tabIndex: Session.get('consentPageTabIndex'),
-    consent: defaultConsent,
-    consentSearchFilter: '',
-    currentConsent: null,
-    consentSearchQuery: {},
-    dialogOpen: Session.get('consentDialogOpen'), 
-    selectedConsentId: Session.get('selectedConsentId'),
-    selectedConsent: false,
-    consents: []
+    tabIndex: Session.get('riskAssessmentPageTabIndex'),
+    riskAssessment: defaultRiskAssessment,
+    riskAssessmentSearchFilter: '',
+    currentRiskAssessment: null,
+    riskAssessmentSearchQuery: {},
+    dialogOpen: Session.get('riskAssessmentDialogOpen'), 
+    selectedRiskAssessmentId: Session.get('selectedRiskAssessmentId'),
+    selectedRiskAssessment: false,
+    riskAssessments: []
   };
 
 
   //---------------------------------------------------------------------------------------------------------
   // Trackers
 
-  data.consent = useTracker(function(){
-    return Session.get('consentFormData');
+  data.riskAssessment = useTracker(function(){
+    return Session.get('riskAssessmentFormData');
   })
-  data.consentSearchFilter = useTracker(function(){
-    return Session.get('consentSearchFilter');
+  data.riskAssessmentSearchFilter = useTracker(function(){
+    return Session.get('riskAssessmentSearchFilter');
   })
-  data.consentSearchFilter = useTracker(function(){
-    return Session.get('consentSearchFilter');
+  data.riskAssessmentSearchFilter = useTracker(function(){
+    return Session.get('riskAssessmentSearchFilter');
   })
-  data.consentSearchQuery = useTracker(function(){
-    return Session.get('consentSearchQuery');
+  data.riskAssessmentSearchQuery = useTracker(function(){
+    return Session.get('riskAssessmentSearchQuery');
   })
-  data.selectedConsent = useTracker(function(){
-    return Session.get('selectedConsent');
+  data.selectedRiskAssessment = useTracker(function(){
+    return Session.get('selectedRiskAssessment');
   })
-  data.selectedConsentId = useTracker(function(){
-    return Session.get('selectedConsentId');
+  data.selectedRiskAssessmentId = useTracker(function(){
+    return Session.get('selectedRiskAssessmentId');
   })
 
-  data.consents = useTracker(function(){
-    return Consents.find().fetch()
+  data.riskAssessments = useTracker(function(){
+    return RiskAssessments.find().fetch()
   })
 
 
   // ???????
-  if(get(this, 'props.params.consentId')){
-    data.selectedConsent = Consents.findOne({id: get(this, 'props.params.consentId')});
-    Session.set('consentPageTabIndex', 2);
-  } else if (Session.get('selectedConsentId')){
-    data.selectedConsent = Consents.findOne({_id: Session.get('selectedConsentId')});
+  if(get(this, 'props.params.riskAssessmentId')){
+    data.selectedRiskAssessment = RiskAssessments.findOne({id: get(this, 'props.params.riskAssessmentId')});
+    Session.set('riskAssessmentPageTabIndex', 2);
+  } else if (Session.get('selectedRiskAssessmentId')){
+    data.selectedRiskAssessment = RiskAssessments.findOne({_id: Session.get('selectedRiskAssessmentId')});
   } else {
-    data.selectedConsent = false;
+    data.selectedRiskAssessment = false;
   }
 
 
@@ -194,30 +194,30 @@ export function ConsentsPage(props){
   // Lifecycle
 
   useEffect(function(){
-  //   if(get(this, 'props.params.consentId')){
-  //     Session.set('selectedConsentId', get(this, 'props.params.consentId'))
-  //     Session.set('consentPageTabIndex', 2);
+  //   if(get(this, 'props.params.riskAssessmentId')){
+  //     Session.set('selectedRiskAssessmentId', get(this, 'props.params.riskAssessmentId'))
+  //     Session.set('riskAssessmentPageTabIndex', 2);
   //   }
   }, [])
 
   function handleTabChange(index){
-    Session.set('consentPageTabIndex', index);
+    Session.set('riskAssessmentPageTabIndex', index);
   }
 
   function onNewTab(){
-    Session.set('selectedConsent', false);
-    Session.set('consentUpsert', false);
+    Session.set('selectedRiskAssessment', false);
+    Session.set('riskAssessmentUpsert', false);
   }
   function handleClose(){
-    Session.set('consentDialogOpen', false);
+    Session.set('riskAssessmentDialogOpen', false);
   }
   function handleSearch(){
     console.log('handleSearch', get(this, 'state.searchForm'));
 
-    Session.set('consentSearchQuery', {
+    Session.set('riskAssessmentSearchQuery', {
       "$and": [
-        {"consentingParty.display": {"$regex": get(this, 'state.searchForm.familyName')}}, 
-        {"consentingParty.display": {"$regex": get(this, 'state.searchForm.givenName')}}
+        {"riskAssessmentingParty.display": {"$regex": get(this, 'state.searchForm.familyName')}}, 
+        {"riskAssessmentingParty.display": {"$regex": get(this, 'state.searchForm.givenName')}}
       ]
     });
     handleClose();
@@ -232,7 +232,7 @@ export function ConsentsPage(props){
     setState({searchForm: searchForm})
   }
   function updateFormData(formData, field, textValue){
-    if(process.env.NODE_ENV === "test") console.log("ConsentDetail.updateFormData", formData, field, textValue);
+    if(process.env.NODE_ENV === "test") console.log("RiskAssessmentDetail.updateFormData", formData, field, textValue);
 
     switch (field) {
       case "givenName":
@@ -249,25 +249,25 @@ export function ConsentsPage(props){
     if(process.env.NODE_ENV === "test") console.log("formData", formData);
     return formData;
   }
-  function updateSearch(consentData, field, textValue){
-    if(process.env.NODE_ENV === "test") console.log("ConsentDetail.updateConsent", consentData, field, textValue);
+  function updateSearch(riskAssessmentData, field, textValue){
+    if(process.env.NODE_ENV === "test") console.log("RiskAssessmentDetail.updateRiskAssessment", riskAssessmentData, field, textValue);
 
     // switch (field) {
     //   case "givenName":
-    //     set(consentData, 'givenName', textValue)
+    //     set(riskAssessmentData, 'givenName', textValue)
     //     break;
     //   case "familyName":
-    //     set(consentData, 'familyName', textValue)
+    //     set(riskAssessmentData, 'familyName', textValue)
     //     break;        
     //   case "category":
-    //     set(consentData, 'category.text', textValue)
+    //     set(riskAssessmentData, 'category.text', textValue)
     //     break;  
     // }
-    return consentData;
+    return riskAssessmentData;
   }
   function changeState(field, event, textValue){
     if(process.env.NODE_ENV === "test") console.log("   ");
-    if(process.env.NODE_ENV === "test") console.log("ConsentDetail.changeState", field, textValue);
+    if(process.env.NODE_ENV === "test") console.log("RiskAssessmentDetail.changeState", field, textValue);
     if(process.env.NODE_ENV === "test") console.log("state", state);
 
     let searchForm = Object.assign({}, state.searchForm);
@@ -287,7 +287,7 @@ export function ConsentsPage(props){
   //=============================================================================================================================================
   // Renders
   console.log('React.version: ' + React.version);
-  console.log('ConsentsPage.props', props);
+  console.log('RiskAssessmentsPage.props', props);
 
   const actions = [
     <Button
@@ -303,16 +303,17 @@ export function ConsentsPage(props){
     />,
   ];
 
-  let consentPageContent;
+  let riskAssessmentPageContent;
   if(true){
-    consentPageContent = <ConsentsTable 
+    riskAssessmentPageContent = <RiskAssessmentsTable 
       showBarcodes={true} 
       hideIdentifier={true}
-      consents={data.consents}
+      hidePerformerReference={true}
+      hideSubjectReference={true}
+      riskAssessments={data.riskAssessments}
       noDataMessage={false}
-      // patient={ data.consentSearchFilter }
-      // query={ data.consentSearchQuery }
-      sort="periodStart"
+      rowsPerPage={LayoutHelpers.calcTableRows()}
+      sort="authoredOn"
     />
   }
 
@@ -321,15 +322,15 @@ export function ConsentsPage(props){
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
-  
+
   return (
-      <PageCanvas id="consentsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      <PageCanvas id="riskAssessmentsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
         <StyledCard height="auto" width={cardWidth + 'px'} margin={20} >
           <CardHeader
-            title={ data.consents.length + " Consents"}
+            title={ data.riskAssessments.length + " RiskAssessments"}
           />
           <CardContent>
-            { consentPageContent }
+            { riskAssessmentPageContent }
           </CardContent>
         </StyledCard>
         
@@ -340,4 +341,4 @@ export function ConsentsPage(props){
 
 
 
-export default ConsentsPage;
+export default RiskAssessmentsPage;

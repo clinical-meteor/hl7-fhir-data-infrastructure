@@ -70,7 +70,7 @@ export function ConditionsPage(props){
           conditions={data.conditions}
           count={data.conditions.length}  
           formFactorLayout={formFactor}
-          rowsPerPage={LayoutHelpers.calcTableRows()}
+          rowsPerPage={LayoutHelpers.calcTableRows()} 
         />
       </CardContent>
     </StyledCard>

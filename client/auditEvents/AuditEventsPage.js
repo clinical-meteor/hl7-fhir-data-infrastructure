@@ -74,6 +74,7 @@ export function AuditEventsPage(props){
             auditEvents={data.auditEvents}
             count={data.auditEvents.length}
             formFactorLayout={formFactor}
+            rowsPerPage={LayoutHelpers.calcTableRows()}
           />
         </CardContent>
       </StyledCard>
