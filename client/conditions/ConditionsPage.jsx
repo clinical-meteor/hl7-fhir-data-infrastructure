@@ -71,6 +71,11 @@ export function ConditionsPage(props){
           count={data.conditions.length}  
           formFactorLayout={formFactor}
           rowsPerPage={LayoutHelpers.calcTableRows()} 
+          actionButtonLabel="Remove"
+          hideActionButton={get(Meteor, 'settings.public.modules.fhir.Conditions.hideRemoveButtonOnTable', true)}
+          onActionButtonClick={function(selectedId){
+            Conditions._collection.remove({_id: selectedId})
+          }}
         />
       </CardContent>
     </StyledCard>

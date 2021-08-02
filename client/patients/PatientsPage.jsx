@@ -20,6 +20,8 @@ import ReactMixin from 'react-mixin';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
+import { get, has, set } from 'lodash';
+
 // Global Theming 
   // This is necessary for the Material UI component render layer
   let theme = {
@@ -98,7 +100,6 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { HTTP } from 'meteor/http';
 
-import { get } from 'lodash';
 
 let defaultPatient = {
   index: 2,
@@ -144,13 +145,16 @@ export function PatientsPage(props){
     return Patients.find().fetch();
   }, [])
 
-  function onTableRowClick(patientId){
-    console.log('onTableRowClick', patientId);
+  // function onTableRowClick(patientId){
+  //   console.log('onTableRowClick', patientId);
 
-    Session.set('selectedPatientId', patientId);
-    Session.set('selectedPatient', Patients.findOne({id: patientId}));
-    Session.set('currentUser', Patients.findOne({id: patientId}));
-  }
+  //   Session.set('selectedPatientId', patientId);
+  //   Session.set('selectedPatient', Patients.findOne({id: patientId}));
+
+  //   if(has(Meteor, 'settings.public.modules.fhir.Patient.openUrlOnRowClick')){
+  //     props.history.replace(get(Meteor, 'settings.public.modules.fhir.Patient.openUrlOnRowClick', '/'))
+  //   }
+  // }
 
   // Patients.find().forEach(function(patient){
   //   data.dataCursors.push({
@@ -192,8 +196,18 @@ export function PatientsPage(props){
               noDataMessagePadding={100}
               patients={ data.patients }
               count={data.patients.length}
-              onRowClick={ onTableRowClick.bind(this) }
-              // cursors={data.dataCursors}
+              rowClickMode="id"
+              onRowClick={function(patientId){
+                console.log('onTableRowClick', patientId);
+
+                Session.set('selectedPatientId', patientId);
+                Session.set('selectedPatient', Patients.findOne({id: patientId}));
+
+                console.log('openUrlOnRowClick', get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick', ''))
+                if(get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick')){
+                  props.history.replace(get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick', '/'))
+                }
+              }}
               formFactorLayout={formFactor}    
               rowsPerPage={LayoutHelpers.calcTableRows()}      
               logger={window.logger ? window.logger : null}

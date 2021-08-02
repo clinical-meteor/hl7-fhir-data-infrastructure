@@ -415,7 +415,7 @@ function QuestionnairesTable(props){
       }
 
       tableRows.push(
-        <TableRow key={i} selected={selected} className="questionnaireRow" style={{cursor: "pointer"}} onClick={ selectQuestionnaireRow.bind(this, questionnairesToRender[i].id )} hover={true} >
+        <TableRow key={i} className="questionnaireRow" style={{cursor: "pointer"}} onClick={ selectQuestionnaireRow.bind(this, questionnairesToRender[i].id )} >
           { renderToggle(i, questionnairesToRender[i]._id) }
           { renderActionIcons(questionnairesToRender[i]) }
           { renderIdentifier(questionnairesToRender[i].identifier) }

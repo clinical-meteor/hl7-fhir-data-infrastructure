@@ -298,8 +298,10 @@ function ConditionsTable(props){
       onRowClick(id);
     }
   }
-  function handleActionButtonClick(){
-    console.log('handleActionButtonClick')
+  function handleActionButtonClick(_id){
+    if(typeof onActionButtonClick === "function"){
+      onActionButtonClick(_id);
+    }
   }
   
   //---------------------------------------------------------------------
@@ -548,11 +550,11 @@ function ConditionsTable(props){
       );
     }
   }
-  function renderActionButton(patient){
+  function renderActionButton(conditionId){
     if (!hideActionButton) {
       return (
         <TableCell className='ActionButton' >
-          <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
+          <Button onClick={ handleActionButtonClick.bind(this, conditionId)}>{ get(props, "actionButtonLabel", "") }</Button>
         </TableCell>
       );
     }
@@ -681,7 +683,7 @@ function ConditionsTable(props){
             { renderStartDate(conditionsToRender[i].onsetDateTime) }
             { renderEndDate(conditionsToRender[i].abatementDateTime) }
             { renderBarcode(conditionsToRender[i]._id)}
-            { renderActionButton(conditionsToRender[i]) }
+            { renderActionButton(conditionsToRender[i]._id) }
           </TableRow>
         );   
       }
