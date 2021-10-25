@@ -34,6 +34,7 @@ import {Questionnaires} from './lib/schemas/Questionnaires';
 import {QuestionnaireResponses} from './lib/schemas/QuestionnaireResponses';
 import {RiskAssessments} from './lib/schemas/RiskAssessments';
 import {ServiceRequests} from './lib/schemas/ServiceRequests';
+import {StructureDefinitions} from './lib/schemas/StructureDefinitions';
 import {Tasks} from './lib/schemas/Tasks';
 import {ValueSets} from './lib/schemas/ValueSets';
 
@@ -192,6 +193,10 @@ import RiskAssessmentForm from './client/riskAssessments/RiskAssessmentForm';
 import ServiceRequestsPage from './client/serviceRequests/ServiceRequestsPage';
 import ServiceRequestsTable from './client/serviceRequests/ServiceRequestsTable';
 import ServiceRequestForm from './client/serviceRequests/ServiceRequestForm';
+
+import StructureDefinitionsPage from './client/structureDefinitions/StructureDefinitionsPage';
+import StructureDefinitionsTable from './client/structureDefinitions/StructureDefinitionsTable';
+
 
 import TasksPage from './client/tasks/TasksPage';
 import TasksTable from './client/tasks/TasksTable';
@@ -397,6 +402,11 @@ let DynamicRoutes = [{
   name: 'TasksPage',
   path: '/tasks',
   component: TasksPage,
+  requireAuth: true
+}, {
+  name: 'StructureDefinitionsPage',
+  path: '/structure-definitions',
+  component: StructureDefinitionsPage,
   requireAuth: true
 }, {
   name: 'ValueSetsPage',
@@ -630,6 +640,12 @@ let SidebarElements = [{
   iconName: 'ic_format_list_bulleted',
   collectionName: 'Tasks'
 }, {
+  primaryText: 'StructureDefinitions',
+  to: '/structure-definitions',
+  href: '/structure-definitions',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'StructureDefinitions'
+}, {
   primaryText: 'Value Sets',
   to: '/valuesets',
   href: '/valuesets',
@@ -725,7 +741,13 @@ let AdminSidebarElements = [{
   href: '/service-requests',
   iconName: 'ic_format_list_bulleted',
   collectionName: 'ServiceRequests'
-}, ];
+}, {
+  primaryText: 'StructureDefinitions',
+  to: '/structure-definitions',
+  href: '/structure-definitions',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'StructureDefinitions'
+}];
 
 
 export { 
@@ -862,6 +884,9 @@ export {
   ServiceRequestsPage,
   ServiceRequestsTable,
   ServiceRequestForm,
+
+  StructureDefinitionsPage,
+  StructureDefinitionsTable,
 
   TasksPage,
   TasksTable,
