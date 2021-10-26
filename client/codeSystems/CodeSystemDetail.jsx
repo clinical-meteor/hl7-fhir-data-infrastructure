@@ -50,14 +50,14 @@
 
 
 
-// function StructureDefinitionDetail(props){
+// function CodeSystemDetail(props){
 
 //   let classes = useStyles();
 
 
 //   let { 
 //     children, 
-//     structureDefinition,
+//     codeSystem,
 //     ...otherProps 
 //   } = props;
 
@@ -69,7 +69,7 @@
 
 
 //   return(
-//     <div className='StructureDefinitionDetails'>
+//     <div className='CodeSystemDetails'>
 
 //         <Grid container spacing={3}>
 //           <Grid item xs={6}>
@@ -80,7 +80,7 @@
 //                 name="titleInput"
 //                 className={classes.input}
 //                 placeholder="Lorem ipsum."              
-//                 value={get(structureDefinition, 'title')}
+//                 value={get(codeSystem, 'title')}
 //                 //onChange={handleFhirEndpointChange}
 //                 fullWidth              
 //               />       
@@ -91,7 +91,7 @@
 //                 id="publisherInput"
 //                 name="publisherInput"
 //                 className={classes.input}
-//                 value={get(structureDefinition, 'publisher')}
+//                 value={get(codeSystem, 'publisher')}
 //                 //onChange={handleFhirEndpointChange}
 //                 fullWidth              
 //               />       
@@ -105,7 +105,7 @@
 //                 name="versionInput"
 //                 className={classes.input}
 //                 placeholder="2020.2"              
-//                 value={get(structureDefinition, 'version')}
+//                 value={get(codeSystem, 'version')}
 //                 //onChange={handleFhirEndpointChange}
 //                 fullWidth              
 //               />          
@@ -117,7 +117,7 @@
 //                 name="identifierInput"
 //                 className={classes.input}
 //                 placeholder="XYZ.1"              
-//                 value={get(structureDefinition, 'identifier[0].value')}
+//                 value={get(codeSystem, 'identifier[0].value')}
 //                 //onChange={handleFhirEndpointChange}
 //                 fullWidth              
 //               />
@@ -131,7 +131,7 @@
 //                 name="statusInput"
 //                 className={classes.input}
 //                 placeholder="active"              
-//                 value={get(structureDefinition, 'status')}
+//                 value={get(codeSystem, 'status')}
 //                 //onChange={handleFhirEndpointChange}
 //                 fullWidth              
 //               />    
@@ -146,7 +146,7 @@
 //                 name="descriptionInput"
 //                 className={classes.input}
 //                 placeholder="Lorem ipsum."              
-//                 value={get(structureDefinition, 'description')}
+//                 value={get(codeSystem, 'description')}
 //                 //onChange={handleFhirEndpointChange}
 //                 fullWidth           
 //                 multiline   
@@ -161,11 +161,11 @@
 //   );
 // }
 
-// StructureDefinitionDetail.propTypes = {
+// CodeSystemDetail.propTypes = {
 //   id: PropTypes.string,
 //   fhirVersion: PropTypes.string,
-//   structureDefinitionId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-//   structureDefinition: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+//   codeSystemId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+//   codeSystem: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 //   showPatientInputs: PropTypes.bool,
 //   showHints: PropTypes.bool,
 //   onInsert: PropTypes.func,
@@ -173,5 +173,5 @@
 //   onRemove: PropTypes.func,
 //   onCancel: PropTypes.func
 // };
-// ReactMixin(StructureDefinitionDetail.prototype, ReactMeteorData);
-// export default StructureDefinitionDetail;
+// ReactMixin(CodeSystemDetail.prototype, ReactMeteorData);
+// export default CodeSystemDetail;

@@ -65,6 +65,10 @@ import ActivitiesTable from './client/carePlans/ActivitiesTable';
 import CareTeamsPage from './client/careTeams/CareTeamsPage';
 import CareTeamsTable from './client/careTeams/CareTeamsTable';
 
+import CodeSystemsPage from './client/codeSystems/CodeSystemsPage';
+import CodeSystemsTable from './client/codeSystems/CodeSystemsTable';
+// import CodeSystemDetail from './client/codeSystems/CodeSystemDetail';
+
 import CompositionsPage from './client/compositions/CompositionsPage';
 import CompositionsTable from './client/compositions/CompositionsTable';
 // import CompositionDetail from './client/compositions/CompositionDetail';
@@ -190,6 +194,9 @@ import RiskAssessmentsPage from './client/riskAssessments/RiskAssessmentsPage';
 import RiskAssessmentsTable from './client/riskAssessments/RiskAssessmentsTable';
 import RiskAssessmentForm from './client/riskAssessments/RiskAssessmentForm';
 
+import SearchParametersPage from './client/searchParameters/SearchParametersPage';
+import SearchParametersTable from './client/searchParameters/SearchParametersTable';
+
 import ServiceRequestsPage from './client/serviceRequests/ServiceRequestsPage';
 import ServiceRequestsTable from './client/serviceRequests/ServiceRequestsTable';
 import ServiceRequestForm from './client/serviceRequests/ServiceRequestForm';
@@ -248,6 +255,10 @@ let DynamicRoutes = [{
   path: '/devices',
   component: DevicesPage,
   requireAuth: true
+}, {
+  name: 'CodeSystemsPage',
+  path: '/code-systems',
+  component: CodeSystemsPage
 }, {
   name: 'ConditionsPage',
   path: '/conditions',
@@ -411,8 +422,7 @@ let DynamicRoutes = [{
 }, {
   name: 'ValueSetsPage',
   path: '/valuesets',
-  component: ValueSetsPage,
-  requireAuth: true
+  component: ValueSetsPage
 } ];
 
 
@@ -447,6 +457,12 @@ let SidebarElements = [{
   href: '/careteams',
   iconName: 'notepad',
   collectionName: 'CareTeams'
+}, {
+  primaryText: 'CodeSystems',
+  to: '/code-systems',
+  href: '/code-systems',
+  iconName: 'notepad',
+  collectionName: 'CodeSystems'  
 }, {
   primaryText: 'Conditions',
   to: '/conditions',
@@ -628,6 +644,12 @@ let SidebarElements = [{
   iconName: 'ic_format_list_bulleted',
   collectionName: 'RiskAssessments'
 }, {
+  primaryText: 'SearchParameters',
+  to: '/search-parameters',
+  href: '/search-parameters',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'SearchParameters'
+}, {
   primaryText: 'Service Requests',
   to: '/service-requests',
   href: '/service-requests',
@@ -665,6 +687,12 @@ let AdminSidebarElements = [{
   primaryText: 'Care Plans',
   to: '/careplans',
   href: '/careplans'
+}, {
+  primaryText: 'CodeSystems',
+  to: '/code-systems',
+  href: '/code-systems',
+  iconName: 'notepad',
+  collectionName: 'CodeSystems'  
 }, {
   primaryText: 'Devices',
   to: '/devices',
@@ -736,6 +764,12 @@ let AdminSidebarElements = [{
   iconName: 'ic_format_list_bulleted',
   collectionName: 'RiskAssessments'
 }, {
+  primaryText: 'StructureDefinitions',
+  to: '/structure-definitions',
+  href: '/structure-definitions',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'StructureDefinitions'
+}, {
   primaryText: 'Service Requests',
   to: '/service-requests',
   href: '/service-requests',
@@ -772,6 +806,9 @@ export {
   // CarePlanDetail,
   GoalsTable,
   ActivitiesTable,
+
+  CodeSystemsPage,
+  CodeSystemsTable,
 
   CareTeamsPage,
   CareTeamsTable,
@@ -880,6 +917,9 @@ export {
   RiskAssessmentsPage,
   RiskAssessmentsTable,
   RiskAssessmentForm,
+
+  SearchParametersPage,
+  SearchParametersTable,
 
   ServiceRequestsPage,
   ServiceRequestsTable,

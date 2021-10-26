@@ -57,18 +57,18 @@ let styles = {
 
 
 
-function StructureDefinitionsTable(props){
-  logger.info('Rendering the StructureDefinitionsTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.StructureDefinitionsTable');
-  logger.data('StructureDefinitionsTable.props', {data: props}, {source: "StructureDefinitionsTable.jsx"});
+function CodeSystemsTable(props){
+  logger.info('Rendering the CodeSystemsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.CodeSystemsTable');
+  logger.data('CodeSystemsTable.props', {data: props}, {source: "CodeSystemsTable.jsx"});
 
   const classes = useStyles();
 
   let { 
     children, 
 
-    structureDefinitions,
-    selectedStructureDefinitionId,
+    codeSystems,
+    selectedCodeSystemId,
 
     query,
     paginationLimit,
@@ -201,7 +201,7 @@ function StructureDefinitionsTable(props){
   }
 
   function removeRecord(_id){
-    console.log('Remove structureDefinition ', _id)
+    console.log('Remove codeSystem ', _id)
     if(onRemoveRecord){
       onRemoveRecord(_id);
     }
@@ -251,7 +251,7 @@ function StructureDefinitionsTable(props){
       );
     }
   }
-  function renderActionIcons(structureDefinition ){
+  function renderActionIcons(codeSystem ){
     if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
@@ -262,8 +262,8 @@ function StructureDefinitionsTable(props){
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          {/* <FaTags style={iconStyle} onClick={ onMetaClick.bind(structureDefinition)} />
-          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(structureDefinition._id)} />   */}
+          {/* <FaTags style={iconStyle} onClick={ onMetaClick.bind(codeSystem)} />
+          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(codeSystem._id)} />   */}
         </TableCell>
       );
     }
@@ -431,7 +431,7 @@ function StructureDefinitionsTable(props){
 
 
   let tableRows = [];
-  let structureDefinitionsToRender = [];
+  let codeSystemsToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
   if(showMinutes){
@@ -442,10 +442,10 @@ function StructureDefinitionsTable(props){
   }
 
 
-  if(structureDefinitions){
-    if(structureDefinitions.length > 0){              
-      structureDefinitions.forEach(function(structureDefinition){
-        structureDefinitionsToRender.push(FhirDehydrator.flattenStructureDefinition(structureDefinition, internalDateFormat));
+  if(codeSystems){
+    if(codeSystems.length > 0){              
+      codeSystems.forEach(function(codeSystem){
+        codeSystemsToRender.push(FhirDehydrator.flattenCodeSystem(codeSystem, internalDateFormat));
       });  
     }
   }
@@ -455,17 +455,17 @@ function StructureDefinitionsTable(props){
     height: '52px'
   }
 
-  if(structureDefinitionsToRender.length === 0){
-    console.log('No structureDefinitions to render');
+  if(codeSystemsToRender.length === 0){
+    console.log('No codeSystems to render');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
-    for (var i = 0; i < structureDefinitionsToRender.length; i++) {
+    for (var i = 0; i < codeSystemsToRender.length; i++) {
 
       let selected = false;
-      if(structureDefinitionsToRender[i].id === selectedStructureDefinitionId){
+      if(codeSystemsToRender[i].id === selectedCodeSystemId){
         selected = true;
       }
-      if(get(structureDefinitionsToRender[i], 'modifierExtension[0]')){
+      if(get(codeSystemsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
       if(tableRowSize === "small"){
@@ -474,25 +474,25 @@ function StructureDefinitionsTable(props){
 
       tableRows.push(
         <TableRow 
-          className="structureDefinitionRow" 
+          className="codeSystemRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, structureDefinitionsToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, codeSystemsToRender[i]._id)} 
           hover={true} 
           style={{cursor: 'pointer', height: '52px'}} 
           selected={selected}
         >
           { renderCheckbox() }
-          { renderActionIcons(structureDefinitionsToRender[i]) }
-          { renderStatus(structureDefinitionsToRender[i].status) }
+          { renderActionIcons(codeSystemsToRender[i]) }
+          { renderStatus(codeSystemsToRender[i].status) }
 
-          { renderVersion(structureDefinitionsToRender[i].version) }
-          { renderName(structureDefinitionsToRender[i].name) }
-          { renderTitle(structureDefinitionsToRender[i].title) }
-          { renderExperimental(structureDefinitionsToRender[i].experimental) }
-          { renderDate(structureDefinitionsToRender[i].date) }
-          { renderPublisher(structureDefinitionsToRender[i].publisher) }
+          { renderVersion(codeSystemsToRender[i].version) }
+          { renderName(codeSystemsToRender[i].name) }
+          { renderTitle(codeSystemsToRender[i].title) }
+          { renderExperimental(codeSystemsToRender[i].experimental) }
+          { renderDate(codeSystemsToRender[i].date) }
+          { renderPublisher(codeSystemsToRender[i].publisher) }
 
-          { renderBarcode(structureDefinitionsToRender[i].id)}
+          { renderBarcode(codeSystemsToRender[i].id)}
         </TableRow>
       );       
     }
@@ -526,10 +526,10 @@ function StructureDefinitionsTable(props){
   );
 }
 
-StructureDefinitionsTable.propTypes = {
+CodeSystemsTable.propTypes = {
   barcodes: PropTypes.bool,
-  structureDefinitions: PropTypes.array,
-  selectedStructureDefinitionId: PropTypes.string,
+  codeSystems: PropTypes.array,
+  selectedCodeSystemId: PropTypes.string,
 
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
@@ -561,7 +561,7 @@ StructureDefinitionsTable.propTypes = {
   formFactorLayout: PropTypes.string,
   checklist: PropTypes.bool
 };
-StructureDefinitionsTable.defaultProps = {
+CodeSystemsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
 
@@ -578,10 +578,10 @@ StructureDefinitionsTable.defaultProps = {
   hideBarcode: true,
 
   checklist: true,
-  selectedStructureDefinitionId: '',
+  selectedCodeSystemId: '',
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'
 }
 
-export default StructureDefinitionsTable; 
+export default CodeSystemsTable; 

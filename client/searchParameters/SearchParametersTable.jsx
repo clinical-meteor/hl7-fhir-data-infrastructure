@@ -57,18 +57,18 @@ let styles = {
 
 
 
-function StructureDefinitionsTable(props){
-  logger.info('Rendering the StructureDefinitionsTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.StructureDefinitionsTable');
-  logger.data('StructureDefinitionsTable.props', {data: props}, {source: "StructureDefinitionsTable.jsx"});
+function SearchParametersTable(props){
+  logger.info('Rendering the SearchParametersTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.SearchParametersTable');
+  logger.data('SearchParametersTable.props', {data: props}, {source: "SearchParametersTable.jsx"});
 
   const classes = useStyles();
 
   let { 
     children, 
 
-    structureDefinitions,
-    selectedStructureDefinitionId,
+    searchParameters,
+    selectedSearchParameterId,
 
     query,
     paginationLimit,
@@ -201,7 +201,7 @@ function StructureDefinitionsTable(props){
   }
 
   function removeRecord(_id){
-    console.log('Remove structureDefinition ', _id)
+    console.log('Remove searchParameter ', _id)
     if(onRemoveRecord){
       onRemoveRecord(_id);
     }
@@ -251,7 +251,7 @@ function StructureDefinitionsTable(props){
       );
     }
   }
-  function renderActionIcons(structureDefinition ){
+  function renderActionIcons(searchParameter ){
     if (!hideActionIcons) {
       let iconStyle = {
         marginLeft: '4px', 
@@ -262,8 +262,8 @@ function StructureDefinitionsTable(props){
 
       return (
         <TableCell className='actionIcons' style={{minWidth: '120px'}}>
-          {/* <FaTags style={iconStyle} onClick={ onMetaClick.bind(structureDefinition)} />
-          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(structureDefinition._id)} />   */}
+          {/* <FaTags style={iconStyle} onClick={ onMetaClick.bind(searchParameter)} />
+          <GoTrashcan style={iconStyle} onClick={ removeRecord.bind(searchParameter._id)} />   */}
         </TableCell>
       );
     }
@@ -431,7 +431,7 @@ function StructureDefinitionsTable(props){
 
 
   let tableRows = [];
-  let structureDefinitionsToRender = [];
+  let searchParametersToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
   if(showMinutes){
@@ -442,10 +442,10 @@ function StructureDefinitionsTable(props){
   }
 
 
-  if(structureDefinitions){
-    if(structureDefinitions.length > 0){              
-      structureDefinitions.forEach(function(structureDefinition){
-        structureDefinitionsToRender.push(FhirDehydrator.flattenStructureDefinition(structureDefinition, internalDateFormat));
+  if(searchParameters){
+    if(searchParameters.length > 0){              
+      searchParameters.forEach(function(searchParameter){
+        searchParametersToRender.push(FhirDehydrator.flattenSearchParameter(searchParameter, internalDateFormat));
       });  
     }
   }
@@ -455,17 +455,17 @@ function StructureDefinitionsTable(props){
     height: '52px'
   }
 
-  if(structureDefinitionsToRender.length === 0){
-    console.log('No structureDefinitions to render');
+  if(searchParametersToRender.length === 0){
+    console.log('No searchParameters to render');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
-    for (var i = 0; i < structureDefinitionsToRender.length; i++) {
+    for (var i = 0; i < searchParametersToRender.length; i++) {
 
       let selected = false;
-      if(structureDefinitionsToRender[i].id === selectedStructureDefinitionId){
+      if(searchParametersToRender[i].id === selectedSearchParameterId){
         selected = true;
       }
-      if(get(structureDefinitionsToRender[i], 'modifierExtension[0]')){
+      if(get(searchParametersToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
       if(tableRowSize === "small"){
@@ -474,25 +474,25 @@ function StructureDefinitionsTable(props){
 
       tableRows.push(
         <TableRow 
-          className="structureDefinitionRow" 
+          className="searchParameterRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, structureDefinitionsToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, searchParametersToRender[i]._id)} 
           hover={true} 
           style={{cursor: 'pointer', height: '52px'}} 
           selected={selected}
         >
           { renderCheckbox() }
-          { renderActionIcons(structureDefinitionsToRender[i]) }
-          { renderStatus(structureDefinitionsToRender[i].status) }
+          { renderActionIcons(searchParametersToRender[i]) }
+          { renderStatus(searchParametersToRender[i].status) }
 
-          { renderVersion(structureDefinitionsToRender[i].version) }
-          { renderName(structureDefinitionsToRender[i].name) }
-          { renderTitle(structureDefinitionsToRender[i].title) }
-          { renderExperimental(structureDefinitionsToRender[i].experimental) }
-          { renderDate(structureDefinitionsToRender[i].date) }
-          { renderPublisher(structureDefinitionsToRender[i].publisher) }
+          { renderVersion(searchParametersToRender[i].version) }
+          { renderName(searchParametersToRender[i].name) }
+          { renderTitle(searchParametersToRender[i].title) }
+          { renderExperimental(searchParametersToRender[i].experimental) }
+          { renderDate(searchParametersToRender[i].date) }
+          { renderPublisher(searchParametersToRender[i].publisher) }
 
-          { renderBarcode(structureDefinitionsToRender[i].id)}
+          { renderBarcode(searchParametersToRender[i].id)}
         </TableRow>
       );       
     }
@@ -526,10 +526,10 @@ function StructureDefinitionsTable(props){
   );
 }
 
-StructureDefinitionsTable.propTypes = {
+SearchParametersTable.propTypes = {
   barcodes: PropTypes.bool,
-  structureDefinitions: PropTypes.array,
-  selectedStructureDefinitionId: PropTypes.string,
+  searchParameters: PropTypes.array,
+  selectedSearchParameterId: PropTypes.string,
 
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
@@ -561,7 +561,7 @@ StructureDefinitionsTable.propTypes = {
   formFactorLayout: PropTypes.string,
   checklist: PropTypes.bool
 };
-StructureDefinitionsTable.defaultProps = {
+SearchParametersTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
 
@@ -578,10 +578,10 @@ StructureDefinitionsTable.defaultProps = {
   hideBarcode: true,
 
   checklist: true,
-  selectedStructureDefinitionId: '',
+  selectedSearchParameterId: '',
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'
 }
 
-export default StructureDefinitionsTable; 
+export default SearchParametersTable; 
