@@ -26,7 +26,8 @@ import { browserHistory } from 'react-router';
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
 
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -501,7 +502,7 @@ function CarePlansTable(props){
 
       carePlans.forEach(function(carePlan){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          carePlansToRender.push(FhirDehydrator.flattenCarePlan(carePlan));
+          carePlansToRender.push(FhirDehydrator.dehydrateCarePlan(carePlan));
         }
         count++;
       }); 

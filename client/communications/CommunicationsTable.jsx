@@ -21,7 +21,8 @@ import moment from 'moment';
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
 
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -446,7 +447,7 @@ function CommunicationsTable(props){
 
       communications.forEach(function(communication){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          communicationsToRender.push(FhirDehydrator.flattenCommunication(communication));
+          communicationsToRender.push(FhirDehydrator.dehydrateCommunication(communication));
         }
         count++;
       }); 

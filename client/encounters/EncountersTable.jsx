@@ -22,7 +22,8 @@ let set = _.set;
 // import {tag} from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 
@@ -438,7 +439,7 @@ function EncountersTable(props){
       let count = 0;    
       props.encounters.forEach(function(encounter){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          encountersToRender.push(FhirDehydrator.flattenEncounter(encounter, internalDateFormat));
+          encountersToRender.push(FhirDehydrator.dehydrateEncounter(encounter, internalDateFormat));
         }
         count++;
       });  

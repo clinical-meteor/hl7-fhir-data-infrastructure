@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 import { 
   Grid, 
@@ -482,7 +483,7 @@ function CompositionsTable(props){
   if(compositions){
     if(compositions.length > 0){              
       compositions.forEach(function(composition){
-        compositionsToRender.push(FhirDehydrator.flattenComposition(composition));
+        compositionsToRender.push(FhirDehydrator.dehydrateComposition(composition));
       });  
     }
   }

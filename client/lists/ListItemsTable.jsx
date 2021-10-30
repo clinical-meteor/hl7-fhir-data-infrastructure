@@ -17,7 +17,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================

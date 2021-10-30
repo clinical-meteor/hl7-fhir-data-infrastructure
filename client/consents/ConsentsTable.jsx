@@ -20,7 +20,8 @@ let set = _.set;
 let has = _.has;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 import { useTracker } from 'meteor/react-meteor-data';
 
@@ -180,66 +181,66 @@ export function ConsentsTable(props){
 
   // data.consents = [];
 
-  function flattenConsent(document){
-      let result = {
-        _id: document._id,
-        id: get(document, 'id', ''),
-        dateTime: moment(get(document, 'dateTime', null)).format("YYYY-MM-DD hh:mm:ss"),
-        status: get(document, 'status', ''),
-        patientReference: get(document, 'patient.reference', ''),
-        patientName: get(document, 'patient.display', ''),
-        // consentingParty: get(document, 'consentingParty[0].display', ''),
-        performer: get(document, 'performer[0].display', ''),
-        organization: get(document, 'organization[0].display', ''),
-        policyAuthority: get(document, 'policy[0].authority', ''),
-        policyUri: get(document, 'policy[0].uri', ''),
-        policyRule: get(document, 'policyRule.text', ''),
-        provisionType: get(document, 'provision[0].type', ''),
-        provisionAction: get(document, 'provision[0].action[0].text', ''),
-        provisionClass: get(document, 'provision[0].class', ''),
-        start: '',
-        end: '',
-        sourceReference: get(document, 'sourceReference.reference', ''),
-        category: '',
-        scope: get(document, 'scope.coding[0].display')
-      };
+  // function dehydrateConsent(document){
+  //     let result = {
+  //       _id: document._id,
+  //       id: get(document, 'id', ''),
+  //       dateTime: moment(get(document, 'dateTime', null)).format("YYYY-MM-DD hh:mm:ss"),
+  //       status: get(document, 'status', ''),
+  //       patientReference: get(document, 'patient.reference', ''),
+  //       patientName: get(document, 'patient.display', ''),
+  //       // consentingParty: get(document, 'consentingParty[0].display', ''),
+  //       performer: get(document, 'performer[0].display', ''),
+  //       organization: get(document, 'organization[0].display', ''),
+  //       policyAuthority: get(document, 'policy[0].authority', ''),
+  //       policyUri: get(document, 'policy[0].uri', ''),
+  //       policyRule: get(document, 'policyRule.text', ''),
+  //       provisionType: get(document, 'provision[0].type', ''),
+  //       provisionAction: get(document, 'provision[0].action[0].text', ''),
+  //       provisionClass: get(document, 'provision[0].class', ''),
+  //       start: '',
+  //       end: '',
+  //       sourceReference: get(document, 'sourceReference.reference', ''),
+  //       category: '',
+  //       scope: get(document, 'scope.coding[0].display')
+  //     };
 
-      if(has(document, 'patient.display')){
-        result.patientName = get(document, 'patient.display')
-      } else {
-        result.patientName = get(document, 'patient.reference')
-      }
+  //     if(has(document, 'patient.display')){
+  //       result.patientName = get(document, 'patient.display')
+  //     } else {
+  //       result.patientName = get(document, 'patient.reference')
+  //     }
 
-      if(has(document, 'category[0].text')){
-        result.category = get(document, 'category[0].text')
-      } else {
-        result.category = get(document, 'category[0].coding[0].display', '')
-      }
+  //     if(has(document, 'category[0].text')){
+  //       result.category = get(document, 'category[0].text')
+  //     } else {
+  //       result.category = get(document, 'category[0].coding[0].display', '')
+  //     }
 
-      if(has(document, 'period.start')){
-        result.start = moment(get(document, 'period.start', '')).format("YYYY-MM-DD hh:mm:ss");
-      }
-      if(has(document, 'period.end')){
-        result.end = moment(get(document, 'period.end', '')).format("YYYY-MM-DD hh:mm:ss");
-      }
+  //     if(has(document, 'period.start')){
+  //       result.start = moment(get(document, 'period.start', '')).format("YYYY-MM-DD hh:mm:ss");
+  //     }
+  //     if(has(document, 'period.end')){
+  //       result.end = moment(get(document, 'period.end', '')).format("YYYY-MM-DD hh:mm:ss");
+  //     }
 
   
-      if(result.patientReference === ''){
-        result.patientReference = get(document, 'patient.reference', '');
-      }
+  //     if(result.patientReference === ''){
+  //       result.patientReference = get(document, 'patient.reference', '');
+  //     }
 
-      if(get(document, 'provision[0].class')){
-        result.provisionClass = "";
-        document.provision[0].class.forEach(function(provision){   
-          if(result.provisionClass == ''){
-            result.provisionClass = provision.code;
-          }  else {
-            result.provisionClass = result.provisionClass + ' - ' + provision.code;
-          }      
-        });
-      }
-      return result;
-  }
+  //     if(get(document, 'provision[0].class')){
+  //       result.provisionClass = "";
+  //       document.provision[0].class.forEach(function(provision){   
+  //         if(result.provisionClass == ''){
+  //           result.provisionClass = provision.code;
+  //         }  else {
+  //           result.provisionClass = result.provisionClass + ' - ' + provision.code;
+  //         }      
+  //       });
+  //     }
+  //     return result;
+  // }
 
 
   //------------------------------------------------------------------------------------
@@ -585,8 +586,8 @@ export function ConsentsTable(props){
 
       consents.forEach(function(condition){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          // consentsToRender.push(FhirDehydrator.flattenConsent(condition, internalDateFormat));
-          consentsToRender.push(flattenConsent(condition, internalDateFormat));
+          // consentsToRender.push(FhirDehydrator.dehydrateConsent(condition, internalDateFormat));
+          consentsToRender.push(FhirDehydrator.dehydrateConsent(condition, internalDateFormat));
         }
         count++;
       });  

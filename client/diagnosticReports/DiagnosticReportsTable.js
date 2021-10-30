@@ -26,7 +26,8 @@ import { get } from 'lodash';
 import moment from 'moment';
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 
@@ -363,7 +364,7 @@ function DiagnosticReportsTable(props){
       let count = 0;    
       props.diagnosticReports.forEach(function(diagnosticReport){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          diagnosticReportsToRender.push(FhirDehydrator.flattenDiagnosticReport(diagnosticReport, internalDateFormat));
+          diagnosticReportsToRender.push(FhirDehydrator.dehydrateDiagnosticReport(diagnosticReport, internalDateFormat));
         }
         count++;
       });  

@@ -17,8 +17,8 @@ let set = _.set;
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
 
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
-
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 //===========================================================================
 // THEMING
@@ -511,7 +511,7 @@ function MeasureReportsTable(props){
 
       props.measureReports.forEach(function(measureReport){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          measureReportsToRender.push(FhirDehydrator.flattenMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand, measureScoreType));
+          measureReportsToRender.push(FhirDehydrator.dehydrateMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand, measureScoreType));
         }
         count++;
       }); 

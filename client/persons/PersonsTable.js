@@ -31,6 +31,7 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -83,7 +84,7 @@ const useStyles = makeStyles(theme => ({
 // FLATTENING / MAPPING
 
 
-function flattenPerson(person, dateFormat){
+function dehydratePerson(person, dateFormat){
   let result = {
     _id: get(person, '_id'),
     id: get(person, 'id'),
@@ -211,7 +212,7 @@ function flattenPerson(person, dateFormat){
   result.postalCode = get(person, 'address[0].postalCode')
   result.country = get(person, 'address[0].country')
 
-  // console.log('flattened', result)
+  // console.log('dehydrateed', result)
   return result;
 }
 
@@ -926,7 +927,7 @@ function PersonsTable(props){
       let count = 0;  
       persons.forEach(function(person){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          personsToRender.push(flattenPerson(person, dateFormat));
+          personsToRender.push(dehydratePerson(person, dateFormat));
         }
         count++;
       });  

@@ -1,13 +1,8 @@
 import React  from 'react';
 
 import { 
-  Card,
   CardHeader,
-  CardContent,
-  Tab, 
-  Tabs,
-  Typography,
-  Box
+  CardContent
 } from '@material-ui/core';
 import { StyledCard, PageCanvas } from 'fhir-starter';
 

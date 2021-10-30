@@ -20,7 +20,8 @@ let set = _.set;
 let has = _.has;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 import { useTracker } from 'meteor/react-meteor-data';
 
@@ -178,7 +179,7 @@ export function RiskAssessmentsTable(props){
 
   // data.riskAssessments = [];
 
-  function flattenRiskAssessment(document){
+  function dehydrateRiskAssessment(document){
       let result = {
         _id: document._id,
         id: get(document, 'id', ''),
@@ -589,8 +590,8 @@ export function RiskAssessmentsTable(props){
 
       riskAssessments.forEach(function(condition){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          riskAssessmentsToRender.push(FhirDehydrator.flattenRiskAssessment(condition, internalDateFormat));
-          // riskAssessmentsToRender.push(flattenRiskAssessment(condition, internalDateFormat));
+          riskAssessmentsToRender.push(FhirDehydrator.dehydrateRiskAssessment(condition, internalDateFormat));
+          // riskAssessmentsToRender.push(dehydrateRiskAssessment(condition, internalDateFormat));
         }
         count++;
       });  

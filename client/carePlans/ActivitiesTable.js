@@ -14,6 +14,7 @@ import {
   import { get } from 'lodash';
   import PropTypes from 'prop-types';
 
+  import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 

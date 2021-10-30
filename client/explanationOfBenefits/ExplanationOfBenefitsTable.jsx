@@ -16,7 +16,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -61,7 +62,7 @@ getLength = function(field){
   }
 }
 
-flattenExplanationOfBenefit = function(explanationOfBenefit, internalDateFormat){
+dehydrateExplanationOfBenefit = function(explanationOfBenefit, internalDateFormat){
   let result = {
     _id: '',
     meta: '',
@@ -140,7 +141,7 @@ flattenExplanationOfBenefit = function(explanationOfBenefit, internalDateFormat)
   result.processNoteCount = getLength(explanationOfBenefit.processNote);
   result.benefitBalance = getLength(explanationOfBenefit.benefit);
 
-  console.log('ExplanationOfBenefitsTable.flattenExplanationOfBenefit', result)
+  console.log('ExplanationOfBenefitsTable.dehydrateExplanationOfBenefit', result)
 
   return result;
 }
@@ -648,7 +649,7 @@ function ExplanationOfBenefitsTable(props){
   if(props.explanationOfBenefits){
     if(props.explanationOfBenefits.length > 0){              
       props.explanationOfBenefits.forEach(function(explanationOfBenefit){
-        explanationOfBenefitsToRender.push(FhirDehydrator.flattenExplanationOfBenefit(explanationOfBenefit, internalDateFormat));
+        explanationOfBenefitsToRender.push(FhirDehydrator.dehydrateExplanationOfBenefit(explanationOfBenefit, internalDateFormat));
       });  
     }
   }

@@ -29,7 +29,8 @@ import moment from 'moment';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 //===========================================================================
 // SESSION VARIABLES  
@@ -75,8 +76,8 @@ let styles = {
 
 
 // export class PractitionersTableOld extends React.Component {
-//   // flattenPractitioner(practitioner){
-//   //   console.log('PractitionersTable.flattenPractitioner()', practitioner)
+//   // dehydratePractitioner(practitioner){
+//   //   console.log('PractitionersTable.dehydratePractitioner()', practitioner)
 
 //   //   let result = {
 //   //     _id: practitioner._id,
@@ -224,12 +225,12 @@ let styles = {
 
 //       if(this.props.data.length > 0){              
 //         this.props.data.forEach(function(practitioner){
-//           data.practitioners.push(self.flattenPractitioner(practitioner));
+//           data.practitioners.push(self.dehydratePractitioner(practitioner));
 //         });  
 //       }
 //     } else {
 //       data.practitioners = Practitioners.find().map(function(practitioner){
-//         return self.flattenPractitioner(practitioner);
+//         return self.dehydratePractitioner(practitioner);
 //       });
 //     }
     
@@ -751,7 +752,7 @@ function PractitionersTable(props){
 
       practitioners.forEach(function(practitioner){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          practitionersToRender.push(FhirDehydrator.flattenPractitioner(practitioner));
+          practitionersToRender.push(FhirDehydrator.dehydratePractitioner(practitioner));
         }
         count++;
       });  

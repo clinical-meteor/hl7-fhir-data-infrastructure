@@ -17,7 +17,8 @@ let set = _.set;
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 //===========================================================================
 // THEMING
@@ -317,7 +318,7 @@ function ValueSetsTable(props){
   if(valueSets){
     if(valueSets.length > 0){              
       valueSets.forEach(function(valueSet){
-        valueSetsToRender.push(FhirDehydrator.flattenValueSet(valueSet, internalDateFormat));
+        valueSetsToRender.push(FhirDehydrator.dehydrateValueSet(valueSet, internalDateFormat));
       });  
     }
   }

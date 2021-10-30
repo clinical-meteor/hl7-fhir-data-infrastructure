@@ -16,7 +16,9 @@ import {
 import { get } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
+
 
 //===========================================================================
 // THEMING
@@ -341,7 +343,7 @@ function MedicationsTable(props){
 
       props.medications.forEach(function(medication){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          medicationsToRender.push(FhirDehydrator.flattenMedication(medication, internalDateFormat, "R4"));
+          medicationsToRender.push(FhirDehydrator.dehydrateMedication(medication, internalDateFormat, "R4"));
         }
         count++;
       });  

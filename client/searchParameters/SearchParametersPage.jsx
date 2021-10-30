@@ -210,7 +210,7 @@ export function SearchParametersPage(props){
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
-      <CardHeader title={data.searchParameters.length + " Structure Definitions"} />
+      <CardHeader title={data.searchParameters.length + " Search Parameters"} />
       <CardContent>
 
         <SearchParametersTable 
@@ -232,7 +232,7 @@ export function SearchParametersPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.searchParameters.length + " SearchParameters"} />
+          <CardHeader title={data.searchParameters.length + " Search Parameters"} />
           <CardContent>
             <SearchParametersTable 
               searchParameters={ data.searchParameters }

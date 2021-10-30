@@ -17,7 +17,8 @@ import { get, has, concat, cloneDeep, findIndex, pullAt } from 'lodash';
 import moment from 'moment'
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -398,7 +399,7 @@ function QuestionnairesTable(props){
   if(questionnaires){
     if(questionnaires.length > 0){              
       questionnaires.forEach(function(questionnaire){
-        questionnairesToRender.push(FhirDehydrator.flattenQuestionnaire(questionnaire, internalDateFormat));
+        questionnairesToRender.push(FhirDehydrator.dehydrateQuestionnaire(questionnaire, internalDateFormat));
       });  
     }
   }

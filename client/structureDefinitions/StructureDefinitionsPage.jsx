@@ -238,13 +238,13 @@ export function StructureDefinitionsPage(props){
               structureDefinitions={ data.structureDefinitions }
               selectedStructureDefinitionId={ data.selectedStructureDefinitionId }
               hideIdentifier={true} 
-              hideCheckbox={false}
+              hideCheckbox={true}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}
-              hideTitle={false}
+              hideTitle={true}
               hideVersion={false}
-              hideExperimental={false}    
+              hideExperimental={true}    
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }

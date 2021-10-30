@@ -30,7 +30,8 @@ let set = _.set;
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 import { Meteor } from 'meteor/meteor';
@@ -366,7 +367,7 @@ function MedicationRequestsTable(props){
       let count = 0;    
       props.medicationRequests.forEach(function(medicationRequest){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          medicationRequestsToRender.push(FhirDehydrator.flattenMedicationRequest(medicationRequest, dateFormat));
+          medicationRequestsToRender.push(FhirDehydrator.dehydrateMedicationRequest(medicationRequest, dateFormat));
         }
         count++;
       });  

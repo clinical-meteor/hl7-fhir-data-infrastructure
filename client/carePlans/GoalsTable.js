@@ -13,6 +13,7 @@ import {
   import { get, has, concat, cloneDeep, findIndex, pullAt } from 'lodash';
   import PropTypes from 'prop-types';
 
+  import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
   export function GoalsTable(props){

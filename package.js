@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.15.2',
+  version: '6.17.0',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -47,6 +47,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
   api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
   api.addFiles('lib/schemas/CareTeams.js', ['client', 'server']);
+  api.addFiles('lib/schemas/CodeSystems.js', ['client', 'server']);
   api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Consents.js', ['client', 'server']);
@@ -59,7 +60,9 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
   api.addFiles('lib/schemas/Endpoints.js', ['client', 'server']);
   api.addFiles('lib/schemas/ExplanationOfBenefit.js', ['client', 'server']);
+  api.addFiles('lib/schemas/HealthcareServices.js', ['client', 'server']);
   api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/InsurancePlans.js', ['client', 'server']);
   api.addFiles('lib/schemas/Goals.js', ['client', 'server']);
   api.addFiles('lib/schemas/Lists.js', ['client', 'server']);
   api.addFiles('lib/schemas/Locations.js', ['client', 'server']);
@@ -70,21 +73,27 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/MedicationRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
   api.addFiles('lib/schemas/MessageHeaders.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Networks.js', ['client', 'server']);
   api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Organizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/OrganizationAffiliations.js', ['client', 'server']);
   api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
   api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
+  api.addFiles('lib/schemas/PractitionerRoles.js', ['client', 'server']);
   api.addFiles('lib/schemas/Persons.js', ['client', 'server']);
   api.addFiles('lib/schemas/Provenances.js', ['client', 'server']);
   api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
   api.addFiles('lib/schemas/RelatedPersons.js', ['client', 'server']);
   api.addFiles('lib/schemas/Questionnaires.js', ['client', 'server']);
   api.addFiles('lib/schemas/QuestionnaireResponses.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Restrictions.js', ['client', 'server']);
   api.addFiles('lib/schemas/RiskAssessments.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SearchParameters.js', ['client', 'server']);
   api.addFiles('lib/schemas/ServiceRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/StructureDefinitions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
   api.addFiles('lib/schemas/ValueSets.js', ['client', 'server']);
+  api.addFiles('lib/schemas/VerificationResults.js', ['client', 'server']);
 
   api.export('ActivityDefinition');
   api.export('ActivityDefinitions');
@@ -170,6 +179,14 @@ Package.onUse(function (api) {
   api.export('Goals');
   api.export('GoalSchema');
 
+  api.export('HealthcareService');
+  api.export('HealthcareServices');
+  api.export('HealthcareServiceSchema');
+
+  api.export('InsurancePlan');
+  api.export('InsurancePlans');
+  api.export('InsurancePlanSchema');
+
   api.export('List');
   api.export('Lists');
   api.export('ListSchema');
@@ -207,6 +224,10 @@ Package.onUse(function (api) {
   api.export('MessageHeaders');
   api.export('MessageHeaderSchema');
 
+  api.export('Network');
+  api.export('Networks');
+  api.export('NetworkSchema');
+
   api.export('Observation');
   api.export('Observations');
   api.export('ObservationSchema');
@@ -214,6 +235,10 @@ Package.onUse(function (api) {
   api.export('Organization');
   api.export('Organizations');
   api.export('OrganizationSchema');
+
+  api.export('OrganizationAffiliation');
+  api.export('OrganizationAffiliations');
+  api.export('OrganizationAffiliationSchema');
 
   api.export('Patient');
   api.export('Patients');
@@ -227,9 +252,17 @@ Package.onUse(function (api) {
   api.export('Practitioners');
   api.export('PractitionerSchema');
 
+  api.export('PractitionerRole');
+  api.export('PractitionerRoles');
+  api.export('PractitionerRoleSchema');
+
   api.export('Procedure');
   api.export('Procedures');
   api.export('ProcedureSchema');
+
+  api.export('Provenance');
+  api.export('Provenances');
+  api.export('ProvenanceSchema');
 
   api.export('Questionnaire');
   api.export('Questionnaires');
@@ -242,6 +275,10 @@ Package.onUse(function (api) {
   api.export('RelatedPerson');
   api.export('RelatedPersons');
   api.export('RelatedPersonSchema');
+
+  api.export('Restriction');
+  api.export('Restrictions');
+  api.export('RestrictionSchema');
 
   api.export('RiskAssessment');
   api.export('RiskAssessments');
@@ -269,6 +306,10 @@ Package.onUse(function (api) {
   api.export('ValueSet');
   api.export('ValueSets');
   api.export('ValueSetSchema');
+
+  api.export('VerificationResult');
+  api.export('VerificationResults');
+  api.export('VerificationResultSchema');
 
   api.export('BaseModel');
 

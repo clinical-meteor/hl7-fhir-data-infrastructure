@@ -19,7 +19,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -445,7 +446,7 @@ function SearchParametersTable(props){
   if(searchParameters){
     if(searchParameters.length > 0){              
       searchParameters.forEach(function(searchParameter){
-        searchParametersToRender.push(FhirDehydrator.flattenSearchParameter(searchParameter, internalDateFormat));
+        searchParametersToRender.push(FhirDehydrator.dehydrateSearchParameter(searchParameter, internalDateFormat));
       });  
     }
   }
@@ -559,7 +560,9 @@ SearchParametersTable.propTypes = {
   tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
-  checklist: PropTypes.bool
+  checklist: PropTypes.bool,
+
+  dateFormat: PropTypes.string
 };
 SearchParametersTable.defaultProps = {
   hideCheckbox: true,
@@ -581,7 +584,9 @@ SearchParametersTable.defaultProps = {
   selectedSearchParameterId: '',
   rowsPerPage: 5,
   tableRowSize: 'medium',
-  actionButtonLabel: 'Export'
+  actionButtonLabel: 'Export',
+
+  dateFormat: "YYYY-MM-DD"
 }
 
 export default SearchParametersTable; 

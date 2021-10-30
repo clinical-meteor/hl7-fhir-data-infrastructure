@@ -18,7 +18,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -56,7 +57,7 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-flattenMessageHeader = function(messageHeader, internalDateFormat){
+dehydrateMessageHeader = function(messageHeader, internalDateFormat){
   let result = {
     _id: '',
     meta: '',
@@ -357,7 +358,7 @@ function MessageHeadersTable(props){
   if(props.messageHeaders){
     if(props.messageHeaders.length > 0){              
       props.messageHeaders.forEach(function(messageHeader){
-        messageHeadersToRender.push(FhirDehydrator.flattenMessageHeader(messageHeader, internalDateFormat));
+        messageHeadersToRender.push(FhirDehydrator.dehydrateMessageHeader(messageHeader, internalDateFormat));
       });  
     }
   }

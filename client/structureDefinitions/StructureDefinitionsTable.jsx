@@ -19,7 +19,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -445,7 +446,7 @@ function StructureDefinitionsTable(props){
   if(structureDefinitions){
     if(structureDefinitions.length > 0){              
       structureDefinitions.forEach(function(structureDefinition){
-        structureDefinitionsToRender.push(FhirDehydrator.flattenStructureDefinition(structureDefinition, internalDateFormat));
+        structureDefinitionsToRender.push(FhirDehydrator.dehydrateStructureDefinition(structureDefinition, internalDateFormat));
       });  
     }
   }
@@ -559,7 +560,9 @@ StructureDefinitionsTable.propTypes = {
   tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
-  checklist: PropTypes.bool
+  checklist: PropTypes.bool,
+
+  dateFormat: PropTypes.string
 };
 StructureDefinitionsTable.defaultProps = {
   hideCheckbox: true,
@@ -581,7 +584,9 @@ StructureDefinitionsTable.defaultProps = {
   selectedStructureDefinitionId: '',
   rowsPerPage: 5,
   tableRowSize: 'medium',
-  actionButtonLabel: 'Export'
+  actionButtonLabel: 'Export',
+
+  dateFormat: "YYYY-MM-DD"
 }
 
 export default StructureDefinitionsTable; 

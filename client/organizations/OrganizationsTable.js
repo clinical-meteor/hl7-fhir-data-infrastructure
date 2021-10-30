@@ -19,7 +19,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 
@@ -60,7 +61,7 @@ let styles = {
   // //===========================================================================
   // // FLATTENING / MAPPING
 
-  // flattenOrganization = function(organization){
+  // dehydrateOrganization = function(organization){
   //   let result = {
   //     _id: '',
   //     id: '',
@@ -514,7 +515,7 @@ function OrganizationsTable(props){
 
       organizations.forEach(function(organization){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          organizationsToRender.push(FhirDehydrator.flattenOrganization(organization));
+          organizationsToRender.push(FhirDehydrator.dehydrateOrganization(organization));
         }
         count++;
       });  

@@ -19,7 +19,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -445,7 +446,7 @@ function CodeSystemsTable(props){
   if(codeSystems){
     if(codeSystems.length > 0){              
       codeSystems.forEach(function(codeSystem){
-        codeSystemsToRender.push(FhirDehydrator.flattenCodeSystem(codeSystem, internalDateFormat));
+        codeSystemsToRender.push(FhirDehydrator.dehydrateCodeSystem(codeSystem, internalDateFormat));
       });  
     }
   }

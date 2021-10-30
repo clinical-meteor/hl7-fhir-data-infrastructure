@@ -31,7 +31,8 @@ let set = _.set;
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 //===========================================================================
 // THEMING
@@ -48,72 +49,6 @@ const useStyles = makeStyles(theme => ({
     padding: '0 30px',
   }
 }));
-
-
-// //===========================================================================
-// // FLATTENING / MAPPING
-
-// flattenProvenance = function(procedure, internalDateFormat){
-//   let result = {
-//     _id: '',
-//     id: '',
-//     meta: '',
-//     identifier: '',
-//     status: '',
-//     targetReferenceDisplay: '',
-//     code: '',
-//     codeDisplay: '',
-//     subject: '',
-//     subjectReference: '',
-//     performerDisplay: '',
-//     occurredDateTime: '',
-//     performedEnd: '',
-//     notesCount: '',
-//     bodySiteDisplay: ''
-//   };
-
-//   if(!internalDateFormat){
-//     internalDateFormat = "YYYY-MM-DD";
-//   }
-
-//   result._id =  get(procedure, 'id') ? get(procedure, 'id') : get(procedure, '_id');
-
-//   result.id = get(procedure, 'id', '');
-//   result.status = get(procedure, 'status', '');
-//   result.targetReferenceDisplay = get(procedure, 'targetReference.coding[0].display', '');
-//   result.identifier = get(procedure, 'identifier[0].value');
-//   result.code = get(procedure, 'code.coding[0].code');
-//   result.codeDisplay = get(procedure, 'code.coding[0].display');
-//   result.targetReferenceDisplay = get(procedure, 'targetReference.coding[0].display')    
-
-//   if(get(procedure, 'subject')){
-//     result.subject = get(procedure, 'subject.display', '');
-//     result.subjectReference = get(procedure, 'subject.reference', '');
-//   } else if(get(procedure, 'patient')){
-//     result.subject = get(procedure, 'patient.display', '');
-//     result.subjectReference = get(procedure, 'patient.reference', '');
-//   }
-
-//   result.occurredDateTime = moment(get(procedure, 'performedDateTime')).format(internalDateFormat);      
-//   result.performerDisplay = moment(get(procedure, 'performer.display')).format(internalDateFormat);
-//   result.performerReference = get(procedure, 'performer.reference');
-//   result.bodySiteDisplay = get(procedure, 'bodySite.display');
-
-//   if(get(procedure, 'performedPeriod')){
-//     result.occurredDateTime = moment(get(procedure, 'performedPeriod.start')).format(internalDateFormat);      
-//     result.performedEnd = moment(get(procedure, 'performedPeriod.end')).format(internalDateFormat);      
-//   }
-
-//   let notes = get(procedure, 'notes')
-//   if(notes && notes.length > 0){
-//     result.notesCount = notes.length;
-//   } else {
-//     result.notesCount = 0;
-//   }
-
-//   return result;
-// }
-
 
 function ProvenancesTable(props){
   logger.info('Rendering the ProvenancesTable');
@@ -548,7 +483,7 @@ function ProvenancesTable(props){
       let count = 0;    
       provenances.forEach(function(procedure){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          provenancesToRender.push(FhirDehydrator.flattenProvenance(procedure, internalDateFormat));
+          provenancesToRender.push(FhirDehydrator.dehydrateProvenance(procedure, internalDateFormat));
         }
         count++;
       });  

@@ -18,7 +18,8 @@ import { get } from 'lodash';
 import moment from 'moment'
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -56,7 +57,7 @@ let styles = {
 // //===========================================================================
 // // FLATTENING / MAPPING
 
-// flattenQuestionnaireResponse = function(questionnaireResponse){
+// dehydrateQuestionnaireResponse = function(questionnaireResponse){
 //   let result = {
 //     _id: questionnaireResponse._id,
 //     id: '',
@@ -479,7 +480,7 @@ function QuestionnaireResponsesTable(props){
   if(questionnaireResponses){
     if(questionnaireResponses.length > 0){              
       questionnaireResponses.forEach(function(questionnaireResponse){
-        responsesToRender.push(FhirDehydrator.flattenQuestionnaireResponse(questionnaireResponse, internalDateFormat));
+        responsesToRender.push(FhirDehydrator.dehydrateQuestionnaireResponse(questionnaireResponse, internalDateFormat));
       });  
     }
   }

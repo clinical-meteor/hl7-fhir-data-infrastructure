@@ -210,7 +210,7 @@ export function CodeSystemsPage(props){
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
-      <CardHeader title={data.codeSystems.length + " Structure Definitions"} />
+      <CardHeader title={data.codeSystems.length + " Code Systems"} />
       <CardContent>
 
         <CodeSystemsTable 
@@ -232,7 +232,7 @@ export function CodeSystemsPage(props){
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
         <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.codeSystems.length + " CodeSystems"} />
+          <CardHeader title={data.codeSystems.length + " Code Systems"} />
           <CardContent>
             <CodeSystemsTable 
               codeSystems={ data.codeSystems }

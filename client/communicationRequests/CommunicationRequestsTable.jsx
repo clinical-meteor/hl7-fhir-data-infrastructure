@@ -21,9 +21,12 @@ import { get } from 'lodash';
 import moment from 'moment';
 
 
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 import { FhirUtilities } from '../../lib/FhirUtilities';
 import { Theming } from '../../lib/Theming';
+
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
+
 
 // //===========================================================================
 // // THEMING
@@ -388,7 +391,7 @@ export function CommunicationRequestsTable(props){
 
       communicationRequests.forEach(function(communicationRequest){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          communicationRequestsToRender.push(FhirDehydrator.flattenCommunicationRequest(communicationRequest, internalDateFormat));
+          communicationRequestsToRender.push(FhirDehydrator.dehydrateCommunicationRequest(communicationRequest, internalDateFormat));
         }
         count++;
       });  

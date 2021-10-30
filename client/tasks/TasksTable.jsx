@@ -19,7 +19,8 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -487,7 +488,7 @@ function TasksTable(props){
   if(tasks){
     if(tasks.length > 0){              
       tasks.forEach(function(task){
-        tasksToRender.push(FhirDehydrator.flattenTask(task, internalDateFormat));
+        tasksToRender.push(FhirDehydrator.dehydrateTask(task, internalDateFormat));
       });  
     }
   }

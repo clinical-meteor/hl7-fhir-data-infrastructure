@@ -29,7 +29,8 @@ import moment from 'moment'
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -399,7 +400,7 @@ function ImmunizationsTable(props){
 
       immunizations.forEach(function(immunization){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          immunizationsToRender.push(FhirDehydrator.flattenImmunization(immunization, internalDateFormat));
+          immunizationsToRender.push(FhirDehydrator.dehydrateImmunization(immunization, internalDateFormat));
         }
         count++;
       });  

@@ -23,7 +23,8 @@ import { get } from 'lodash';
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
 
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -223,11 +224,11 @@ function ConditionsTable(props){
     //     barcode: false
     //   }
       
-    //   let flattenedCollection = conditions.map(function(record){
-    //     return flattenCondition(record, "YYYY-MM-DD");
+    //   let dehydrateedCollection = conditions.map(function(record){
+    //     return dehydrateCondition(record, "YYYY-MM-DD");
     //   });      
   
-    //   flattenedCollection.forEach(function(row){
+    //   dehydrateedCollection.forEach(function(row){
     //     if(get(row, 'id')){
     //       columnHasData.barcode = true;
     //     }
@@ -621,7 +622,7 @@ function ConditionsTable(props){
 
       conditions.forEach(function(condition){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          conditionsToRender.push(FhirDehydrator.flattenCondition(condition, internalDateFormat));
+          conditionsToRender.push(FhirDehydrator.dehydrateCondition(condition, internalDateFormat));
         }
         count++;
       });  

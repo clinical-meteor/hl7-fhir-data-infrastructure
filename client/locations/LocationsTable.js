@@ -17,7 +17,8 @@ import moment from 'moment'
 import { get, has, findIndex } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -345,7 +346,7 @@ function LocationsTable(props){
 
       props.locations.forEach(function(location){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          locationsToRender.push(FhirDehydrator.flattenLocation(location, simplifiedAddress, extensionUrl));
+          locationsToRender.push(FhirDehydrator.dehydrateLocation(location, simplifiedAddress, extensionUrl));
         }
         count++;
       });  

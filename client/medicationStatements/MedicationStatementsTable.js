@@ -22,7 +22,8 @@ import moment from 'moment'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -471,7 +472,7 @@ function MedicationStatementsTable(props){
 
       props.medicationStatements.forEach(function(medicationStatement){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          medicationStatementsToRender.push(FhirDehydrator.flattenMedicationStatement(medicationStatement, "R4", medicationsCursor));
+          medicationStatementsToRender.push(FhirDehydrator.dehydrateMedicationStatement(medicationStatement, "R4", medicationsCursor));
         }
         count++;
       });  

@@ -20,7 +20,8 @@ let set = _.set;
 let has = _.has;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, TableNoData } from 'fhir-starter';
+import { TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 import { useTracker } from 'meteor/react-meteor-data';
 
@@ -180,7 +181,7 @@ export function ServiceRequestsTable(props){
 
   // data.serviceRequests = [];
 
-  // function flattenServiceRequest(document){
+  // function dehydrateServiceRequest(document){
   //     let result = {
   //       _id: document._id,
   //       id: get(document, 'id', ''),
@@ -659,8 +660,8 @@ export function ServiceRequestsTable(props){
 
       serviceRequests.forEach(function(serviceRequest){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          serviceRequestsToRender.push(FhirDehydrator.flattenServiceRequest(serviceRequest, internalDateFormat));
-          // serviceRequestsToRender.push(flattenServiceRequest(serviceRequest, internalDateFormat));
+          serviceRequestsToRender.push(FhirDehydrator.dehydrateServiceRequest(serviceRequest, internalDateFormat));
+          // serviceRequestsToRender.push(dehydrateServiceRequest(serviceRequest, internalDateFormat));
         }
         count++;
       });  

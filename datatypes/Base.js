@@ -2,6 +2,10 @@ import SimpleSchema from 'simpl-schema';
 import Code from './Code';
 
 BaseSchema = new SimpleSchema({
+  "_id" : {
+    type: String,
+    optional: true
+  },
   "id" : {
     type: String,
     optional: true

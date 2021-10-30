@@ -21,7 +21,9 @@ let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
 
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
+
 
 //===========================================================================
 // THEMING
@@ -428,7 +430,7 @@ function DevicesTable(props){
 
       props.devices.forEach(function(device){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          devicesToRender.push(FhirDehydrator.flattenDevice(device, internalDateFormat));
+          devicesToRender.push(FhirDehydrator.dehydrateDevice(device, internalDateFormat));
         }
         count++;
       });  

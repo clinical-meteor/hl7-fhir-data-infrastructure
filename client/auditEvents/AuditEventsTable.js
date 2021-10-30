@@ -4,7 +4,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-// import { Card, CardActions, CardMedia, CardText, CardTitle } from 'material-ui/Card';
 import { 
   Table,
   TableBody,
@@ -14,14 +13,12 @@ import {
   TablePagination
 } from '@material-ui/core';
 
-import { FhirDehydrator, StyledCard, PageCanvas, flattenAuditEvent } from 'fhir-starter';
-
 import moment from 'moment'
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 
-import FhirUtilities from '../../lib/FhirUtilities';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
@@ -501,7 +498,7 @@ function AuditEventsTable(props){
 
       auditEvents.forEach(function(auditEvent){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          auditEventsToRender.push(FhirDehydrator.flattenAuditEvent(auditEvent));
+          auditEventsToRender.push(FhirDehydrator.dehydrateAuditEvent(auditEvent));
         }
         count++;
       }); 

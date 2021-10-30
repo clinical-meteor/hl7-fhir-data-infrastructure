@@ -23,7 +23,8 @@ let get = _.get;
 let set = _.set;
 let has = _.has;
 
-import { FhirDehydrator, StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
@@ -632,7 +633,7 @@ function ObservationsTable(props){
       let count = 0;    
       observations.forEach(function(observation){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          observationsToRender.push(FhirDehydrator.flattenObservation(
+          observationsToRender.push(FhirDehydrator.dehydrateObservation(
             observation, 
             internalDateFormat, 
             get(props, 'numeratorCode'),

@@ -29,8 +29,7 @@ import { get, set } from 'lodash';
 
 import moment from 'moment'
 
-import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 //===========================================================================
 // ICONS
@@ -559,7 +558,7 @@ function AllergyIntolerancesTable(props){
 
       allergyIntolerances.forEach(function(allergyIntolerance){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          allergyIntolerancesToRender.push(FhirDehydrator.flattenAllergyIntolerance(allergyIntolerance));
+          allergyIntolerancesToRender.push(FhirDehydrator.dehydrateAllergyIntolerance(allergyIntolerance));
         }
         count++;
       }); 
@@ -737,7 +736,7 @@ function AllergyIntolerancesTable(props){
 //   render () {
 //     let tableRows = [];
 //     for (var i = 0; i < data.allergyIntolerances.length; i++) {
-//       var newRow = FhirDehydrator.flattenAllergyIntolerance(data.allergyIntolerance[i])
+//       var newRow = FhirDehydrator.dehydrateAllergyIntolerance(data.allergyIntolerance[i])
       
 //       let rowStyle = {
 //         cursor: 'pointer'

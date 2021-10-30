@@ -16,7 +16,9 @@ let get = _.get;
 let set = _.set;
 
 import FhirUtilities from '../../lib/FhirUtilities';
-import { FhirDehydrator, StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
+import { FhirDehydrator } from '../../lib/FhirDehydrator';
+
 
 //===========================================================================
 // THEMING
@@ -53,7 +55,7 @@ let styles = {
 //===========================================================================
 // FLATTENING / MAPPING
 
-// flattenMeasure = function(measure, internalDateFormat){
+// dehydrateMeasure = function(measure, internalDateFormat){
 //   let result = {
 //     _id: '',
 //     meta: '',
@@ -633,7 +635,7 @@ function MeasuresTable(props){
   if(measures){
     if(measures.length > 0){              
       measures.forEach(function(measure){
-        measuresToRender.push(FhirDehydrator.flattenMeasure(measure, internalDateFormat));
+        measuresToRender.push(FhirDehydrator.dehydrateMeasure(measure, internalDateFormat));
       });  
     }
   }

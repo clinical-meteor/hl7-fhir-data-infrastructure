@@ -6,6 +6,8 @@ import {AllergyIntolerances} from './lib/schemas/AllergyIntolerances';
 import {AuditEvents} from './lib/schemas/AuditEvents';
 import {Bundles} from './lib/schemas/Bundles';
 import {CarePlans} from './lib/schemas/CarePlans';
+import {CareTeams} from './lib/schemas/CareTeams';
+import {CodeSystems} from './lib/schemas/CodeSystems';
 import {Conditions} from './lib/schemas/Conditions';
 import {Consents} from './lib/schemas/Consents';
 import {Communications} from './lib/schemas/Communications';
@@ -14,7 +16,10 @@ import {Devices} from './lib/schemas/Devices';
 import {DiagnosticReports} from './lib/schemas/DiagnosticReports';
 import {DocumentReferences} from './lib/schemas/DocumentReferences';
 import {Encounters} from './lib/schemas/Encounters';
+import {Endpoints} from './lib/schemas/Endpoints';
+import {HealthcareServices} from './lib/schemas/HealthcareServices';
 import {Immunizations} from './lib/schemas/Immunizations';
+import {InsurancePlans} from './lib/schemas/InsurancePlans';
 import {Goals} from './lib/schemas/Goals';
 import {Locations} from './lib/schemas/Locations';
 import {Lists} from './lib/schemas/Lists';
@@ -24,18 +29,24 @@ import {Medications} from './lib/schemas/Medications';
 import {MedicationOrders} from './lib/schemas/MedicationOrders';
 import {MedicationStatements} from './lib/schemas/MedicationStatements';
 import {MessageHeaders} from './lib/schemas/MessageHeaders';
+import {Networks} from './lib/schemas/Networks';
 import {Observations} from './lib/schemas/Observations';
 import {Organizations} from './lib/schemas/Organizations';
+import {OrganizationAffiliations} from './lib/schemas/OrganizationAffiliations';
 import {Patients} from './lib/schemas/Patients';
 import {Practitioners} from './lib/schemas/Practitioners';
+import {PractitionerRoles} from './lib/schemas/PractitionerRoles';
 import {Procedures} from './lib/schemas/Procedures';
 import {Provenances} from './lib/schemas/Provenances';
 import {Questionnaires} from './lib/schemas/Questionnaires';
 import {QuestionnaireResponses} from './lib/schemas/QuestionnaireResponses';
+import {Restrictions} from './lib/schemas/Restrictions';
 import {RiskAssessments} from './lib/schemas/RiskAssessments';
+import {SearchParameters} from './lib/schemas/SearchParameters';
 import {ServiceRequests} from './lib/schemas/ServiceRequests';
 import {StructureDefinitions} from './lib/schemas/StructureDefinitions';
 import {Tasks} from './lib/schemas/Tasks';
+import {VerificationResults} from './lib/schemas/VerificationResults';
 import {ValueSets} from './lib/schemas/ValueSets';
 
 
@@ -104,15 +115,23 @@ import DocumentReferencesTable from './client/documentReferences/DocumentReferen
 
 import EncountersPage from './client/encounters/EncountersPage';
 import EncountersTable from './client/encounters/EncountersTable';
-// import EncounterDetail from './client/encounters/EncounterDetail';
+
+import EndpointsPage from './client/endpoints/EndpointsPage';
+import EndpointsTable from './client/endpoints/EndpointsTable';
 
 import ExplanationOfBenefitsPage from './client/explanationOfBenefits/ExplanationOfBenefitsPage';
 import ExplanationOfBenefitsTable from './client/explanationOfBenefits/ExplanationOfBenefitsTable';
 // import ExplanationOfBenefitDetail from './client/explanationOfBenefits/ExplanationOfBenefitDetail';
 
+import HealthcareServicesPage from './client/healthcareServices/HealthcareServicesPage';
+import HealthcareServicesTable from './client/healthcareServices/HealthcareServicesTable';
+
 import ImmunizationsPage from './client/immunizations/ImmunizationsPage';
 import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
 // import ImmunizationDetail from './client/immunizations/ImmunizationDetail';
+
+import InsurancePlansPage from './client/insurancePlans/InsurancePlansPage';
+import InsurancePlansTable from './client/insurancePlans/InsurancePlansTable';
 
 import GoalsPage from './client/goals/GoalsPage';
 // import GoalsTable from './client/goals/GoalsTable';
@@ -154,13 +173,18 @@ import MessageHeadersPage from './client/messageHeaders/MessageHeadersPage';
 import MessageHeadersTable from './client/messageHeaders/MessageHeadersTable';
 // import MessageHeaderDetail from './client/messageHeaders/MessageHeaderDetail';
 
+import NetworksPage from './client/networks/NetworksPage';
+import NetworksTable from './client/networks/NetworksTable';
+
 import ObservationsPage from './client/observations/ObservationsPage';
 import ObservationsTable from './client/observations/ObservationsTable';
 import ObservationDetail from './client/observations/ObservationDetail';
 
 import OrganizationsPage from './client/organizations/OrganizationsPage';
 import OrganizationsTable from './client/organizations/OrganizationsTable';
-// import OrganizationDetail from './client/organizations/OrganizationDetail';
+
+import OrganizationAffiliationsPage from './client/organizationAffiliations/OrganizationAffiliationsPage';
+import OrganizationAffiliationsTable from './client/organizationAffiliations/OrganizationAffiliationsTable';
 
 import PatientsPage from './client/patients/PatientsPage';
 
@@ -169,7 +193,9 @@ import PersonsTable from './client/persons/PersonsTable';
 
 import PractitionersPage from './client/practitioners/PractitionersPage';
 import PractitionersTable from './client/practitioners/PractitionersTable';
-// import PractitionerDetail from './client/practitioners/PractitionerDetail';
+
+import PractitionerRolesPage from './client/practitionerRoles/PractitionerRolesPage';
+import PractitionerRolesTable from './client/practitionerRoles/PractitionerRolesTable';
 
 import ProceduresPage from './client/procedures/ProceduresPage';
 import ProceduresTable from './client/procedures/ProceduresTable';
@@ -204,14 +230,17 @@ import ServiceRequestForm from './client/serviceRequests/ServiceRequestForm';
 import StructureDefinitionsPage from './client/structureDefinitions/StructureDefinitionsPage';
 import StructureDefinitionsTable from './client/structureDefinitions/StructureDefinitionsTable';
 
+import RestrictionsPage from './client/restrictions/RestrictionsPage';
+import RestrictionsTable from './client/restrictions/RestrictionsTable';
 
 import TasksPage from './client/tasks/TasksPage';
 import TasksTable from './client/tasks/TasksTable';
-// import TaskDetail from './client/tasks/TaskDetail';
+
+import VerificationResultsPage from './client/verificationResults/VerificationResultsPage';
+import VerificationResultsTable from './client/verificationResults/VerificationResultsTable';
 
 import ValueSetsPage from './client/valuesets/ValueSetsPage';
 import ValueSetsTable from './client/valuesets/ValueSetsTable';
-// import ValueSetDetail from './client/valuesets/ValueSetDetail';
 
 import DynamicSpacer from './ui/DynamicSpacer';
 
@@ -295,6 +324,11 @@ let DynamicRoutes = [{
   component: EncountersPage,
   requireAuth: true
 }, {
+  name: 'EndpointsPage',
+  path: '/endpoints',
+  component: EndpointsPage,
+  requireAuth: true
+}, {
   name: 'ExplanationOfBenefitsPage',
   path: '/explanation-of-benefits',
   component: ExplanationOfBenefitsPage,
@@ -305,9 +339,19 @@ let DynamicRoutes = [{
   component: GoalsPage,
   requireAuth: true
 }, {
+  name: 'HealthcareServicesPage',
+  path: '/healthcare-services',
+  component: HealthcareServicesPage,
+  requireAuth: true
+}, {
   name: 'ImmunizationsPage',
   path: '/immunizations',
   component: ImmunizationsPage,
+  requireAuth: true
+}, {
+  name: 'InsurancePlansPage',
+  path: '/insurance-plans',
+  component: InsurancePlansPage,
   requireAuth: true
 }, {
   name: 'LocationsPage',
@@ -350,6 +394,11 @@ let DynamicRoutes = [{
   component: MessageHeadersPage,
   requireAuth: true
 }, {
+  name: 'NetworksPage',
+  path: '/networks',
+  component: NetworksPage,
+  requireAuth: true
+}, {
   name: 'ObservationsPage',
   path: '/observations',
   component: ObservationsPage,
@@ -360,6 +409,11 @@ let DynamicRoutes = [{
   component: OrganizationsPage,
   requireAuth: true
 }, {
+  name: 'OrganizationAffiliationsPage',
+  path: '/organization-affiliations',
+  component: OrganizationAffiliationsPage,
+  requireAuth: true
+}, {
   name: 'PatientsPage',
   path: '/patients',
   component: PatientsPage,
@@ -368,6 +422,11 @@ let DynamicRoutes = [{
   name: 'PractitionersPage',
   path: '/practitioners',
   component: PractitionersPage,
+  requireAuth: true
+}, {
+  name: 'PractitionerRolesPage',
+  path: '/practitioner-roles',
+  component: PractitionerRolesPage,
   requireAuth: true
 }, {
   name: 'PersonsPage',
@@ -405,6 +464,16 @@ let DynamicRoutes = [{
   component: RiskAssessmentsPage,
   requireAuth: true
 }, {
+  name: 'RestrictionsPage',
+  path: '/restrictions',
+  component: RestrictionsPage,
+  requireAuth: true
+}, {
+  name: 'SearchParametersPage',
+  path: '/search-parameters',
+  component: SearchParametersPage,
+  requireAuth: true
+}, {
   name: 'ServiceRequestsPage',
   path: '/service-requests',
   component: ServiceRequestsPage,
@@ -418,6 +487,11 @@ let DynamicRoutes = [{
   name: 'StructureDefinitionsPage',
   path: '/structure-definitions',
   component: StructureDefinitionsPage,
+  requireAuth: true
+}, {
+  name: 'VerificationResultsPage',
+  path: '/verification-results',
+  component: VerificationResultsPage,
   requireAuth: true
 }, {
   name: 'ValueSetsPage',
@@ -512,17 +586,35 @@ let SidebarElements = [{
   iconName: 'ic_transfer_within_a_station',
   collectionName: 'Encounters'
 }, {
+  primaryText: 'Endpoints',
+  to: '/endpoints',
+  href: '/endpoints',
+  iconName: 'notepad',
+  collectionName: 'Endpoints'
+}, {
   primaryText: 'Explanation Of Benefits',
   to: '/explanation-of-benefits',
   href: '/explanation-of-benefits',
   iconName: 'notepad',
   collectionName: 'ExplanationOfBenefits'
 }, {
+  primaryText: 'Healthcare Services',
+  to: '/healthcare-services',
+  href: '/healthcare-services',
+  iconName: 'notepad',
+  collectionName: 'HealthcareServices'  
+}, {
   primaryText: 'Immunizations',
   to: '/immunizations',
   href: '/immunizations',
   iconName: 'eyedropper',
   collectionName: 'Immunizations'  
+}, {
+  primaryText: 'Insurance Plans',
+  to: '/insurance-plans',
+  href: '/insurance-plans',
+  iconName: 'notepad',
+  collectionName: 'InsurancePlans'  
 }, {
   primaryText: 'Locations',
   to: '/locations',
@@ -578,6 +670,12 @@ let SidebarElements = [{
   iconName: 'envelopeO',
   collectionName: 'MessageHeaders'  
 }, {
+  primaryText: 'Networks',
+  to: '/networks',
+  href: '/networks',
+  iconName: 'notepad',
+  collectionName: 'Networks' 
+}, {
   primaryText: 'Observations',
   to: '/observations',
   href: '/observations',
@@ -589,6 +687,12 @@ let SidebarElements = [{
   href: '/organizations',
   iconName: 'hospitalO',
   collectionName: 'Organizations'
+}, {
+  primaryText: 'Organization Affiliations',
+  to: '/organization-affiliations',
+  href: '/organization-affiliations',
+  iconName: 'hospitalO',
+  collectionName: 'OrganizationAffiliations'
 }, {
   primaryText: 'Patients',
   to: '/patients',
@@ -607,6 +711,12 @@ let SidebarElements = [{
   href: '/practitioners',
   iconName: 'userMd',
   collectionName: 'Practitioners'
+}, {
+  primaryText: 'Practitioner Roles',
+  to: '/practitioner-roles',
+  href: '/practitioner-roles',
+  iconName: 'userMd',
+  collectionName: 'PractitionerRoles'
 }, {
   primaryText: 'Procedures',
   to: '/procedures',
@@ -644,6 +754,12 @@ let SidebarElements = [{
   iconName: 'ic_format_list_bulleted',
   collectionName: 'RiskAssessments'
 }, {
+  primaryText: 'Restrictions',
+  to: '/restrictions',
+  href: '/restrictions',
+  iconName: 'notepad',
+  collectionName: 'Restrictions'
+}, {
   primaryText: 'SearchParameters',
   to: '/search-parameters',
   href: '/search-parameters',
@@ -673,6 +789,12 @@ let SidebarElements = [{
   href: '/valuesets',
   iconName: 'notepad',
   collectionName: 'ValueSets'
+}, {
+  primaryText: 'VerificationResults',
+  to: '/verification-results',
+  href: '/verification-results',
+  iconName: 'notepad',
+  collectionName: 'VerificationResults'
 }];
   
 let AdminSidebarElements = [{
@@ -706,9 +828,27 @@ let AdminSidebarElements = [{
   to: '/encounters',
   href: '/encounters'
 }, {
+  primaryText: 'Endpoints',
+  to: '/endpoints',
+  href: '/endpoints',
+  iconName: 'notepad',
+  collectionName: 'Endpoints'
+}, {
+  primaryText: 'Healthcare Services',
+  to: '/healthcare-services',
+  href: '/healthcare-services',
+  iconName: 'notepad',
+  collectionName: 'HealthcareServices'  
+}, {
   primaryText: 'Immunizations',
   to: '/immunizations',
   href: '/immunizations'
+}, {
+  primaryText: 'Insurance Plans',
+  to: '/insurance-plans',
+  href: '/insurance-plans',
+  iconName: 'notepad',
+  collectionName: 'InsurancePlans'  
 }, {
   primaryText: 'Lists',
   to: '/lists',
@@ -738,13 +878,26 @@ let AdminSidebarElements = [{
   to: '/medication-statements',
   href: '/medication-statements'
 }, {
-  primaryText: 'Observations',
-  to: '/observations',
-  href: '/observations'
+  primaryText: 'Networks',
+  to: '/networks',
+  href: '/networks',
+  iconName: 'notepad',
+  collectionName: 'Networks' 
 }, {
   primaryText: 'Observations',
   to: '/observations',
   href: '/observations'
+}, {
+  primaryText: 'Organizations',
+  to: '/organizations',
+  href: '/organizations',
+  iconName: 'hospitalO',
+}, {
+  primaryText: 'Organization Affiliations',
+  to: '/organization-affiliations',
+  href: '/organization-affiliations',
+  iconName: 'hospitalO',
+  collectionName: 'OrganizationAffiliations'
 }, {
   primaryText: 'Patients',
   to: '/patients',
@@ -754,9 +907,21 @@ let AdminSidebarElements = [{
   to: '/practitioners',
   href: '/practitioners'
 }, {
+  primaryText: 'Practitioner Roles',
+  to: '/practitioner-roles',
+  href: '/practitioner-roles',
+  iconName: 'userMd',
+  collectionName: 'PractitionerRoles'
+}, {
   primaryText: 'Procedures',
   to: '/procedures',
   href: '/procedures'
+}, {
+  primaryText: 'Restrictions',
+  to: '/restrictions',
+  href: '/restrictions',
+  iconName: 'notepad',
+  collectionName: 'Restrictions'
 }, {
   primaryText: 'Risk Assessments',
   to: '/risk-assessments',
@@ -781,6 +946,12 @@ let AdminSidebarElements = [{
   href: '/structure-definitions',
   iconName: 'ic_format_list_bulleted',
   collectionName: 'StructureDefinitions'
+}, {
+  primaryText: 'VerificationResults',
+  to: '/verification-results',
+  href: '/verification-results',
+  iconName: 'notepad',
+  collectionName: 'VerificationResults'
 }];
 
 
@@ -803,9 +974,9 @@ export {
 
   CarePlansPage,
   CarePlansTable,
-  // CarePlanDetail,
   GoalsTable,
   ActivitiesTable,
+  // CarePlanDetail,
 
   CodeSystemsPage,
   CodeSystemsTable,
@@ -847,15 +1018,21 @@ export {
 
   EncountersPage,
   EncountersTable,
-  // EncounterDetail,
+
+  EndpointsPage,
+  EndpointsTable,
 
   ExplanationOfBenefitsPage,
   ExplanationOfBenefitsTable,
-  // ExplanationOfBenefitDetail,
+
+  HealthcareServicesPage,
+  HealthcareServicesTable,
 
   ImmunizationsPage,
   ImmunizationsTable,
-  // ImmunizationDetail,
+
+  InsurancePlansPage,
+  InsurancePlansTable,
 
   GoalsPage,
   // GoalsTable,
@@ -888,6 +1065,9 @@ export {
   MedicationStatementsPage,
   MedicationStatementsTable,
 
+  NetworksPage,
+  NetworksTable,
+
   ObservationsPage,
   ObservationsTable,
   ObservationDetail,
@@ -895,10 +1075,16 @@ export {
   OrganizationsPage,
   OrganizationsTable,
 
+  OrganizationAffiliationsPage,
+  OrganizationAffiliationsTable,
+
   PatientsPage,
 
   PractitionersPage,
   PractitionersTable,
+
+  PractitionerRolesPage,
+  PractitionerRolesTable,
 
   ProceduresPage,
   ProceduresTable,
@@ -913,6 +1099,9 @@ export {
 
   QuestionnaireResponsesPage,
   QuestionnaireResponsesTable,
+
+  RestrictionsPage,
+  RestrictionsTable,
 
   RiskAssessmentsPage,
   RiskAssessmentsTable,
@@ -933,6 +1122,9 @@ export {
 
   ValueSetsPage,
   ValueSetsTable,
+
+  VerificationsPage,
+  VerificationsTable,
 
   FhirDehydrator,
   FhirUtilities,
