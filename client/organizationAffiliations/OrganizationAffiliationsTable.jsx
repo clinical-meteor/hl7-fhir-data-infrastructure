@@ -78,6 +78,20 @@ function OrganizationAffiliationsTable(props){
     hideCheckbox,
     hideActionIcons,
 
+    hideActive,
+    hidePeriodStart,
+    hidePeriodEnd,
+    hideOrganization,
+    hideParticipatingOrganization,
+    hideNetwork,
+    hideCode,
+    hideSpecialty,
+    hideLocation,
+    hideHealthcareService,
+    hideEmail,
+    hidePhone,
+    hideNumEndpoints,
+
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -107,27 +121,98 @@ function OrganizationAffiliationsTable(props){
       case "phone":
         hideCheckbox = true;
         hideActionIcons = false;
+        hideStatus = true;
         hideBarcode = true;
+        hideActive = true;
+        hidePeriodStart = true;
+        hidePeriodEnd = true;
+        hideOrganization = false;
+        hideParticipatingOrganization = true;
+        hideNetwork = false;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = false;
+        hideHealthcareService = false;
+        hideEmail = true;
+        hidePhone = true;
+        hideNumEndpointse = true;
+    
         break;
       case "tablet":
         hideCheckbox = true;
         hideActionIcons = false;
+        hideStatus = true;
         hideBarcode = true;
+        hideActive = true;
+        hidePeriodStart = true;
+        hidePeriodEnd = true;
+        hideOrganization = false;
+        hideParticipatingOrganization = true;
+        hideNetwork = false;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = false;
+        hideHealthcareService = false;
+        hideEmail = true;
+        hidePhone = true;
+        hideNumEndpointse = true;
         break;
       case "web":
         hideCheckbox = true;
         hideActionIcons = false;
+        hideStatus = true;
         hideBarcode = true;
+        hideActive = true;
+        hidePeriodStart = true;
+        hidePeriodEnd = true;
+        hideOrganization = false;
+        hideParticipatingOrganization = true;
+        hideNetwork = false;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = false;
+        hideHealthcareService = false;
+        hideEmail = true;
+        hidePhone = true;
+        hideNumEndpointse = true;
         break;
       case "desktop":
         hideCheckbox = true;
         hideActionIcons = false;
+        hideStatus = true;
         hideBarcode = true;
+        hideActive = true;
+        hidePeriodStart = true;
+        hidePeriodEnd = true;
+        hideOrganization = false;
+        hideParticipatingOrganization = true;
+        hideNetwork = false;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = false;
+        hideHealthcareService = false;
+        hideEmail = true;
+        hidePhone = true;
+        hideNumEndpointse = true;
         break;
       case "videowall":
-        hideCheckbox = false;
+        hideCheckbox = true;
         hideActionIcons = false;
+        hideStatus = true;
         hideBarcode = true;
+        hideActive = true;
+        hidePeriodStart = true;
+        hidePeriodEnd = true;
+        hideOrganization = false;
+        hideParticipatingOrganization = true;
+        hideNetwork = false;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = false;
+        hideHealthcareService = false;
+        hideEmail = true;
+        hidePhone = true;
+        hideNumEndpointse = true;
         break;            
     }
   }
@@ -212,6 +297,20 @@ function OrganizationAffiliationsTable(props){
     }
   } 
 
+  function renderActive(active){
+    if (!hideActive) {
+      return (
+        <TableCell className='active'>{ active }</TableCell>
+      );
+    }
+  }
+  function renderActiveHeader(){
+    if (!hideActive) {
+      return (
+        <TableCell className='active'>Active</TableCell>
+      );
+    }
+  }
   function renderStatus(status){
     if (!hideStatus) {
       return (
@@ -223,6 +322,162 @@ function OrganizationAffiliationsTable(props){
     if (!hideStatus) {
       return (
         <TableCell className='status'>Status</TableCell>
+      );
+    }
+  }
+  function renderIdentifier(identifier){
+    if (!hideIdentifier) {
+      return (
+        <TableCell className="identifier">{ identifier }</TableCell>
+      );
+    }
+  }
+  function renderIdentifierHeader(){
+    if (!hideIdentifier) {
+      return (
+        <TableCell className="identifier">Identifier</TableCell>
+      );
+    }
+  }
+  function renderNetwork(network){
+    if (!hideNetwork) {
+      return (
+        <TableCell className='network'>{ network }</TableCell>
+      );
+    }
+  }
+  function renderNetworkHeader(){
+    if (!hideNetwork) {
+      return (
+        <TableCell className='network'>Network</TableCell>
+      );
+    }
+  }
+    function renderOrganization(organization){
+    if (!hideOrganization) {
+      return (
+        <TableCell className='organization'>{ organization }</TableCell>
+      );
+    }
+  }
+  function renderOrganizationHeader(){
+    if (!hideOrganization) {
+      return (
+        <TableCell className='organization'>Organization</TableCell>
+      );
+    }
+  }
+  function renderParticipatingOrganization(participatingOrg){
+    if (!hideParticipatingOrganization) {
+      return (
+        <TableCell className='participatingOrg'>{ participatingOrg }</TableCell>
+      );
+    }
+  }
+  function renderParticipatingOrganizationHeader(){
+    if (!hideParticipatingOrganization) {
+      return (
+        <TableCell className='participatingOrg'>Participating Org</TableCell>
+      );
+    }
+  }
+  function renderCode(code){
+    if (!hideCode) {
+      return (
+        <TableCell className='code'>{ code }</TableCell>
+      );
+    }
+  }
+  function renderCodeHeader(){
+    if (!hideCode) {
+      return (
+        <TableCell className='code'>Code</TableCell>
+      );
+    }
+  }
+  function renderSpecialty(specialty){
+    if (!hideSpecialty) {
+      return (
+        <TableCell className='specialty'>{ specialty }</TableCell>
+      );
+    }
+  }
+  function renderSpecialtyHeader(){
+    if (!hideSpecialty) {
+      return (
+        <TableCell className='specialty'>Specialty</TableCell>
+      );
+    }
+  }
+
+  function renderLocation(location){
+    if (!hideLocation) {
+      return (
+        <TableCell className='location'>{ location }</TableCell>
+      );
+    }
+  }
+  function renderLocationHeader(){
+    if (!hideLocation) {
+      return (
+        <TableCell className='location'>Location</TableCell>
+      );
+    }
+  }
+
+  function renderHealthcareService(healthcareService){
+    if (!hideHealthcareService) {
+      return (
+        <TableCell className='healthcareService'>{ healthcareService }</TableCell>
+      );
+    }
+  }
+  function renderHealthcareServiceHeader(){
+    if (!hideHealthcareService) {
+      return (
+        <TableCell className='healthcareService'>Healthcare Service</TableCell>
+      );
+    }
+  }
+  function renderPhone(phone){
+    if (!hidePhone) {
+      return (
+        <TableCell className='phone'>{ phone }</TableCell>
+      );
+    }
+  }
+  function renderPhoneHeader(){
+    if (!hidePhone) {
+      return (
+        <TableCell className='phone'>Phone</TableCell>
+      );
+    }
+  }
+  function renderEmail(email){
+    if (!hideEmail) {
+      return (
+        <TableCell className='email'>{ email }</TableCell>
+      );
+    }
+  }
+  function renderEmailHeader(){
+    if (!hideEmail) {
+      return (
+        <TableCell className='email'>Email</TableCell>
+      );
+    }
+  }
+  function renderNumEndpoints(numEndpoints){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'>{ numEndpoints }</TableCell>
+      );
+    }
+  }
+  function renderNumEndpointsHeader(){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'># Endpoints</TableCell>
       );
     }
   }
@@ -338,6 +593,21 @@ function OrganizationAffiliationsTable(props){
           { renderActionIcons(organizationAffiliationsToRender[i]) }
           { renderStatus(organizationAffiliationsToRender[i].status) }
 
+          {/* { renderPeriodStart(organizationAffiliationsToRender[i].periodStart) }
+          { renderPeriodEnd(organizationAffiliationsToRender[i].periodEnd) } */}
+
+          { renderActive(organizationAffiliationsToRender[i].active) }
+          { renderOrganization(organizationAffiliationsToRender[i].organization) }
+          { renderParticipatingOrganization(organizationAffiliationsToRender[i].participatingOrganization) }
+          { renderNetwork(organizationAffiliationsToRender[i].network) }
+          { renderCode(organizationAffiliationsToRender[i].code) }
+          { renderSpecialty(organizationAffiliationsToRender[i].specialty) }
+          { renderLocation(organizationAffiliationsToRender[i].location) }
+          { renderHealthcareService(organizationAffiliationsToRender[i].healthcareService) }
+          { renderEmail(organizationAffiliationsToRender[i].email) }
+          { renderPhone(organizationAffiliationsToRender[i].phone) }
+          { renderNumEndpoints(organizationAffiliationsToRender[i].numEndpoints) }
+
           { renderBarcode(organizationAffiliationsToRender[i].id)}
         </TableRow>
       );       
@@ -352,7 +622,17 @@ function OrganizationAffiliationsTable(props){
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
             { renderStatusHeader() }
-            
+            { renderActiveHeader() }
+            { renderOrganizationHeader() }
+            { renderParticipatingOrganizationHeader() }
+            { renderNetworkHeader() }
+            { renderCodeHeader() }
+            { renderSpecialtyHeader() }
+            { renderLocationHeader() }
+            { renderHealthcareServiceHeader() }
+            { renderEmailHeader() }
+            { renderPhoneHeader() }
+            { renderNumEndpointsHeader() }
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -378,6 +658,20 @@ OrganizationAffiliationsTable.propTypes = {
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
+  hideActive: PropTypes.bool,
+  hidePeriodStart: PropTypes.bool,
+  hidePeriodEnd: PropTypes.bool,
+  hideOrganization: PropTypes.bool,
+  hideParticipatingOrganization: PropTypes.bool,
+  hideNetwork: PropTypes.bool,
+  hideCode: PropTypes.bool,
+  hideSpecialty: PropTypes.bool,
+  hideLocation: PropTypes.bool,
+  hideHealthcareService: PropTypes.bool,
+  hideEmail: PropTypes.bool,
+  hidePhone: PropTypes.bool,
+  hideNumEndpoints: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
@@ -393,6 +687,20 @@ OrganizationAffiliationsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
+
+  hideActive: false,
+  hidePeriodStart: false,
+  hidePeriodEnd: false,
+  hideOrganization: false,
+  hideParticipatingOrganization: false,
+  hideNetwork: false,
+  hideCode: false,
+  hideSpecialty: false,
+  hideLocation: false,
+  hideHealthcareService: false,
+  hideEmail: false,
+  hidePhone: false,
+  hideNumEndpoints: false,
 
   checklist: true,
   selectedOrganizationAffiliationId: '',

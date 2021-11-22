@@ -530,13 +530,14 @@ let SidebarElements = [{
   to: '/careteams',
   href: '/careteams',
   iconName: 'notepad',
-  collectionName: 'CareTeams'
+  collectionName: 'CareTeams',
+  requireAuth: true
 }, {
   primaryText: 'CodeSystems',
   to: '/code-systems',
   href: '/code-systems',
   iconName: 'notepad',
-  collectionName: 'CodeSystems'  
+  collectionName: 'CodeSystems'
 }, {
   primaryText: 'Conditions',
   to: '/conditions',
@@ -554,13 +555,15 @@ let SidebarElements = [{
   to: '/communications',
   href: '/communications',
   iconName: 'envelopeO',
-  collectionName: 'Communications'  
+  collectionName: 'Communications',
+  requireAuth: true
 }, {
   primaryText: 'Communication Requests',
   to: '/communication-requests',
   href: '/communication-requests',
   iconName: 'envelopeO',
-  collectionName: 'CommunicationRequests'    
+  collectionName: 'CommunicationRequests',
+  requireAuth: true
 }, {
   primaryText: 'Devices',
   to: '/devices',
@@ -674,7 +677,8 @@ let SidebarElements = [{
   to: '/networks',
   href: '/networks',
   iconName: 'notepad',
-  collectionName: 'Networks' 
+  collectionName: 'Networks',
+  requireAuth: true
 }, {
   primaryText: 'Observations',
   to: '/observations',
@@ -728,7 +732,8 @@ let SidebarElements = [{
   to: '/provenances',
   href: '/provenances',
   iconName: 'fire',
-  collectionName: 'Provenances'
+  collectionName: 'Provenances',
+  requireAuth: true
 }, {
   primaryText: 'Questionnaires',
   to: '/questionnaires',
@@ -746,7 +751,8 @@ let SidebarElements = [{
   to: '/related-persons',
   href: '/related-persons',
   iconName: 'users',
-  collectionName: 'RelatedPersons'
+  collectionName: 'RelatedPersons',
+  requireAuth: true
 }, {
   primaryText: 'Risk Assessments',
   to: '/risk-assessments',
@@ -758,7 +764,8 @@ let SidebarElements = [{
   to: '/restrictions',
   href: '/restrictions',
   iconName: 'notepad',
-  collectionName: 'Restrictions'
+  collectionName: 'Restrictions',
+  requireAuth: true
 }, {
   primaryText: 'SearchParameters',
   to: '/search-parameters',
@@ -776,7 +783,8 @@ let SidebarElements = [{
   to: '/tasks',
   href: '/tasks',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'Tasks'
+  collectionName: 'Tasks',
+  requireAuth: true
 }, {
   primaryText: 'StructureDefinitions',
   to: '/structure-definitions',
@@ -794,7 +802,8 @@ let SidebarElements = [{
   to: '/verification-results',
   href: '/verification-results',
   iconName: 'notepad',
-  collectionName: 'VerificationResults'
+  collectionName: 'VerificationResults',
+  requireAuth: true
 }];
   
 let AdminSidebarElements = [{

@@ -77,6 +77,16 @@ function InsurancePlansTable(props){
 
     hideCheckbox,
     hideActionIcons,
+    hideStatus,
+    hideType,
+    hideName,
+    hideAlias,
+    hideOwnedBy,
+    hideAdministeredBy,
+    hideCoverageArea,
+    hideCoverageType,
+    hideCoverageBenefitType,
+    hideNumEndpoints,
 
     onCellClick,
     onRowClick,
@@ -106,28 +116,78 @@ function InsurancePlansTable(props){
     switch (formFactorLayout) {
       case "phone":
         hideCheckbox = true;
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideBarcode = true;
+        hideStatus = false;
+        hideType = false;
+        hideName = false;
+        hideAlias = true;
+        hideOwnedBy = false;
+        hideAdministeredBy = false;
+        hideCoverageArea = false;
+        hideCoverageType = true;
+        hideCoverageBenefitType = true;    
+        hideNumEndpoints = false;
         break;
       case "tablet":
         hideCheckbox = true;
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideBarcode = true;
+        hideStatus = false;
+        hideType = false;
+        hideName = false;
+        hideAlias = true;
+        hideOwnedBy = false;
+        hideAdministeredBy = false;
+        hideCoverageArea = false;
+        hideCoverageType = true;
+        hideCoverageBenefitType = true;
+        hideNumEndpoints = false;
         break;
       case "web":
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideStatus = false;
+        hideType = false;
+        hideName = false;
+        hideAlias = true;
+        hideOwnedBy = false;
+        hideAdministeredBy = false;
+        hideCoverageArea = false;
+        hideCoverageType = true;
+        hideCoverageBenefitType = true;
+        hideNumEndpoints = false;
         break;
       case "desktop":
         hideCheckbox = true;
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideBarcode = true;
+        hideStatus = false;
+        hideType = false;
+        hideName = false;
+        hideAlias = true;
+        hideOwnedBy = false;
+        hideAdministeredBy = false;
+        hideCoverageArea = false;
+        hideCoverageType = false;
+        hideCoverageBenefitType = true;
+        hideNumEndpoints = false;
         break;
       case "videowall":
         hideCheckbox = false;
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideBarcode = true;
+        hideStatus = false;
+        hideType = false;
+        hideName = false;
+        hideAlias = false;
+        hideOwnedBy = false;
+        hideAdministeredBy = false;
+        hideCoverageArea = false;
+        hideCoverageType = false;
+        hideCoverageBenefitType = false;
+        hideNumEndpoints = false;
         break;            
     }
   }
@@ -226,7 +286,134 @@ function InsurancePlansTable(props){
       );
     }
   }
+  
+  function renderType(type){
+    if (!hideType) {
+      return (
+        <TableCell className='type'>{ type }</TableCell>
+      );
+    }
+  }
+  function renderTypeHeader(){
+    if (!hideType) {
+      return (
+        <TableCell className='type'>Type</TableCell>
+      );
+    }
+  }
+  function renderName(name){
+    if (!hideName) {
+      return (
+        <TableCell className='name'>{ name }</TableCell>
+      );
+    }
+  }
+  function renderNameHeader(){
+    if (!hideName) {
+      return (
+        <TableCell className='name'>Name</TableCell>
+      );
+    }
+  }
 
+  function renderAlias(alias){
+    if (!hideAlias) {
+      return (
+        <TableCell className='alias'>{ alias }</TableCell>
+      );
+    }
+  }
+  function renderAliasHeader(){
+    if (!hideAlias) {
+      return (
+        <TableCell className='alias'>Alias</TableCell>
+      );
+    }
+  }
+  function renderOwnedBy(ownedBy){
+    if (!hideOwnedBy) {
+      return (
+        <TableCell className='ownedBy'>{ ownedBy }</TableCell>
+      );
+    }
+  }
+  function renderOwnedByHeader(){
+    if (!hideOwnedBy) {
+      return (
+        <TableCell className='ownedBy'>Owned By</TableCell>
+      );
+    }
+  }
+  function renderAdministeredBy(administeredBy){
+    if (!hideAdministeredBy) {
+      return (
+        <TableCell className='administeredBy'>{ administeredBy }</TableCell>
+      );
+    }
+  }
+  function renderAdministeredByHeader(){
+    if (!hideAdministeredBy) {
+      return (
+        <TableCell className='administeredBy'>Administered By</TableCell>
+      );
+    }
+  }
+  function renderCoverageArea(coverageArea){
+    if (!hideCoverageArea) {
+      return (
+        <TableCell className='coverageArea'>{ coverageArea }</TableCell>
+      );
+    }
+  }
+  function renderCoverageAreaHeader(){
+    if (!hideCoverageArea) {
+      return (
+        <TableCell className='coverageArea'>Coverage Area</TableCell>
+      );
+    }
+  }
+  function renderCoverageType(coverageType){
+    if (!hideCoverageType) {
+      return (
+        <TableCell className='coverageType'>{ coverageType }</TableCell>
+      );
+    }
+  }
+  function renderCoverageTypeHeader(){
+    if (!hideCoverageType) {
+      return (
+        <TableCell className='coverageType'>Coverage Type</TableCell>
+      );
+    }
+  }
+  function renderCoverageBenefitType(coverageBenefit){
+    if (!hideCoverageBenefitType) {
+      return (
+        <TableCell className='coverageBenefit'>{ coverageBenefit }</TableCell>
+      );
+    }
+  }
+  function renderCoverageBenefitTypeHeader(){
+    if (!hideCoverageBenefitType) {
+      return (
+        <TableCell className='coverageBenefit'>Coverage Benefit</TableCell>
+      );
+    }
+  }
+  function renderNumEndpoints(numEndpoints){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'>{ numEndpoints }</TableCell>
+      );
+    }
+  }
+  function renderNumEndpointsHeader(){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'># Endpoints</TableCell>
+      );
+    }
+  }
 
   function renderBarcode(id){
     if (!hideBarcode) {
@@ -338,6 +525,15 @@ function InsurancePlansTable(props){
           { renderActionIcons(insurancePlansToRender[i]) }
           { renderStatus(insurancePlansToRender[i].status) }
 
+          { renderType(insurancePlansToRender[i].type) }
+          { renderName(insurancePlansToRender[i].name) }
+          { renderAlias(insurancePlansToRender[i].alias) }
+          { renderOwnedBy(insurancePlansToRender[i].ownedBy) }
+          { renderAdministeredBy(insurancePlansToRender[i].administeredBy) }
+          { renderCoverageArea(insurancePlansToRender[i].coverageArea) }
+          { renderCoverageType(insurancePlansToRender[i].coverageType) }
+          { renderCoverageBenefitType(insurancePlansToRender[i].coverageBenefitType) }
+
           { renderBarcode(insurancePlansToRender[i].id)}
         </TableRow>
       );       
@@ -352,6 +548,15 @@ function InsurancePlansTable(props){
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
             { renderStatusHeader() }
+
+            { renderTypeHeader() }
+            { renderNameHeader() }
+            { renderAliasHeader() }
+            { renderOwnedByHeader() }
+            { renderAdministeredByHeader() }
+            { renderCoverageAreaHeader() }
+            { renderCoverageTypeHeader() }
+            { renderCoverageBenefitTypeHeader() }
             
             { renderBarcodeHeader() }
           </TableRow>
@@ -378,6 +583,17 @@ InsurancePlansTable.propTypes = {
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
+  hideStatus: PropTypes.bool,
+  hideType: PropTypes.bool,
+  hideName: PropTypes.bool,
+  hideAlias: PropTypes.bool,
+  hideOwnedBy: PropTypes.bool,
+  hideAdministeredBy: PropTypes.bool,
+  hideCoverageArea: PropTypes.bool,
+  hideCoverageType: PropTypes.bool,
+  hideCoverageBenefitType: PropTypes.bool,
+  hideNumEndpoints: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
@@ -393,7 +609,16 @@ InsurancePlansTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
-
+  hideStatus: false,
+  hideType: false,
+  hideName: false,
+  hideAlias: false,
+  hideOwnedBy: false,
+  hideAdministeredBy: false,
+  hideCoverageArea: false,
+  hideCoverageType: false,
+  hideCoverageBenefitType: false,
+  hideNumEndpoints: false,
   checklist: true,
   selectedInsurancePlanId: '',
   rowsPerPage: 5,

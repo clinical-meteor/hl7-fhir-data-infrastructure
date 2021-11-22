@@ -55,6 +55,11 @@ Session.setDefault('organizationAffiliationChecklistMode', false)
 
 export function OrganizationAffiliationsPage(props){
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
+
   let data = {
     selectedAuditEventId: '',
     selectedAuditEvent: null,
@@ -223,6 +228,7 @@ export function OrganizationAffiliationsPage(props){
           paginationLimit={10}     
           checklist={data.organizationAffiliationChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          formFactorLayout={formFactor}
           count={data.organizationAffiliations.length}
           />
         </CardContent>
@@ -247,6 +253,7 @@ export function OrganizationAffiliationsPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              formFactorLayout={formFactor}
               count={data.organizationAffiliations.length}
               />
           </CardContent>
@@ -274,11 +281,6 @@ export function OrganizationAffiliationsPage(props){
       </Grid>
     </Grid>
   }
-
-
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   return (
     <PageCanvas id="organizationAffiliationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>

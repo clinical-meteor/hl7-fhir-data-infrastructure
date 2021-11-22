@@ -60,6 +60,11 @@ Session.setDefault('blockchainPractitionerData', []);
 Session.setDefault('fhirVersion', 'v1.0.2');
 
 export function PractitionersPage(props){
+  
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
   let data = {
     selectedPractitionerId: '',
     selectedPractitioner: null,
@@ -88,9 +93,6 @@ export function PractitionersPage(props){
     </Tab>                 
   }
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
 
@@ -105,6 +107,7 @@ export function PractitionersPage(props){
                 formFactorLayout={formFactor}
                 showBarcodes={false} 
                 count={data.practitioners.length}
+                formFactorLayout={formFactor}
                 rowsPerPage={10}
                 />
 

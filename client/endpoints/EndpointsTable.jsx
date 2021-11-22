@@ -78,6 +78,12 @@ function EndpointsTable(props){
     hideCheckbox,
     hideActionIcons,
 
+    hideStatus,
+    hideConnectionType,
+    hideName,
+    hideOrganization,
+    hideAddress,
+
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -108,26 +114,51 @@ function EndpointsTable(props){
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideStatus = false;
+        hideConnectionType = false;
+        hideName = false;
+        hideOrganization = false;
+        hideAddress = false;
         break;
       case "tablet":
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideStatus = false;
+        hideConnectionType = false;
+        hideName = false;
+        hideOrganization = false;
+        hideAddress = false;
         break;
       case "web":
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideStatus = false;
+        hideConnectionType = false;
+        hideName = false;
+        hideOrganization = false;
+        hideAddress = false;
         break;
       case "desktop":
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideStatus = false;
+        hideConnectionType = false;
+        hideName = false;
+        hideOrganization = false;
+        hideAddress = false;
         break;
       case "videowall":
         hideCheckbox = false;
         hideActionIcons = false;
         hideBarcode = true;
+        hideStatus = false;
+        hideConnectionType = false;
+        hideName = false;
+        hideOrganization = false;
+        hideAddress = false;
         break;            
     }
   }
@@ -226,7 +257,63 @@ function EndpointsTable(props){
       );
     }
   }
+  function renderName(name){
+    if (!hideName) {
+      return (
+        <TableCell className='name'>{ name }</TableCell>
+      );
+    }
+  }
+  function renderNameHeader(){
+    if (!hideName) {
+      return (
+        <TableCell className='name'>Name</TableCell>
+      );
+    }
+  }
 
+  function renderConnectionType(connectionType){
+    if (!hideConnectionType) {
+      return (
+        <TableCell className='connectionType'>{ connectionType }</TableCell>
+      );
+    }
+  }
+  function renderConnectionTypeHeader(){
+    if (!hideConnectionType) {
+      return (
+        <TableCell className='connectionType'>Connection Type</TableCell>
+      );
+    }
+  }
+  function renderOrganization(organization){
+    if (!hideOrganization) {
+      return (
+        <TableCell className='organization'>{ organization }</TableCell>
+      );
+    }
+  }
+  function renderOrganizationHeader(){
+    if (!hideOrganization) {
+      return (
+        <TableCell className='organization'>Organization</TableCell>
+      );
+    }
+  }
+  function renderAddress(address){
+    if (!hideAddress) {
+      return (
+        <TableCell className='address'>{ address }</TableCell>
+      );
+    }
+  }
+  function renderAddressHeader(){
+    if (!hideAddress) {
+      return (
+        <TableCell className='address'>Address</TableCell>
+      );
+    }
+  }
 
   function renderBarcode(id){
     if (!hideBarcode) {
@@ -334,9 +421,14 @@ function EndpointsTable(props){
           style={{cursor: 'pointer', height: '52px'}} 
           selected={selected}
         >
-          { renderCheckbox() }
+          { renderCheckbox(endpointsToRender[i]) }
           { renderActionIcons(endpointsToRender[i]) }
+
           { renderStatus(endpointsToRender[i].status) }
+          { renderConnectionType(endpointsToRender[i].connectionType) }
+          { renderName(endpointsToRender[i].name) }
+          { renderOrganization(endpointsToRender[i].managingOrganization) }
+          { renderAddress(endpointsToRender[i].address) }
 
           { renderBarcode(endpointsToRender[i].id)}
         </TableRow>
@@ -352,7 +444,10 @@ function EndpointsTable(props){
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
             { renderStatusHeader() }
-            
+            { renderConnectionTypeHeader() }
+            { renderNameHeader() }
+            { renderOrganizationHeader() }
+            { renderAddressHeader() }
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -377,6 +472,12 @@ EndpointsTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+  
+  hideStatus: PropTypes.bool,
+  hideConnectionType: PropTypes.bool,
+  hideName: PropTypes.bool,
+  hideOrganization: PropTypes.bool,
+  hideAddress: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -393,6 +494,12 @@ EndpointsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
+
+  hideStatus: false,
+  hideConnectionType: false,
+  hideName: false,
+  hideOrganization: false,
+  hideAddress: false,
 
   checklist: true,
   selectedEndpointId: '',

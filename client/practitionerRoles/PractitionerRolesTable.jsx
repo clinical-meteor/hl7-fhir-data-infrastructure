@@ -78,6 +78,17 @@ function PractitionerRolesTable(props){
     hideCheckbox,
     hideActionIcons,
 
+    hideIdentifier,
+    hidePractitioner,
+    hideOrganization,
+    hideCode,
+    hideSpecialty,
+    hideLocation,
+    hideHealthcareService,
+    hidePhone,
+    hideEmail,
+    hideNumEndpoints,
+  
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -106,28 +117,83 @@ function PractitionerRolesTable(props){
     switch (formFactorLayout) {
       case "phone":
         hideCheckbox = true;
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideBarcode = true;
+
+        hideIdentifier = true;
+        hidePractitioner = true;
+        hideOrganization = true;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = true;
+        hideHealthcareService = true;
+        hidePhone = true;
+        hideEmail = true;
+        hideNumEndpoints = false;    
         break;
       case "tablet":
         hideCheckbox = true;
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideBarcode = true;
+
+        hideIdentifier = true;
+        hidePractitioner = true;
+        hideOrganization = true;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = true;
+        hideHealthcareService = true;
+        hidePhone = true;
+        hideEmail = true;
+        hideNumEndpoints = false;
         break;
       case "web":
         hideCheckbox = true;
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideBarcode = true;
+
+        hideIdentifier = false;
+        hidePractitioner = true;
+        hideOrganization = true;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = true;
+        hideHealthcareService = true;
+        hidePhone = true;
+        hideEmail = true;
+        hideNumEndpoints = false;
         break;
       case "desktop":
         hideCheckbox = true;
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideBarcode = true;
+
+        hideIdentifier = false;
+        hidePractitioner = false;
+        hideOrganization = false;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = false;
+        hideHealthcareService = false;
+        hidePhone = true;
+        hideEmail = true;
+        hideNumEndpoints = false;
         break;
       case "videowall":
         hideCheckbox = false;
-        hideActionIcons = false;
-        hideBarcode = true;
+        hideActionIcons = true;
+        hideBarcode = false;
+
+        hideIdentifier = false;
+        hidePractitioner = false;
+        hideOrganization = false;
+        hideCode = false;
+        hideSpecialty = false;
+        hideLocation = false;
+        hideHealthcareService = false;
+        hidePhone = false;
+        hideEmail = false;
+        hideNumEndpoints = false;
         break;            
     }
   }
@@ -223,6 +289,149 @@ function PractitionerRolesTable(props){
     if (!hideStatus) {
       return (
         <TableCell className='status'>Status</TableCell>
+      );
+    }
+  }
+
+  function renderIdentifier(identifier){
+    if (!hideIdentifier) {
+      return (
+        <TableCell className='identifier'>{ identifier }</TableCell>
+      );
+    }
+  }
+  function renderIdentifierHeader(){
+    if (!hideIdentifier) {
+      return (
+        <TableCell className='identifier'>Identifier</TableCell>
+      );
+    }
+  }
+  function renderPractitioner(practitioner){
+    if (!hidePractitioner) {
+      return (
+        <TableCell className='practitioner'>{ practitioner }</TableCell>
+      );
+    }
+  }
+  function renderPractitionerHeader(){
+    if (!hidePractitioner) {
+      return (
+        <TableCell className='practitioner'>Practitioner</TableCell>
+      );
+    }
+  }
+  function renderOrganization(organization){
+    if (!hideOrganization) {
+      return (
+        <TableCell className='organization'>{ organization }</TableCell>
+      );
+    }
+  }
+  function renderOrganizationHeader(){
+    if (!hideOrganization) {
+      return (
+        <TableCell className='organization'>Organization</TableCell>
+      );
+    }
+  }
+  function renderCode(code){
+    if (!hideCode) {
+      return (
+        <TableCell className='code'>{ code }</TableCell>
+      );
+    }
+  }
+  function renderCodeHeader(){
+    if (!hideCode) {
+      return (
+        <TableCell className='code'>Code</TableCell>
+      );
+    }
+  }
+  function renderSpecialty(specialty){
+    if (!hideSpecialty) {
+      return (
+        <TableCell className='specialty'>{ specialty }</TableCell>
+      );
+    }
+  }
+  function renderSpecialtyHeader(){
+    if (!hideSpecialty) {
+      return (
+        <TableCell className='specialty'>Specialty</TableCell>
+      );
+    }
+  }
+
+  function renderLocation(location){
+    if (!hideLocation) {
+      return (
+        <TableCell className='location'>{ location }</TableCell>
+      );
+    }
+  }
+  function renderLocationHeader(){
+    if (!hideLocation) {
+      return (
+        <TableCell className='location'>Location</TableCell>
+      );
+    }
+  }
+
+  function renderHealthcareService(healthcareService){
+    if (!hideHealthcareService) {
+      return (
+        <TableCell className='healthcareService'>{ healthcareService }</TableCell>
+      );
+    }
+  }
+  function renderHealthcareServiceHeader(){
+    if (!hideHealthcareService) {
+      return (
+        <TableCell className='healthcareService'>Healthcare Service</TableCell>
+      );
+    }
+  }
+  function renderPhone(phone){
+    if (!hidePhone) {
+      return (
+        <TableCell className='phone'>{ phone }</TableCell>
+      );
+    }
+  }
+  function renderPhoneHeader(){
+    if (!hidePhone) {
+      return (
+        <TableCell className='phone'>Phone</TableCell>
+      );
+    }
+  }
+  function renderEmail(email){
+    if (!hideEmail) {
+      return (
+        <TableCell className='email'>{ email }</TableCell>
+      );
+    }
+  }
+  function renderEmailHeader(){
+    if (!hideEmail) {
+      return (
+        <TableCell className='email'>Email</TableCell>
+      );
+    }
+  }
+  function renderNumEndpoints(numEndpoints){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'>{ numEndpoints }</TableCell>
+      );
+    }
+  }
+  function renderNumEndpointsHeader(){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'># Endpoints</TableCell>
       );
     }
   }
@@ -337,7 +546,16 @@ function PractitionerRolesTable(props){
           { renderCheckbox() }
           { renderActionIcons(practitionerRolesToRender[i]) }
           { renderStatus(practitionerRolesToRender[i].status) }
-
+          { renderIdentifier(practitionerRolesToRender[i].identifier) }
+          { renderPractitioner(practitionerRolesToRender[i].practitioner) }
+          { renderOrganization(practitionerRolesToRender[i].organization) }
+          { renderCode(practitionerRolesToRender[i].code) }
+          { renderSpecialty(practitionerRolesToRender[i].specialty) }
+          { renderLocation(practitionerRolesToRender[i].location) }
+          { renderHealthcareService(practitionerRolesToRender[i].healthcareService) }
+          { renderPhone(practitionerRolesToRender[i].phone) }
+          { renderEmail(practitionerRolesToRender[i].email) }
+          { renderNumEndpoints(practitionerRolesToRender[i].numEndpoints) }
           { renderBarcode(practitionerRolesToRender[i].id)}
         </TableRow>
       );       
@@ -351,8 +569,17 @@ function PractitionerRolesTable(props){
           <TableRow>
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
-            { renderStatusHeader() }
-            
+            { renderStatusHeader() }            
+            { renderIdentifierHeader() }
+            { renderPractitionerHeader() }
+            { renderOrganizationHeader() }
+            { renderCodeHeader() }
+            { renderSpecialtyHeader() }
+            { renderLocationHeader() }
+            { renderHealthcareServiceHeader() }
+            { renderPhoneHeader() }
+            { renderEmailHeader() }
+            { renderNumEndpointsHeader() }
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -378,6 +605,18 @@ PractitionerRolesTable.propTypes = {
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
+  hideIdentifier: PropTypes.bool,
+  hidePractitioner: PropTypes.bool,
+  hideOrganization: PropTypes.bool,
+  hideStatus: PropTypes.bool,
+  hideCode: PropTypes.bool,
+  hideSpecialty: PropTypes.bool,
+  hideLocation: PropTypes.bool,
+  hideHealthcareService: PropTypes.bool,
+  hidePhone: PropTypes.bool,
+  hideEmail: PropTypes.bool,
+  hideNumEndpoints: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
@@ -393,6 +632,18 @@ PractitionerRolesTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
+  
+  hideStatus: true,
+  hideIdentifier: false,
+  hidePractitioner: false,
+  hideOrganization: false,
+  hideCode: false,
+  hideSpecialty: false,
+  hideLocation: false,
+  hideHealthcareService: false,
+  hidePhone: false,
+  hideEmail: false,
+  hideNumEndpoints: false,
 
   checklist: true,
   selectedPractitionerRoleId: '',

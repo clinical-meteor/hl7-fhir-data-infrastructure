@@ -78,6 +78,14 @@ function HealthcareServicesTable(props){
     hideCheckbox,
     hideActionIcons,
 
+    hideCategory,
+    hideType,
+    hideSpecialty,
+    hideName,
+    hideLocationDisplay,
+    hideProvidedBy,
+    hideNumEndpoints,
+  
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -108,26 +116,61 @@ function HealthcareServicesTable(props){
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideCategory = false;
+        hideType = false;
+        hideSpecialty = false;
+        hideName = false;
+        hideProvidedBy = false;
+        hideLocationDisplay = false;
+        hideNumEndpoints = false;    
         break;
       case "tablet":
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideCategory = false;
+        hideType = false;
+        hideSpecialty = false;
+        hideName = false;
+        hideProvidedBy = false;
+        hideLocationDisplay = false;
+        hideNumEndpoints = false;
         break;
       case "web":
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideCategory = false;
+        hideType = false;
+        hideSpecialty = false;
+        hideName = false;
+        hideProvidedBy = false;
+        hideLocationDisplay = false;
+        hideNumEndpoints = false;
         break;
       case "desktop":
         hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+        hideCategory = false;
+        hideType = false;
+        hideSpecialty = false;
+        hideName = false;
+        hideProvidedBy = false;
+        hideLocationDisplay = false;
+        hideNumEndpoints = false;
         break;
       case "videowall":
         hideCheckbox = false;
         hideActionIcons = false;
         hideBarcode = true;
+        hideCategory = false;
+        hideType = false;
+        hideSpecialty = false;
+        hideName = false;
+        hideProvidedBy = false;
+        hideLocationDisplay = false;
+        hideNumEndpoints = false;
         break;            
     }
   }
@@ -212,21 +255,104 @@ function HealthcareServicesTable(props){
     }
   } 
 
-  function renderStatus(status){
-    if (!hideStatus) {
+  function renderCategory(category){
+    if (!hideCategory) {
       return (
-        <TableCell className='status'>{ status }</TableCell>
+        <TableCell className='category'>{ category }</TableCell>
       );
     }
   }
-  function renderStatusHeader(){
-    if (!hideStatus) {
+  function renderCategoryHeader(){
+    if (!hideCategory) {
       return (
-        <TableCell className='status'>Status</TableCell>
+        <TableCell className='category'>Category</TableCell>
       );
     }
   }
-
+  function renderType(type){
+    if (!hideType) {
+      return (
+        <TableCell className='type'>{ type }</TableCell>
+      );
+    }
+  }
+  function renderTypeHeader(){
+    if (!hideType) {
+      return (
+        <TableCell className='type'>Type</TableCell>
+      );
+    }
+  }
+  function renderSpecialty(specialty){
+    if (!hideSpecialty) {
+      return (
+        <TableCell className='specialty'>{ specialty }</TableCell>
+      );
+    }
+  }
+  function renderSpecialtyHeader(){
+    if (!hideSpecialty) {
+      return (
+        <TableCell className='specialty'>Specialty</TableCell>
+      );
+    }
+  }
+  function renderName(name){
+    if (!hideName) {
+      return (
+        <TableCell className='name'>{ name }</TableCell>
+      );
+    }
+  }
+  function renderNameHeader(){
+    if (!hideName) {
+      return (
+        <TableCell className='name'>Name</TableCell>
+      );
+    }
+  }
+  function renderLocation(location){
+    if (!hideLocationDisplay) {
+      return (
+        <TableCell className='location'>{ location }</TableCell>
+      );
+    }
+  }
+  function renderLocationHeader(){
+    if (!hideLocationDisplay) {
+      return (
+        <TableCell className='location'>Location</TableCell>
+      );
+    }
+  }
+  function renderNumEndpoints(numEndpoints){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'>{ numEndpoints }</TableCell>
+      );
+    }
+  }
+  function renderNumEndpointsHeader(){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'># Endpoints</TableCell>
+      );
+    }
+  }
+  function renderProvidedBy(providedBy){
+    if (!hideProvidedBy) {
+      return (
+        <TableCell className='providedBy'>{ providedBy }</TableCell>
+      );
+    }
+  }
+  function renderProvidedByHeader(){
+    if (!hideProvidedBy) {
+      return (
+        <TableCell className='providedBy'>Provided By</TableCell>
+      );
+    }
+  }
 
   function renderBarcode(id){
     if (!hideBarcode) {
@@ -336,8 +462,13 @@ function HealthcareServicesTable(props){
         >
           { renderCheckbox() }
           { renderActionIcons(healthcareServicesToRender[i]) }
-          { renderStatus(healthcareServicesToRender[i].status) }
-
+          { renderCategory(healthcareServicesToRender[i].category) }
+          { renderType(healthcareServicesToRender[i].type) }
+          { renderSpecialty(healthcareServicesToRender[i].specialty) }
+          { renderName(healthcareServicesToRender[i].name) }
+          { renderLocation(healthcareServicesToRender[i].locationDisplay) }
+          { renderProvidedBy(healthcareServicesToRender[i].providedBy) }
+          { renderNumEndpoints(healthcareServicesToRender[i].numEndpoints) }
           { renderBarcode(healthcareServicesToRender[i].id)}
         </TableRow>
       );       
@@ -351,8 +482,13 @@ function HealthcareServicesTable(props){
           <TableRow>
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
-            { renderStatusHeader() }
-            
+            { renderCategoryHeader() }
+            { renderTypeHeader() }
+            { renderSpecialtyHeader() }
+            { renderNameHeader() }
+            { renderLocationHeader() }
+            { renderProvidedByHeader() }
+            { renderNumEndpointsHeader() }
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -378,6 +514,14 @@ HealthcareServicesTable.propTypes = {
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
 
+  hideCategory: PropTypes.bool,
+  hideType: PropTypes.bool,
+  hideSpecialty: PropTypes.bool,
+  hideName: PropTypes.bool,
+  hideLocationDisplay: PropTypes.bool,
+  hideProvidedBy: PropTypes.bool,
+  hideNumEndpoints: PropTypes.bool,
+
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
@@ -393,6 +537,14 @@ HealthcareServicesTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
+
+  hideCategory: false,
+  hideType: false,
+  hideSpecialty: false,
+  hideName: false,
+  hideLocationDisplay: false,
+  hideProvidedBy: false,
+  hideNumEndpoints: false,
 
   checklist: true,
   selectedHealthcareServiceId: '',

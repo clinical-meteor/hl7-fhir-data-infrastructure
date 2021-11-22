@@ -55,6 +55,10 @@ Session.setDefault('practitionerRoleChecklistMode', false)
 
 export function PractitionerRolesPage(props){
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
   let data = {
     selectedAuditEventId: '',
     selectedAuditEvent: null,
@@ -223,6 +227,7 @@ export function PractitionerRolesPage(props){
           paginationLimit={10}     
           checklist={data.practitionerRoleChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          formFactorLayout={formFactor}
           count={data.practitionerRoles.length}
           />
         </CardContent>
@@ -247,6 +252,7 @@ export function PractitionerRolesPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              formFactorLayout={formFactor}
               count={data.practitionerRoles.length}
               />
           </CardContent>
@@ -275,10 +281,6 @@ export function PractitionerRolesPage(props){
     </Grid>
   }
 
-
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   return (
     <PageCanvas id="practitionerRolesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>

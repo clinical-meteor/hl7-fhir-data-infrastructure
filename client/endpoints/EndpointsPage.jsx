@@ -211,9 +211,9 @@ export function EndpointsPage(props){
           hideCheckbox={false}
           hideStatus={false}
           hideName={false}
-          hideTitle={false}
-          hideVersion={false}
-          hideExperimental={false}
+          hideConnectionType={false}
+          hideOrganization={false}
+          hideAddress={false}    
           paginationLimit={10}     
           checklist={data.endpointChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
@@ -235,9 +235,9 @@ export function EndpointsPage(props){
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}
-              hideTitle={false}
-              hideVersion={false}
-              hideExperimental={false}    
+              hideConnectionType={false}
+              hideOrganization={false}
+              hideAddress={false}    
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }

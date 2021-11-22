@@ -54,6 +54,10 @@ Session.setDefault('insurancePlanChecklistMode', false)
 
 export function InsurancePlansPage(props){
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
   let data = {
     selectedAuditEventId: '',
     selectedAuditEvent: null,
@@ -68,9 +72,6 @@ export function InsurancePlansPage(props){
     },
     insurancePlanChecklistMode: false
   };
-
-  
-
 
   data.onePageLayout = useTracker(function(){
     return Session.get('InsurancePlansPage.onePageLayout');
@@ -222,6 +223,7 @@ export function InsurancePlansPage(props){
           paginationLimit={10}     
           checklist={data.insurancePlanChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          formFactorLayout={formFactor}
           count={data.insurancePlans.length}
           />
         </CardContent>
@@ -246,6 +248,7 @@ export function InsurancePlansPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              formFactorLayout={formFactor}
               count={data.insurancePlans.length}
               />
           </CardContent>
@@ -273,11 +276,6 @@ export function InsurancePlansPage(props){
       </Grid>
     </Grid>
   }
-
-
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   return (
     <PageCanvas id="insurancePlansPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
