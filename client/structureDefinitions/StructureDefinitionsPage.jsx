@@ -15,9 +15,8 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
-// import StructureDefinitionDetail from './StructureDefinitionDetail';
+import StructureDefinitionDetail from './StructureDefinitionDetail';
 import StructureDefinitionsTable from './StructureDefinitionsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -27,7 +26,7 @@ import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-import { StructureDefinitions } from '../../lib/schemas/StructureDefinitions';
+// import { StructureDefinitions } from '../../lib/schemas/StructureDefinitions';
 
 
 //---------------------------------------------------------------
@@ -41,6 +40,7 @@ Session.setDefault('selectedStructureDefinition', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('structureDefinitionsArray', []);
 Session.setDefault('StructureDefinitionsPage.onePageLayout', true)
+Session.setDefault('StructureDefinitionsTable.hideCheckbox', true)
 
 //---------------------------------------------------------------
 // Theming
@@ -76,6 +76,9 @@ export function StructureDefinitionsPage(props){
 
   data.onePageLayout = useTracker(function(){
     return Session.get('StructureDefinitionsPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('StructureDefinitionsTable.hideCheckbox');
   }, [])
   data.selectedStructureDefinitionId = useTracker(function(){
     return Session.get('selectedStructureDefinitionId');
@@ -183,12 +186,25 @@ export function StructureDefinitionsPage(props){
     } 
     Session.set('structureDefinitionPageTabIndex', 1);
   }
-  function handleRowClick(structureDefinitionId, foo, bar){
+  function handleRowClick(structureDefinitionId){
     console.log('StructureDefinitionsPage.handleRowClick', structureDefinitionId)
     let structureDefinition = StructureDefinitions.findOne({id: structureDefinitionId});
 
-    Session.set('selectedStructureDefinitionId', get(structureDefinition, 'id'));
-    Session.set('selectedStructureDefinition', structureDefinition);
+    if(structureDefinition){
+      Session.set('selectedStructureDefinitionId', get(structureDefinition, 'id'));
+      Session.set('selectedStructureDefinition', structureDefinition);
+      Session.set('StructureDefinition.Current', structureDefinition);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "StructureDefinitionDetail");
+        Session.set('mainAppDialogTitle', "Edit Definition");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    } else {
+      console.log('No structureDefinition found...')
+    }
   }
   function onInsert(structureDefinitionId){
     Session.set('selectedStructureDefinitionId', '');
@@ -215,7 +231,7 @@ export function StructureDefinitionsPage(props){
 
         <StructureDefinitionsTable 
           structureDefinitions={ data.structureDefinitions }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -223,6 +239,7 @@ export function StructureDefinitionsPage(props){
           hideExperimental={false}
           paginationLimit={10}     
           checklist={data.structureDefinitionChecklistMode}
+          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           count={data.structureDefinitions.length}
           />
@@ -238,7 +255,7 @@ export function StructureDefinitionsPage(props){
               structureDefinitions={ data.structureDefinitions }
               selectedStructureDefinitionId={ data.selectedStructureDefinitionId }
               hideIdentifier={true} 
-              hideCheckbox={true}
+              hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

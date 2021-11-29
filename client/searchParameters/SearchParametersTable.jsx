@@ -116,7 +116,6 @@ function SearchParametersTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        hideCheckbox = true;
         hideActionIcons = false;
 
         hideVersion = false;
@@ -132,7 +131,6 @@ function SearchParametersTable(props){
         hideBarcode = true;
         break;
       case "tablet":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideVersion = false;
         hideName = false;
@@ -146,7 +144,6 @@ function SearchParametersTable(props){
         hideBarcode = true;
         break;
       case "web":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideVersion = false;
         hideName = false;
@@ -160,7 +157,6 @@ function SearchParametersTable(props){
         hideBarcode = true;
         break;
       case "desktop":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideVersion = false;
         hideName = false;
@@ -174,7 +170,6 @@ function SearchParametersTable(props){
         hideBarcode = true;
         break;
       case "videowall":
-        hideCheckbox = false;
         hideActionIcons = false;
         hideVersion = false;
         hideName = false;
@@ -453,7 +448,7 @@ function SearchParametersTable(props){
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(searchParametersToRender.length === 0){
@@ -477,9 +472,9 @@ function SearchParametersTable(props){
         <TableRow 
           className="searchParameterRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, searchParametersToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, searchParametersToRender[i].id)} 
           hover={true} 
-          style={{cursor: 'pointer', height: '52px'}} 
+          style={rowStyle} 
           selected={selected}
         >
           { renderCheckbox() }

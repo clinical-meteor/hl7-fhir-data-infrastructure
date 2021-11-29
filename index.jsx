@@ -78,7 +78,7 @@ import CareTeamsTable from './client/careTeams/CareTeamsTable';
 
 import CodeSystemsPage from './client/codeSystems/CodeSystemsPage';
 import CodeSystemsTable from './client/codeSystems/CodeSystemsTable';
-// import CodeSystemDetail from './client/codeSystems/CodeSystemDetail';
+import CodeSystemDetail from './client/codeSystems/CodeSystemDetail';
 
 import CompositionsPage from './client/compositions/CompositionsPage';
 import CompositionsTable from './client/compositions/CompositionsTable';
@@ -118,6 +118,7 @@ import EncountersTable from './client/encounters/EncountersTable';
 
 import EndpointsPage from './client/endpoints/EndpointsPage';
 import EndpointsTable from './client/endpoints/EndpointsTable';
+import EndpointDetail from './client/endpoints/EndpointDetail';
 
 import ExplanationOfBenefitsPage from './client/explanationOfBenefits/ExplanationOfBenefitsPage';
 import ExplanationOfBenefitsTable from './client/explanationOfBenefits/ExplanationOfBenefitsTable';
@@ -125,6 +126,7 @@ import ExplanationOfBenefitsTable from './client/explanationOfBenefits/Explanati
 
 import HealthcareServicesPage from './client/healthcareServices/HealthcareServicesPage';
 import HealthcareServicesTable from './client/healthcareServices/HealthcareServicesTable';
+import HealthcareServiceDetail from './client/healthcareServices/HealthcareServiceDetail';
 
 import ImmunizationsPage from './client/immunizations/ImmunizationsPage';
 import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
@@ -132,6 +134,7 @@ import ImmunizationsTable from './client/immunizations/ImmunizationsTable';
 
 import InsurancePlansPage from './client/insurancePlans/InsurancePlansPage';
 import InsurancePlansTable from './client/insurancePlans/InsurancePlansTable';
+import InsurancePlanDetail from './client/insurancePlans/InsurancePlanDetail';
 
 import GoalsPage from './client/goals/GoalsPage';
 // import GoalsTable from './client/goals/GoalsTable';
@@ -144,6 +147,7 @@ import ListItemsTable from './client/lists/ListItemsTable';
 
 import LocationsTable from './client/locations/LocationsTable';
 import LocationsPage from './client/locations/LocationsPage';
+import LocationDetail from './client/locations/LocationDetail';
 
 import MeasuresPage from './client/measures/MeasuresPage';
 import MeasuresTable from './client/measures/MeasuresTable';
@@ -182,9 +186,11 @@ import ObservationDetail from './client/observations/ObservationDetail';
 
 import OrganizationsPage from './client/organizations/OrganizationsPage';
 import OrganizationsTable from './client/organizations/OrganizationsTable';
+import OrganizationDetail from './client/organizations/OrganizationDetail';
 
 import OrganizationAffiliationsPage from './client/organizationAffiliations/OrganizationAffiliationsPage';
 import OrganizationAffiliationsTable from './client/organizationAffiliations/OrganizationAffiliationsTable';
+import OrganizationAffiliationDetail from './client/organizationAffiliations/OrganizationAffiliationDetail';
 
 import PatientsPage from './client/patients/PatientsPage';
 
@@ -193,9 +199,11 @@ import PersonsTable from './client/persons/PersonsTable';
 
 import PractitionersPage from './client/practitioners/PractitionersPage';
 import PractitionersTable from './client/practitioners/PractitionersTable';
+import PractitionerDetail from './client/practitioners/PractitionerDetail';
 
 import PractitionerRolesPage from './client/practitionerRoles/PractitionerRolesPage';
 import PractitionerRolesTable from './client/practitionerRoles/PractitionerRolesTable';
+import PractitionerRoleDetail from './client/practitionerRoles/PractitionerRoleDetail';
 
 import ProceduresPage from './client/procedures/ProceduresPage';
 import ProceduresTable from './client/procedures/ProceduresTable';
@@ -222,6 +230,7 @@ import RiskAssessmentForm from './client/riskAssessments/RiskAssessmentForm';
 
 import SearchParametersPage from './client/searchParameters/SearchParametersPage';
 import SearchParametersTable from './client/searchParameters/SearchParametersTable';
+import SearchParameterDetail from './client/searchParameters/SearchParameterDetail';
 
 import ServiceRequestsPage from './client/serviceRequests/ServiceRequestsPage';
 import ServiceRequestsTable from './client/serviceRequests/ServiceRequestsTable';
@@ -229,6 +238,7 @@ import ServiceRequestForm from './client/serviceRequests/ServiceRequestForm';
 
 import StructureDefinitionsPage from './client/structureDefinitions/StructureDefinitionsPage';
 import StructureDefinitionsTable from './client/structureDefinitions/StructureDefinitionsTable';
+import StructureDefinitionDetail from './client/structureDefinitions/StructureDefinitionDetail';
 
 import RestrictionsPage from './client/restrictions/RestrictionsPage';
 import RestrictionsTable from './client/restrictions/RestrictionsTable';
@@ -241,6 +251,7 @@ import VerificationResultsTable from './client/verificationResults/VerificationR
 
 import ValueSetsPage from './client/valuesets/ValueSetsPage';
 import ValueSetsTable from './client/valuesets/ValueSetsTable';
+import ValueSetDetail from './client/valuesets/ValueSetDetail';
 
 import DynamicSpacer from './ui/DynamicSpacer';
 
@@ -987,6 +998,7 @@ export {
   ActivitiesTable,
   // CarePlanDetail,
 
+  CodeSystemDetail,
   CodeSystemsPage,
   CodeSystemsTable,
 
@@ -1030,18 +1042,21 @@ export {
 
   EndpointsPage,
   EndpointsTable,
+  EndpointDetail,
 
   ExplanationOfBenefitsPage,
   ExplanationOfBenefitsTable,
 
   HealthcareServicesPage,
   HealthcareServicesTable,
+  HealthcareServiceDetail,
 
   ImmunizationsPage,
   ImmunizationsTable,
 
   InsurancePlansPage,
   InsurancePlansTable,
+  InsurancePlanDetail,
 
   GoalsPage,
   // GoalsTable,
@@ -1054,6 +1069,7 @@ export {
 
   LocationsTable,
   LocationPage,
+  LocaitionDetail,
 
   MeasuresPage,
   MeasuresTable,
@@ -1083,17 +1099,21 @@ export {
 
   OrganizationsPage,
   OrganizationsTable,
+  OrganizationDetail,
 
   OrganizationAffiliationsPage,
   OrganizationAffiliationsTable,
+  OrganizationAffiliationDetail,
 
   PatientsPage,
 
   PractitionersPage,
   PractitionersTable,
+  PractitionerDetail,
 
   PractitionerRolesPage,
   PractitionerRolesTable,
+  PractitionerRoleDetail,
 
   ProceduresPage,
   ProceduresTable,
@@ -1118,6 +1138,7 @@ export {
 
   SearchParametersPage,
   SearchParametersTable,
+  SearchParameterDetail,
 
   ServiceRequestsPage,
   ServiceRequestsTable,
@@ -1125,12 +1146,14 @@ export {
 
   StructureDefinitionsPage,
   StructureDefinitionsTable,
+  StructureDefinitionDetail,
 
   TasksPage,
   TasksTable,
 
   ValueSetsPage,
   ValueSetsTable,
+  ValueSetDetail,
 
   VerificationsPage,
   VerificationsTable,

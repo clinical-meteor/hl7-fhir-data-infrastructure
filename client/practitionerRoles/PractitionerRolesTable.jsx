@@ -116,7 +116,6 @@ function PractitionerRolesTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideBarcode = true;
 
@@ -132,7 +131,6 @@ function PractitionerRolesTable(props){
         hideNumEndpoints = false;    
         break;
       case "tablet":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideBarcode = true;
 
@@ -148,7 +146,6 @@ function PractitionerRolesTable(props){
         hideNumEndpoints = false;
         break;
       case "web":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideBarcode = true;
 
@@ -164,7 +161,6 @@ function PractitionerRolesTable(props){
         hideNumEndpoints = false;
         break;
       case "desktop":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideBarcode = true;
 
@@ -180,7 +176,6 @@ function PractitionerRolesTable(props){
         hideNumEndpoints = false;
         break;
       case "videowall":
-        hideCheckbox = false;
         hideActionIcons = true;
         hideBarcode = false;
 
@@ -514,7 +509,7 @@ function PractitionerRolesTable(props){
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(practitionerRolesToRender.length === 0){
@@ -538,9 +533,9 @@ function PractitionerRolesTable(props){
         <TableRow 
           className="practitionerRoleRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, practitionerRolesToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, practitionerRolesToRender[i].id)} 
           hover={true} 
-          style={{cursor: 'pointer', height: '52px'}} 
+          style={rowStyle} 
           selected={selected}
         >
           { renderCheckbox() }

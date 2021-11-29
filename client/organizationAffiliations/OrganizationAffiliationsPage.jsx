@@ -17,7 +17,7 @@ import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-// import OrganizationAffiliationDetail from './OrganizationAffiliationDetail';
+import OrganizationAffiliationDetail from './OrganizationAffiliationDetail';
 import OrganizationAffiliationsTable from './OrganizationAffiliationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -26,7 +26,7 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-
+// import { OrganizationAffiliations } from '../../lib/schemas/OrganizationAffiliations';
 
 
 //---------------------------------------------------------------
@@ -40,6 +40,7 @@ Session.setDefault('selectedOrganizationAffiliation', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('organizationAffiliationsArray', []);
 Session.setDefault('OrganizationAffiliationsPage.onePageLayout', true)
+Session.setDefault('OrganizationAffiliationsTable.hideCheckbox', true)
 
 //---------------------------------------------------------------
 // Theming
@@ -80,6 +81,9 @@ export function OrganizationAffiliationsPage(props){
 
   data.onePageLayout = useTracker(function(){
     return Session.get('OrganizationAffiliationsPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('OrganizationAffiliationsTable.hideCheckbox');
   }, [])
   data.selectedOrganizationAffiliationId = useTracker(function(){
     return Session.get('selectedOrganizationAffiliationId');
@@ -187,12 +191,25 @@ export function OrganizationAffiliationsPage(props){
     } 
     Session.set('organizationAffiliationPageTabIndex', 1);
   }
-  function handleRowClick(organizationAffiliationId, foo, bar){
-    console.log('OrganizationAffiliationsPage.handleRowClick', organizationAffiliationId)
-    let organizationAffiliation = OrganizationAffiliations.findOne({id: organizationAffiliationId});
+  function handleRowClick(orgAffiliationId){
+    console.log('OrganizationAffiliationsPage.handleRowClick', orgAffiliationId)
+    let orgAffiliation = OrganizationAffiliations.findOne({id: orgAffiliationId});
 
-    Session.set('selectedOrganizationAffiliationId', get(organizationAffiliation, 'id'));
-    Session.set('selectedOrganizationAffiliation', organizationAffiliation);
+    if(orgAffiliation){
+      Session.set('selectedOrganizationAffiliationId', get(orgAffiliation, 'id'));
+      Session.set('selectedOrganizationAffiliation', orgAffiliation);
+      Session.set('OrganizationAffiliation.Current', orgAffiliation);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "OrganizationAffiliationDetail");
+        Session.set('mainAppDialogTitle', "Edit Affiliation");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    } else {
+      console.log('No OrgAffiliation found...')
+    }
   }
   function onInsert(organizationAffiliationId){
     Session.set('selectedOrganizationAffiliationId', '');
@@ -219,7 +236,7 @@ export function OrganizationAffiliationsPage(props){
 
         <OrganizationAffiliationsTable 
           organizationAffiliations={ data.organizationAffiliations }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -227,6 +244,7 @@ export function OrganizationAffiliationsPage(props){
           hideExperimental={false}
           paginationLimit={10}     
           checklist={data.organizationAffiliationChecklistMode}
+          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           formFactorLayout={formFactor}
           count={data.organizationAffiliations.length}
@@ -243,7 +261,7 @@ export function OrganizationAffiliationsPage(props){
               organizationAffiliations={ data.organizationAffiliations }
               selectedOrganizationAffiliationId={ data.selectedOrganizationAffiliationId }
               hideIdentifier={true} 
-              hideCheckbox={false}
+              hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

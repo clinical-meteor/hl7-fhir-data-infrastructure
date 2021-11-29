@@ -16,14 +16,19 @@ import {
 
 import React from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+
 import PropTypes from 'prop-types';
 
 import { Meteor } from 'meteor/meteor';
 
 import moment from 'moment';
 import { get, set } from 'lodash';
-// import { setFlagsFromString } from 'v8';
+
+import { FhirUtilities } from '../../lib/FhirUtilities';
+import { lookupReferenceName } from '../../lib/FhirDehydrator';
+
+//====================================================================================
+// THEMING
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
@@ -49,12 +54,22 @@ const useStyles = makeStyles(theme => ({
 
 
 
+//====================================================================================
+// SESSION VARIABLES
+
+let defaultValueSet = {
+  resourceType: 'ValueSet'
+}
+
+Session.setDefault('ValueSet.Current', defaultValueSet)
 
 
-function ValueSetDetail(props){
+//====================================================================================
+// MAIN COMPONENT
+
+export function ValueSetDetail(props){
 
   let classes = useStyles();
-
 
   let { 
     children, 
@@ -62,6 +77,19 @@ function ValueSetDetail(props){
     ...otherProps 
   } = props;
 
+
+  let activeValueSet = defaultValueSet;
+
+  activeValueSet = useTracker(function(){
+    return Session.get('ValueSet.Current');
+  }, []);
+
+  function updateField(path, event){
+    console.log('updateField', event.currentTarget.value);
+
+    // setCurrentCodeSystem(set(currentCodeSystem, path, event.currentTarget.value))
+    Session.set('ValueSet.Current', set(activeCodeSystem, path, event.currentTarget.value))    
+  }
 
 
 
@@ -118,16 +146,16 @@ function ValueSetDetail(props){
   }
 
   let approvedOnDate = '';
-  if(get(valueSet, 'approvedDate')){
-    approvedOnDate = moment(get(valueSet, 'approvedDate')).format("YYYY-MM-DD")
+  if(get(activeValueSet, 'approvedDate')){
+    approvedOnDate = moment(get(activeValueSet, 'approvedDate')).format("YYYY-MM-DD")
   }
   let lastEditedDate = '';
-  if(get(valueSet, 'date')){
-    lastEditedDate = moment(get(valueSet, 'date')).format("YYYY-MM-DD")
+  if(get(activeValueSet, 'date')){
+    lastEditedDate = moment(get(activeValueSet, 'date')).format("YYYY-MM-DD")
   }
   let lastReviewDate = '';
-  if(get(valueSet, 'lastReviewDate')){
-    lastReviewDate = moment(get(valueSet, 'lastReviewDate')).format("YYYY-MM-DD")
+  if(get(activeValueSet, 'lastReviewDate')){
+    lastReviewDate = moment(get(activeValueSet, 'lastReviewDate')).format("YYYY-MM-DD")
   }
 
   return(
@@ -140,7 +168,8 @@ function ValueSetDetail(props){
               name="titleInput"
               type='text'
               label='Title'
-              value={get(valueSet, 'title')}
+              value={get(activeValueSet, 'title')}
+              onChange={updateField.bind(this, 'title')}
               fullWidth  
               InputLabelProps={{
                 shrink: true,
@@ -152,7 +181,8 @@ function ValueSetDetail(props){
               name="publisherInput"
               type='text'
               label='Publisher'
-              value={get(valueSet, 'publisher')}
+              value={get(activeValueSet, 'publisher')}
+              onChange={updateField.bind(this, 'publisher')}
               fullWidth   
               InputLabelProps={{
                 shrink: true,
@@ -166,33 +196,36 @@ function ValueSetDetail(props){
               name="versionInput"
               type='text'
               label='Version'
-              value={get(valueSet, 'version')}
+              value={get(activeValueSet, 'version')}
+              onChange={updateField.bind(this, 'version')}
               fullWidth   
               InputLabelProps={{
                 shrink: true,
               }}
               style={{marginBottom: '20px'}}             
             /> 
-            <TextField
+            {/* <TextField
                 id="identifierInput"
                 name="identifierInput"
               type='text'
               label='Identifier'
-              value={get(valueSet, 'identifier[0].value')}
+              value={get(activeValueSet, 'identifier[0].value')}
+              onChange={updateField.bind(this, 'identifier[0].value')}
               fullWidth   
               InputLabelProps={{
                 shrink: true,
               }}
               style={{marginBottom: '20px'}}             
-            /> 
+            />  */}
           </Grid>
           <Grid item xs={3}>
             <TextField
               id="statusInput"
-              name="statusInput"
+              name="statusInpactiveValueSetut"
               type='text'
               label='Status'
-              value={get(valueSet, 'status')}
+              value={get(activeValueSet, 'status')}
+              onChange={updateField.bind(this, 'status')}
               fullWidth   
               InputLabelProps={{
                 shrink: true,
@@ -206,7 +239,8 @@ function ValueSetDetail(props){
               name="descriptionInput"
               type='text'
               label='Description'
-              value={get(valueSet, 'description')}
+              value={get(activeValueSet, 'description')}
+              onChange={updateField.bind(this, 'description')}
               fullWidth   
               InputLabelProps={{
                 shrink: true,

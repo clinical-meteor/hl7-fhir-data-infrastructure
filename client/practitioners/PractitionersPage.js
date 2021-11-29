@@ -14,7 +14,7 @@ import {
 import { StyledCard, PageCanvas } from 'fhir-starter';
 
 
-// import PractitionerDetail  from './PractitionerDetail';
+import PractitionerDetail  from './PractitionerDetail';
 import PractitionersTable  from './PractitionersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -26,7 +26,7 @@ import { Package } from 'meteor/meteor';
 
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
+// import { Practitioners } from '../../lib/schemas/Practitioners';
 
 import { get } from 'lodash';
 
@@ -55,6 +55,8 @@ function TabPanel(props) {
 
 Session.setDefault('practitionerPageTabIndex', 1);
 Session.setDefault('practitionerSearchFilter', '');
+Session.setDefault('PractitionersPage.onePageLayout', false);
+Session.setDefault('PractitionersTable.hideCheckbox', true);
 Session.setDefault('selectedPractitionerId', false);
 Session.setDefault('blockchainPractitionerData', []);
 Session.setDefault('fhirVersion', 'v1.0.2');
@@ -69,11 +71,15 @@ export function PractitionersPage(props){
     selectedPractitionerId: '',
     selectedPractitioner: null,
     practitioners: [],
-    onePageLayout: true
+    onePageLayout: true,
+    hideCheckbox: true
   };
 
   data.onePageLayout = useTracker(function(){
     return Session.get('PractitionersPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('PractitionersTable.hideCheckbox');
   }, [])
   data.selectedPractitionerId = useTracker(function(){
     return Session.get('selectedPractitionerId');
@@ -86,13 +92,33 @@ export function PractitionersPage(props){
   }, [])
 
 
+  function handleRowClick(practitionerId){
+    console.log('PractitionersPage.handleRowClick', practitionerId)
+    let practitioner = Practitioners.findOne({id: practitionerId});
+
+    if(practitioner){
+      Session.set('selectedPractitionerId', get(practitioner, 'id'));
+      Session.set('selectedPractitioner', practitioner);
+      Session.set('Practitioner.Current', practitioner);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "PractitionerDetail");
+        Session.set('mainAppDialogTitle', "Edit Practitioner");
+        Session.set('mainAppDialogMaxWidth', "md");
+      }      
+    } else {
+      console.log('No practitioner found...')
+    }
+  }
+
   let blockchainTab;
   if (get(Meteor, 'settings.public.defaults.displayBlockchainComponents')){
     blockchainTab = <Tab className="practitionerBlockchainHisotryTab" label='Blockchain' onActive={this.handleActive} style={data.style.tab} value={3}>
       <PractitionersTable showBarcodes={false} data={ data.blockchainData } />
     </Tab>                 
   }
-
 
   let cardWidth = window.innerWidth - paddingWidth;
 
@@ -108,7 +134,9 @@ export function PractitionersPage(props){
                 showBarcodes={false} 
                 count={data.practitioners.length}
                 formFactorLayout={formFactor}
+                hideCheckbox={data.hideCheckbox}
                 rowsPerPage={10}
+                onRowClick={ handleRowClick.bind(this) }
                 />
 
             {/* <Tabs id="practitionersPageTabs" value={data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">

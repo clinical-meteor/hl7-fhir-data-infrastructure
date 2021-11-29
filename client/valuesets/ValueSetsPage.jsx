@@ -21,6 +21,9 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import { get } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+// import { ValueSets } from '../../lib/schemas/ValueSets';
+
+//=============================================================================
 
 Session.setDefault('valueSetPageTabIndex', 0);
 Session.setDefault('valueSetSearchFilter', '');
@@ -28,7 +31,12 @@ Session.setDefault('selectedValueSetId', '');
 Session.setDefault('selectedValueSet', null);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('valueSetsArray', []);
-Session.setDefault('ValueSetsPage.onePageLayout', false)
+Session.setDefault('ValueSetsPage.onePageLayout', true)
+Session.setDefault('ValueSetsTable.hideCheckbox', false)
+
+
+//=============================================================================
+// THEMING
 
 // Global Theming 
   // This is necessary for the Material UI component render layer
@@ -99,16 +107,6 @@ Session.setDefault('ValueSetsPage.onePageLayout', false)
     }
   });
 
-// const StyledCard = styled(Card)`
-//   background: ` + theme.paperColor + `;
-//   border-radius: 3px;
-//   border: 0;
-//   color: ` + theme.paperTextColor + `;
-//   height: 48px;
-//   padding: 0 30px;
-//   box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
-// `;
-
 
 //===========================================================================
 // MAIN COMPONENT  
@@ -126,6 +124,9 @@ export function ValueSetsPage(props){
 
   data.onePageLayout = useTracker(function(){
     return Session.get('ValueSetsPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('ValueSetsTable.hideCheckbox');
   }, [])
   data.selectedValueSetId = useTracker(function(){
     return Session.get('selectedValueSetId');
@@ -146,9 +147,19 @@ export function ValueSetsPage(props){
   function handleRowClick(valueSetId){
     console.log('ValueSetsPage.handleRowClick', valueSetId)
     let valueSet = ValueSets.findOne({id: valueSetId});
+
     if(valueSet){
       Session.set('selectedValueSetId', get(valueSet, 'id'));
-      Session.set('selectedValueSet', valueSet);  
+      Session.set('selectedValueSet', valueSet);
+      Session.set('ValueSet.Current', valueSet);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "ValueSetDetail");
+        Session.set('mainAppDialogTitle', "Edit Value Set");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
     }
   }
 
@@ -169,7 +180,9 @@ export function ValueSetsPage(props){
           valueSets={ data.valueSets }
           formFactorLayout={formFactor} 
           count={data.valueSets.length}
+          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={LayoutHelpers.calcTableRows()}  
+          hideCheckbox={data.hideCheckbox}
           />
         </CardContent>
       </StyledCard>
@@ -186,6 +199,7 @@ export function ValueSetsPage(props){
               onRowClick={ handleRowClick.bind(this) }
               count={data.valueSets.length}
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  data.appHeight) }
+              hideCheckbox={data.hideCheckbox}
               />
           </CardContent>
         </StyledCard>

@@ -323,6 +323,11 @@ function ValueSetsTable(props){
     }
   }
 
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '55px'
+  }
+
   if(valueSetsToRender.length === 0){
     console.log('No valueSets to render');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
@@ -337,9 +342,9 @@ function ValueSetsTable(props){
         <TableRow 
           className="valueSetRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, valueSetsToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, valueSetsToRender[i].id)} 
           hover={true} 
-          style={{cursor: 'pointer', height: '52px'}} 
+          style={rowStyle} 
           selected={selected}
         >
           { renderToggle() }

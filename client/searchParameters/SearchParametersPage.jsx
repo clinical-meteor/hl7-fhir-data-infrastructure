@@ -15,9 +15,8 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
-// import SearchParameterDetail from './SearchParameterDetail';
+import SearchParameterDetail from './SearchParameterDetail';
 import SearchParametersTable from './SearchParametersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -27,7 +26,7 @@ import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-import { SearchParameters } from '../../lib/schemas/SearchParameters';
+// import { SearchParameters } from '../../lib/schemas/SearchParameters';
 
 
 //---------------------------------------------------------------
@@ -41,6 +40,7 @@ Session.setDefault('selectedSearchParameter', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('searchParametersArray', []);
 Session.setDefault('SearchParametersPage.onePageLayout', true)
+Session.setDefault('SearchParametersTable.hideCheckbox', true)
 
 //---------------------------------------------------------------
 // Theming
@@ -76,6 +76,9 @@ export function SearchParametersPage(props){
 
   data.onePageLayout = useTracker(function(){
     return Session.get('SearchParametersPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('SearchParametersTable.hideCheckbox');
   }, [])
   data.selectedSearchParameterId = useTracker(function(){
     return Session.get('selectedSearchParameterId');
@@ -183,12 +186,25 @@ export function SearchParametersPage(props){
     } 
     Session.set('searchParameterPageTabIndex', 1);
   }
-  function handleRowClick(searchParameterId, foo, bar){
+  function handleRowClick(searchParameterId){
     console.log('SearchParametersPage.handleRowClick', searchParameterId)
     let searchParameter = SearchParameters.findOne({id: searchParameterId});
 
-    Session.set('selectedSearchParameterId', get(searchParameter, 'id'));
-    Session.set('selectedSearchParameter', searchParameter);
+    if(searchParameter){
+      Session.set('selectedSearchParameterId', get(searchParameter, 'id'));
+      Session.set('selectedSearchParameter', searchParameter);
+      Session.set('SearchParameter.Current', searchParameter);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "SearchParameterDetail");
+        Session.set('mainAppDialogTitle', "Edit Search Parameter");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    } else {
+      console.log('No Search Parameter found...')
+    }
   }
   function onInsert(searchParameterId){
     Session.set('selectedSearchParameterId', '');
@@ -215,7 +231,7 @@ export function SearchParametersPage(props){
 
         <SearchParametersTable 
           searchParameters={ data.searchParameters }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -224,6 +240,7 @@ export function SearchParametersPage(props){
           paginationLimit={10}     
           checklist={data.searchParameterChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onRowClick={ handleRowClick.bind(this) }
           count={data.searchParameters.length}
           />
         </CardContent>
@@ -238,7 +255,7 @@ export function SearchParametersPage(props){
               searchParameters={ data.searchParameters }
               selectedSearchParameterId={ data.selectedSearchParameterId }
               hideIdentifier={true} 
-              hideCheckbox={false}
+              hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

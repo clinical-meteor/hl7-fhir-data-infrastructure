@@ -17,7 +17,7 @@ import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
-// import CodeSystemDetail from './CodeSystemDetail';
+import CodeSystemDetail from './CodeSystemDetail';
 import CodeSystemsTable from './CodeSystemsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -41,7 +41,7 @@ Session.setDefault('selectedCodeSystem', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('codeSystemsArray', []);
 Session.setDefault('CodeSystemsPage.onePageLayout', true)
-
+Session.setDefault('CodeSystemsTable.hideCheckbox', true)
 //---------------------------------------------------------------
 // Theming
 
@@ -62,6 +62,7 @@ export function CodeSystemsPage(props){
     codeSystems: [],
     onePageLayout: true,
     codeSystemSearchFilter: '',
+    hideCheckbox: true,
     options: {
       sort: {
         'focus.display': -1,
@@ -73,7 +74,9 @@ export function CodeSystemsPage(props){
 
   
 
-
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('CodeSystemsTable.hideCheckbox');
+  }, [])
   data.onePageLayout = useTracker(function(){
     return Session.get('CodeSystemsPage.onePageLayout');
   }, [])
@@ -187,8 +190,19 @@ export function CodeSystemsPage(props){
     console.log('CodeSystemsPage.handleRowClick', codeSystemId)
     let codeSystem = CodeSystems.findOne({id: codeSystemId});
 
-    Session.set('selectedCodeSystemId', get(codeSystem, 'id'));
-    Session.set('selectedCodeSystem', codeSystem);
+    if(codeSystem){
+      Session.set('selectedCodeSystemId', get(codeSystem, 'id'));
+      Session.set('selectedCodeSystem', codeSystem);
+      Session.set('CodeSystem.Current', codeSystem);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "CodeSystemDetail");
+        Session.set('mainAppDialogTitle', "Edit Code System");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    }
   }
   function onInsert(codeSystemId){
     Session.set('selectedCodeSystemId', '');
@@ -215,13 +229,14 @@ export function CodeSystemsPage(props){
 
         <CodeSystemsTable 
           codeSystems={ data.codeSystems }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
           hideVersion={false}
           hideExperimental={false}
-          paginationLimit={10}     
+          paginationLimit={10}    
+          onRowClick={ handleRowClick.bind(this) } 
           checklist={data.codeSystemChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           count={data.codeSystems.length}
@@ -238,7 +253,7 @@ export function CodeSystemsPage(props){
               codeSystems={ data.codeSystems }
               selectedCodeSystemId={ data.selectedCodeSystemId }
               hideIdentifier={true} 
-              hideCheckbox={false}
+              hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

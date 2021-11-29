@@ -21,17 +21,17 @@ import {
 } from '@material-ui/core';
 
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
-
 
 import { Meteor } from 'meteor/meteor';
 
 import moment from 'moment';
 import { get, set } from 'lodash';
 
+import { FhirUtilities } from '../../lib/FhirUtilities';
+import { lookupReferenceName } from '../../lib/FhirDehydrator';
 
-//---------------------------------------------------------------
-// Theming  
+//====================================================================================
+// THEMING
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
@@ -56,10 +56,21 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-//---------------------------------------------------------------
-// Main Component  
+//====================================================================================
+// SESSION VARIABLES
 
-function OrganizationDetail(props){
+let defaultOrganization = {
+  resourceType: 'Organization'
+}
+
+Session.setDefault('Organization.Current', defaultOrganization)
+
+
+//====================================================================================
+// MAIN COMPONENT
+
+
+export function OrganizationDetail(props){
   logger.debug('OrganizationDetail', props)
   let classes = useStyles();
 
@@ -70,7 +81,18 @@ function OrganizationDetail(props){
     ...otherProps 
   } = props;
 
+  let activeOrganization = defaultOrganization;
 
+  activeOrganization = useTracker(function(){
+    return Session.get('Organization.Current');
+  }, [])
+
+  function updateField(path, event){
+    console.log('updateField', event.currentTarget.value);
+
+    // setCurrentCodeSystem(set(currentCodeSystem, path, event.currentTarget.value))
+    Session.set('Organization.Current', set(activeCodeSystem, path, event.currentTarget.value))    
+  }
 
 
   return(
@@ -84,8 +106,8 @@ function OrganizationDetail(props){
                 name="nameInput"
                 className={classes.input}
                 placeholder="St. James Infirmary"              
-                value={get(organization, 'name', '')}
-                //onChange={handleFhirEndpointChange}
+                value={get(activeOrganization, 'name', '')}
+                onChange={updateField.bind(this, 'name')}
                 fullWidth              
               />       
             </FormControl>       
@@ -98,8 +120,8 @@ function OrganizationDetail(props){
                 name="identifierInput"
                 className={classes.input}
                 placeholder="12345"              
-                value={get(organization, 'identifier[0].value', '')}
-                //onChange={handleFhirEndpointChange}
+                value={get(activeOrganization, 'identifier[0].value', '')}
+                onChange={updateField.bind(this, 'identifier[0].value')}
                 fullWidth              
               />          
             </FormControl>   
@@ -112,8 +134,8 @@ function OrganizationDetail(props){
                 name="addressLineInput"
                 className={classes.input}
                 placeholder="123 Main St"              
-                value={get(organization, 'address[0].line[0]', '')}
-                //onChange={handleFhirEndpointChange}
+                value={get(activeOrganization, 'address[0].line[0]', '')}
+                onChange={updateField.bind(this, 'address[0].line[0]')}
                 fullWidth              
               />    
             </FormControl>
@@ -126,8 +148,8 @@ function OrganizationDetail(props){
                 name="cityInput"
                 className={classes.input}
                 placeholder="New Orleans"              
-                value={get(organization, 'address[0].city', '')}
-                //onChange={handleFhirEndpointChange}
+                value={get(activeOrganization, 'address[0].city', '')}
+                onChange={updateField.bind(this, 'address[0].city')}
                 fullWidth              
               />    
             </FormControl>
@@ -140,8 +162,8 @@ function OrganizationDetail(props){
                 name="stateInput"
                 className={classes.input}
                 placeholder="LI"              
-                value={get(organization, 'address[0].state', '')}
-                //onChange={handleFhirEndpointChange}
+                value={get(activeOrganization, 'address[0].state', '')}
+                onChange={updateField.bind(this, 'address[0].state')}
                 fullWidth              
               />    
             </FormControl>
@@ -154,14 +176,14 @@ function OrganizationDetail(props){
                 name="postalCodeInput"
                 className={classes.input}
                 placeholder="12345"              
-                value={get(organization, 'address[0].postalCode', '')}
-                //onChange={handleFhirEndpointChange}
+                value={get(activeOrganization, 'address[0].postalCode', '')}
+                onChange={updateField.bind(this, 'address[0].postalCode')}
                 fullWidth              
               />    
             </FormControl>
           </Grid>                              
 
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
               <InputAdornment className={classes.label}>Description</InputAdornment>
               <Input
@@ -169,13 +191,13 @@ function OrganizationDetail(props){
                 name="descriptionInput"
                 className={classes.input}
                 placeholder=""              
-                value={get(organization, 'description', '')}
-                //onChange={handleFhirEndpointChange}
+                value={get(activeOrganization, 'description', '')}
+                onChange={updateField.bind(this, 'description')}
                 fullWidth           
                 multiline   
               />
             </FormControl>            
-          </Grid>
+          </Grid> */}
         </Grid>
     </div>
   );

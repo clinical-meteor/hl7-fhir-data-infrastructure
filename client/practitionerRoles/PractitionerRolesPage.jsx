@@ -15,9 +15,9 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
-// import PractitionerRoleDetail from './PractitionerRoleDetail';
+
+import PractitionerRoleDetail from './PractitionerRoleDetail';
 import PractitionerRolesTable from './PractitionerRolesTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -26,7 +26,7 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-
+// import { PractitionerRoles } from '../../lib/schemas/PractitionerRoles';
 
 
 //---------------------------------------------------------------
@@ -40,6 +40,7 @@ Session.setDefault('selectedPractitionerRole', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('practitionerRolesArray', []);
 Session.setDefault('PractitionerRolesPage.onePageLayout', true)
+Session.setDefault('PractitionerRolesTable.hideCheckbox', true)
 
 //---------------------------------------------------------------
 // Theming
@@ -79,6 +80,9 @@ export function PractitionerRolesPage(props){
 
   data.onePageLayout = useTracker(function(){
     return Session.get('PractitionerRolesPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('PractitionerRolesTable.hideCheckbox');
   }, [])
   data.selectedPractitionerRoleId = useTracker(function(){
     return Session.get('selectedPractitionerRoleId');
@@ -186,12 +190,25 @@ export function PractitionerRolesPage(props){
     } 
     Session.set('practitionerRolePageTabIndex', 1);
   }
-  function handleRowClick(practitionerRoleId, foo, bar){
+  function handleRowClick(practitionerRoleId){
     console.log('PractitionerRolesPage.handleRowClick', practitionerRoleId)
     let practitionerRole = PractitionerRoles.findOne({id: practitionerRoleId});
 
-    Session.set('selectedPractitionerRoleId', get(practitionerRole, 'id'));
-    Session.set('selectedPractitionerRole', practitionerRole);
+    if(practitionerRole){
+      Session.set('selectedPractitionerRoleId', get(practitionerRole, 'id'));
+      Session.set('selectedPractitionerRole', practitionerRole);
+      Session.set('PractitionerRole.Current', practitionerRole);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "PractitionerRoleDetail");
+        Session.set('mainAppDialogTitle', "Edit Role");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    } else {
+      console.log('No PractitionerRole found...')
+    }
   }
   function onInsert(practitionerRoleId){
     Session.set('selectedPractitionerRoleId', '');
@@ -218,7 +235,7 @@ export function PractitionerRolesPage(props){
 
         <PractitionerRolesTable 
           practitionerRoles={ data.practitionerRoles }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -226,6 +243,7 @@ export function PractitionerRolesPage(props){
           hideExperimental={false}
           paginationLimit={10}     
           checklist={data.practitionerRoleChecklistMode}
+          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           formFactorLayout={formFactor}
           count={data.practitionerRoles.length}
@@ -242,7 +260,7 @@ export function PractitionerRolesPage(props){
               practitionerRoles={ data.practitionerRoles }
               selectedPractitionerRoleId={ data.selectedPractitionerRoleId }
               hideIdentifier={true} 
-              hideCheckbox={false}
+              hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

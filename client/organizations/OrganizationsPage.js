@@ -24,10 +24,10 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
+// import { Organizations } from '../../lib/schemas/Organizations';
 
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 
 //=============================================================================================================================================
 // GLOBAL THEMING
@@ -112,6 +112,7 @@ Session.setDefault('selectedOrganizationId', false);
 Session.setDefault('selectedOrganization', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('OrganizationsPage.onePageLayout', true)
+Session.setDefault('OrganizationsTable.hideCheckbox', true)
 
 
 
@@ -131,6 +132,9 @@ export function OrganizationsPage(props){
   data.onePageLayout = useTracker(function(){
     return Session.get('OrganizationsPage.onePageLayout');
   }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('OrganizationsTable.hideCheckbox');
+  }, [])
   data.selectedOrganizationId = useTracker(function(){
     return Session.get('selectedOrganizationId');
   }, [])
@@ -144,14 +148,24 @@ export function OrganizationsPage(props){
 
 
   function handleRowClick(organizationId){
-    // logger.info('OrganizationsPage.handleRowClick', organizationId)
+    console.log('OrganizationsPage.handleRowClick', organizationId)
     let organization = Organizations.findOne({id: organizationId});
 
-    Session.set('selectedOrganizationId', get(organization, 'id'));
-    Session.set('selectedOrganization', Organizations.findOne({id: get(organization, 'id')}));
-
-    Session.set('currentSelectionId', 'Organization/' + get(organization, '_id'));
-    Session.set('currentSelection', organization);
+    if(organization){
+      Session.set('selectedOrganizationId', get(organization, 'id'));
+      Session.set('selectedOrganization', organization);
+      Session.set('Organization.Current', organization);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "OrganizationDetail");
+        Session.set('mainAppDialogTitle', "Edit Organization");
+        Session.set('mainAppDialogMaxWidth', "md");
+      }      
+    } else {
+      console.log('No organization found...')
+    }
   }
 
 
@@ -173,7 +187,7 @@ export function OrganizationsPage(props){
           count={data.organizations.length}
           selectedOrganizationId={ data.selectedOrganizationId }
           onRowClick={ handleRowClick.bind(this) }
-          hideCheckbox={true}
+          hideCheckbox={data.hideCheckbox}
           hideBarcode={false}
           hideActionIcons={true}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
@@ -191,7 +205,7 @@ export function OrganizationsPage(props){
             <OrganizationsTable
               organizations={data.organizations}
               count={data.organizations.length}
-              hideCheckbox={true}
+              hideCheckbox={data.hideCheckbox}
               hideBarcode={true}
               hidePhone={true}
               hideEmail={true}

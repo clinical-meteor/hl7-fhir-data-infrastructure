@@ -111,7 +111,6 @@ function EndpointsTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideStatus = false;
@@ -121,7 +120,6 @@ function EndpointsTable(props){
         hideAddress = false;
         break;
       case "tablet":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideStatus = false;
@@ -131,7 +129,6 @@ function EndpointsTable(props){
         hideAddress = false;
         break;
       case "web":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideStatus = false;
@@ -141,7 +138,6 @@ function EndpointsTable(props){
         hideAddress = false;
         break;
       case "desktop":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideStatus = false;
@@ -151,7 +147,6 @@ function EndpointsTable(props){
         hideAddress = false;
         break;
       case "videowall":
-        hideCheckbox = false;
         hideActionIcons = false;
         hideBarcode = true;
         hideStatus = false;
@@ -392,7 +387,7 @@ function EndpointsTable(props){
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(endpointsToRender.length === 0){
@@ -416,9 +411,9 @@ function EndpointsTable(props){
         <TableRow 
           className="endpointRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, endpointsToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, endpointsToRender[i].id)} 
           hover={true} 
-          style={{cursor: 'pointer', height: '52px'}} 
+          style={rowStyle} 
           selected={selected}
         >
           { renderCheckbox(endpointsToRender[i]) }

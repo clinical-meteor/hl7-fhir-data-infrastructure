@@ -14,7 +14,7 @@ import {
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
 
-// import LocationDetail from './LocationDetail';
+import LocationDetail from './LocationDetail';
 import LocationsTable from './LocationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -23,7 +23,7 @@ import { Session } from 'meteor/session';
 
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
+// import { Locations } from '../../lib/schemas/Locations';
 
 import { get } from 'lodash';
 
@@ -41,6 +41,7 @@ Session.setDefault('priximityLocations', false);
 Session.setDefault('selectedLocation', null);
 Session.setDefault('selectedLocationId', false);
 Session.setDefault('LocationsPage.onePageLayout', true)
+Session.setDefault('LocationsTable.hideCheckbox', true)
 
 
 //=============================================================================================================================================
@@ -154,6 +155,9 @@ export function LocationsPage(props){
   data.onePageLayout = useTracker(function(){
     return Session.get('LocationsPage.onePageLayout');
   }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('LocationsTable.hideCheckbox');
+  }, [])
   data.selectedLocationId = useTracker(function(){
     return Session.get('selectedLocationId');
   }, [])
@@ -164,6 +168,26 @@ export function LocationsPage(props){
     return Locations.find().fetch();
   }, [])
 
+
+
+  function handleRowClick(locationId){
+    console.log('LocationsPage.handleRowClick', locationId)
+    let location = Locations.findOne({id: locationId});
+
+    if(location){
+      Session.set('selectedLocationId', get(location, 'id'));
+      Session.set('selectedLocation', location);
+      Session.set('Location.Current', location);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "LocationDetail");
+        Session.set('mainAppDialogTitle', "Edit Location");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    }
+  }
 
 
   let self = this;
@@ -187,7 +211,9 @@ export function LocationsPage(props){
           locations={data.locations}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
           tableRowSize="medium"
-          count={data.locations.length}      
+          hideCheckbox={data.hideCheckbox}
+          count={data.locations.length}  
+          onRowClick={ handleRowClick.bind(this) }    
         />
       </CardContent>
     </StyledCard>
@@ -202,8 +228,10 @@ export function LocationsPage(props){
             <LocationsTable 
               locations={data.locations}
               rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
+              hideCheckbox={data.hideCheckbox}
               // tableRowSize="medium"
-              count={data.locations.length}       
+              count={data.locations.length}   
+              onRowClick={ handleRowClick.bind(this) }    
             />
           </CardContent>
         </StyledCard>

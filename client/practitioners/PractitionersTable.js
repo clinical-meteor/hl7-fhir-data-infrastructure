@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
+  Checkbox,
   Button,
   Table,
   TableBody,
@@ -599,7 +600,7 @@ function PractitionersTable(props){
       }
       logger.trace('practitionersToRender[i]', practitionersToRender[i])
       tableRows.push(
-        <TableRow className="practitionerRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, practitionersToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
+        <TableRow className="practitionerRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, practitionersToRender[i].id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
           { renderCheckbox() }
           { renderActionIcons(practitionersToRender[i]) }
           { renderIdentifier(practitionersToRender[i].identifier ) }

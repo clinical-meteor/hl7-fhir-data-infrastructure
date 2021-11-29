@@ -119,8 +119,6 @@ function OrganizationAffiliationsTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        hideCheckbox = true;
-        hideActionIcons = false;
         hideStatus = true;
         hideBarcode = true;
         hideActive = true;
@@ -139,8 +137,6 @@ function OrganizationAffiliationsTable(props){
     
         break;
       case "tablet":
-        hideCheckbox = true;
-        hideActionIcons = false;
         hideStatus = true;
         hideBarcode = true;
         hideActive = true;
@@ -158,8 +154,6 @@ function OrganizationAffiliationsTable(props){
         hideNumEndpointse = true;
         break;
       case "web":
-        hideCheckbox = true;
-        hideActionIcons = false;
         hideStatus = true;
         hideBarcode = true;
         hideActive = true;
@@ -177,8 +171,6 @@ function OrganizationAffiliationsTable(props){
         hideNumEndpointse = true;
         break;
       case "desktop":
-        hideCheckbox = true;
-        hideActionIcons = false;
         hideStatus = true;
         hideBarcode = true;
         hideActive = true;
@@ -196,8 +188,6 @@ function OrganizationAffiliationsTable(props){
         hideNumEndpointse = true;
         break;
       case "videowall":
-        hideCheckbox = true;
-        hideActionIcons = false;
         hideStatus = true;
         hideBarcode = true;
         hideActive = true;
@@ -560,7 +550,7 @@ function OrganizationAffiliationsTable(props){
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(organizationAffiliationsToRender.length === 0){
@@ -584,9 +574,9 @@ function OrganizationAffiliationsTable(props){
         <TableRow 
           className="organizationAffiliationRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, organizationAffiliationsToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, organizationAffiliationsToRender[i].id)} 
           hover={true} 
-          style={{cursor: 'pointer', height: '52px'}} 
+          style={rowStyle} 
           selected={selected}
         >
           { renderCheckbox() }

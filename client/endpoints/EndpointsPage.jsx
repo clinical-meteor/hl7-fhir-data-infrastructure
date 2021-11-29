@@ -12,6 +12,7 @@ import { Session } from 'meteor/session';
 
 import { useTracker } from 'meteor/react-meteor-data';
 
+import EndpointDetail from './EndpointDetail';
 import EndpointsTable from './EndpointsTable';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -21,7 +22,7 @@ import { get, cloneDeep } from 'lodash';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
+// import { Endpoints } from '../../lib/schemas/Endpoints';
 
 //---------------------------------------------------------------
 // Session Variables
@@ -34,6 +35,7 @@ Session.setDefault('selectedEndpoint', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('endpointsArray', []);
 Session.setDefault('EndpointsPage.onePageLayout', true)
+Session.setDefault('EndpointsTable.hideCheckbox', true)
 
 //---------------------------------------------------------------
 // Theming
@@ -54,6 +56,7 @@ export function EndpointsPage(props){
     selectedAuditEvent: null,
     endpoints: [],
     onePageLayout: true,
+    hideCheckbox: true,
     endpointSearchFilter: '',
     options: {
       sort: {
@@ -64,11 +67,11 @@ export function EndpointsPage(props){
     endpointChecklistMode: false
   };
 
-  
-
-
   data.onePageLayout = useTracker(function(){
     return Session.get('EndpointsPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('EndpointsTable.hideCheckbox');
   }, [])
   data.selectedEndpointId = useTracker(function(){
     return Session.get('selectedEndpointId');
@@ -176,12 +179,25 @@ export function EndpointsPage(props){
     } 
     Session.set('endpointPageTabIndex', 1);
   }
-  function handleRowClick(endpointId, foo, bar){
+  function handleRowClick(endpointId){
     console.log('EndpointsPage.handleRowClick', endpointId)
     let endpoint = Endpoints.findOne({id: endpointId});
 
-    Session.set('selectedEndpointId', get(endpoint, 'id'));
-    Session.set('selectedEndpoint', endpoint);
+    if(endpoint){
+      Session.set('selectedEndpointId', get(endpoint, 'id'));
+      Session.set('selectedEndpoint', endpoint);
+      Session.set('Endpoint.Current', endpoint);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "EndpointDetail");
+        Session.set('mainAppDialogTitle', "Edit Endpoint");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    } else {
+      console.log('No endpoint found...')
+    }
   }
   function onInsert(endpointId){
     Session.set('selectedEndpointId', '');
@@ -208,7 +224,7 @@ export function EndpointsPage(props){
 
         <EndpointsTable 
           endpoints={ data.endpoints }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideConnectionType={false}
@@ -216,6 +232,7 @@ export function EndpointsPage(props){
           hideAddress={false}    
           paginationLimit={10}     
           checklist={data.endpointChecklistMode}
+          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           count={data.endpoints.length}
           />
@@ -231,7 +248,7 @@ export function EndpointsPage(props){
               endpoints={ data.endpoints }
               selectedEndpointId={ data.selectedEndpointId }
               hideIdentifier={true} 
-              hideCheckbox={false}
+              hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

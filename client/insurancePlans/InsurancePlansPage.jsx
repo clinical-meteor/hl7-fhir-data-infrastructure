@@ -15,9 +15,9 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
-// import InsurancePlanDetail from './InsurancePlanDetail';
+
+import InsurancePlanDetail from './InsurancePlanDetail';
 import InsurancePlansTable from './InsurancePlansTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -26,7 +26,7 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-
+// import { InsurancePlans } from '../../lib/schemas/InsurancePlans';
 
 //---------------------------------------------------------------
 // Session Variables
@@ -39,6 +39,7 @@ Session.setDefault('selectedInsurancePlan', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('insurancePlansArray', []);
 Session.setDefault('InsurancePlansPage.onePageLayout', true)
+Session.setDefault('InsurancePlansTable.hideCheckbox', true)
 
 //---------------------------------------------------------------
 // Theming
@@ -63,6 +64,7 @@ export function InsurancePlansPage(props){
     selectedAuditEvent: null,
     insurancePlans: [],
     onePageLayout: true,
+    hideCheckbox: true,
     insurancePlanSearchFilter: '',
     options: {
       sort: {
@@ -75,6 +77,9 @@ export function InsurancePlansPage(props){
 
   data.onePageLayout = useTracker(function(){
     return Session.get('InsurancePlansPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('InsurancePlansTable.hideCheckbox');
   }, [])
   data.selectedInsurancePlanId = useTracker(function(){
     return Session.get('selectedInsurancePlanId');
@@ -182,12 +187,24 @@ export function InsurancePlansPage(props){
     } 
     Session.set('insurancePlanPageTabIndex', 1);
   }
-  function handleRowClick(insurancePlanId, foo, bar){
+
+  function handleRowClick(insurancePlanId){
     console.log('InsurancePlansPage.handleRowClick', insurancePlanId)
     let insurancePlan = InsurancePlans.findOne({id: insurancePlanId});
 
-    Session.set('selectedInsurancePlanId', get(insurancePlan, 'id'));
-    Session.set('selectedInsurancePlan', insurancePlan);
+    if(insurancePlan){
+      Session.set('selectedInsurancePlanId', get(insurancePlan, 'id'));
+      Session.set('selectedInsurancePlan', insurancePlan);
+      Session.set('InsurancePlan.Current', insurancePlan);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "InsurancePlanDetail");
+        Session.set('mainAppDialogTitle', "Edit Plan");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    }
   }
   function onInsert(insurancePlanId){
     Session.set('selectedInsurancePlanId', '');
@@ -214,7 +231,7 @@ export function InsurancePlansPage(props){
 
         <InsurancePlansTable 
           insurancePlans={ data.insurancePlans }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -222,6 +239,7 @@ export function InsurancePlansPage(props){
           hideExperimental={false}
           paginationLimit={10}     
           checklist={data.insurancePlanChecklistMode}
+          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           formFactorLayout={formFactor}
           count={data.insurancePlans.length}
@@ -238,7 +256,7 @@ export function InsurancePlansPage(props){
               insurancePlans={ data.insurancePlans }
               selectedInsurancePlanId={ data.selectedInsurancePlanId }
               hideIdentifier={true} 
-              hideCheckbox={false}
+              hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

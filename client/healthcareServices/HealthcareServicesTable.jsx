@@ -113,7 +113,6 @@ function HealthcareServicesTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideCategory = false;
@@ -125,7 +124,6 @@ function HealthcareServicesTable(props){
         hideNumEndpoints = false;    
         break;
       case "tablet":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideCategory = false;
@@ -137,7 +135,6 @@ function HealthcareServicesTable(props){
         hideNumEndpoints = false;
         break;
       case "web":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideCategory = false;
@@ -149,7 +146,6 @@ function HealthcareServicesTable(props){
         hideNumEndpoints = false;
         break;
       case "desktop":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideCategory = false;
@@ -161,7 +157,6 @@ function HealthcareServicesTable(props){
         hideNumEndpoints = false;
         break;
       case "videowall":
-        hideCheckbox = false;
         hideActionIcons = false;
         hideBarcode = true;
         hideCategory = false;
@@ -431,7 +426,7 @@ function HealthcareServicesTable(props){
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(healthcareServicesToRender.length === 0){
@@ -455,9 +450,9 @@ function HealthcareServicesTable(props){
         <TableRow 
           className="healthcareServiceRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, healthcareServicesToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, healthcareServicesToRender[i].id)} 
           hover={true} 
-          style={{cursor: 'pointer', height: '52px'}} 
+          style={rowStyle} 
           selected={selected}
         >
           { renderCheckbox() }

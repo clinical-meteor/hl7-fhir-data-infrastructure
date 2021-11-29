@@ -115,7 +115,6 @@ function InsurancePlansTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideBarcode = true;
         hideStatus = false;
@@ -130,7 +129,6 @@ function InsurancePlansTable(props){
         hideNumEndpoints = false;
         break;
       case "tablet":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideBarcode = true;
         hideStatus = false;
@@ -145,7 +143,6 @@ function InsurancePlansTable(props){
         hideNumEndpoints = false;
         break;
       case "web":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
         hideStatus = false;
@@ -160,7 +157,6 @@ function InsurancePlansTable(props){
         hideNumEndpoints = false;
         break;
       case "desktop":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideBarcode = true;
         hideStatus = false;
@@ -175,7 +171,6 @@ function InsurancePlansTable(props){
         hideNumEndpoints = false;
         break;
       case "videowall":
-        hideCheckbox = false;
         hideActionIcons = true;
         hideBarcode = true;
         hideStatus = false;
@@ -492,7 +487,7 @@ function InsurancePlansTable(props){
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(insurancePlansToRender.length === 0){
@@ -516,9 +511,9 @@ function InsurancePlansTable(props){
         <TableRow 
           className="insurancePlanRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, insurancePlansToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, insurancePlansToRender[i].id)} 
           hover={true} 
-          style={{cursor: 'pointer', height: '52px'}} 
+          style={rowStyle} 
           selected={selected}
         >
           { renderCheckbox() }

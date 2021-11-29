@@ -17,6 +17,7 @@ import React  from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import HealthcareServicesTable from './HealthcareServicesTable';
+import HealthcareServiceDetail from './HealthcareServiceDetail';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -24,7 +25,7 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider } from '@material-ui/core/styles';
-
+// import { HealthcareServices } from '../../lib/schemas/HealthcareServices';
 
 //---------------------------------------------------------------
 // Session Variables
@@ -37,6 +38,7 @@ Session.setDefault('selectedHealthcareService', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('healthcareServicesArray', []);
 Session.setDefault('HealthcareServicesPage.onePageLayout', true)
+Session.setDefault('HealthcareServicesTable.hideCheckbox', true)
 
 //---------------------------------------------------------------
 // Theming
@@ -57,6 +59,7 @@ export function HealthcareServicesPage(props){
     selectedAuditEvent: null,
     healthcareServices: [],
     onePageLayout: true,
+    hideCheckbox: true,
     healthcareServiceSearchFilter: '',
     options: {
       sort: {
@@ -72,6 +75,9 @@ export function HealthcareServicesPage(props){
 
   data.onePageLayout = useTracker(function(){
     return Session.get('HealthcareServicesPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('HealthcareServicesTable.hideCheckbox');
   }, [])
   data.selectedHealthcareServiceId = useTracker(function(){
     return Session.get('selectedHealthcareServiceId');
@@ -179,12 +185,24 @@ export function HealthcareServicesPage(props){
     } 
     Session.set('healthcareServicePageTabIndex', 1);
   }
-  function handleRowClick(healthcareServiceId, foo, bar){
+
+  function handleRowClick(healthcareServiceId){
     console.log('HealthcareServicesPage.handleRowClick', healthcareServiceId)
     let healthcareService = HealthcareServices.findOne({id: healthcareServiceId});
 
-    Session.set('selectedHealthcareServiceId', get(healthcareService, 'id'));
-    Session.set('selectedHealthcareService', healthcareService);
+    if(healthcareService){
+      Session.set('selectedHealthcareServiceId', get(healthcareService, 'id'));
+      Session.set('selectedHealthcareService', healthcareService);
+      Session.set('HealthcareService.Current', healthcareService);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "HealthcareServiceDetail");
+        Session.set('mainAppDialogTitle', "Edit Service");
+        Session.set('mainAppDialogMaxWidth', "sm");
+      }      
+    }
   }
   function onInsert(healthcareServiceId){
     Session.set('selectedHealthcareServiceId', '');
@@ -211,7 +229,7 @@ export function HealthcareServicesPage(props){
 
         <HealthcareServicesTable 
           healthcareServices={ data.healthcareServices }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -219,6 +237,7 @@ export function HealthcareServicesPage(props){
           hideExperimental={false}
           paginationLimit={10}     
           checklist={data.healthcareServiceChecklistMode}
+          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           count={data.healthcareServices.length}
           />
@@ -234,7 +253,7 @@ export function HealthcareServicesPage(props){
               healthcareServices={ data.healthcareServices }
               selectedHealthcareServiceId={ data.selectedHealthcareServiceId }
               hideIdentifier={true} 
-              hideCheckbox={false}
+              hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

@@ -169,7 +169,6 @@ function OrganizationsTable(props){
     logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
     switch (formFactorLayout) {
       case "phone":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideIdentifier = true;
         hideName = false;
@@ -183,7 +182,6 @@ function OrganizationsTable(props){
         multiline = true;
         break;
       case "tablet":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideIdentifier = true;
         hideName = false;
@@ -196,7 +194,6 @@ function OrganizationsTable(props){
         hideBarcode = true;
         break;
       case "web":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideIdentifier = true;
         hideName = false;
@@ -209,7 +206,6 @@ function OrganizationsTable(props){
         hideBarcode = true;
         break;
       case "desktop":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideIdentifier = false;
         hideName = false;
@@ -222,7 +218,6 @@ function OrganizationsTable(props){
         hideBarcode = true;
         break;
       case "videowall":
-        hideCheckbox = true;
         hideActionIcons = true;
         hideIdentifier = false;
         hideName = false;
@@ -539,7 +534,7 @@ function OrganizationsTable(props){
       }
       logger.trace('organizationsToRender[i]', organizationsToRender[i])
       tableRows.push(
-        <TableRow className="organizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, organizationsToRender[i]._id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
+        <TableRow className="organizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, organizationsToRender[i].id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
           { renderCheckbox() }
           { renderActionIcons(organizationsToRender[i]) }
           { renderIdentifier(organizationsToRender[i].identifier ) }
