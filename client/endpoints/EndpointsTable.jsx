@@ -81,8 +81,10 @@ function EndpointsTable(props){
     hideStatus,
     hideConnectionType,
     hideName,
+    hideVersion,
     hideOrganization,
     hideAddress,
+    hideBarcode,
 
     onCellClick,
     onRowClick,
@@ -112,7 +114,6 @@ function EndpointsTable(props){
     switch (formFactorLayout) {
       case "phone":
         hideActionIcons = false;
-        hideBarcode = true;
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
@@ -121,7 +122,6 @@ function EndpointsTable(props){
         break;
       case "tablet":
         hideActionIcons = false;
-        hideBarcode = true;
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
@@ -130,7 +130,6 @@ function EndpointsTable(props){
         break;
       case "web":
         hideActionIcons = false;
-        hideBarcode = true;
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
@@ -139,7 +138,6 @@ function EndpointsTable(props){
         break;
       case "desktop":
         hideActionIcons = false;
-        hideBarcode = true;
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
@@ -148,7 +146,6 @@ function EndpointsTable(props){
         break;
       case "videowall":
         hideActionIcons = false;
-        hideBarcode = true;
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
@@ -309,6 +306,20 @@ function EndpointsTable(props){
       );
     }
   }
+  function renderVersion(version){
+    if (!hideVersion) {
+      return (
+        <TableCell className='version'>{ version }</TableCell>
+      );
+    }
+  }
+  function renderVersionHeader(){
+    if (!hideVersion) {
+      return (
+        <TableCell className='version'>Version</TableCell>
+      );
+    }
+  }
 
   function renderBarcode(id){
     if (!hideBarcode) {
@@ -421,6 +432,7 @@ function EndpointsTable(props){
 
           { renderStatus(endpointsToRender[i].status) }
           { renderConnectionType(endpointsToRender[i].connectionType) }
+          { renderVersion(endpointsToRender[i].version) }
           { renderName(endpointsToRender[i].name) }
           { renderOrganization(endpointsToRender[i].managingOrganization) }
           { renderAddress(endpointsToRender[i].address) }
@@ -440,6 +452,7 @@ function EndpointsTable(props){
             { renderActionIconsHeader() }
             { renderStatusHeader() }
             { renderConnectionTypeHeader() }
+            { renderVersionHeader() }
             { renderNameHeader() }
             { renderOrganizationHeader() }
             { renderAddressHeader() }
@@ -470,6 +483,7 @@ EndpointsTable.propTypes = {
   
   hideStatus: PropTypes.bool,
   hideConnectionType: PropTypes.bool,
+  hideVersion: PropTypes.bool,
   hideName: PropTypes.bool,
   hideOrganization: PropTypes.bool,
   hideAddress: PropTypes.bool,
@@ -492,6 +506,7 @@ EndpointsTable.defaultProps = {
 
   hideStatus: false,
   hideConnectionType: false,
+  hideVersion: false,
   hideName: false,
   hideOrganization: false,
   hideAddress: false,

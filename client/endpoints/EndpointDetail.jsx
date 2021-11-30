@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { 
   Grid, 
   Button, 
@@ -12,8 +14,6 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-
-import React from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
 import PropTypes from 'prop-types';
@@ -71,7 +71,6 @@ export function EndpointDetail(props){
 
   let classes = useStyles();
 
-
   let { 
     children, 
     endpoint,
@@ -88,7 +87,7 @@ export function EndpointDetail(props){
     console.log('updateField', event.currentTarget.value);
 
     // setCurrentCodeSystem(set(currentCodeSystem, path, event.currentTarget.value))
-    Session.set('Endpoint.Current', set(activeCodeSystem, path, event.currentTarget.value))    
+    Session.set('Endpoint.Current', set(activeEndpoint, path, event.currentTarget.value))    
   }
 
 

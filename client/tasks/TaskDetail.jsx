@@ -24,6 +24,13 @@ import moment from 'moment';
 import { get, set } from 'lodash';
 // import { setFlagsFromString } from 'v8';
 
+
+import { FhirUtilities } from '../../lib/FhirUtilities';
+import { lookupReferenceName } from '../../lib/FhirDehydrator';
+
+//====================================================================================
+// THEMING
+
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
   button: {
@@ -47,6 +54,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+//====================================================================================
+// SESSION VARIABLES
+
+let defaultTask = {
+  resourceType: 'Task'
+}
+
+Session.setDefault('Task.Current', defaultTask)
+
 
 
 
@@ -61,8 +77,18 @@ function TaskDetail(props){
     ...otherProps 
   } = props;
 
+  let activeTask = defaultTask;
 
+  activeTask = useTracker(function(){
+    return Session.get('Task.Current');
+  }, [])
 
+  function updateField(path, event){
+    console.log('updateField', event.currentTarget.value);
+
+    // setCurrentCodeSystem(set(currentCodeSystem, path, event.currentTarget.value))
+    Session.set('Task.Current', set(activeTask, path, event.currentTarget.value))    
+  }
 
 
 
@@ -81,18 +107,18 @@ function TaskDetail(props){
                 className={classes.input}
                 placeholder="Lorem ipsum."              
                 value={get(task, 'title')}
-                //onChange={handleFhirEndpointChange}
+                onChange={updateField.bind(this, 'title')}
                 fullWidth              
               />       
             </FormControl>   
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Publisher</InputAdornment>
+              <InputAdornment className={classes.label}>Requestor</InputAdornment>
               <Input
-                id="publisherInput"
-                name="publisherInput"
+                id="requestorInput"
+                name="requestorInput"
                 className={classes.input}
-                value={get(task, 'publisher')}
-                //onChange={handleFhirEndpointChange}
+                value={FhirUtilities.pluckReference(get(task, 'requestor'))}
+                onChange={updateField.bind(this, 'requestor.display')}
                 fullWidth              
               />       
             </FormControl>      
@@ -106,7 +132,7 @@ function TaskDetail(props){
                 className={classes.input}
                 placeholder="2020.2"              
                 value={get(task, 'version')}
-                //onChange={handleFhirEndpointChange}
+                onChange={updateField.bind(this, 'version')}
                 fullWidth              
               />          
             </FormControl>
@@ -118,7 +144,7 @@ function TaskDetail(props){
                 className={classes.input}
                 placeholder="XYZ.1"              
                 value={get(task, 'identifier[0].value')}
-                //onChange={handleFhirEndpointChange}
+                onChange={updateField.bind(this, 'dentifier[0].value')}
                 fullWidth              
               />
             </FormControl>     
@@ -132,7 +158,19 @@ function TaskDetail(props){
                 className={classes.input}
                 placeholder="active"              
                 value={get(task, 'status')}
-                //onChange={handleFhirEndpointChange}
+                onChange={updateField.bind(this, 'status')}
+                fullWidth              
+              />    
+            </FormControl>
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Business Status</InputAdornment>
+              <Input
+                id="businessStatusInput"
+                name="businessStatusInput"
+                className={classes.input}
+                placeholder="active"              
+                value={get(task, 'businessStatus')}
+                onChange={updateField.bind(this, 'businessStatus')}
                 fullWidth              
               />    
             </FormControl>
@@ -147,7 +185,7 @@ function TaskDetail(props){
                 className={classes.input}
                 placeholder="Lorem ipsum."              
                 value={get(task, 'description')}
-                //onChange={handleFhirEndpointChange}
+                onChange={updateField.bind(this, 'description')}
                 fullWidth           
                 multiline   
               />
@@ -173,5 +211,5 @@ TaskDetail.propTypes = {
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
-ReactMixin(TaskDetail.prototype, ReactMeteorData);
+
 export default TaskDetail;

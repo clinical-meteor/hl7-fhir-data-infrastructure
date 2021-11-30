@@ -329,7 +329,7 @@ function RestrictionsTable(props){
         <TableRow 
           className="restrictionRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, restrictionsToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, restrictionsToRender[i].id)} 
           hover={true} 
           style={{cursor: 'pointer', height: '52px'}} 
           selected={selected}

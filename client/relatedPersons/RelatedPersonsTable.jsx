@@ -955,7 +955,7 @@ function RelatedPersonsTable(props){
       }
 
       tableRows.push(
-        <TableRow key={i} className="relatedPersonRow" hover={true} style={rowStyle} selected={selected} onClick={ selectRelatedPersonRow.bind(this, relatedPersonsToRender[i]._id )} >
+        <TableRow key={i} className="relatedPersonRow" hover={true} style={rowStyle} selected={selected} onClick={ selectRelatedPersonRow.bind(this, relatedPersonsToRender[i].id )} >
           { renderActionIcons(relatedPersonsToRender[i]) }
           { renderRowAvatar(relatedPersonsToRender[i], styles.avatar) }
           { renderIdentifier(relatedPersonsToRender[i].identifier)}

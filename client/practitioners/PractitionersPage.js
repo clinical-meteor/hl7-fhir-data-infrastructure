@@ -105,8 +105,13 @@ export function PractitionersPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "PractitionerDetail");
-        Session.set('mainAppDialogTitle', "Edit Practitioner");
         Session.set('mainAppDialogMaxWidth', "md");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Practitioner");
+        } else {
+          Session.set('mainAppDialogTitle', "View Practitioner");
+        }
       }      
     } else {
       console.log('No practitioner found...')

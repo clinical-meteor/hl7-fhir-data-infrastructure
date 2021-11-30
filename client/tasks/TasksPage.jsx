@@ -106,98 +106,116 @@ export function TasksPage(props){
   }, [])
 
 
-  function onCancelUpsertTask(context){
-    Session.set('taskPageTabIndex', 1);
-  }
-  function onDeleteTask(context){
-    Tasks._collection.remove({_id: get(context, 'state.taskId')}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('Tasks.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        Session.set('selectedTaskId', '');
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});        
-      }
-    });
-    Session.set('taskPageTabIndex', 1);
-  }
-  function onUpsertTask(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new Task...', context.state)
+  // function onCancelUpsertTask(context){
+  //   Session.set('taskPageTabIndex', 1);
+  // }
+  // function onDeleteTask(context){
+  //   Tasks._collection.remove({_id: get(context, 'state.taskId')}, function(error, result){
+  //     if (error) {
+  //       if(process.env.NODE_ENV === "test") console.log('Tasks.insert[error]', error);
+  //       Bert.alert(error.reason, 'danger');
+  //     }
+  //     if (result) {
+  //       Session.set('selectedTaskId', '');
+  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});        
+  //     }
+  //   });
+  //   Session.set('taskPageTabIndex', 1);
+  // }
+  // function onUpsertTask(context){
+  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
+  //   console.log('Saving a new Task...', context.state)
 
-    if(get(context, 'state.task')){
-      let self = context;
-      let fhirTaskData = Object.assign({}, get(context, 'state.task'));
+  //   if(get(context, 'state.task')){
+  //     let self = context;
+  //     let fhirTaskData = Object.assign({}, get(context, 'state.task'));
   
-      // if(process.env.NODE_ENV === "test") console.log('fhirTaskData', fhirTaskData);
+  //     // if(process.env.NODE_ENV === "test") console.log('fhirTaskData', fhirTaskData);
   
-      let taskValidator = TaskSchema.newContext();
-      // console.log('taskValidator', taskValidator)
-      taskValidator.validate(fhirTaskData)
+  //     let taskValidator = TaskSchema.newContext();
+  //     // console.log('taskValidator', taskValidator)
+  //     taskValidator.validate(fhirTaskData)
   
-      if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', taskValidator.isValid())
-        console.log('ValidationErrors: ', taskValidator.validationErrors());
+  //     if(process.env.NODE_ENV === "development"){
+  //       console.log('IsValid: ', taskValidator.isValid())
+  //       console.log('ValidationErrors: ', taskValidator.validationErrors());
   
-      }
+  //     }
   
-      console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.taskId')) {
-        if(process.env.NODE_ENV === "development") {
-          console.log("Updating task...");
-        }
+  //     console.log('Checking context.state again...', context.state)
+  //     if (get(context, 'state.taskId')) {
+  //       if(process.env.NODE_ENV === "development") {
+  //         console.log("Updating task...");
+  //       }
 
-        delete fhirTaskData._id;
+  //       delete fhirTaskData._id;
   
-        // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirTaskData.resourceType = 'Task';
+  //       // not sure why we're having to respecify this; fix for a bug elsewhere
+  //       fhirTaskData.resourceType = 'Task';
   
-        Tasks._collection.update({_id: get(context, 'state.taskId')}, {$set: fhirTaskData }, function(error, result){
-          if (error) {
-            if(process.env.NODE_ENV === "test") console.log("Tasks.insert[error]", error);
+  //       Tasks._collection.update({_id: get(context, 'state.taskId')}, {$set: fhirTaskData }, function(error, result){
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test") console.log("Tasks.insert[error]", error);
           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
-            Session.set('selectedTaskId', '');
-            Session.set('taskPageTabIndex', 1);
-          }
-        });
-      } else {
-        // if(process.env.NODE_ENV === "test") 
-        console.log("Creating a new task...", fhirTaskData);
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
+  //           Session.set('selectedTaskId', '');
+  //           Session.set('taskPageTabIndex', 1);
+  //         }
+  //       });
+  //     } else {
+  //       // if(process.env.NODE_ENV === "test") 
+  //       console.log("Creating a new task...", fhirTaskData);
   
-        fhirTaskData.effectiveDateTime = new Date();
-        Tasks._collection.insert(fhirTaskData, function(error, result) {
-          if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('Tasks.insert[error]', error);           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
-            Session.set('taskPageTabIndex', 1);
-            Session.set('selectedTaskId', '');
-          }
-        });
-      }
-    } 
-    Session.set('taskPageTabIndex', 1);
-  }
-  function handleRowClick(taskId, foo, bar){
+  //       fhirTaskData.effectiveDateTime = new Date();
+  //       Tasks._collection.insert(fhirTaskData, function(error, result) {
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test")  console.log('Tasks.insert[error]', error);           
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
+  //           Session.set('taskPageTabIndex', 1);
+  //           Session.set('selectedTaskId', '');
+  //         }
+  //       });
+  //     }
+  //   } 
+  //   Session.set('taskPageTabIndex', 1);
+  // }
+  function handleRowClick(taskId){
     console.log('TasksPage.handleRowClick', taskId)
     let task = Tasks.findOne({id: taskId});
 
-    Session.set('selectedTaskId', get(task, 'id'));
-    Session.set('selectedTask', task);
+    if(task){
+      Session.set('selectedTaskId', get(task, 'id'));
+      Session.set('selectedTask', task);
+      Session.set('Task.Current', task);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "TaskDetail");
+        Session.set('mainAppDialogMaxWidth', "md");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Task");
+        } else {
+          Session.set('mainAppDialogTitle', "View Task");
+        }
+      }      
+    } else {
+      console.log('No task found...')
+    }
   }
-  function onInsert(taskId){
-    Session.set('selectedTaskId', '');
-    Session.set('taskPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
-  }
-  function onCancel(){
-    Session.set('taskPageTabIndex', 1);
-  } 
+  // function onInsert(taskId){
+  //   Session.set('selectedTaskId', '');
+  //   Session.set('taskPageTabIndex', 1);
+  //   HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
+  // }
+  // function onCancel(){
+  //   Session.set('taskPageTabIndex', 1);
+  // } 
 
 
   // console.log('TasksPage.data', data)

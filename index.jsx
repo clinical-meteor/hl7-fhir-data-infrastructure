@@ -50,6 +50,7 @@ import {VerificationResults} from './lib/schemas/VerificationResults';
 import {ValueSets} from './lib/schemas/ValueSets';
 
 
+
 import FhirUtilities from './lib/FhirUtilities';
 import FhirDehydrator from './lib/FhirDehydrator';
 import LayoutHelpers from './lib/LayoutHelpers';
@@ -75,6 +76,7 @@ import ActivitiesTable from './client/carePlans/ActivitiesTable';
 
 import CareTeamsPage from './client/careTeams/CareTeamsPage';
 import CareTeamsTable from './client/careTeams/CareTeamsTable';
+import CareTeamDetail from './client/careTeams/CareTeamDetail';
 
 import CodeSystemsPage from './client/codeSystems/CodeSystemsPage';
 import CodeSystemsTable from './client/codeSystems/CodeSystemsTable';
@@ -95,11 +97,11 @@ import ConsentForm from './client/consents/ConsentForm';
 
 import CommunicationsPage from './client/communications/CommunicationsPage';
 import CommunicationsTable from './client/communications/CommunicationsTable';
-// import CommunicationDetail from './client/communications/CommunicationDetail';
+import CommunicationDetail from './client/communications/CommunicationDetail';
 
 import CommunicationRequestsPage from './client/communicationRequests/CommunicationRequestsPage';
 import CommunicationRequestsTable from './client/communicationRequests/CommunicationRequestsTable';
-// import CommunicationRequestDetail from './client/communicationRequests/CommunicationRequestDetail';
+import CommunicationRequestDetail from './client/communicationRequests/CommunicationRequestDetail';
 
 import DevicesPage from './client/devices/DevicesPage';
 import DevicesTable from './client/devices/DevicesTable';
@@ -179,6 +181,7 @@ import MessageHeadersTable from './client/messageHeaders/MessageHeadersTable';
 
 import NetworksPage from './client/networks/NetworksPage';
 import NetworksTable from './client/networks/NetworksTable';
+import NetworkDetail from './client/networks/NetworkDetail';
 
 import ObservationsPage from './client/observations/ObservationsPage';
 import ObservationsTable from './client/observations/ObservationsTable';
@@ -211,6 +214,7 @@ import ProceduresTable from './client/procedures/ProceduresTable';
 
 import ProvenancesPage from './client/provenances/ProvenancesPage';
 import ProvenancesTable from './client/provenances/ProvenancesTable';
+import ProvenanceDetail from './client/provenances/ProvenanceDetail';
 
 import QuestionnairesPage from './client/questionnaires/QuestionnairesPage';
 import QuestionnairesTable from './client/questionnaires/QuestionnairesTable';
@@ -223,10 +227,15 @@ import QuestionnaireResponsesTable from './client/questionnaireResponses/Questio
 
 import RelatedPersonsPage from './client/relatedPersons/RelatedPersonsPage';
 import RelatedPersonsTable from './client/relatedPersons/RelatedPersonsTable';
+import RelatedPersonDetail from './client/relatedPersons/RelatedPersonDetail';
 
 import RiskAssessmentsPage from './client/riskAssessments/RiskAssessmentsPage';
 import RiskAssessmentsTable from './client/riskAssessments/RiskAssessmentsTable';
 import RiskAssessmentForm from './client/riskAssessments/RiskAssessmentForm';
+
+import RestrictionsPage from './client/restrictions/RestrictionsPage';
+import RestrictionsTable from './client/restrictions/RestrictionsTable';
+import RestrictionDetail from './client/restrictions/RestrictionDetail';
 
 import SearchParametersPage from './client/searchParameters/SearchParametersPage';
 import SearchParametersTable from './client/searchParameters/SearchParametersTable';
@@ -240,14 +249,13 @@ import StructureDefinitionsPage from './client/structureDefinitions/StructureDef
 import StructureDefinitionsTable from './client/structureDefinitions/StructureDefinitionsTable';
 import StructureDefinitionDetail from './client/structureDefinitions/StructureDefinitionDetail';
 
-import RestrictionsPage from './client/restrictions/RestrictionsPage';
-import RestrictionsTable from './client/restrictions/RestrictionsTable';
-
 import TasksPage from './client/tasks/TasksPage';
 import TasksTable from './client/tasks/TasksTable';
+import TaskDetail from './client/tasks/TaskDetail';
 
 import VerificationResultsPage from './client/verificationResults/VerificationResultsPage';
 import VerificationResultsTable from './client/verificationResults/VerificationResultsTable';
+import VerificationResultDetail from './client/verificationResults/VerificationResultDetail';
 
 import ValueSetsPage from './client/valuesets/ValueSetsPage';
 import ValueSetsTable from './client/valuesets/ValueSetsTable';
@@ -490,24 +498,24 @@ let DynamicRoutes = [{
   component: ServiceRequestsPage,
   requireAuth: true
 }, {
-  name: 'TasksPage',
-  path: '/tasks',
-  component: TasksPage,
-  requireAuth: true
-}, {
   name: 'StructureDefinitionsPage',
   path: '/structure-definitions',
   component: StructureDefinitionsPage,
   requireAuth: true
 }, {
-  name: 'VerificationResultsPage',
-  path: '/verification-results',
-  component: VerificationResultsPage,
+  name: 'TasksPage',
+  path: '/tasks',
+  component: TasksPage,
   requireAuth: true
 }, {
   name: 'ValueSetsPage',
   path: '/valuesets',
   component: ValueSetsPage
+}, {
+  name: 'VerificationResultsPage',
+  path: '/verification-results',
+  component: VerificationResultsPage,
+  requireAuth: true
 } ];
 
 
@@ -790,18 +798,18 @@ let SidebarElements = [{
   iconName: 'ic_format_list_bulleted',
   collectionName: 'ServiceRequests'
 }, {
+  primaryText: 'StructureDefinitions',
+  to: '/structure-definitions',
+  href: '/structure-definitions',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'StructureDefinitions'
+}, {
   primaryText: 'Tasks',
   to: '/tasks',
   href: '/tasks',
   iconName: 'ic_format_list_bulleted',
   collectionName: 'Tasks',
   requireAuth: true
-}, {
-  primaryText: 'StructureDefinitions',
-  to: '/structure-definitions',
-  href: '/structure-definitions',
-  iconName: 'ic_format_list_bulleted',
-  collectionName: 'StructureDefinitions'
 }, {
   primaryText: 'Value Sets',
   to: '/valuesets',
@@ -1004,6 +1012,7 @@ export {
 
   CareTeamsPage,
   CareTeamsTable,
+  CareTeamDetail,
 
   CompositionsPage,
   CompositionsTable,
@@ -1020,11 +1029,11 @@ export {
 
   CommunicationsPage,
   CommunicationsTable,
-  // CommunicationDetail,
+  CommunicationDetail,
 
   CommunicationRequestsPage,
   CommunicationRequestsTable,
-  // CommunicationRequestDetail,
+  CommunicationRequestDetail,
 
   DevicesPage,
   DevicesTable,
@@ -1068,8 +1077,8 @@ export {
   // ListDetail,
 
   LocationsTable,
-  LocationPage,
-  LocaitionDetail,
+  LocationsPage,
+  LocationDetail,
 
   MeasuresPage,
   MeasuresTable,
@@ -1092,6 +1101,7 @@ export {
 
   NetworksPage,
   NetworksTable,
+  NetworkDetail,
 
   ObservationsPage,
   ObservationsTable,
@@ -1120,6 +1130,7 @@ export {
 
   ProvenancesPage,
   ProvenancesTable,
+  ProvenanceDetail,
 
   QuestionnairesPage,
   QuestionnairesTable,
@@ -1129,8 +1140,13 @@ export {
   QuestionnaireResponsesPage,
   QuestionnaireResponsesTable,
 
+  RelatedPersonsPage,
+  RelatedPersonsTable,
+  RelatedPersonDetail,
+
   RestrictionsPage,
   RestrictionsTable,
+  RestrictionDetail,
 
   RiskAssessmentsPage,
   RiskAssessmentsTable,
@@ -1150,13 +1166,15 @@ export {
 
   TasksPage,
   TasksTable,
+  TaskDetail,
 
   ValueSetsPage,
   ValueSetsTable,
   ValueSetDetail,
 
-  VerificationsPage,
-  VerificationsTable,
+  VerificationResultsPage,
+  VerificationResultsTable,
+  VerificationResultDetail,
 
   FhirDehydrator,
   FhirUtilities,

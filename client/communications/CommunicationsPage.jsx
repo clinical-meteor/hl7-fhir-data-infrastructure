@@ -1,23 +1,30 @@
 
 
 import { 
+  Grid,
   CardHeader,
   CardContent
 } from '@material-ui/core';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
 
+import CommunicationDetail from './CommunicationDetail';
 import CommunicationsTable from './CommunicationsTable';
-import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React, { useState }  from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { Session } from 'meteor/session';
 import moment from 'moment';
+import { get, cloneDeep } from 'lodash';
 
-import { get } from 'lodash';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
+//---------------------------------------------------------------
+// Theming
+
+const muiTheme = Theming.createMuiTheme();
 
 
 
@@ -114,6 +121,13 @@ let defaultCommunication = {
 
 Session.setDefault('communicationSearchFilter', '');
 
+Session.setDefault('communicationPageTabIndex', 0);
+Session.setDefault('communicationSearchFilter', '');
+Session.setDefault('selectedCommunicationId', '');
+Session.setDefault('selectedCommunication', false);
+Session.setDefault('CommunicationsPage.onePageLayout', true)
+Session.setDefault('CommunicationsTable.hideCheckbox', true)
+
 
 
 //=============================================================================================================================================
@@ -122,11 +136,19 @@ Session.setDefault('communicationSearchFilter', '');
 export function CommunicationsPage(props){
 
   let data = {   
+    onePageLayout: true,
+    hideCheckbox: true,
     communication: defaultCommunication,
     selectedCommunication: null,
     selectedCommunicationId: ''
   };
 
+  data.onePageLayout = useTracker(function(){
+    return Session.get('CommunicationsPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('CommunicationsTable.hideCheckbox');
+  }, [])
   data.selectedCommunicationId = useTracker(function(){
     return Session.get('selectedCommunicationId');
   }, [])
@@ -137,37 +159,99 @@ export function CommunicationsPage(props){
     return Communications.find().fetch();
   }, [])
 
+  function handleRowClick(communicationId){
+    console.log('CommunicationsPage.handleRowClick', communicationId)
+    let communication = Communications.findOne({id: communicationId});
+
+    if(communication){
+      Session.set('selectedCommunicationId', get(communication, 'id'));
+      Session.set('selectedCommunication', communication);
+      Session.set('Communication.Current', communication);      
+
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "CommunicationDetail");
+        Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Communication");
+        } else {
+          Session.set('mainAppDialogTitle', "View Communication");
+        }
+      }      
+    } else {
+      console.log('No communication found...')
+    }
+  }
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
+
+  let layoutContents;
+  if(data.onePageLayout){
+    layoutContents = <StyledCard height="auto" margin={20} >
+      <CardHeader title={data.communications.length + " Communication Log Entries"} />
+      <CardContent>
+        <CommunicationsTable 
+          communications={data.communications}
+          hideCheckbox={data.hideCheckbox}
+          hideIdentifier={true}
+          hideActionIcons={true}
+          hideBarcode={false} 
+          onRemoveRecord={function(recordId){
+            Communications.remove({_id: recordId})
+          }}
+          onRowClick={ handleRowClick.bind(this) }
+          actionButtonLabel="Enroll"
+        />
+      </CardContent>
+    </StyledCard>
+  } else {
+    layoutContents = <Grid container spacing={3}>
+      <Grid item lg={6}>
+        <StyledCard height="auto" margin={20} >
+          <CardHeader title={data.communications.length + " Communication Log Entries"} />
+          <CardContent>
+            <CommunicationsTable 
+              communications={data.communications}
+              hideCheckbox={data.hideCheckbox}
+              hideIdentifier={true}
+              hideActionIcons={true}
+              hideBarcode={false} 
+              onRemoveRecord={function(recordId){
+                Communications.remove({_id: recordId})
+              }}
+              onRowClick={ handleRowClick.bind(this) }
+              actionButtonLabel="Enroll"
+            />
+          </CardContent>
+        </StyledCard>
+      </Grid>
+      <Grid item lg={6}>
+        <StyledCard height="auto" margin={20} scrollable>
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedCareTeamId }</h1>
+          {/* <CardHeader title={data.selectedCareTeamId } className="helveticas barcode" /> */}
+          <CardContent>
+            <CardContent>
+              <CommunicationDetail 
+                id='communicationDetails'                 
+                communication={ data.selectedCommunication }
+                communicationId={ data.selectedCommunicationId } 
+              />
+            </CardContent>
+          </CardContent>
+        </StyledCard>
+      </Grid>
+    </Grid>
+  }
   return (
     <PageCanvas id="communicationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-
-      <StyledCard height="auto" margin={20} >
-        <CardHeader
-          title="Communication Log"
-        />
-        <CardContent>
-          <CommunicationsTable 
-            communications={data.communications}
-            hideIdentifier={true}
-            hideCheckbox={true}
-            hideActionIcons={true}
-            hideBarcode={false} 
-            onRemoveRecord={function(recordId){
-              Communications.remove({_id: recordId})
-            }}
-            onRowClick={function(id){
-              Session.set('communicationsUpsert', false);
-              Session.set('selectedCommunication', id);
-              Session.set('communicationPageTabIndex', 2);
-            }}
-            actionButtonLabel="Enroll"
-          />
-        </CardContent>
-      </StyledCard>
+      <MuiThemeProvider theme={muiTheme} >
+        { layoutContents }
+      </MuiThemeProvider> 
     </PageCanvas>
   );
 }

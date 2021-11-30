@@ -28,7 +28,7 @@ import moment from 'moment';
 import { get, set } from 'lodash';
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
-import { lookupReferenceName } from '../../lib/FhirDehydrator';
+import { lookupReferenceName, lookupReference } from '../../lib/FhirDehydrator';
 
 //====================================================================================
 // THEMING
@@ -94,6 +94,9 @@ export function OrganizationDetail(props){
     Session.set('Organization.Current', set(activeCodeSystem, path, event.currentTarget.value))    
   }
 
+  let resolvedEndpoint = "";
+  resolvedEndpoint = get(lookupReference(get(activeOrganization, 'endpoint[0].reference', '')), 'address');
+  console.log('resolvedEndpoint', resolvedEndpoint);
 
   return(
     <div className='MeasureDetails'>
@@ -183,21 +186,36 @@ export function OrganizationDetail(props){
             </FormControl>
           </Grid>                              
 
-          {/* <Grid item xs={12}>
+          <Grid item xs={3}>
             <FormControl style={{width: '100%', marginTop: '20px'}}>
-              <InputAdornment className={classes.label}>Description</InputAdornment>
+              <InputAdornment className={classes.label}>Available Endpoints</InputAdornment>
               <Input
-                id="descriptionInput"
-                name="descriptionInput"
+                id="endpointInput"
+                name="endpointInput"
                 className={classes.input}
                 placeholder=""              
-                value={get(activeOrganization, 'description', '')}
-                onChange={updateField.bind(this, 'description')}
+                value={FhirUtilities.pluckReference(get(activeOrganization, 'endpoint[0]', ''))}
+                onChange={updateField.bind(this, 'endpoint[0]')}
                 fullWidth           
                 multiline   
               />
             </FormControl>            
-          </Grid> */}
+          </Grid>
+          <Grid item xs={9}>
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment className={classes.label}>Endpoint URL</InputAdornment>
+              <Input
+                id="endpointInput"
+                name="endpointInput"
+                className={classes.input}
+                placeholder=""              
+                value={resolvedEndpoint}
+                onChange={updateField.bind(this, 'endpoint[0]')}
+                fullWidth           
+                multiline   
+              />
+            </FormControl>            
+          </Grid>
         </Grid>
     </div>
   );

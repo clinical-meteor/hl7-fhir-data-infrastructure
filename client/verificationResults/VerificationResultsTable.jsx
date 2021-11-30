@@ -78,6 +78,14 @@ function VerificationResultsTable(props){
     hideCheckbox,
     hideActionIcons,
 
+    hideTarget,
+    hideStatus,
+    hideStatusDate,
+    hideValidationType,
+    hideValidationProcess,
+    hideLastPerformed,
+    hideNextScheduled,
+
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -105,29 +113,65 @@ function VerificationResultsTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+
+        hideTarget = false
+        hideStatus = false
+        hideStatusDate = false
+        hideValidationType = false
+        hideValidationProcess = false
+        hideLastPerformed = false
+        hideNextScheduled = false
+    
         break;
       case "tablet":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+
+        hideTarget = false
+        hideStatus = false
+        hideStatusDate = false
+        hideValidationType = false
+        hideValidationProcess = false
+        hideLastPerformed = false
+        hideNextScheduled = false
         break;
       case "web":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+
+        hideTarget = false
+        hideStatus = false
+        hideStatusDate = false
+        hideValidationType = false
+        hideValidationProcess = false
+        hideLastPerformed = false
+        hideNextScheduled = false
         break;
       case "desktop":
-        hideCheckbox = true;
         hideActionIcons = false;
         hideBarcode = true;
+
+        hideTarget = false
+        hideStatus = false
+        hideStatusDate = false
+        hideValidationType = false
+        hideValidationProcess = false
+        hideLastPerformed = false
+        hideNextScheduled = false
         break;
       case "videowall":
-        hideCheckbox = false;
         hideActionIcons = false;
         hideBarcode = true;
+
+        hideTarget = false
+        hideStatus = false
+        hideStatusDate = false
+        hideValidationType = false
+        hideValidationProcess = false
+        hideLastPerformed = false
+        hideNextScheduled = false
         break;            
     }
   }
@@ -226,7 +270,94 @@ function VerificationResultsTable(props){
       );
     }
   }
+  function renderStatusDate(statusDate){
+    if (!hideStatusDate) {
+      return (
+        <TableCell className='statusDate'>{ statusDate }</TableCell>
+      );
+    }
+  }
+  function renderStatusDateHeader(){
+    if (!hideStatusDate) {
+      return (
+        <TableCell className='statusDate'>Status Date</TableCell>
+      );
+    }
+  }
 
+  function renderTarget(target){
+    if (!hideTarget) {
+      return (
+        <TableCell className='target'>{ target }</TableCell>
+      );
+    }
+  }
+  function renderTargetHeader(){
+    if (!hideTarget) {
+      return (
+        <TableCell className='target'>Target</TableCell>
+      );
+    }
+  }
+  function renderValidationType(validationType){
+    if (!hideValidationType) {
+      return (
+        <TableCell className='validationType'>{ validationType }</TableCell>
+      );
+    }
+  }
+  function renderValidationTypeHeader(){
+    if (!hideValidationType) {
+      return (
+        <TableCell className='validationType'>Type</TableCell>
+      );
+    }
+  }
+  function renderValidationProcess(validationProcess){
+    if (!hideValidationProcess) {
+      return (
+        <TableCell className='validationProcess'>{ validationProcess }</TableCell>
+      );
+    }
+  }
+  function renderValidationProcessHeader(){
+    if (!hideValidationProcess) {
+      return (
+        <TableCell className='validationProcess'>Process</TableCell>
+      );
+    }
+  }
+
+
+  function renderLastPerformed(lastPerformed){
+    if (!hideLastPerformed) {
+      return (
+        <TableCell className='lastPerformed'>{ lastPerformed }</TableCell>
+      );
+    }
+  }
+  function renderLastPerformedHeader(){
+    if (!hideLastPerformed) {
+      return (
+        <TableCell className='lastPerformed'>Last Performed</TableCell>
+      );
+    }
+  }
+
+  function renderNextScheduled(nextScheduled){
+    if (!hideNextScheduled) {
+      return (
+        <TableCell className='nextScheduled'>{ nextScheduled }</TableCell>
+      );
+    }
+  }
+  function renderNextScheduledHeader(){
+    if (!hideNextScheduled) {
+      return (
+        <TableCell className='nextScheduled'>Next Scheduled</TableCell>
+      );
+    }
+  }
 
   function renderBarcode(id){
     if (!hideBarcode) {
@@ -329,7 +460,7 @@ function VerificationResultsTable(props){
         <TableRow 
           className="verificationResultRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, verificationResultsToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, verificationResultsToRender[i].id)} 
           hover={true} 
           style={{cursor: 'pointer', height: '52px'}} 
           selected={selected}
@@ -337,6 +468,12 @@ function VerificationResultsTable(props){
           { renderCheckbox() }
           { renderActionIcons(verificationResultsToRender[i]) }
           { renderStatus(verificationResultsToRender[i].status) }
+          { renderTarget(verificationResultsToRender[i].target) }
+          { renderStatusDate(verificationResultsToRender[i].statusDate) }
+          { renderValidationType(verificationResultsToRender[i].validationType) }
+          { renderValidationProcess(verificationResultsToRender[i].validationProcess) }
+          { renderLastPerformed(verificationResultsToRender[i].lastPerformed) }
+          { renderNextScheduled(verificationResultsToRender[i].nextScheduled) }
 
           { renderBarcode(verificationResultsToRender[i].id)}
         </TableRow>
@@ -352,7 +489,13 @@ function VerificationResultsTable(props){
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
             { renderStatusHeader() }
-            
+            { renderTargetHeader() }
+            { renderStatusDateHeader() }
+            { renderValidationTypeHeader() }
+            { renderValidationProcessHeader() }
+            { renderLastPerformedHeader() }
+            { renderNextScheduledHeader() }
+
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -377,6 +520,14 @@ VerificationResultsTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+
+  hideTarget:  PropTypes.bool,
+  hideStatus:  PropTypes.bool,
+  hideStatusDate:  PropTypes.bool,
+  hideValidationType:  PropTypes.bool,
+  hideValidationProcess:  PropTypes.bool,
+  hideLastPerformed:  PropTypes.bool,
+  hideNextScheduled:  PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,

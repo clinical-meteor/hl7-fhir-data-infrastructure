@@ -204,8 +204,13 @@ export function OrganizationAffiliationsPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "OrganizationAffiliationDetail");
-        Session.set('mainAppDialogTitle', "Edit Affiliation");
         Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Affiliation");
+        } else {
+          Session.set('mainAppDialogTitle', "View Affiliation");
+        }
       }      
     } else {
       console.log('No OrgAffiliation found...')

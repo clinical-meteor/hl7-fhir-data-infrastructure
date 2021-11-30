@@ -67,6 +67,34 @@ export function CommunicationRequestPage(props){
     return CommunicationRequests.find().fetch();
   }, [])
 
+
+  function handleRowClick(communicationRequestId){
+    console.log('CommunicationRequestsPage.handleRowClick', communicationRequestId)
+    let communication = CommunicationRequests.findOne({id: communicationRequestId});
+
+    if(communication){
+      Session.set('selectedCommunicationRequestId', get(communication, 'id'));
+      Session.set('selectedCommunicationRequest', communication);
+      Session.set('CommunicationRequest.Current', communication);      
+
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "CommunicationRequestDetail");
+        Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Communication Request");
+        } else {
+          Session.set('mainAppDialogTitle', "View Communication Request");
+        }
+
+      }      
+    } else {
+      console.log('No communication found...')
+    }
+  }
+
   console.log('CommunicationRequestsPage.communicationRequests', data.communicationRequests);
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
@@ -95,6 +123,7 @@ export function CommunicationRequestPage(props){
             onRemoveRecord={function(recordId){
               CommunicationRequest.remove({_id: recordId})
             }}
+            onRowClick={ handleRowClick.bind(this) }
             actionButtonLabel="Enroll"
           />
         </CardContent>

@@ -1,330 +1,249 @@
-// import React from 'react';
+import React from 'react';
 
-// import { 
-//   Grid, 
-//   Container,
-//   Button,
-//   Typography,
-//   DatePicker,
-//   FormControl,
-//   InputLabel,
-//   Input,
-//   InputAdornment,
-//   FormControlLabel,
-//   Checkbox,
-//   TextField,
-//   Card,
-//   CardContent
-// } from '@material-ui/core';
+import { 
+  Grid, 
+  Container,
+  Button,
+  Typography,
+  DatePicker,
+  FormControl,
+  InputLabel,
+  Input,
+  InputAdornment,
+  FormControlLabel,
+  Checkbox,
+  TextField,
+  Card,
+  CardContent
+} from '@material-ui/core';
 
-// import { get } from 'lodash';
-// import moment from 'moment';
+import { get, set } from 'lodash';
+import moment from 'moment';
 
-// import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-// import ReactMixin from 'react-mixin';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
-// import { Session } from 'meteor/session';
+import { Session } from 'meteor/session';
 
+import { FhirUtilities } from '../../lib/FhirUtilities';
+import { lookupReferenceName } from '../../lib/FhirDehydrator';
 
-// let defaultCommunication = {
-//   "resourceType" : "Communication",
-//   "name" : [{
-//     "text" : "",
-//     "resourceType" : "HumanName"
-//   }],
-//   "active" : true,
-//   "gender" : "",
-//   "birthDate" : null,
-//   "photo" : [{
-//     url: ""
-//   }],
-//   "identifier": [{
-//     "use": "usual",
-//     "type": {
-//       "coding": [
-//         {
-//           "system": "http://hl7.org/fhir/v2/0203",
-//           "code": "MR"
-//         }
-//       ]
-//     },
-//     "value": ""
-//   }],
-//   "test" : false
-// };
+//====================================================================================
+// THEMING
 
 
-// Session.setDefault('communicationUpsert', false);
-// Session.setDefault('selectedCommunication', false);
-
-// export class CommunicationDetail extends React.Component {
-//   getMeteorData() {
-//     let data = {
-//       communicationId: false,
-//       communication: defaultCommunication
-//     };
-
-//     if (Session.get('communicationUpsert')) {
-//       data.communication = Session.get('communicationUpsert');
-//     } else {
-//       if (Session.get('selectedCommunication')) {
-//         data.communicationId = Session.get('selectedCommunication');
-//         console.log("selectedCommunication", Session.get('selectedCommunication'));
-
-//         let selectedCommunication = Communications.findOne({_id: Session.get('selectedCommunication')});
-//         console.log("selectedCommunication", selectedCommunication);
-
-//         if (selectedCommunication) {
-//           data.communication = selectedCommunication;
-
-//           if (typeof selectedCommunication.birthDate === "object") {
-//             data.communication.birthDate = moment(selectedCommunication.birthDate).add(1, 'day').format("YYYY-MM-DD");
-//           }
-//         }
-//       } else {
-//         data.communication = defaultCommunication;
-//       }
-//     }
-
-//     if(process.env.NODE_ENV === "test") console.log("CommunicationDetail[data]", data);
-//     return data;
-//   }
-
-//   render() {
-//     return (
-//       <div id={this.props.id} className="communicationDetail">
-//         <CardContent>
-//             <Grid container>
-//               <Grid item md={2}>
-//                 <TextField
-//                   id='categoryInput'
-//                   name='category'
-//                   floatingLabelText='category'
-//                   value={ get(this, 'data.communication.category[0].text') }
-//                   onChange={ this.changeState.bind(this, 'category')}
-//                   fullWidth
-//                   /><br/>
-//               </Grid>
-//               <Grid item md={6}>
-//                 <TextField
-//                   id='identifierInput'
-//                   name='identifier'
-//                   floatingLabelText='identifier'
-//                   value={ get(this, 'data.communication.identifier[0].url') }
-//                   onChange={ this.changeState.bind(this, 'photo')}
-//                   floatingLabelFixed={false}
-//                   fullWidth
-//                   /><br/>
-//               </Grid>
-//             </Grid>
-//             <Grid container>
-//               <Grid item md={4}>
-//                 <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
-//                   <TextField
-//                     id='subjectInput'
-//                     name='subject'
-//                     floatingLabelText='subject'
-//                     value={ get(this, 'data.communication.subject.display', '') }
-//                     onChange={ this.changeState.bind(this, 'name')}
-//                     fullWidth
-//                     /><br/>
-//                   <TextField
-//                     id='sentInput'
-//                     name='sent'
-//                     floatingLabelText='sent'
-//                     value={ moment(get(this, 'data.communication.sent')).format('YYYY-MM-DD hh:mm:ss') }
-//                     onChange={ this.changeState.bind(this, 'sent')}
-//                     fullWidth
-//                     /><br/>
-//                 </Card>
-//               </Grid>
-//               <Grid item md={4}>
-//                 <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
-//                   <TextField
-//                     id='definitionInput'
-//                     name='definition'
-//                     floatingLabelText='definition'
-//                     value={ get(this, 'data.communication.definition[0].text') }
-//                     onChange={ this.changeState.bind(this, 'definition')}
-//                     fullWidth
-//                     /><br/>
-//                   <TextField
-//                     id='payloadInput'
-//                     name='payload'
-//                     floatingLabelText='payload'
-//                     value={ get(this, 'data.communication.payload[0].contentString') }
-//                     onChange={ this.changeState.bind(this, 'payload')}
-//                     fullWidth
-//                     /><br/>
-//                 </Card>
-              
-//               </Grid>
-//               <Grid item md={4}>
-//                 <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
-//                   <TextField
-//                     id='recipientInput'
-//                     name='recipient'
-//                     floatingLabelText='recipient'
-//                     onChange={ this.changeState.bind(this, 'recipient')}
-//                     value={ get(this, 'data.communication.recipient.display', '') }
-//                     fullWidth
-//                     /><br/>
-//                   <TextField
-//                     id='receivedInput'
-//                     name='received'
-//                     floatingLabelText='received'
-//                     value={ moment(get(this, 'data.communication.received')).format('YYYY-MM-DD hh:mm:ss') }
-//                     onChange={ this.changeState.bind(this, 'received')}
-//                     fullWidth
-//                     /><br/>
-//                 </Card>
-//                 {/* { this.determineButtons(this.data.communicationId) }   */}
-//               </Grid>
-//             </Grid>
-
-//         </CardContent>
-//       </div>
-//     );
-//   }
-//   // determineButtons(communicationId){
-//   //   if (communicationId) {
-//   //     return (
-//   //       <div>
-//   //         <RaisedButton id='saveCommunicationButton' className='saveCommunicationButton' label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} />
-//   //         <RaisedButton label="Delete" onClick={this.handleDeleteButton.bind(this)} />
-//   //       </div>
-//   //     );
-//   //   } else {
-//   //     return(
-//   //         <RaisedButton id='saveCommunicationButton'  className='saveCommunicationButton' label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} />
-//   //     );
-//   //   }
-//   // }
-
-//   changeState(field, event, value){
-//     let communicationUpdate;
-
-//     if(process.env.NODE_ENV === "test") console.log("communicationDetail.changeState", field, event, value);
-
-//     // by default, assume there's no other data and we're creating a new communication
-//     if (Session.get('communicationUpsert')) {
-//       communicationUpdate = Session.get('communicationUpsert');
-//     } else {
-//       communicationUpdate = defaultCommunication;
-//     }
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  },
+  input: {
+    marginBottom: '20px'
+  },
+  compactInput: {
+    marginBottom: '10px'
+  },
+  label: {
+    paddingBottom: '10px'
+  }
+}));
 
 
-
-//     // if there's an existing communication, use them
-//     if (Session.get('selectedCommunication')) {
-//       communicationUpdate = this.data.communication;
-//     }
-
-//     switch (field) {
-//       case "subject":
-//         communicationUpdate.name[0].text = value;
-//         break;
-//       case "recipient":
-//         communicationUpdate.gender = value.toLowerCase();
-//         break;
-//       case "sent":
-//         communicationUpdate.birthDate = value;
-//         break;
-//       case "definition":
-//         communicationUpdate.photo[0].url = value;
-//         break;
-//       case "identifier":
-//         communicationUpdate.identifier[0].value = value;
-//         break;
-//       case "category":
-//         communicationUpdate.identifier[0].value = value;
-//         break;
-//         case "payload":
-//         communicationUpdate.identifier[0].value = value;
-//         break;
-//       default:
-
-//     }
-//     // communicationUpdate[field] = value;
-//     process.env.TRACE && console.log("communicationUpdate", communicationUpdate);
-
-//     Session.set('communicationUpsert', communicationUpdate);
-//   }
+//====================================================================================
+// SESSION VARIABLES
 
 
-//   // this could be a mixin
-//   handleSaveButton(){
-//     if(process.env.NODE_ENV === "test") console.log('handleSaveButton()');
-//     let communicationUpdate = Session.get('communicationUpsert', communicationUpdate);
+let defaultCommunication = {
+  "resourceType" : "Communication",
+  "name" : [{
+    "text" : "",
+    "resourceType" : "HumanName"
+  }],
+  "active" : true,
+  "gender" : "",
+  "birthDate" : null,
+  "photo" : [{
+    url: ""
+  }],
+  "identifier": [{
+    "use": "usual",
+    "type": {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/v2/0203",
+          "code": "MR"
+        }
+      ]
+    },
+    "value": ""
+  }],
+  "test" : false
+};
+
+Session.setDefault('communicationUpsert', false);
+Session.setDefault('selectedCommunication', false);
+Session.setDefault('Communication.Current', defaultCommunication)
 
 
-//     if (communicationUpdate.birthDate) {
-//       communicationUpdate.birthDate = new Date(communicationUpdate.birthDate);
-//     }
-//     if(process.env.NODE_ENV === "test") console.log("communicationUpdate", communicationUpdate);
+//====================================================================================
+// MAIN COMPONENT
 
-//     if (Session.get('selectedCommunication')) {
-//       if(process.env.NODE_ENV === "test") console.log("Updating communication...");
+export function CommunicationDetail(props){
+  let classes = useStyles();
 
-//       delete communicationUpdate._id;
+  let { 
+    children, 
+    communication,
+    selectedCommunicationId,
+    ...otherProps 
+  } = props;
 
-//       // not sure why we're having to respecify this; fix for a bug elsewhere
-//       communicationUpdate.resourceType = 'Communication';
+  let activeCommunication = defaultCommunication;
 
-//       Communications.update({_id: Session.get('selectedCommunication')}, {$set: communicationUpdate }, function(error, result){
-//         if (error) {
-//           if(process.env.NODE_ENV === "test") console.log("Communications.insert[error]", error);
-//           //Bert.alert(error.reason, 'danger');
-//         }
-//         if (result) {
-//           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Communications", recordId: Session.get('selectedCommunication')});
-//           Session.set('communicationUpdate', defaultCommunication);
-//           Session.set('communicationUpsert', defaultCommunication);
-//           Session.set('communicationPageTabIndex', 1);
-//           //Bert.alert('Communication added!', 'success');
-//         }
-//       });
-//     } else {
-//       if(process.env.NODE_ENV === "test") console.log("Creating a new communication...", communicationUpdate);
+  activeCommunication = useTracker(function(){
+    return Session.get('Communication.Current');
+  }, [])
 
-//       Communications.insert(communicationUpdate, function(error, result) {
-//         if (error) {
-//           if(process.env.NODE_ENV === "test")  console.log('Communications.insert[error]', error);
-//           //Bert.alert(error.reason, 'danger');
-//         }
-//         if (result) {
-//           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Communications", recordId: result});
-//           Session.set('communicationPageTabIndex', 1);
-//           Session.set('selectedCommunication', false);
-//           Session.set('communicationUpsert', false);
-//           //Bert.alert('Communication added!', 'success');
-//         }
-//       });
-//     }
-//   }
+  function updateField(path, event){
+    console.log('updateField', event.currentTarget.value);
 
-//   handleCancelButton(){
-//     Session.set('communicationPageTabIndex', 1);
-//   }
-
-//   handleDeleteButton(){
-//     Communications.remove({_id: Session.get('selectedCommunication')}, function(error, result){
-//       if (error) {
-//         if(process.env.NODE_ENV === "test") console.log('Communications.insert[error]', error);
-//         //Bert.alert(error.reason, 'danger');
-//       }
-//       if (result) {
-//         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Communications", recordId: Session.get('selectedCommunication')});
-//         Session.set('communicationUpdate', defaultCommunication);
-//         Session.set('communicationUpsert', defaultCommunication);
-//         Session.set('communicationPageTabIndex', 1);
-//         //Bert.alert('Communication removed!', 'success');
-//       }
-//     });
-//   }
-// }
+    // setCurrentCodeSystem(set(currentCodeSystem, path, event.currentTarget.value))
+    Session.set('Communication.Current', set(activeCommunication, path, event.currentTarget.value))    
+  }
 
 
-// ReactMixin(CommunicationDetail.prototype, ReactMeteorData);
+  return (
+    <div className="communicationDetail">
+      {/* <CardContent> */}
+          <Grid container spacing={3}>
+            <Grid item md={6}>
+              <FormControl style={{width: '100%', marginTop: '20px'}}>
+                <InputAdornment className={classes.label}>Name</InputAdornment>
+                <Input
+                  id='categoryInput'
+                  name='category'
+                  className={classes.input}
+                  floatingLabelText='category'
+                  placeholder="Lorem ipsum." 
+                  value={ get(activeCommunication, 'category[0].text') }
+                  onChange={updateField.bind(this, 'category[0].text')}                  
+                  fullWidth
+                  />
+              </FormControl>              
+            </Grid>
+            <Grid item md={6}>
+              <FormControl style={{width: '100%', marginTop: '20px'}}>
+                <InputAdornment className={classes.label}>Identifier</InputAdornment>
+                <Input
+                  id='identifierInput'
+                  name='identifier'
+                  className={classes.input}
+                  floatingLabelText='identifier'
+                  value={ get(activeCommunication, 'identifier[0].url') }
+                  onChange={updateField.bind(this, 'identifier[0].url')}
+                  floatingLabelFixed={false}
+                  fullWidth
+                  />
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={4}>
+              <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
+                <TextField
+                  label="Subject"
+                  id='subjectInput'
+                  name='subject'
+                  floatingLabelText='subject'
+                  value={ get(activeCommunication, 'subject.display', '') }
+                  onChange={updateField.bind(this, 'subject.display')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  fullWidth
+                  /><br/>
+                <TextField
+                  label="Sent"
+                  id='sentInput'
+                  name='sent'
+                  floatingLabelText='sent'
+                  value={ moment(get(activeCommunication, 'sent')).format('YYYY-MM-DD hh:mm:ss') }
+                  onChange={updateField.bind(this, 'sent')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  fullWidth
+                  /><br/>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
+                <TextField
+                  label="Definition"
+                  id='definitionInput'
+                  name='definition'
+                  floatingLabelText='definition'
+                  value={ get(activeCommunication, 'definition[0].text') }
+                  onChange={updateField.bind(this, 'definition[0].text')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  fullWidth
+                  /><br/>
+                <TextField
+                  label="Payload"
+                  id='payloadInput'
+                  name='payload'
+                  floatingLabelText='payload'
+                  value={ get(activeCommunication, 'payload[0].contentString') }
+                  onChange={updateField.bind(this, 'payload[0].contentString')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  fullWidth
+                  /><br/>
+              </Card>
+            
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
+                <TextField
+                  label="Recipient"
+                  id='recipientInput'
+                  name='recipient'
+                  floatingLabelText='recipient'
+                  value={ get(activeCommunication, 'recipient') }
+                  onChange={updateField.bind(this, 'recipient')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  fullWidth
+                  /><br/>
+                <TextField
+                  label="Received"
+                  id='receivedInput'
+                  name='received'
+                  floatingLabelText='received'
+                  value={ moment(get(activeCommunication, 'received')).format('YYYY-MM-DD hh:mm:ss') }
+                  onChange={updateField.bind(this, 'received')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  fullWidth
+                  /><br/>
+              </Card>
+            </Grid>
+          </Grid>
 
-// export default CommunicationDetail;
+      {/* </CardContent> */}
+    </div>
+  );
+}
+
+
+export default CommunicationDetail;

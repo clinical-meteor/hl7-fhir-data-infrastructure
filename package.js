@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.18.0',
+  version: '6.19.0',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -421,5 +421,6 @@ Package.onUse(function (api) {
 
 
 Npm.depends({
-  "react-sortable-hoc": "1.11.0"
+  "react-sortable-hoc": "1.11.0",
+  "react-icons-kit": "2.0.0"
 })

@@ -113,83 +113,83 @@ export function PractitionerRolesPage(props){
   }, [])
 
 
-  function onCancelUpsertPractitionerRole(context){
-    Session.set('practitionerRolePageTabIndex', 1);
-  }
-  function onDeletePractitionerRole(context){
-    PractitionerRoles._collection.remove({_id: get(context, 'state.practitionerRoleId')}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('PractitionerRoles.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        Session.set('selectedPractitionerRoleId', '');
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});        
-      }
-    });
-    Session.set('practitionerRolePageTabIndex', 1);
-  }
-  function onUpsertPractitionerRole(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new PractitionerRole...', context.state)
+  // function onCancelUpsertPractitionerRole(context){
+  //   Session.set('practitionerRolePageTabIndex', 1);
+  // }
+  // function onDeletePractitionerRole(context){
+  //   PractitionerRoles._collection.remove({_id: get(context, 'state.practitionerRoleId')}, function(error, result){
+  //     if (error) {
+  //       if(process.env.NODE_ENV === "test") console.log('PractitionerRoles.insert[error]', error);
+  //       Bert.alert(error.reason, 'danger');
+  //     }
+  //     if (result) {
+  //       Session.set('selectedPractitionerRoleId', '');
+  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});        
+  //     }
+  //   });
+  //   Session.set('practitionerRolePageTabIndex', 1);
+  // }
+  // function onUpsertPractitionerRole(context){
+  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
+  //   console.log('Saving a new PractitionerRole...', context.state)
 
-    if(get(context, 'state.practitionerRole')){
-      let self = context;
-      let fhirPractitionerRoleData = Object.assign({}, get(context, 'state.practitionerRole'));
+  //   if(get(context, 'state.practitionerRole')){
+  //     let self = context;
+  //     let fhirPractitionerRoleData = Object.assign({}, get(context, 'state.practitionerRole'));
   
-      // if(process.env.NODE_ENV === "test") console.log('fhirPractitionerRoleData', fhirPractitionerRoleData);
+  //     // if(process.env.NODE_ENV === "test") console.log('fhirPractitionerRoleData', fhirPractitionerRoleData);
   
-      let practitionerRoleValidator = PractitionerRoleSchema.newContext();
-      // console.log('practitionerRoleValidator', practitionerRoleValidator)
-      practitionerRoleValidator.validate(fhirPractitionerRoleData)
+  //     let practitionerRoleValidator = PractitionerRoleSchema.newContext();
+  //     // console.log('practitionerRoleValidator', practitionerRoleValidator)
+  //     practitionerRoleValidator.validate(fhirPractitionerRoleData)
   
-      if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', practitionerRoleValidator.isValid())
-        console.log('ValidationErrors: ', practitionerRoleValidator.validationErrors());
+  //     if(process.env.NODE_ENV === "development"){
+  //       console.log('IsValid: ', practitionerRoleValidator.isValid())
+  //       console.log('ValidationErrors: ', practitionerRoleValidator.validationErrors());
   
-      }
+  //     }
   
-      console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.practitionerRoleId')) {
-        if(process.env.NODE_ENV === "development") {
-          console.log("Updating practitionerRole...");
-        }
+  //     console.log('Checking context.state again...', context.state)
+  //     if (get(context, 'state.practitionerRoleId')) {
+  //       if(process.env.NODE_ENV === "development") {
+  //         console.log("Updating practitionerRole...");
+  //       }
 
-        delete fhirPractitionerRoleData._id;
+  //       delete fhirPractitionerRoleData._id;
   
-        // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirPractitionerRoleData.resourceType = 'PractitionerRole';
+  //       // not sure why we're having to respecify this; fix for a bug elsewhere
+  //       fhirPractitionerRoleData.resourceType = 'PractitionerRole';
   
-        PractitionerRoles._collection.update({_id: get(context, 'state.practitionerRoleId')}, {$set: fhirPractitionerRoleData }, function(error, result){
-          if (error) {
-            if(process.env.NODE_ENV === "test") console.log("PractitionerRoles.insert[error]", error);
+  //       PractitionerRoles._collection.update({_id: get(context, 'state.practitionerRoleId')}, {$set: fhirPractitionerRoleData }, function(error, result){
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test") console.log("PractitionerRoles.insert[error]", error);
           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});
-            Session.set('selectedPractitionerRoleId', '');
-            Session.set('practitionerRolePageTabIndex', 1);
-          }
-        });
-      } else {
-        // if(process.env.NODE_ENV === "test") 
-        console.log("Creating a new practitionerRole...", fhirPractitionerRoleData);
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});
+  //           Session.set('selectedPractitionerRoleId', '');
+  //           Session.set('practitionerRolePageTabIndex', 1);
+  //         }
+  //       });
+  //     } else {
+  //       // if(process.env.NODE_ENV === "test") 
+  //       console.log("Creating a new practitionerRole...", fhirPractitionerRoleData);
   
-        fhirPractitionerRoleData.effectiveDateTime = new Date();
-        PractitionerRoles._collection.insert(fhirPractitionerRoleData, function(error, result) {
-          if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('PractitionerRoles.insert[error]', error);           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});
-            Session.set('practitionerRolePageTabIndex', 1);
-            Session.set('selectedPractitionerRoleId', '');
-          }
-        });
-      }
-    } 
-    Session.set('practitionerRolePageTabIndex', 1);
-  }
+  //       fhirPractitionerRoleData.effectiveDateTime = new Date();
+  //       PractitionerRoles._collection.insert(fhirPractitionerRoleData, function(error, result) {
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test")  console.log('PractitionerRoles.insert[error]', error);           
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});
+  //           Session.set('practitionerRolePageTabIndex', 1);
+  //           Session.set('selectedPractitionerRoleId', '');
+  //         }
+  //       });
+  //     }
+  //   } 
+  //   Session.set('practitionerRolePageTabIndex', 1);
+  // }
   function handleRowClick(practitionerRoleId){
     console.log('PractitionerRolesPage.handleRowClick', practitionerRoleId)
     let practitionerRole = PractitionerRoles.findOne({id: practitionerRoleId});
@@ -203,8 +203,12 @@ export function PractitionerRolesPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "PractitionerRoleDetail");
-        Session.set('mainAppDialogTitle', "Edit Role");
         Session.set('mainAppDialogMaxWidth', "sm");
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Role");
+        } else {
+          Session.set('mainAppDialogTitle', "View Role");
+        }
       }      
     } else {
       console.log('No PractitionerRole found...')

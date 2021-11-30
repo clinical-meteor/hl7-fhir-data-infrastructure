@@ -147,6 +147,7 @@ function OrganizationsTable(props){
     hideBarcode,
     actionButtonLabel,
     hideExtensions,
+    hideNumEndpoints,
   
     rowsPerPage,
     tableRowSize,
@@ -466,6 +467,20 @@ function OrganizationsTable(props){
       );
     }
   }
+  function renderNumEndpoints(numEndpoints){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'>{numEndpoints}</TableCell>
+      );
+    }
+  }
+  function renderNumEndpointsHeader(){
+    if (!hideNumEndpoints) {
+      return (
+        <TableCell className='numEndpoints'># Endpoints</TableCell>
+      );
+    }
+  }
   function renderBarcode(id){
     if (!hideBarcode) {
       return (
@@ -546,6 +561,7 @@ function OrganizationsTable(props){
           {renderCity(organizationsToRender[i].city)}
           {renderState(organizationsToRender[i].state)}
           {renderPostalCode(organizationsToRender[i].postalCode)}
+          {renderNumEndpoints(organizationsToRender[i].numEndpoints)}
 
           { renderBarcode(organizationsToRender[i]._id)}
           { renderActionButton(organizationsToRender[i]) }
@@ -575,6 +591,7 @@ function OrganizationsTable(props){
             { renderCityHeader() }
             { renderStateHeader() }
             { renderPostalCodeHeader() }
+            { renderNumEndpointsHeader() }
             
             { renderBarcodeHeader() }
             { renderActionButtonHeader() }
@@ -621,6 +638,7 @@ OrganizationsTable.propTypes = {
   hideBarcode: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
   hideExtensions: PropTypes.bool,
+  hideNumEndpoints: PropTypes.bool,
 
   rowsPerPage: PropTypes.number,
   tableRowSize: PropTypes.string,
@@ -639,6 +657,7 @@ OrganizationsTable.defaultProps = {
   hideCheckbox: true,
   hideBarcode: true,
   hideExtensions: true,
+  hideNumEndpoints: true,
   multiline: false,
   rowsPerPage: 5,
   tableRowSize: 'medium'

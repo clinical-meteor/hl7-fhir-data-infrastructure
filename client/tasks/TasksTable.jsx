@@ -519,7 +519,7 @@ function TasksTable(props){
         <TableRow 
           className="taskRow" 
           key={i} 
-          onClick={ handleRowClick.bind(this, tasksToRender[i]._id)} 
+          onClick={ handleRowClick.bind(this, tasksToRender[i].id)} 
           hover={true} 
           style={{cursor: 'pointer', height: '52px'}} 
           selected={selected}

@@ -105,98 +105,114 @@ export function NetworksPage(props){
   }, [])
 
 
-  function onCancelUpsertNetwork(context){
-    Session.set('networkPageTabIndex', 1);
-  }
-  function onDeleteNetwork(context){
-    Networks._collection.remove({_id: get(context, 'state.networkId')}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('Networks.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        Session.set('selectedNetworkId', '');
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});        
-      }
-    });
-    Session.set('networkPageTabIndex', 1);
-  }
-  function onUpsertNetwork(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new Network...', context.state)
+  // function onCancelUpsertNetwork(context){
+  //   Session.set('networkPageTabIndex', 1);
+  // }
+  // function onDeleteNetwork(context){
+  //   Networks._collection.remove({_id: get(context, 'state.networkId')}, function(error, result){
+  //     if (error) {
+  //       if(process.env.NODE_ENV === "test") console.log('Networks.insert[error]', error);
+  //       Bert.alert(error.reason, 'danger');
+  //     }
+  //     if (result) {
+  //       Session.set('selectedNetworkId', '');
+  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});        
+  //     }
+  //   });
+  //   Session.set('networkPageTabIndex', 1);
+  // }
+  // function onUpsertNetwork(context){
+  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
+  //   console.log('Saving a new Network...', context.state)
 
-    if(get(context, 'state.network')){
-      let self = context;
-      let fhirNetworkData = Object.assign({}, get(context, 'state.network'));
+  //   if(get(context, 'state.network')){
+  //     let self = context;
+  //     let fhirNetworkData = Object.assign({}, get(context, 'state.network'));
   
-      // if(process.env.NODE_ENV === "test") console.log('fhirNetworkData', fhirNetworkData);
+  //     // if(process.env.NODE_ENV === "test") console.log('fhirNetworkData', fhirNetworkData);
   
-      let networkValidator = NetworkSchema.newContext();
-      // console.log('networkValidator', networkValidator)
-      networkValidator.validate(fhirNetworkData)
+  //     let networkValidator = NetworkSchema.newContext();
+  //     // console.log('networkValidator', networkValidator)
+  //     networkValidator.validate(fhirNetworkData)
   
-      if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', networkValidator.isValid())
-        console.log('ValidationErrors: ', networkValidator.validationErrors());
+  //     if(process.env.NODE_ENV === "development"){
+  //       console.log('IsValid: ', networkValidator.isValid())
+  //       console.log('ValidationErrors: ', networkValidator.validationErrors());
   
-      }
+  //     }
   
-      console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.networkId')) {
-        if(process.env.NODE_ENV === "development") {
-          console.log("Updating network...");
-        }
+  //     console.log('Checking context.state again...', context.state)
+  //     if (get(context, 'state.networkId')) {
+  //       if(process.env.NODE_ENV === "development") {
+  //         console.log("Updating network...");
+  //       }
 
-        delete fhirNetworkData._id;
+  //       delete fhirNetworkData._id;
   
-        // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirNetworkData.resourceType = 'Network';
+  //       // not sure why we're having to respecify this; fix for a bug elsewhere
+  //       fhirNetworkData.resourceType = 'Network';
   
-        Networks._collection.update({_id: get(context, 'state.networkId')}, {$set: fhirNetworkData }, function(error, result){
-          if (error) {
-            if(process.env.NODE_ENV === "test") console.log("Networks.insert[error]", error);
+  //       Networks._collection.update({_id: get(context, 'state.networkId')}, {$set: fhirNetworkData }, function(error, result){
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test") console.log("Networks.insert[error]", error);
           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});
-            Session.set('selectedNetworkId', '');
-            Session.set('networkPageTabIndex', 1);
-          }
-        });
-      } else {
-        // if(process.env.NODE_ENV === "test") 
-        console.log("Creating a new network...", fhirNetworkData);
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});
+  //           Session.set('selectedNetworkId', '');
+  //           Session.set('networkPageTabIndex', 1);
+  //         }
+  //       });
+  //     } else {
+  //       // if(process.env.NODE_ENV === "test") 
+  //       console.log("Creating a new network...", fhirNetworkData);
   
-        fhirNetworkData.effectiveDateTime = new Date();
-        Networks._collection.insert(fhirNetworkData, function(error, result) {
-          if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('Networks.insert[error]', error);           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});
-            Session.set('networkPageTabIndex', 1);
-            Session.set('selectedNetworkId', '');
-          }
-        });
-      }
-    } 
-    Session.set('networkPageTabIndex', 1);
-  }
-  function handleRowClick(networkId, foo, bar){
+  //       fhirNetworkData.effectiveDateTime = new Date();
+  //       Networks._collection.insert(fhirNetworkData, function(error, result) {
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test")  console.log('Networks.insert[error]', error);           
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});
+  //           Session.set('networkPageTabIndex', 1);
+  //           Session.set('selectedNetworkId', '');
+  //         }
+  //       });
+  //     }
+  //   } 
+  //   Session.set('networkPageTabIndex', 1);
+  // }
+  function handleRowClick(networkId){
     console.log('NetworksPage.handleRowClick', networkId)
     let network = Networks.findOne({id: networkId});
 
-    Session.set('selectedNetworkId', get(network, 'id'));
-    Session.set('selectedNetwork', network);
+    if(network){
+      Session.set('selectedNetworkId', get(network, 'id'));
+      Session.set('selectedNetwork', network);
+      Session.set('Network.Current', network);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "NetworkDetail");
+        Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Network");
+        } else {
+          Session.set('mainAppDialogTitle', "View Network");
+        }
+      }      
+    }
   }
-  function onInsert(networkId){
-    Session.set('selectedNetworkId', '');
-    Session.set('networkPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: networkId});
-  }
-  function onCancel(){
-    Session.set('networkPageTabIndex', 1);
-  } 
+  // function onInsert(networkId){
+  //   Session.set('selectedNetworkId', '');
+  //   Session.set('networkPageTabIndex', 1);
+  //   HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: networkId});
+  // }
+  // function onCancel(){
+  //   Session.set('networkPageTabIndex', 1);
+  // } 
 
 
   // console.log('NetworksPage.data', data)

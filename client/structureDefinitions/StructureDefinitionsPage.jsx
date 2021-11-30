@@ -199,8 +199,13 @@ export function StructureDefinitionsPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "StructureDefinitionDetail");
-        Session.set('mainAppDialogTitle', "Edit Definition");
         Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Definition");
+        } else {
+          Session.set('mainAppDialogTitle', "View Definition");
+        }
       }      
     } else {
       console.log('No structureDefinition found...')

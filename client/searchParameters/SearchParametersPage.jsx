@@ -199,8 +199,13 @@ export function SearchParametersPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "SearchParameterDetail");
-        Session.set('mainAppDialogTitle', "Edit Search Parameter");
         Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Search Parameter");
+        } else {
+          Session.set('mainAppDialogTitle', "View Search Parameter");
+        }
       }      
     } else {
       console.log('No Search Parameter found...')

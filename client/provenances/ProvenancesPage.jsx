@@ -135,6 +135,33 @@ export function ProvenancesPage(props){
 
   if(process.env.NODE_ENV === "test") console.log('In ProvenancesPage render');
 
+
+  function handleRowClick(provenanceId){
+    console.log('ProvenancesPage.handleRowClick', provenanceId)
+    let provenance = Provenances.findOne({id: provenanceId});
+
+    if(provenance){
+      Session.set('selectedProvenanceId', get(provenance, 'id'));
+      Session.set('selectedProvenance', provenance);
+      Session.set('Provenance.Current', provenance);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "ProvenanceDetail");
+        Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Provenance");
+        } else {
+          Session.set('mainAppDialogTitle', "View Provenance");
+        }
+      }      
+    } else {
+      console.log('No provenance found...')
+    }
+  }
+
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
@@ -155,7 +182,8 @@ export function ProvenancesPage(props){
                 tableRowSize="medium"
                 formFactorLayout={formFactor}
                 rowsPerPage={LayoutHelpers.calcTableRows()}
-                />
+                onRowClick={ handleRowClick.bind(this) }
+              />
             </CardContent>
           </StyledCard>
       </MuiThemeProvider>

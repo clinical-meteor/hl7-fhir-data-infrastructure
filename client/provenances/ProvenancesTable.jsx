@@ -511,7 +511,7 @@ function ProvenancesTable(props){
       }
 
       tableRows.push(
-        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, provenancesToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
+        <TableRow className="procedureRow" key={i} onClick={ rowClick.bind(this, provenancesToRender[i].id)} hover={true} style={rowStyle} selected={selected} >            
           { renderToggle() }
           { renderActionIcons(provenancesToRender[i]) }
           { renderIdentifier(provenancesToRender.identifier ) }

@@ -108,83 +108,83 @@ export function HealthcareServicesPage(props){
   }, [])
 
 
-  function onCancelUpsertHealthcareService(context){
-    Session.set('healthcareServicePageTabIndex', 1);
-  }
-  function onDeleteHealthcareService(context){
-    HealthcareServices._collection.remove({_id: get(context, 'state.healthcareServiceId')}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('HealthcareServices.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        Session.set('selectedHealthcareServiceId', '');
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});        
-      }
-    });
-    Session.set('healthcareServicePageTabIndex', 1);
-  }
-  function onUpsertHealthcareService(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new HealthcareService...', context.state)
+  // function onCancelUpsertHealthcareService(context){
+  //   Session.set('healthcareServicePageTabIndex', 1);
+  // }
+  // function onDeleteHealthcareService(context){
+  //   HealthcareServices._collection.remove({_id: get(context, 'state.healthcareServiceId')}, function(error, result){
+  //     if (error) {
+  //       if(process.env.NODE_ENV === "test") console.log('HealthcareServices.insert[error]', error);
+  //       Bert.alert(error.reason, 'danger');
+  //     }
+  //     if (result) {
+  //       Session.set('selectedHealthcareServiceId', '');
+  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});        
+  //     }
+  //   });
+  //   Session.set('healthcareServicePageTabIndex', 1);
+  // }
+  // function onUpsertHealthcareService(context){
+  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
+  //   console.log('Saving a new HealthcareService...', context.state)
 
-    if(get(context, 'state.healthcareService')){
-      let self = context;
-      let fhirHealthcareServiceData = Object.assign({}, get(context, 'state.healthcareService'));
+  //   if(get(context, 'state.healthcareService')){
+  //     let self = context;
+  //     let fhirHealthcareServiceData = Object.assign({}, get(context, 'state.healthcareService'));
   
-      // if(process.env.NODE_ENV === "test") console.log('fhirHealthcareServiceData', fhirHealthcareServiceData);
+  //     // if(process.env.NODE_ENV === "test") console.log('fhirHealthcareServiceData', fhirHealthcareServiceData);
   
-      let healthcareServiceValidator = HealthcareServiceSchema.newContext();
-      // console.log('healthcareServiceValidator', healthcareServiceValidator)
-      healthcareServiceValidator.validate(fhirHealthcareServiceData)
+  //     let healthcareServiceValidator = HealthcareServiceSchema.newContext();
+  //     // console.log('healthcareServiceValidator', healthcareServiceValidator)
+  //     healthcareServiceValidator.validate(fhirHealthcareServiceData)
   
-      if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', healthcareServiceValidator.isValid())
-        console.log('ValidationErrors: ', healthcareServiceValidator.validationErrors());
+  //     if(process.env.NODE_ENV === "development"){
+  //       console.log('IsValid: ', healthcareServiceValidator.isValid())
+  //       console.log('ValidationErrors: ', healthcareServiceValidator.validationErrors());
   
-      }
+  //     }
   
-      console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.healthcareServiceId')) {
-        if(process.env.NODE_ENV === "development") {
-          console.log("Updating healthcareService...");
-        }
+  //     console.log('Checking context.state again...', context.state)
+  //     if (get(context, 'state.healthcareServiceId')) {
+  //       if(process.env.NODE_ENV === "development") {
+  //         console.log("Updating healthcareService...");
+  //       }
 
-        delete fhirHealthcareServiceData._id;
+  //       delete fhirHealthcareServiceData._id;
   
-        // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirHealthcareServiceData.resourceType = 'HealthcareService';
+  //       // not sure why we're having to respecify this; fix for a bug elsewhere
+  //       fhirHealthcareServiceData.resourceType = 'HealthcareService';
   
-        HealthcareServices._collection.update({_id: get(context, 'state.healthcareServiceId')}, {$set: fhirHealthcareServiceData }, function(error, result){
-          if (error) {
-            if(process.env.NODE_ENV === "test") console.log("HealthcareServices.insert[error]", error);
+  //       HealthcareServices._collection.update({_id: get(context, 'state.healthcareServiceId')}, {$set: fhirHealthcareServiceData }, function(error, result){
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test") console.log("HealthcareServices.insert[error]", error);
           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});
-            Session.set('selectedHealthcareServiceId', '');
-            Session.set('healthcareServicePageTabIndex', 1);
-          }
-        });
-      } else {
-        // if(process.env.NODE_ENV === "test") 
-        console.log("Creating a new healthcareService...", fhirHealthcareServiceData);
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});
+  //           Session.set('selectedHealthcareServiceId', '');
+  //           Session.set('healthcareServicePageTabIndex', 1);
+  //         }
+  //       });
+  //     } else {
+  //       // if(process.env.NODE_ENV === "test") 
+  //       console.log("Creating a new healthcareService...", fhirHealthcareServiceData);
   
-        fhirHealthcareServiceData.effectiveDateTime = new Date();
-        HealthcareServices._collection.insert(fhirHealthcareServiceData, function(error, result) {
-          if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('HealthcareServices.insert[error]', error);           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});
-            Session.set('healthcareServicePageTabIndex', 1);
-            Session.set('selectedHealthcareServiceId', '');
-          }
-        });
-      }
-    } 
-    Session.set('healthcareServicePageTabIndex', 1);
-  }
+  //       fhirHealthcareServiceData.effectiveDateTime = new Date();
+  //       HealthcareServices._collection.insert(fhirHealthcareServiceData, function(error, result) {
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test")  console.log('HealthcareServices.insert[error]', error);           
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});
+  //           Session.set('healthcareServicePageTabIndex', 1);
+  //           Session.set('selectedHealthcareServiceId', '');
+  //         }
+  //       });
+  //     }
+  //   } 
+  //   Session.set('healthcareServicePageTabIndex', 1);
+  // }
 
   function handleRowClick(healthcareServiceId){
     console.log('HealthcareServicesPage.handleRowClick', healthcareServiceId)
@@ -199,8 +199,13 @@ export function HealthcareServicesPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "HealthcareServiceDetail");
-        Session.set('mainAppDialogTitle', "Edit Service");
         Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Service");
+        } else {
+          Session.set('mainAppDialogTitle', "View Service");
+        }
       }      
     }
   }

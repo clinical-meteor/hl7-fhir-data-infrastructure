@@ -160,8 +160,13 @@ export function OrganizationsPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "OrganizationDetail");
-        Session.set('mainAppDialogTitle', "Edit Organization");
         Session.set('mainAppDialogMaxWidth', "md");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Organization");
+        } else {
+          Session.set('mainAppDialogTitle', "View Organization");
+        }
       }      
     } else {
       console.log('No organization found...')
@@ -190,6 +195,7 @@ export function OrganizationsPage(props){
           hideCheckbox={data.hideCheckbox}
           hideBarcode={false}
           hideActionIcons={true}
+          hideNumEndpoints={false}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           size="small"
         />                                
@@ -210,6 +216,7 @@ export function OrganizationsPage(props){
               hidePhone={true}
               hideEmail={true}
               hideActionIcons={true}
+              hideNumEndpoints={false}
               selectedOrganizationId={ data.selectedOrganizationId }
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }

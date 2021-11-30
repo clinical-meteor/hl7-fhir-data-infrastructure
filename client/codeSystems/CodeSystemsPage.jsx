@@ -199,8 +199,12 @@ export function CodeSystemsPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "CodeSystemDetail");
-        Session.set('mainAppDialogTitle', "Edit Code System");
         Session.set('mainAppDialogMaxWidth', "sm");
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Code System");
+        } else {
+          Session.set('mainAppDialogTitle', "View Code System");
+        }
       }      
     }
   }

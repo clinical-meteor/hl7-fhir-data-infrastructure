@@ -15,9 +15,9 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
 
-// import VerificationResultDetail from './VerificationResultDetail';
+
+import VerificationResultDetail from './VerificationResultDetail';
 import VerificationResultsTable from './VerificationResultsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
@@ -40,6 +40,7 @@ Session.setDefault('selectedVerificationResult', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('verificationResultsArray', []);
 Session.setDefault('VerificationResultsPage.onePageLayout', true)
+Session.setDefault('VerificationResultsTable.hideCheckbox', true)
 
 //---------------------------------------------------------------
 // Theming
@@ -76,6 +77,9 @@ export function VerificationResultsPage(props){
   data.onePageLayout = useTracker(function(){
     return Session.get('VerificationResultsPage.onePageLayout');
   }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('VerificationResultsTable.hideCheckbox');
+  }, [])
   data.selectedVerificationResultId = useTracker(function(){
     return Session.get('selectedVerificationResultId');
   }, [])
@@ -104,103 +108,31 @@ export function VerificationResultsPage(props){
     return Session.get('verificationResultChecklistMode')
   }, [])
 
-
-  function onCancelUpsertVerificationResult(context){
-    Session.set('verificationResultPageTabIndex', 1);
-  }
-  function onDeleteVerificationResult(context){
-    VerificationResults._collection.remove({_id: get(context, 'state.verificationResultId')}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('VerificationResults.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        Session.set('selectedVerificationResultId', '');
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "VerificationResults", recordId: context.state.verificationResultId});        
-      }
-    });
-    Session.set('verificationResultPageTabIndex', 1);
-  }
-  function onUpsertVerificationResult(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new VerificationResult...', context.state)
-
-    if(get(context, 'state.verificationResult')){
-      let self = context;
-      let fhirVerificationResultData = Object.assign({}, get(context, 'state.verificationResult'));
-  
-      // if(process.env.NODE_ENV === "test") console.log('fhirVerificationResultData', fhirVerificationResultData);
-  
-      let verificationResultValidator = VerificationResultSchema.newContext();
-      // console.log('verificationResultValidator', verificationResultValidator)
-      verificationResultValidator.validate(fhirVerificationResultData)
-  
-      if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', verificationResultValidator.isValid())
-        console.log('VerificationResultErrors: ', verificationResultValidator.verificationResultErrors());
-  
-      }
-  
-      console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.verificationResultId')) {
-        if(process.env.NODE_ENV === "development") {
-          console.log("Updating verificationResult...");
-        }
-
-        delete fhirVerificationResultData._id;
-  
-        // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirVerificationResultData.resourceType = 'VerificationResult';
-  
-        VerificationResults._collection.update({_id: get(context, 'state.verificationResultId')}, {$set: fhirVerificationResultData }, function(error, result){
-          if (error) {
-            if(process.env.NODE_ENV === "test") console.log("VerificationResults.insert[error]", error);
-          
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "VerificationResults", recordId: context.state.verificationResultId});
-            Session.set('selectedVerificationResultId', '');
-            Session.set('verificationResultPageTabIndex', 1);
-          }
-        });
-      } else {
-        // if(process.env.NODE_ENV === "test") 
-        console.log("Creating a new verificationResult...", fhirVerificationResultData);
-  
-        fhirVerificationResultData.effectiveDateTime = new Date();
-        VerificationResults._collection.insert(fhirVerificationResultData, function(error, result) {
-          if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('VerificationResults.insert[error]', error);           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "VerificationResults", recordId: context.state.verificationResultId});
-            Session.set('verificationResultPageTabIndex', 1);
-            Session.set('selectedVerificationResultId', '');
-          }
-        });
-      }
-    } 
-    Session.set('verificationResultPageTabIndex', 1);
-  }
-  function handleRowClick(verificationResultId, foo, bar){
+  function handleRowClick(verificationResultId){
     console.log('VerificationResultsPage.handleRowClick', verificationResultId)
     let verificationResult = VerificationResults.findOne({id: verificationResultId});
 
-    Session.set('selectedVerificationResultId', get(verificationResult, 'id'));
-    Session.set('selectedVerificationResult', verificationResult);
+    if(verificationResult){
+      Session.set('selectedVerificationResultId', get(verificationResult, 'id'));
+      Session.set('selectedVerificationResult', verificationResult);
+      Session.set('VerificationResult.Current', verificationResult);
+      
+      let showModals = true;
+      if(showModals){
+        Session.set('mainAppDialogOpen', true);
+        Session.set('mainAppDialogComponent', "VerificationResultDetail");
+        Session.set('mainAppDialogMaxWidth', "md");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit VerificationResult");
+        } else {
+          Session.set('mainAppDialogTitle', "View VerificationResult");
+        }
+      }      
+    } else {
+      console.log('No verificationResult found...')
+    }
   }
-  function onInsert(verificationResultId){
-    Session.set('selectedVerificationResultId', '');
-    Session.set('verificationResultPageTabIndex', 1);
-    HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "VerificationResults", recordId: verificationResultId});
-  }
-  function onCancel(){
-    Session.set('verificationResultPageTabIndex', 1);
-  } 
-
-
-  // console.log('VerificationResultsPage.data', data)
-
   function handleChange(event, newValue) {
     Session.set('verificationResultPageTabIndex', newValue)
   }
@@ -214,7 +146,7 @@ export function VerificationResultsPage(props){
 
         <VerificationResultsTable 
           verificationResults={ data.verificationResults }
-          hideCheckbox={false}
+          hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -223,6 +155,7 @@ export function VerificationResultsPage(props){
           paginationLimit={10}     
           checklist={data.verificationResultChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onRowClick={ handleRowClick.bind(this) }
           count={data.verificationResults.length}
           />
         </CardContent>
@@ -234,10 +167,10 @@ export function VerificationResultsPage(props){
           <CardHeader title={data.verificationResults.length + " Verification Results"} />
           <CardContent>
             <VerificationResultsTable 
-              verificationResults={ data.verificationResults }
               selectedVerificationResultId={ data.selectedVerificationResultId }
-              hideIdentifier={true} 
-              hideCheckbox={false}
+              verificationResults={ data.verificationResults }
+              hideCheckbox={data.hideCheckbox}
+              hideIdentifier={true}               
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}

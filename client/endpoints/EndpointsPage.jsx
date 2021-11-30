@@ -22,7 +22,6 @@ import { get, cloneDeep } from 'lodash';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
-// import { Endpoints } from '../../lib/schemas/Endpoints';
 
 //---------------------------------------------------------------
 // Session Variables
@@ -102,83 +101,83 @@ export function EndpointsPage(props){
   }, [])
 
 
-  function onCancelUpsertEndpoint(context){
-    Session.set('endpointPageTabIndex', 1);
-  }
-  function onDeleteEndpoint(context){
-    Endpoints._collection.remove({_id: get(context, 'state.endpointId')}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('Endpoints.insert[error]', error);
-        Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        Session.set('selectedEndpointId', '');
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});        
-      }
-    });
-    Session.set('endpointPageTabIndex', 1);
-  }
-  function onUpsertEndpoint(context){
-    //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-    console.log('Saving a new Endpoint...', context.state)
+  // function onCancelUpsertEndpoint(context){
+  //   Session.set('endpointPageTabIndex', 1);
+  // }
+  // function onDeleteEndpoint(context){
+  //   Endpoints._collection.remove({_id: get(context, 'state.endpointId')}, function(error, result){
+  //     if (error) {
+  //       if(process.env.NODE_ENV === "test") console.log('Endpoints.insert[error]', error);
+  //       Bert.alert(error.reason, 'danger');
+  //     }
+  //     if (result) {
+  //       Session.set('selectedEndpointId', '');
+  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});        
+  //     }
+  //   });
+  //   Session.set('endpointPageTabIndex', 1);
+  // }
+  // function onUpsertEndpoint(context){
+  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
+  //   console.log('Saving a new Endpoint...', context.state)
 
-    if(get(context, 'state.endpoint')){
-      let self = context;
-      let fhirEndpointData = Object.assign({}, get(context, 'state.endpoint'));
+  //   if(get(context, 'state.endpoint')){
+  //     let self = context;
+  //     let fhirEndpointData = Object.assign({}, get(context, 'state.endpoint'));
   
-      // if(process.env.NODE_ENV === "test") console.log('fhirEndpointData', fhirEndpointData);
+  //     // if(process.env.NODE_ENV === "test") console.log('fhirEndpointData', fhirEndpointData);
   
-      let endpointValidator = EndpointSchema.newContext();
-      // console.log('endpointValidator', endpointValidator)
-      endpointValidator.validate(fhirEndpointData)
+  //     let endpointValidator = EndpointSchema.newContext();
+  //     // console.log('endpointValidator', endpointValidator)
+  //     endpointValidator.validate(fhirEndpointData)
   
-      if(process.env.NODE_ENV === "development"){
-        console.log('IsValid: ', endpointValidator.isValid())
-        console.log('ValidationErrors: ', endpointValidator.validationErrors());
+  //     if(process.env.NODE_ENV === "development"){
+  //       console.log('IsValid: ', endpointValidator.isValid())
+  //       console.log('ValidationErrors: ', endpointValidator.validationErrors());
   
-      }
+  //     }
   
-      console.log('Checking context.state again...', context.state)
-      if (get(context, 'state.endpointId')) {
-        if(process.env.NODE_ENV === "development") {
-          console.log("Updating endpoint...");
-        }
+  //     console.log('Checking context.state again...', context.state)
+  //     if (get(context, 'state.endpointId')) {
+  //       if(process.env.NODE_ENV === "development") {
+  //         console.log("Updating endpoint...");
+  //       }
 
-        delete fhirEndpointData._id;
+  //       delete fhirEndpointData._id;
   
-        // not sure why we're having to respecify this; fix for a bug elsewhere
-        fhirEndpointData.resourceType = 'Endpoint';
+  //       // not sure why we're having to respecify this; fix for a bug elsewhere
+  //       fhirEndpointData.resourceType = 'Endpoint';
   
-        Endpoints._collection.update({_id: get(context, 'state.endpointId')}, {$set: fhirEndpointData }, function(error, result){
-          if (error) {
-            if(process.env.NODE_ENV === "test") console.log("Endpoints.insert[error]", error);
+  //       Endpoints._collection.update({_id: get(context, 'state.endpointId')}, {$set: fhirEndpointData }, function(error, result){
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test") console.log("Endpoints.insert[error]", error);
           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});
-            Session.set('selectedEndpointId', '');
-            Session.set('endpointPageTabIndex', 1);
-          }
-        });
-      } else {
-        // if(process.env.NODE_ENV === "test") 
-        console.log("Creating a new endpoint...", fhirEndpointData);
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});
+  //           Session.set('selectedEndpointId', '');
+  //           Session.set('endpointPageTabIndex', 1);
+  //         }
+  //       });
+  //     } else {
+  //       // if(process.env.NODE_ENV === "test") 
+  //       console.log("Creating a new endpoint...", fhirEndpointData);
   
-        fhirEndpointData.effectiveDateTime = new Date();
-        Endpoints._collection.insert(fhirEndpointData, function(error, result) {
-          if (error) {
-            if(process.env.NODE_ENV === "test")  console.log('Endpoints.insert[error]', error);           
-          }
-          if (result) {
-            HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});
-            Session.set('endpointPageTabIndex', 1);
-            Session.set('selectedEndpointId', '');
-          }
-        });
-      }
-    } 
-    Session.set('endpointPageTabIndex', 1);
-  }
+  //       fhirEndpointData.effectiveDateTime = new Date();
+  //       Endpoints._collection.insert(fhirEndpointData, function(error, result) {
+  //         if (error) {
+  //           if(process.env.NODE_ENV === "test")  console.log('Endpoints.insert[error]', error);           
+  //         }
+  //         if (result) {
+  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});
+  //           Session.set('endpointPageTabIndex', 1);
+  //           Session.set('selectedEndpointId', '');
+  //         }
+  //       });
+  //     }
+  //   } 
+  //   Session.set('endpointPageTabIndex', 1);
+  // }
   function handleRowClick(endpointId){
     console.log('EndpointsPage.handleRowClick', endpointId)
     let endpoint = Endpoints.findOne({id: endpointId});
@@ -192,8 +191,13 @@ export function EndpointsPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "EndpointDetail");
-        Session.set('mainAppDialogTitle', "Edit Endpoint");
         Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Endpoint");
+        } else {
+          Session.set('mainAppDialogTitle', "View Endpoint");
+        }
       }      
     } else {
       console.log('No endpoint found...')
@@ -255,7 +259,6 @@ export function EndpointsPage(props){
               hideConnectionType={false}
               hideOrganization={false}
               hideAddress={false}    
-              hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               count={data.endpoints.length}

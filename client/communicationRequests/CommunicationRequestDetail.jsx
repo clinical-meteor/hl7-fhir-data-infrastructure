@@ -17,14 +17,46 @@ import {
   CardContent
 } from '@material-ui/core';
 
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 import moment from 'moment';
 
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
 
 import { Session } from 'meteor/session';
 
+
+import { FhirUtilities } from '../../lib/FhirUtilities';
+import { lookupReferenceName } from '../../lib/FhirDehydrator';
+
+
+//====================================================================================
+// THEMING
+
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  },
+  input: {
+    marginBottom: '20px'
+  },
+  compactInput: {
+    marginBottom: '10px'
+  },
+  label: {
+    paddingBottom: '10px'
+  }
+}));
+
+
+//====================================================================================
+// SESSION VARIABLES
 
 let defaultCommunicationRequest = {
   "resourceType" : "CommunicationRequest",
@@ -56,275 +88,162 @@ let defaultCommunicationRequest = {
 
 Session.setDefault('communicationRequestUpsert', false);
 Session.setDefault('selectedCommunicationRequest', false);
+Session.setDefault('CommunicationRequest.Current', defaultCommunicationRequest)
 
-export class CommunicationRequestDetail extends React.Component {
-  getMeteorData() {
-    let data = {
-      communicationRequestId: false,
-      communicationRequest: defaultCommunicationRequest
-    };
+//====================================================================================
+// MAIN COMPONENT
 
-    if (Session.get('communicationRequestUpsert')) {
-      data.communicationRequest = Session.get('communicationRequestUpsert');
-    } else {
-      if (Session.get('selectedCommunicationRequest')) {
-        data.communicationRequestId = Session.get('selectedCommunicationRequest');
-        console.log("selectedCommunicationRequest", Session.get('selectedCommunicationRequest'));
+export function CommunicationRequestDetail(props) {
+  
+  let classes = useStyles();
 
-        let selectedCommunicationRequest = CommunicationRequests.findOne({_id: Session.get('selectedCommunicationRequest')});
-        console.log("selectedCommunicationRequest", selectedCommunicationRequest);
+  let { 
+    children, 
+    communicationRequest,
+    ...otherProps 
+  } = props;
 
-        if (selectedCommunicationRequest) {
-          data.communicationRequest = selectedCommunicationRequest;
+  let activeCommunicationRequest = defaultCommunicationRequest;
 
-          if (typeof selectedCommunicationRequest.birthDate === "object") {
-            data.communicationRequest.birthDate = moment(selectedCommunicationRequest.birthDate).add(1, 'day').format("YYYY-MM-DD");
-          }
-        }
-      } else {
-        data.communicationRequest = defaultCommunicationRequest;
-      }
-    }
+  activeCommunicationRequest = useTracker(function(){
+    return Session.get('CommunicationRequest.Current');
+  }, [])
 
-    if(process.env.NODE_ENV === "test") console.log("CommunicationRequestDetail[data]", data);
-    return data;
+  function updateField(path, event){
+    console.log('updateField', event.currentTarget.value);
+
+    // setCurrentCodeSystem(set(currentCodeSystem, path, event.currentTarget.value))
+    Session.set('CommunicationRequest.Current', set(activeCommunicationRequest, path, event.currentTarget.value))    
   }
 
-  render() {
-    return (
-      <div id={this.props.id} className="communicationRequestDetail">
-        <CardContent>
-            <Grid container>
-              <Grid item md={2}>
-                <TextField
-                  id='categoryInput'
-                  name='category'
-                  floatingLabelText='category'
-                  value={ get(this, 'data.communicationRequest.category[0].text') }
-                  onChange={ this.changeState.bind(this, 'category')}
-                  fullWidth
-                  /><br/>
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  id='identifierInput'
-                  name='identifier'
-                  floatingLabelText='identifier'
-                  value={ get(this, 'data.communicationRequest.identifier[0].url') }
-                  onChange={ this.changeState.bind(this, 'photo')}
-                  floatingLabelFixed={false}
-                  fullWidth
-                  /><br/>
-              </Grid>
+  return (
+    <div className="communicationRequestDetail">
+      <CardContent>
+          <Grid container>
+            <Grid item md={2}>
+              <TextField
+                label="Category"
+                id='categoryInput'
+                name='category'
+                floatingLabelText='category'
+                value={ get(activeCommunicationRequest, 'category[0].text') }
+                onChange={updateField.bind(this, 'category[0].text')}
+                InputLabelProps={{
+                  shrink: true
+                }}
+                fullWidth
+                /><br/>
             </Grid>
-            <Grid container>
-              <Grid item md={4}>
-                <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
-                  <TextField
-                    id='subjectInput'
-                    name='subject'
-                    floatingLabelText='subject'
-                    value={ get(this, 'data.communicationRequest.subject.display', '') }
-                    onChange={ this.changeState.bind(this, 'name')}
-                    fullWidth
-                    /><br/>
-                  <TextField
-                    id='sentInput'
-                    name='sent'
-                    floatingLabelText='sent'
-                    value={ moment(get(this, 'data.communicationRequest.sent')).format('YYYY-MM-DD hh:mm:ss') }
-                    onChange={ this.changeState.bind(this, 'sent')}
-                    fullWidth
-                    /><br/>
-                </Card>
-              </Grid>
-              <Grid item md={4}>
-                <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
-                  <TextField
-                    id='definitionInput'
-                    name='definition'
-                    floatingLabelText='definition'
-                    value={ get(this, 'data.communicationRequest.definition[0].text') }
-                    onChange={ this.changeState.bind(this, 'definition')}
-                    fullWidth
-                    /><br/>
-                  <TextField
-                    id='payloadInput'
-                    name='payload'
-                    floatingLabelText='payload'
-                    value={ get(this, 'data.communicationRequest.payload[0].contentString') }
-                    onChange={ this.changeState.bind(this, 'payload')}
-                    fullWidth
-                    /><br/>
-                </Card>
+            <Grid item md={6}>
+              <TextField
+                label="Identifier"
+                id='identifierInput'
+                name='identifier'
+                floatingLabelText='identifier'
+                value={ get(activeCommunicationRequest, 'identifier[0].url') }
+                onChange={updateField.bind(this, 'identifier[0].url')}
+                floatingLabelFixed={false}
+                InputLabelProps={{
+                  shrink: true
+                }}
+                fullWidth
+                /><br/>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item md={4}>
               
-              </Grid>
-              <Grid item md={4}>
-                <Card zDepth={2} style={{padding: '20px', marginBottom: '20px'}}>
-                  <TextField
-                    id='recipientInput'
-                    name='recipient'
-                    floatingLabelText='recipient'
-                    onChange={ this.changeState.bind(this, 'recipient')}
-                    value={ get(this, 'data.communicationRequest.recipient.display', '') }
-                    fullWidth
-                    /><br/>
-                  <TextField
-                    id='receivedInput'
-                    name='received'
-                    floatingLabelText='received'
-                    value={ moment(get(this, 'data.communicationRequest.received')).format('YYYY-MM-DD hh:mm:ss') }
-                    onChange={ this.changeState.bind(this, 'received')}
-                    fullWidth
-                    /><br/>
-                </Card>
-                {/* { this.determineButtons(this.data.communicationRequestId) }   */}
-              </Grid>
+                <TextField
+                  label="Subject"
+                  id='subjectInput'
+                  name='subject'
+                  floatingLabelText='subject'
+                  value={ get(activeCommunicationRequest, 'subject.display', '') }
+                  onChange={updateField.bind(this, 'subject.display')}
+                  InputLabelProps={{
+                    shrink: true
+                  }}  
+                  fullWidth
+                  /><br/>
+                <TextField
+                  label="Sent"
+                  id='sentInput'
+                  name='sent'
+                  floatingLabelText='sent'
+                  value={ moment(get(activeCommunicationRequest, 'sent')).format('YYYY-MM-DD hh:mm:ss') }
+                  onChange={updateField.bind(this, 'sent')}
+                  InputLabelProps={{
+                    shrink: true
+                  }}  
+                  fullWidth
+                  /><br/>
+              
             </Grid>
+            <Grid item md={4}>
+              
+                <TextField
+                  label="Definition"
+                  id='definitionInput'
+                  name='definition'
+                  floatingLabelText='definition'
+                  value={ get(activeCommunicationRequest, 'definition[0].text') }
+                  onChange={updateField.bind(this, 'definition[0].text')}
+                  InputLabelProps={{
+                    shrink: true
+                  }}  
+                  fullWidth
+                  /><br/>
+                <TextField
+                  label="Payload"
+                  id='payloadInput'
+                  name='payload'
+                  floatingLabelText='payload'
+                  value={ get(activeCommunicationRequest, 'payload[0].contentString') }
+                  onChange={updateField.bind(this, 'payload[0].contentString')}
+                  InputLabelProps={{
+                    shrink: true
+                  }}  
+                  fullWidth
+                  /><br/>
+              
+            
+            </Grid>
+            <Grid item md={4}>
+              
+                <TextField
+                  label="Recipient"
+                  id='recipientInput'
+                  name='recipient'
+                  floatingLabelText='recipient'
+                  value={ get(activeCommunicationRequest, 'recipient.display', '') }
+                  onChange={updateField.bind(this, 'recipient.display')}
+                  InputLabelProps={{
+                    shrink: true
+                  }}  
+                  fullWidth
+                  /><br/>
+                <TextField
+                  label="Received"
+                  id='receivedInput'
+                  name='received'
+                  floatingLabelText='received'
+                  value={ moment(get(activeCommunicationRequest, 'received')).format('YYYY-MM-DD hh:mm:ss') }
+                  onChange={updateField.bind(this, 'received')}
+                  InputLabelProps={{
+                    shrink: true
+                  }}  
+                  fullWidth
+                  /><br/>
+              
+            </Grid>
+          </Grid>
 
-        </CardContent>
-      </div>
-    );
-  }
-  // determineButtons(communicationRequestId){
-  //   if (communicationRequestId) {
-  //     return (
-  //       <div>
-  //         <RaisedButton id='saveCommunicationRequestButton' className='saveCommunicationRequestButton' label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} />
-  //         <RaisedButton label="Delete" onClick={this.handleDeleteButton.bind(this)} />
-  //       </div>
-  //     );
-  //   } else {
-  //     return(
-  //         <RaisedButton id='saveCommunicationRequestButton'  className='saveCommunicationRequestButton' label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} />
-  //     );
-  //   }
-  // }
-
-  changeState(field, event, value){
-    let communicationRequestUpdate;
-
-    if(process.env.NODE_ENV === "test") console.log("communicationRequestDetail.changeState", field, event, value);
-
-    // by default, assume there's no other data and we're creating a new communicationRequest
-    if (Session.get('communicationRequestUpsert')) {
-      communicationRequestUpdate = Session.get('communicationRequestUpsert');
-    } else {
-      communicationRequestUpdate = defaultCommunicationRequest;
-    }
-
-
-
-    // if there's an existing communicationRequest, use them
-    if (Session.get('selectedCommunicationRequest')) {
-      communicationRequestUpdate = this.data.communicationRequest;
-    }
-
-    switch (field) {
-      case "subject":
-        communicationRequestUpdate.name[0].text = value;
-        break;
-      case "recipient":
-        communicationRequestUpdate.gender = value.toLowerCase();
-        break;
-      case "sent":
-        communicationRequestUpdate.birthDate = value;
-        break;
-      case "definition":
-        communicationRequestUpdate.photo[0].url = value;
-        break;
-      case "identifier":
-        communicationRequestUpdate.identifier[0].value = value;
-        break;
-      case "category":
-        communicationRequestUpdate.identifier[0].value = value;
-        break;
-        case "payload":
-        communicationRequestUpdate.identifier[0].value = value;
-        break;
-      default:
-
-    }
-    // communicationRequestUpdate[field] = value;
-    process.env.TRACE && console.log("communicationRequestUpdate", communicationRequestUpdate);
-
-    Session.set('communicationRequestUpsert', communicationRequestUpdate);
-  }
-
-
-  // this could be a mixin
-  handleSaveButton(){
-    if(process.env.NODE_ENV === "test") console.log('handleSaveButton()');
-    let communicationRequestUpdate = Session.get('communicationRequestUpsert', communicationRequestUpdate);
-
-
-    if (communicationRequestUpdate.birthDate) {
-      communicationRequestUpdate.birthDate = new Date(communicationRequestUpdate.birthDate);
-    }
-    if(process.env.NODE_ENV === "test") console.log("communicationRequestUpdate", communicationRequestUpdate);
-
-    if (Session.get('selectedCommunicationRequest')) {
-      if(process.env.NODE_ENV === "test") console.log("Updating communicationRequest...");
-
-      delete communicationRequestUpdate._id;
-
-      // not sure why we're having to respecify this; fix for a bug elsewhere
-      communicationRequestUpdate.resourceType = 'CommunicationRequest';
-
-      CommunicationRequests.update({_id: Session.get('selectedCommunicationRequest')}, {$set: communicationRequestUpdate }, function(error, result){
-        if (error) {
-          if(process.env.NODE_ENV === "test") console.log("CommunicationRequests.insert[error]", error);
-          //Bert.alert(error.reason, 'danger');
-        }
-        if (result) {
-          HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "CommunicationRequests", recordId: Session.get('selectedCommunicationRequest')});
-          Session.set('communicationRequestUpdate', defaultCommunicationRequest);
-          Session.set('communicationRequestUpsert', defaultCommunicationRequest);
-          Session.set('communicationRequestPageTabIndex', 1);
-          //Bert.alert('CommunicationRequest added!', 'success');
-        }
-      });
-    } else {
-      if(process.env.NODE_ENV === "test") console.log("Creating a new communicationRequest...", communicationRequestUpdate);
-
-      CommunicationRequests.insert(communicationRequestUpdate, function(error, result) {
-        if (error) {
-          if(process.env.NODE_ENV === "test")  console.log('CommunicationRequests.insert[error]', error);
-          //Bert.alert(error.reason, 'danger');
-        }
-        if (result) {
-          HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "CommunicationRequests", recordId: result});
-          Session.set('communicationRequestPageTabIndex', 1);
-          Session.set('selectedCommunicationRequest', false);
-          Session.set('communicationRequestUpsert', false);
-          //Bert.alert('CommunicationRequest added!', 'success');
-        }
-      });
-    }
-  }
-
-  handleCancelButton(){
-    Session.set('communicationRequestPageTabIndex', 1);
-  }
-
-  handleDeleteButton(){
-    CommunicationRequests.remove({_id: Session.get('selectedCommunicationRequest')}, function(error, result){
-      if (error) {
-        if(process.env.NODE_ENV === "test") console.log('CommunicationRequests.insert[error]', error);
-        //Bert.alert(error.reason, 'danger');
-      }
-      if (result) {
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "CommunicationRequests", recordId: Session.get('selectedCommunicationRequest')});
-        Session.set('communicationRequestUpdate', defaultCommunicationRequest);
-        Session.set('communicationRequestUpsert', defaultCommunicationRequest);
-        Session.set('communicationRequestPageTabIndex', 1);
-        //Bert.alert('CommunicationRequest removed!', 'success');
-      }
-    });
-  }
+      </CardContent>
+    </div>
+  );
+  
 }
 
 
-ReactMixin(CommunicationRequestDetail.prototype, ReactMeteorData);
 
 export default CommunicationRequestDetail;

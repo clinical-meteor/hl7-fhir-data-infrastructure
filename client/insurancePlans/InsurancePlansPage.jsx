@@ -201,8 +201,13 @@ export function InsurancePlansPage(props){
       if(showModals){
         Session.set('mainAppDialogOpen', true);
         Session.set('mainAppDialogComponent', "InsurancePlanDetail");
-        Session.set('mainAppDialogTitle', "Edit Plan");
         Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Plan");
+        } else {
+          Session.set('mainAppDialogTitle', "View Plan");
+        }
       }      
     }
   }
