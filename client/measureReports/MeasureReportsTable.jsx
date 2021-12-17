@@ -16,7 +16,6 @@ let get = _.get;
 let set = _.set;
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
-
 import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
@@ -106,6 +105,9 @@ function MeasureReportsTable(props){
     rowsPerPage,
     tableRowSize,
 
+    page,
+    onSetPage,
+
     count,
     formFactorLayout,
 
@@ -122,7 +124,6 @@ function MeasureReportsTable(props){
       props.onRowClick(_id);
     }
   }
-
   function removeRecord(_id){
     logger.info('Remove measureReport: ' + _id)
     if(props.onRemoveRecord){
@@ -139,7 +140,6 @@ function MeasureReportsTable(props){
       props.onCellClick(id);
     }
   }
-
   function handleMetaClick(patient){
     let self = this;
     if(props.onMetaClick){
@@ -455,34 +455,33 @@ function MeasureReportsTable(props){
   
 
 
-  //---------------------------------------------------------------------
-  // Pagination
+  // //---------------------------------------------------------------------
+  // // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
   }
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }    
   };
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       // rowsPerPageOptions={[5, 10, 25, 100]}
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -510,7 +509,7 @@ function MeasureReportsTable(props){
       let count = 0;  
 
       props.measureReports.forEach(function(measureReport){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           measureReportsToRender.push(FhirDehydrator.dehydrateMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand, measureScoreType));
         }
         count++;
@@ -609,6 +608,7 @@ MeasureReportsTable.propTypes = {
   selectedMeasureReportId: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
+  page: PropTypes.number,
   rowsPerPage: PropTypes.number,
   showMinutes: PropTypes.bool,
 
@@ -636,6 +636,7 @@ MeasureReportsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
   actionButtonLabel: PropTypes.string,
   showActionButton: PropTypes.bool,
 
@@ -652,6 +653,7 @@ MeasureReportsTable.propTypes = {
 };
 MeasureReportsTable.defaultProps = {
   tableRowSize: 'medium',
+  page: 0,
   rowsPerPage: 5,
   showMinutes: false,
   hideCheckboxes: true,

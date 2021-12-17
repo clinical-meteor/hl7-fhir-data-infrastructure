@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.19.1',
+  version: '6.20.0',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -10,19 +10,20 @@ Package.describe({
 Package.onUse(function (api) {
   api.versionsFrom('1.1.0.3');
 
-  api.use('meteor@1.9.3');
-  api.use('webapp@1.10.0');
+  api.use('meteor@1.10.0');
+  api.use('webapp@1.13.0');
+  api.use('ecmascript@0.16.0');
+  api.use('react-meteor-data@2.2.2');
+
   api.use('ddp@1.4.0');
   api.use('livedata@1.0.18');
   api.use('es5-shim@4.8.0');
-  api.use('ecmascript@0.15.0');
 
   api.use('session');
   api.use('mongo');
   api.use('http');
-  api.use('react-meteor-data@2.1.2');
   
-  api.use('aldeed:collection2@3.0.6');
+  api.use('aldeed:collection2@3.5.0');
   api.use('matb33:collection-hooks@1.0.1');
   api.use('clinical:hl7-resource-datatypes@4.0.6');
 
@@ -422,6 +423,6 @@ Package.onUse(function (api) {
 
 Npm.depends({
   "react-sortable-hoc": "1.11.0",
-  "react-icons-kit": "2.0.0",
-  "react": "16.13.0"
+  "react-icons-kit": "2.0.0"
+  // "react": "16.13.0"
 })

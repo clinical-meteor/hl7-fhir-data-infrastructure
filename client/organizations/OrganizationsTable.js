@@ -142,7 +142,7 @@ function OrganizationsTable(props){
     onRowClick,
     onMetaClick,
     onRemoveRecord,
-    onActionButtonClihandle,
+    onActionButton,
     hideActionButton,
     hideBarcode,
     actionButtonLabel,
@@ -157,6 +157,10 @@ function OrganizationsTable(props){
 
     appHeight,
     formFactorLayout,
+
+    page,
+    onSetPage,
+
     count,
     multiline,
 
@@ -235,13 +239,10 @@ function OrganizationsTable(props){
 
 
 
-  //---------------------------------------------------------------------
-  // Pagination
+  // //---------------------------------------------------------------------
+  // // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
 
   let paginationCount = 101;
   if(count){
@@ -251,7 +252,9 @@ function OrganizationsTable(props){
   }
 
   function handleChangePage(event, newPage){
-    setPage(newPage);
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
   }
 
   let paginationFooter;
@@ -262,7 +265,7 @@ function OrganizationsTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -524,7 +527,7 @@ function OrganizationsTable(props){
       let count = 0;    
 
       organizations.forEach(function(organization){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           organizationsToRender.push(FhirDehydrator.dehydrateOrganization(organization));
         }
         count++;
@@ -633,7 +636,8 @@ OrganizationsTable.propTypes = {
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
-  onActionButtonClihandle: PropTypes.func,
+  onActionButton: PropTypes.func,
+  onSetPage: PropTypes.func,
   hideActionButton: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
@@ -645,6 +649,8 @@ OrganizationsTable.propTypes = {
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   size: PropTypes.string,
+  
+  page: PropTypes.number,
   count: PropTypes.number,
   multiline: PropTypes.bool,
 
@@ -659,6 +665,7 @@ OrganizationsTable.defaultProps = {
   hideExtensions: true,
   hideNumEndpoints: true,
   multiline: false,
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium'
 }
