@@ -45,6 +45,7 @@ import {RiskAssessments} from './lib/schemas/RiskAssessments';
 import {SearchParameters} from './lib/schemas/SearchParameters';
 import {ServiceRequests} from './lib/schemas/ServiceRequests';
 import {StructureDefinitions} from './lib/schemas/StructureDefinitions';
+import {ServerStats} from './lib/schemas/ServerStats';
 import {Tasks} from './lib/schemas/Tasks';
 import {VerificationResults} from './lib/schemas/VerificationResults';
 import {ValueSets} from './lib/schemas/ValueSets';
@@ -531,13 +532,15 @@ let SidebarElements = [{
   primaryText: 'Audit Events',
   to: '/audit-events',
   href: '/audit-events',
-  collectionName: 'AuditEvents'
+  collectionName: 'AuditEvents',
+  requireAuth: true
 }, {
   primaryText: 'Bundles',
   to: '/bundles',
   href: '/bundles',
   iconName: 'suitcase',
-  collectionName: 'Bundles'
+  collectionName: 'Bundles',
+  requireAuth: true
 }, {
   primaryText: 'Care Plans',
   to: '/careplans',
@@ -556,7 +559,8 @@ let SidebarElements = [{
   to: '/code-systems',
   href: '/code-systems',
   iconName: 'notepad',
-  collectionName: 'CodeSystems'
+  collectionName: 'CodeSystems',
+  requireAuth: true
 }, {
   primaryText: 'Conditions',
   to: '/conditions',
@@ -790,19 +794,22 @@ let SidebarElements = [{
   to: '/search-parameters',
   href: '/search-parameters',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'SearchParameters'
+  collectionName: 'SearchParameters',
+  requireAuth: true
 }, {
   primaryText: 'Service Requests',
   to: '/service-requests',
   href: '/service-requests',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'ServiceRequests'
+  collectionName: 'ServiceRequests',
+  requireAuth: true
 }, {
   primaryText: 'StructureDefinitions',
   to: '/structure-definitions',
   href: '/structure-definitions',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'StructureDefinitions'
+  collectionName: 'StructureDefinitions',
+  requireAuth: true
 }, {
   primaryText: 'Tasks',
   to: '/tasks',
@@ -815,7 +822,8 @@ let SidebarElements = [{
   to: '/valuesets',
   href: '/valuesets',
   iconName: 'notepad',
-  collectionName: 'ValueSets'
+  collectionName: 'ValueSets',
+  requireAuth: true
 }, {
   primaryText: 'VerificationResults',
   to: '/verification-results',

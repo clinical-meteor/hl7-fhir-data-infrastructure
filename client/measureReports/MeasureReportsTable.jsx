@@ -56,7 +56,7 @@ let styles = {
 // MAIN COMPONENT
 
 
-function MeasureReportsTable(props){
+export function MeasureReportsTable(props){
   logger.debug('Rendering the MeasureReportsTable');
   logger.verbose('clinical:hl7-resource-encounter.client.MeasureReportsTable');
   logger.data('MeasureReportsTable.props', {data: props}, {source: "MeasureReportsTable.jsx"});
@@ -459,8 +459,8 @@ function MeasureReportsTable(props){
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  let [page, setPage] = useState(0);
+  let [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
   let paginationCount = 101;

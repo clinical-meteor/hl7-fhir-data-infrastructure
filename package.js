@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.19.0',
+  version: '6.19.1',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -91,6 +91,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/SearchParameters.js', ['client', 'server']);
   api.addFiles('lib/schemas/ServiceRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/StructureDefinitions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/ServerStats.js', ['client', 'server']);
   api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
   api.addFiles('lib/schemas/ValueSets.js', ['client', 'server']);
   api.addFiles('lib/schemas/VerificationResults.js', ['client', 'server']);
@@ -312,6 +313,8 @@ Package.onUse(function (api) {
   api.export('VerificationResultSchema');
 
   api.export('BaseModel');
+
+  api.export('ServerStats');
 
   // ---------------------------------------------------------------------------
   // Base Resources
