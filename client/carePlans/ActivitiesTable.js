@@ -10,7 +10,7 @@ import {
 //   import { GoTrashcan } from 'react-icons/go'
   
   import React from 'react';
-  import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+  import { useTracker } from 'meteor/react-meteor-data';
   import { get } from 'lodash';
   import PropTypes from 'prop-types';
 

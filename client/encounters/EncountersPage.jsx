@@ -16,8 +16,7 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 // import EncounterDetail from './EncounterDetail';
 import EncountersTable from './EncountersTable';

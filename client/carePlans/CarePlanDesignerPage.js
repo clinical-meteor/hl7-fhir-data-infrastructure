@@ -22,8 +22,7 @@ if(Package["clinical:hl7-fhir-data-infrastructure"]){
 import { CarePlansTable } from './CarePlansTable';
 
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -304,7 +303,5 @@ export class CarePlanDesignerPage extends React.Component {
 
 
 
-
-ReactMixin(CarePlanDesignerPage.prototype, ReactMeteorData);
 
 export default CarePlanDesignerPage;

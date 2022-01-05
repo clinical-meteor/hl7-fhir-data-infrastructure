@@ -20,7 +20,7 @@ import {
   MenuItem,
 } from '@material-ui/core';
 
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { Meteor } from 'meteor/meteor';
 

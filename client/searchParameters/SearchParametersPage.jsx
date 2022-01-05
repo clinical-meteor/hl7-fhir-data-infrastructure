@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import SearchParameterDetail from './SearchParameterDetail';
 import SearchParametersTable from './SearchParametersTable';

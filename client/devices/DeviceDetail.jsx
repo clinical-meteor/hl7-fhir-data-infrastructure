@@ -9,8 +9,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
   Button,
@@ -337,5 +336,6 @@ DeviceDetail.propTypes = {
   deviceId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   device: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
-ReactMixin(DeviceDetail.prototype, ReactMeteorData);
+
+
 export default DeviceDetail;

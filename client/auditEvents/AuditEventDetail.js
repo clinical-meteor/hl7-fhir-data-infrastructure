@@ -4,7 +4,7 @@
 // import DatePicker from 'material-ui/DatePicker';
 // import RaisedButton from 'material-ui/RaisedButton';
 // import React from 'react';
-// import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+// import { useTracker } from 'meteor/react-meteor-data';
 // import ReactMixin from 'react-mixin';
 // import TextField from 'material-ui/TextField';
 // import { browserHistory } from 'react-router';

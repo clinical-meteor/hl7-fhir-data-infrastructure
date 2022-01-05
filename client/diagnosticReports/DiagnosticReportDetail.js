@@ -33,8 +33,7 @@ import MomentUtils from '@date-io/moment';
 
 
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { get, set } from 'lodash';
 import PropTypes from 'prop-types';
@@ -570,5 +569,5 @@ DiagnosticReportDetail.propTypes = {
   diagnosticReportId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   diagnosticReport: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
-ReactMixin(DiagnosticReportDetail.prototype, ReactMeteorData);
+
 export default DiagnosticReportDetail;

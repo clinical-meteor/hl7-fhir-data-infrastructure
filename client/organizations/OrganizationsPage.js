@@ -23,7 +23,7 @@ import OrganizationsTable from './OrganizationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 // import { Organizations } from '../../lib/schemas/Organizations';
 

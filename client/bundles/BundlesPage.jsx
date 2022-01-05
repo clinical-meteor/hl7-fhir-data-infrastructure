@@ -16,8 +16,8 @@ import {
 } from '@material-ui/core';
 import { FhirDehydrator, StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
-import { useTracker, Bundles } from 'meteor/clinical:hl7-fhir-data-infrastructure';
-
+import { Bundles } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import moment from 'moment';
 import { get, has } from 'lodash';

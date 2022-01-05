@@ -1,6 +1,6 @@
 import React  from 'react';
 import ReactMixin  from 'react-mixin';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { 

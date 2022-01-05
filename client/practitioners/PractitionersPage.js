@@ -25,8 +25,8 @@ import { Session } from 'meteor/session';
 import { Package } from 'meteor/meteor';
 
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-// import { Practitioners } from '../../lib/schemas/Practitioners';
+import { useTracker } from 'meteor/react-meteor-data';
+
 
 import { get } from 'lodash';
 

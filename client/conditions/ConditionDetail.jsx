@@ -9,8 +9,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
   Button,
@@ -446,5 +445,5 @@ ConditionDetail.propTypes = {
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
-ReactMixin(ConditionDetail.prototype, ReactMeteorData);
+
 export default ConditionDetail;

@@ -2,8 +2,7 @@ import { CardActions, CardContent, Button, TextField } from '@material-ui/core';
 import { get, find } from 'lodash';
 
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { Session } from 'meteor/session';
 import { copyFileSync } from 'fs';
@@ -164,5 +163,4 @@ export class QuestionnaireResponseDetail extends React.Component {
 }
 
 
-ReactMixin(QuestionnaireResponseDetail.prototype, ReactMeteorData);
 export default QuestionnaireResponseDetail;
