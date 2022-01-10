@@ -94,25 +94,47 @@ function LocationsTable(props){
     rowsPerPage,
     count,
 
+    page,
+    onSetPage,
+
     formFactorLayout,
     tableRowSize,
 
     ...otherProps 
   } = props;
 
-  //---------------------------------------------------------------------
-  // Pagination
+  // //---------------------------------------------------------------------
+  // // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
+  }
+
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
   }
 
 
@@ -345,7 +367,7 @@ function LocationsTable(props){
       let count = 0;    
 
       props.locations.forEach(function(location){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           locationsToRender.push(FhirDehydrator.dehydrateLocation(location, simplifiedAddress, extensionUrl));
         }
         count++;
@@ -382,25 +404,6 @@ function LocationsTable(props){
   }
 
   
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!props.disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
 
   return(
     <div>
@@ -439,6 +442,9 @@ LocationsTable.propTypes = {
   disablePagination: PropTypes.bool,
   rowsPerPage: PropTypes.number,
   count: PropTypes.number,
+
+  page: PropTypes.number,
+  onSetPage: PropTypes.func,
 
   hideIdentifier: PropTypes.bool,
   hideName: PropTypes.bool,
@@ -480,6 +486,7 @@ LocationsTable.defaultProps = {
   simplifiedAddress: true,
   multiline: false,
   tableRowSize: 'medium',
+  page: 0,
   rowsPerPage: 5
 }
 
