@@ -21,8 +21,7 @@ import ProceduresTable from './ProceduresTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
 

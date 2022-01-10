@@ -14,7 +14,7 @@ import {
 
 
 import React, { useState } from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { Meteor } from 'meteor/meteor';

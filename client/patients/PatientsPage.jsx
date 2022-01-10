@@ -15,8 +15,7 @@ import PropTypes from 'prop-types';
 import { PatientsTable, PatientDetail, PageCanvas, StyledCard } from 'fhir-starter';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 

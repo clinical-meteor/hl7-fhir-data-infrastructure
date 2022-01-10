@@ -14,8 +14,7 @@ import {
 
 
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { Meteor } from 'meteor/meteor';
@@ -183,5 +182,5 @@ ListDetail.propTypes = {
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
-ReactMixin(ListDetail.prototype, ReactMeteorData);
+
 export default ListDetail;

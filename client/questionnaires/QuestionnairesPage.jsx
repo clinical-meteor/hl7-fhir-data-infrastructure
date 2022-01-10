@@ -29,8 +29,7 @@ import {
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { Session } from 'meteor/session';
 import { Random } from 'meteor/random';

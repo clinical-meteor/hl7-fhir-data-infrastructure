@@ -13,8 +13,7 @@ import {
 } from '@material-ui/core';
 
 import { HTTP } from 'meteor/http';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { get } from 'lodash';
 import moment from 'moment';

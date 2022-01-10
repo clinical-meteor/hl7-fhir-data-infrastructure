@@ -17,7 +17,7 @@ import {
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { get, set } from 'lodash';
 

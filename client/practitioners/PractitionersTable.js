@@ -17,10 +17,8 @@ import {
   LastPageIcon
 } from '@material-ui/core';
 
-// import React from 'react';
-// import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-// import ReactMixin from 'react-mixin';
 
+import { useTracker } from 'meteor/react-meteor-data';
 import _ from 'lodash';
 let get = _.get;
 let set = _.set;

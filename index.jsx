@@ -1,5 +1,4 @@
 import BaseModel from './lib/BaseModel';
-// import { useTracker, withTracker } from './lib/Tracker';
 
 
 import {AllergyIntolerances} from './lib/schemas/AllergyIntolerances';

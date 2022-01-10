@@ -24,9 +24,8 @@ import {
 import { get, uniq, compact } from 'lodash';
 import moment from 'moment';
 
-// import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-// import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { Questionnaires } from '../../lib/schemas/Questionnaires';
 

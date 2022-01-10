@@ -10,8 +10,7 @@ import {
 import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 import React  from 'react';
-import ReactMixin  from 'react-mixin';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 // import MedicationDetail from './MedicationDetail';
 import MedicationsTable from './MedicationsTable';

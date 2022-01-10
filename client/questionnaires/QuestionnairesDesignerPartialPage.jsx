@@ -22,8 +22,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 import { get } from 'lodash';
 import { Session } from 'meteor/session';
 import { Random } from 'meteor/random';
@@ -569,5 +568,4 @@ export class QuestionnairesPage extends React.Component {
 }
 
 
-ReactMixin(QuestionnairesPage.prototype, ReactMeteorData);
 export default QuestionnairesPage;

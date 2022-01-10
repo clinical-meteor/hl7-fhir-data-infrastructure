@@ -20,7 +20,7 @@ import {
 import { get, set } from 'lodash';
 import moment from 'moment';
 
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { Session } from 'meteor/session';
 

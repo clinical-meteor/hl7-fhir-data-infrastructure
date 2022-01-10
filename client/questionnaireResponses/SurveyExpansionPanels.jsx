@@ -23,8 +23,6 @@
 // import { get, has, uniq, compact } from 'lodash';
 // import moment from 'moment';
 
-// // import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-// // import ReactMixin from 'react-mixin';
 // import PropTypes from 'prop-types';
 
 // import { Questionnaires } from 'meteor/clinical:hl7-fhir-data-infrastructure';

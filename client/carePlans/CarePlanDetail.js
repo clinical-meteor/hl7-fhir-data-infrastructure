@@ -17,8 +17,7 @@ import {
 import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { ConditionsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
@@ -266,5 +265,5 @@ export class CarePlanDetail extends React.Component {
 CarePlanDetail.propTypes = {
   hasUser: PropTypes.object
 };
-ReactMixin(CarePlanDetail.prototype, ReactMeteorData);
+
 export default CarePlanDetail;

@@ -12,8 +12,7 @@ import {
 
 
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { get, set } from 'lodash';
 import PropTypes from 'prop-types';
@@ -472,5 +471,5 @@ ImmunizationDetail.propTypes = {
   onCancel: PropTypes.func
 };
 
-ReactMixin(ImmunizationDetail.prototype, ReactMeteorData);
+
 export default ImmunizationDetail;

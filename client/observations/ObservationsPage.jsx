@@ -17,8 +17,7 @@ import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin  from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 
 // import ObservationDetail from './ObservationDetail';
 import ObservationsTable from './ObservationsTable';

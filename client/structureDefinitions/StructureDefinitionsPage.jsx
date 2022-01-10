@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React  from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import StructureDefinitionDetail from './StructureDefinitionDetail';
 import StructureDefinitionsTable from './StructureDefinitionsTable';
@@ -26,7 +26,6 @@ import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-// import { StructureDefinitions } from '../../lib/schemas/StructureDefinitions';
 
 
 //---------------------------------------------------------------

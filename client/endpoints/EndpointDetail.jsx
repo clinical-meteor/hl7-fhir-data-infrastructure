@@ -14,7 +14,7 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import PropTypes from 'prop-types';
 

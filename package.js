@@ -13,7 +13,7 @@ Package.onUse(function (api) {
   api.use('meteor@1.10.0');
   api.use('webapp@1.13.0');
   api.use('ecmascript@0.16.0');
-  api.use('react-meteor-data@2.2.2');
+  api.use('react-meteor-data@2.4.0');
 
   api.use('ddp@1.4.0');
   api.use('livedata@1.0.18');

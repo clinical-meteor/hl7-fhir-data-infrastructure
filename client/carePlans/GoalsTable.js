@@ -9,7 +9,7 @@ import {
   } from '@material-ui/core';
   
   import React, { useState } from 'react';
-  import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+  import { useTracker } from 'meteor/react-meteor-data';
   import { get, has, concat, cloneDeep, findIndex, pullAt } from 'lodash';
   import PropTypes from 'prop-types';
 

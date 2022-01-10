@@ -24,8 +24,7 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
 import React, { Component } from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 
@@ -587,5 +586,5 @@ AllergyIntoleranceDetail.propTypes = {
   allergyIntoleranceId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   allergyIntolerance: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
-ReactMixin(AllergyIntoleranceDetail.prototype, ReactMeteorData);
+
 export default AllergyIntoleranceDetail;

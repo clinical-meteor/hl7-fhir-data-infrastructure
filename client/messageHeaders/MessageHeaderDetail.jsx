@@ -14,8 +14,7 @@ import {
 
 
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { Meteor } from 'meteor/meteor';
@@ -50,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 
 
 
-function MessageHeaderDetail(props){
+export function MessageHeaderDetail(props){
 
   let classes = useStyles();
 
@@ -442,5 +441,5 @@ MessageHeaderDetail.propTypes = {
   onRemove: PropTypes.func,
   onCancel: PropTypes.func
 };
-ReactMixin(MessageHeaderDetail.prototype, ReactMeteorData);
+
 export default MessageHeaderDetail;
