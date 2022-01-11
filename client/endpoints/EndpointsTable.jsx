@@ -97,11 +97,16 @@ function EndpointsTable(props){
     rowsPerPage,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
+    displayEnteredInError, 
 
     formFactorLayout,
     checklist,
+
+    page,
+    onSetPage,
+
     count,
+    multiline,
     tableRowSize,
 
     ...otherProps 
@@ -340,7 +345,7 @@ function EndpointsTable(props){
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
@@ -351,9 +356,12 @@ function EndpointsTable(props){
     paginationCount = rows.length;
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
 
   let paginationFooter;
   if(!disablePagination){
@@ -390,8 +398,13 @@ function EndpointsTable(props){
 
   if(endpoints){
     if(endpoints.length > 0){              
+      let count = 0;
+
       endpoints.forEach(function(endpoint){
-        endpointsToRender.push(FhirDehydrator.dehydrateEndpoint(endpoint, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          endpointsToRender.push(FhirDehydrator.dehydrateEndpoint(endpoint, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -492,12 +505,16 @@ EndpointsTable.propTypes = {
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
+  onSetPage: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
   tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
-  checklist: PropTypes.bool
+  checklist: PropTypes.bool,
+
+  page: PropTypes.number,
+  count: PropTypes.number
 };
 EndpointsTable.defaultProps = {
   hideCheckbox: true,
@@ -513,6 +530,7 @@ EndpointsTable.defaultProps = {
 
   checklist: true,
   selectedEndpointId: '',
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'

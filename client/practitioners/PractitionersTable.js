@@ -116,20 +116,22 @@ function PractitionersTable(props){
     onMetaClick,
     onRemoveRecord,
     onActionButtonClihandle,
+
     hideActionButton,
     hideBarcode,
     actionButtonLabel,
     hideExtensions,
-
-
   
     rowsPerPage,
     tableRowSize,
     dateFormat,
     showMinutes,
     size,
-
     formFactorLayout,
+
+    page,
+    onSetPage,
+
     count,
     multiline,
 
@@ -234,7 +236,7 @@ function PractitionersTable(props){
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
@@ -246,7 +248,9 @@ function PractitionersTable(props){
   }
 
   function handleChangePage(event, newPage){
-    setPage(newPage);
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
   }
 
   let paginationFooter;
@@ -698,6 +702,7 @@ PractitionersTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClihandle: PropTypes.func,
+  onSetPage: PropTypes.func,
   hideActionButton: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
@@ -708,6 +713,7 @@ PractitionersTable.propTypes = {
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   size: PropTypes.string,
+  page: PropTypes.number,
   count: PropTypes.number,
   multiline: PropTypes.bool,
 
@@ -729,6 +735,7 @@ PractitionersTable.defaultProps = {
   hideQualificationStart: true,
   hideQualificationEnd: true,
   hideFullAddress: true,
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium'
 }
