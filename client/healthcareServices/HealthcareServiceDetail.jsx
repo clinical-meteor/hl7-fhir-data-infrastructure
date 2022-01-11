@@ -4,13 +4,28 @@ import {
   Container,
   Typography,
   DatePicker,
-  FormControl,
-  InputLabel,
-  Input,
-  InputAdornment,
-  FormControlLabel,
   Checkbox
 } from '@material-ui/core';
+
+import IconButton from '@material-ui/core/IconButton';
+import Input from '@material-ui/core/Input';
+import FilledInput from '@material-ui/core/FilledInput';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import PersonIcon from '@material-ui/icons/Person';
+import GroupIcon from '@material-ui/icons/Group';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import SearchIcon from '@material-ui/icons/Search';
 
 
 import React from 'react';
@@ -86,8 +101,15 @@ export function HealthcareServiceDetail(props){
     console.log('updateField', event.currentTarget.value);
 
     // setCurrentCodeSystem(set(currentCodeSystem, path, event.currentTarget.value))
-    Session.set('HealthcareService.Current', set(activeCodeSystem, path, event.currentTarget.value))    
+    Session.set('HealthcareService.Current', set(activeHealthcareService, path, event.currentTarget.value))    
   }
+  function handleOpenTypes(){
+    Session.set('mainAppDialogTitle', "Search Types of Healthcare Services");
+    Session.set('mainAppDialogComponent', "CarePlanPatientSearchDialog");
+    Session.set('lastUpdated', new Date());
+    Session.set('mainAppDialogMaxWidth', "md");
+    Session.set('mainAppDialogOpen', true);
+  }  
 
 
   return(
@@ -116,7 +138,7 @@ export function HealthcareServiceDetail(props){
                 name="categoryInput"
                 className={classes.input}
                 value={FhirUtilities.pluckCodeableConcept(get(activeHealthcareService, 'category[0]'))}
-                onChange={updateField.bind(this, 'category')}
+                onChange={updateField.bind(this, 'category[0].text')}
                 fullWidth              
               />       
             </FormControl>      
@@ -129,9 +151,19 @@ export function HealthcareServiceDetail(props){
                 name="typeInput"
                 className={classes.input}
                 // placeholder=""              
-                value={get(activeHealthcareService, 'type')}
-                onChange={updateField.bind(this, 'type')}
-                fullWidth              
+                value={FhirUtilities.pluckCodeableConcept(get(activeHealthcareService, 'type[0]'))}
+                onChange={updateField.bind(this, 'type[0].text')}
+                fullWidth    
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle type select"
+                      onClick={ handleOpenTypes.bind(this) }
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                }           
               />          
             </FormControl>            
           </Grid>
@@ -144,7 +176,7 @@ export function HealthcareServiceDetail(props){
                 className={classes.input}
                 placeholder="Lorem ipsum."              
                 value={FhirUtilities.pluckCodeableConcept(get(activeHealthcareService, 'specialty[0]'))}
-                onChange={updateField.bind(this, 'specialty')}
+                onChange={updateField.bind(this, 'specialty[0].text')}
                 fullWidth           
                 multiline   
               />
