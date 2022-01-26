@@ -23,6 +23,8 @@ let get = _.get;
 let set = _.set;
 let has = _.has;
 
+// import { get, set, has } from 'lodash';
+
 import { StyledCard, PageCanvas } from 'fhir-starter';
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
@@ -133,6 +135,9 @@ function ObservationsTable(props){
     showSeconds,
     count,
 
+    page,
+    onSetPage,
+
     formFactorLayout,
 
     ...otherProps
@@ -240,14 +245,20 @@ function ObservationsTable(props){
 
   let rows = [];
   
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPage, setRowsPerPage] = useState(rowsPerPage);
 
   let paginationCount = 101;
   if(count){
     paginationCount = count;
   } else {
     paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
   }
 
   function rowClick(id){
@@ -632,7 +643,7 @@ function ObservationsTable(props){
     if(observations.length > 0){     
       let count = 0;    
       observations.forEach(function(observation){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           observationsToRender.push(FhirDehydrator.dehydrateObservation(
             observation, 
             internalDateFormat, 
@@ -713,9 +724,6 @@ function ObservationsTable(props){
     }
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
   let paginationFooter;
   if(!disablePagination){
@@ -724,7 +732,7 @@ function ObservationsTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -812,6 +820,8 @@ ObservationsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
   actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,
@@ -821,11 +831,13 @@ ObservationsTable.propTypes = {
   tableRowSize: PropTypes.string,
   noDataMessagePadding: PropTypes.string,
 
+  page: PropTypes.number,
   count: PropTypes.number,
   formFactorLayout: PropTypes.string
 };
 ObservationsTable.defaultProps = {
   tableRowSize: 'medium',
+  page: 0,
   rowsPerPage: 5,
   dateFormat: "YYYY-MM-DD hh:mm:ss",
   hideCheckbox: true,
