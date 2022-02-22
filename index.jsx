@@ -45,6 +45,7 @@ import {SearchParameters} from './lib/schemas/SearchParameters';
 import {ServiceRequests} from './lib/schemas/ServiceRequests';
 import {StructureDefinitions} from './lib/schemas/StructureDefinitions';
 import {ServerStats} from './lib/schemas/ServerStats';
+import {Subscriptions} from './lib/schemas/Subscriptions';
 import {Tasks} from './lib/schemas/Tasks';
 import {VerificationResults} from './lib/schemas/VerificationResults';
 import {ValueSets} from './lib/schemas/ValueSets';
@@ -248,6 +249,10 @@ import ServiceRequestForm from './client/serviceRequests/ServiceRequestForm';
 import StructureDefinitionsPage from './client/structureDefinitions/StructureDefinitionsPage';
 import StructureDefinitionsTable from './client/structureDefinitions/StructureDefinitionsTable';
 import StructureDefinitionDetail from './client/structureDefinitions/StructureDefinitionDetail';
+
+import SubscriptionsPage from './client/subscriptions/SubscriptionsPage';
+import SubscriptionsTable from './client/subscriptions/SubscriptionsTable';
+import SubscriptionDetail from './client/subscriptions/SubscriptionDetail';
 
 import TasksPage from './client/tasks/TasksPage';
 import TasksTable from './client/tasks/TasksTable';
@@ -501,6 +506,11 @@ let DynamicRoutes = [{
   name: 'StructureDefinitionsPage',
   path: '/structure-definitions',
   component: StructureDefinitionsPage,
+  requireAuth: true
+}, {
+  name: 'SubscriptionsPage',
+  path: '/subscriptions',
+  component: SubscriptionsPage,
   requireAuth: true
 }, {
   name: 'TasksPage',
@@ -808,6 +818,13 @@ let SidebarElements = [{
   href: '/structure-definitions',
   iconName: 'ic_format_list_bulleted',
   collectionName: 'StructureDefinitions',
+  requireAuth: true
+}, {
+  primaryText: 'Subscriptions',
+  to: '/subscriptions',
+  href: '/subscriptions',
+  iconName: 'ic_format_list_bulleted',
+  collectionName: 'Subscriptions',
   requireAuth: true
 }, {
   primaryText: 'Tasks',
@@ -1170,6 +1187,10 @@ export {
   StructureDefinitionsPage,
   StructureDefinitionsTable,
   StructureDefinitionDetail,
+
+  SubscriptionsPage,
+  SubscriptionsTable,
+  SubscriptionDetail,
 
   TasksPage,
   TasksTable,

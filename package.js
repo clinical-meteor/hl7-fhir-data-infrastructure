@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.20.8',
+  version: '6.21.1',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -93,6 +93,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/ServiceRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas/StructureDefinitions.js', ['client', 'server']);
   api.addFiles('lib/schemas/ServerStats.js', ['client', 'server']);
+  api.addFiles('lib/schemas/Subscriptions.js', ['client', 'server']);
   api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
   api.addFiles('lib/schemas/ValueSets.js', ['client', 'server']);
   api.addFiles('lib/schemas/VerificationResults.js', ['client', 'server']);
@@ -301,6 +302,10 @@ Package.onUse(function (api) {
   api.export('StructureDefinitions');
   api.export('StructureDefinitionSchema');
 
+  api.export('Subscription');
+  api.export('Subscriptions');
+  api.export('SubscriptionSchema');
+
   api.export('Task');
   api.export('Tasks');
   api.export('TaskSchema');
@@ -356,6 +361,7 @@ Package.onUse(function (api) {
 
   api.addFiles('datatypes/Basic.js');
   api.addFiles('datatypes/OperationDefinition.js');
+  api.addFiles('datatypes/OperationOutcome.js');
   api.addFiles('datatypes/StructureDefinition.js');
   api.addFiles('datatypes/ValueSet.js');
 
@@ -382,6 +388,7 @@ Package.onUse(function (api) {
 
   api.export('BasicSchema');
   api.export('OperationDefinitionSchema');
+  api.export('OperationOutcomeSchema');
   api.export('StructureDefinitionSchema');
   api.export('ValueSetSchema');
 
