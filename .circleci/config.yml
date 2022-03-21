@@ -77,7 +77,7 @@ jobs:
     steps:
 
       - browser-tools/install-browser-tools
-      
+
       # Dependencies
       #   This would typically go in either a build or a build-and-test job when using workflows
       # # Restore the dependency cache
@@ -118,8 +118,6 @@ jobs:
 
     # Link the meteor executable into /usr/bin
     - run: cd .. && sudo ln -s .meteor/meteor /usr/bin/meteor
-
-    - run: cd .. && meteor --version
 
     # # Install Starrynight unless it is cached
     # - run: npm install starrynight
