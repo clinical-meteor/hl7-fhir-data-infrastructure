@@ -150,7 +150,7 @@ export function HealthcareServiceDetail(props){
                 id="typeInput"
                 name="typeInput"
                 className={classes.input}
-                // placeholder=""              
+   
                 value={FhirUtilities.pluckCodeableConcept(get(activeHealthcareService, 'type[0]'))}
                 onChange={updateField.bind(this, 'type[0].text')}
                 fullWidth    

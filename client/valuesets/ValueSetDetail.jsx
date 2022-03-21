@@ -10,7 +10,13 @@ import {
   InputAdornment,
   FormControlLabel,
   Checkbox,
-  TextField
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination
 } from '@material-ui/core';
 
 
@@ -74,6 +80,11 @@ export function ValueSetDetail(props){
   let { 
     children, 
     valueSet,
+    hideTitleElements,
+    hideDescriptionElements,
+    hideConcepts,
+    hideTable,  
+    jsonContent,
     ...otherProps 
   } = props;
 
@@ -82,7 +93,12 @@ export function ValueSetDetail(props){
 
   activeValueSet = useTracker(function(){
     return Session.get('ValueSet.Current');
-  }, []);
+  }, []);  
+
+  // inefficient, because the tracker is still running; but hey...
+  if(valueSet){
+    activeValueSet = valueSet;
+  }
 
   function updateField(path, event){
     console.log('updateField', event.currentTarget.value);
@@ -94,7 +110,9 @@ export function ValueSetDetail(props){
 
 
   let renderElements = [];
-  let composeIncludes = get(valueSet, 'compose.include');
+  let conceptsTable;
+  let composeIncludes = get(activeValueSet, 'compose.include');
+  console.log('composeIncludes', composeIncludes)
 
   if(Array.isArray(composeIncludes)){
     composeIncludes.forEach(function(includeSystem, includeSystemIndex){
@@ -107,12 +125,13 @@ export function ValueSetDetail(props){
           value={get(includeSystem, 'system')}
           fullWidth          
           style={{marginTop: '20px'}}
+          disabled
         />
 
       </Grid>)
 
       let includeConcepts = get(includeSystem, 'concept');
-      if(Array.isArray(includeConcepts)){
+      if(Array.isArray(includeConcepts) && !hideConcepts){
         includeConcepts.forEach(function(concept, index){          
           renderElements.push(<Grid item xs={3}>
             <TextField
@@ -142,6 +161,43 @@ export function ValueSetDetail(props){
 
         })
       }
+
+      
+      if(Array.isArray(includeConcepts) && hideTable){
+        let tableElements = [];
+        includeConcepts.forEach(function(concept, index){          
+          tableElements.push(<TableRow key={index}>
+            <TableCell>
+              <TextField
+                id={"concecptCode-" + get(concept, 'code')}
+                name={"concecptCode-" + get(concept, 'code')}
+                type='text'
+                label={index === 0 ? 'Concept Code' : ''}
+                value={get(concept, 'code')}
+                fullWidth   
+                InputLabelProps={index === 0 ? {shrink: true} : null }
+                // style={index === 0 ? {marginBottom: '20px'} : null }
+              />
+            </TableCell>  
+          </TableRow>)
+          tableElements.push(<TableRow>
+            <TextField
+              id={"conceptDisplay-" + get(concept, 'code')}
+              name={"conceptDisplay-" + get(concept, 'code')}
+              type='text'
+              label={index === 0 ? 'Concept Display' : ''}
+              value={get(concept, 'display')}
+              fullWidth   
+              InputLabelProps={index === 0 ? {shrink: true} : null }
+              // style={index === 0 ? {marginBottom: '20px'} : null }         
+            />  
+          </TableRow>)
+          conceptsTable = <Table>
+            { tableElements }
+          </Table>
+        })
+
+      }
     })    
   }
 
@@ -158,98 +214,115 @@ export function ValueSetDetail(props){
     lastReviewDate = moment(get(activeValueSet, 'lastReviewDate')).format("YYYY-MM-DD")
   }
 
+  let titleElements;
+  if(!hideTitleElements){
+    titleElements = <Grid container spacing={3}>
+      <Grid item xs={6}>
+        <TextField
+          id="titleInput"
+          name="titleInput"
+          type='text'
+          label='Title'
+          value={get(activeValueSet, 'title')}
+          onChange={updateField.bind(this, 'title')}
+          fullWidth  
+          InputLabelProps={{
+            shrink: true,
+          }}
+          style={{marginBottom: '20px'}}        
+        />
+        <TextField
+          id="publisherInput"
+          name="publisherInput"
+          type='text'
+          label='Publisher'
+          value={get(activeValueSet, 'publisher')}
+          onChange={updateField.bind(this, 'publisher')}
+          fullWidth   
+          InputLabelProps={{
+            shrink: true,
+          }}
+          style={{marginBottom: '20px'}}             
+        />  
+      </Grid>
+      <Grid item xs={3}>
+        <TextField
+          id="versionInput"
+          name="versionInput"
+          type='text'
+          label='Version'
+          value={get(activeValueSet, 'version')}
+          onChange={updateField.bind(this, 'version')}
+          fullWidth   
+          InputLabelProps={{
+            shrink: true,
+          }}
+          style={{marginBottom: '20px'}}             
+        /> 
+        {/* <TextField
+            id="identifierInput"
+            name="identifierInput"
+          type='text'
+          label='Identifier'
+          value={get(activeValueSet, 'identifier[0].value')}
+          onChange={updateField.bind(this, 'identifier[0].value')}
+          fullWidth   
+          InputLabelProps={{
+            shrink: true,
+          }}
+          style={{marginBottom: '20px'}}             
+        />  */}
+      </Grid>
+      <Grid item xs={3}>
+        <TextField
+          id="statusInput"
+          name="statusInpactiveValueSetut"
+          type='text'
+          label='Status'
+          value={get(activeValueSet, 'status')}
+          onChange={updateField.bind(this, 'status')}
+          fullWidth   
+          InputLabelProps={{
+            shrink: true,
+          }}
+          style={{marginBottom: '20px'}}             
+        /> 
+      </Grid>          
+    </Grid>
+  }
+
+
+  let descriptionElements;
+  if(!hideDescriptionElements){
+    descriptionElements = <Grid container spacing={3}>
+      <Grid item xs={12}>            
+        <TextField
+          id="descriptionInput"
+          name="descriptionInput"
+          type='text'
+          label='Description'
+          value={get(activeValueSet, 'description')}
+          onChange={updateField.bind(this, 'description')}
+          fullWidth   
+          InputLabelProps={{
+            shrink: true,
+          }}                     
+        />                          
+      </Grid>
+
+    </Grid>
+  }
+
+
   return(
     <div className='ValueSetDetails'>
 
+        { titleElements }
+        { descriptionElements }
+        
         <Grid container spacing={3}>
-          <Grid item xs={6}>
-            <TextField
-              id="titleInput"
-              name="titleInput"
-              type='text'
-              label='Title'
-              value={get(activeValueSet, 'title')}
-              onChange={updateField.bind(this, 'title')}
-              fullWidth  
-              InputLabelProps={{
-                shrink: true,
-              }}
-              style={{marginBottom: '20px'}}        
-            />
-            <TextField
-              id="publisherInput"
-              name="publisherInput"
-              type='text'
-              label='Publisher'
-              value={get(activeValueSet, 'publisher')}
-              onChange={updateField.bind(this, 'publisher')}
-              fullWidth   
-              InputLabelProps={{
-                shrink: true,
-              }}
-              style={{marginBottom: '20px'}}             
-            />  
-          </Grid>
-          <Grid item xs={3}>
-            <TextField
-              id="versionInput"
-              name="versionInput"
-              type='text'
-              label='Version'
-              value={get(activeValueSet, 'version')}
-              onChange={updateField.bind(this, 'version')}
-              fullWidth   
-              InputLabelProps={{
-                shrink: true,
-              }}
-              style={{marginBottom: '20px'}}             
-            /> 
-            {/* <TextField
-                id="identifierInput"
-                name="identifierInput"
-              type='text'
-              label='Identifier'
-              value={get(activeValueSet, 'identifier[0].value')}
-              onChange={updateField.bind(this, 'identifier[0].value')}
-              fullWidth   
-              InputLabelProps={{
-                shrink: true,
-              }}
-              style={{marginBottom: '20px'}}             
-            />  */}
-          </Grid>
-          <Grid item xs={3}>
-            <TextField
-              id="statusInput"
-              name="statusInpactiveValueSetut"
-              type='text'
-              label='Status'
-              value={get(activeValueSet, 'status')}
-              onChange={updateField.bind(this, 'status')}
-              fullWidth   
-              InputLabelProps={{
-                shrink: true,
-              }}
-              style={{marginBottom: '20px'}}             
-            /> 
-          </Grid>
-          <Grid item xs={12}>            
-            <TextField
-              id="descriptionInput"
-              name="descriptionInput"
-              type='text'
-              label='Description'
-              value={get(activeValueSet, 'description')}
-              onChange={updateField.bind(this, 'description')}
-              fullWidth   
-              InputLabelProps={{
-                shrink: true,
-              }}                     
-            />                          
-          </Grid>
-
           { renderElements }
-          
+          {/* { conceptsTable } */}
         </Grid>
     </div>
   );
@@ -265,7 +338,18 @@ ValueSetDetail.propTypes = {
   onInsert: PropTypes.func,
   onUpsert: PropTypes.func,
   onRemove: PropTypes.func,
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+
+  hideTitleElements: PropTypes.bool,
+  hideDescriptionElements: PropTypes.bool,
+  hideConcepts: PropTypes.bool,
+  hideTable: PropTypes.bool
 };
+ValueSetDetail.defaultValues = {
+  hideTitleElements: false,
+  hideDescriptionElements: false,
+  hideConcepts: false,
+  hideTable: true
+}
 
 export default ValueSetDetail;
