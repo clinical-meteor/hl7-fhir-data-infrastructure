@@ -76,7 +76,6 @@ jobs:
     #   name: selenium
     steps:
 
-    - run: browser-tools/install-browser-tools
 
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
