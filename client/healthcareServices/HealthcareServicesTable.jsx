@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
+  Button,
+  Checkbox,
   Table,
   TableBody,
   TableCell,
-  TableHead,
+  TableHead, 
   TableRow,
+  TableFooter,
   TablePagination,
-  Checkbox
 } from '@material-ui/core';
-
-import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
 import _ from 'lodash';
@@ -55,7 +55,15 @@ let styles = {
   }
 }
 
+//===========================================================================
+// SESSION VARIABLES
 
+Session.setDefault('selectedServices', []);
+
+
+
+//===========================================================================
+// MAIN COMPONENT
 
 
 function HealthcareServicesTable(props){
@@ -67,7 +75,9 @@ function HealthcareServicesTable(props){
 
   let { 
     children, 
+    id,
 
+    data,
     healthcareServices,
     selectedHealthcareServiceId,
 
@@ -77,7 +87,6 @@ function HealthcareServicesTable(props){
 
     hideCheckbox,
     hideActionIcons,
-
     hideCategory,
     hideType,
     hideSpecialty,
@@ -95,14 +104,18 @@ function HealthcareServicesTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
     displayEnteredInError,
 
-    formFactorLayout,
-    checklist,
+    page,
+    onSetPage,
     count,
-    tableRowSize,
+    multiline,
 
     ...otherProps 
   } = props;
@@ -171,12 +184,48 @@ function HealthcareServicesTable(props){
   }
 
 
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
+
+
   // ------------------------------------------------------------------------
   // Helper Functions
 
   function handleRowClick(id){
     console.log('Clicking row ' + id)
-    if(onRowClick){
+    if(typeof onRowClick === "function"){
       onRowClick(id);
     }
   }
@@ -186,6 +235,9 @@ function HealthcareServicesTable(props){
     if(onRemoveRecord){
       onRemoveRecord(_id);
     }
+  }
+  function handleActionButtonClick(){
+    console.log('handleActionButtonClick')
   }
   function handleActionButtonClick(id){
     if(typeof onActionButtonClick === "function"){
@@ -364,40 +416,6 @@ function HealthcareServicesTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-  
   
   //---------------------------------------------------------------------
   // Table Rows
@@ -417,9 +435,14 @@ function HealthcareServicesTable(props){
 
 
   if(healthcareServices){
-    if(healthcareServices.length > 0){              
+    if(healthcareServices.length > 0){   
+      let count = 0;    
+
       healthcareServices.forEach(function(healthcareService){
-        healthcareServicesToRender.push(FhirDehydrator.dehydrateHealthcareService(healthcareService, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          healthcareServicesToRender.push(FhirDehydrator.dehydrateHealthcareService(healthcareService, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -431,7 +454,7 @@ function HealthcareServicesTable(props){
 
   if(healthcareServicesToRender.length === 0){
     console.log('No healthcareServices to render');
-    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
+
   } else {
     for (var i = 0; i < healthcareServicesToRender.length; i++) {
 
@@ -442,9 +465,9 @@ function HealthcareServicesTable(props){
       if(get(healthcareServicesToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
-      if(tableRowSize === "small"){
-        rowStyle.height = '32px';
-      }
+      // if(tableRowSize === "small"){
+      //   rowStyle.height = '32px';
+      // }
 
       tableRows.push(
         <TableRow 
@@ -543,6 +566,7 @@ HealthcareServicesTable.defaultProps = {
 
   checklist: true,
   selectedHealthcareServiceId: '',
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'

@@ -7,7 +7,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TablePagination,
+  TablePagination, 
   Checkbox
 } from '@material-ui/core';
 
@@ -56,6 +56,12 @@ let styles = {
 }
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedAffiliationss', []);
+
+
 
 
 function OrganizationAffiliationsTable(props){
@@ -67,10 +73,11 @@ function OrganizationAffiliationsTable(props){
 
   let { 
     children, 
+    id,
 
+    data,
     organizationAffiliations,
     selectedOrganizationAffiliationId,
-
     query,
     paginationLimit,
     disablePagination,
@@ -101,14 +108,21 @@ function OrganizationAffiliationsTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
+
     displayEnteredInError,
 
-    formFactorLayout,
+    page,
+    onSetPage,
+
     checklist,
     count,
-    tableRowSize,
+    multiline,
 
     ...otherProps 
   } = props;
@@ -207,6 +221,39 @@ function OrganizationAffiliationsTable(props){
     }
   }
 
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -488,39 +535,39 @@ function OrganizationAffiliationsTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
+  // //---------------------------------------------------------------------
+  // // Pagination
 
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  // let rows = [];
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
+  // let paginationCount = 101;
+  // if(count){
+  //   paginationCount = count;
+  // } else {
+  //   paginationCount = rows.length;
+  // }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
+  // let paginationFooter;
+  // if(!disablePagination){
+  //   paginationFooter = <TablePagination
+  //     component="div"
+  //     // rowsPerPageOptions={[5, 10, 25, 100]}
+  //     rowsPerPageOptions={['']}
+  //     colSpan={3}
+  //     count={paginationCount}
+  //     rowsPerPage={rowsPerPageToRender}
+  //     page={page}
+  //     onChangePage={handleChangePage}
+  //     style={{float: 'right', border: 'none'}}
+  //   />
+  // }
   
   
   //---------------------------------------------------------------------
@@ -541,9 +588,15 @@ function OrganizationAffiliationsTable(props){
 
 
   if(organizationAffiliations){
-    if(organizationAffiliations.length > 0){              
+    if(organizationAffiliations.length > 0){ 
+      let count = 0;    
+
+             
       organizationAffiliations.forEach(function(organizationAffiliation){
-        organizationAffiliationsToRender.push(FhirDehydrator.dehydrateOrganizationAffiliation(organizationAffiliation, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          organizationAffiliationsToRender.push(FhirDehydrator.dehydrateOrganizationAffiliation(organizationAffiliation, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -671,7 +724,13 @@ OrganizationAffiliationsTable.propTypes = {
   tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
-  checklist: PropTypes.bool
+  checklist: PropTypes.bool,
+
+  size: PropTypes.string,
+  
+  page: PropTypes.number,
+  count: PropTypes.number,
+  multiline: PropTypes.bool,
 };
 OrganizationAffiliationsTable.defaultProps = {
   hideCheckbox: true,
@@ -694,6 +753,7 @@ OrganizationAffiliationsTable.defaultProps = {
 
   checklist: true,
   selectedOrganizationAffiliationId: '',
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'

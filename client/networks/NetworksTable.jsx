@@ -11,12 +11,8 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
-
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -58,6 +54,16 @@ let styles = {
 
 
 
+
+
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedNetworks', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
 function NetworksTable(props){
   logger.info('Rendering the NetworksTable');
   logger.verbose('clinical:hl7-fhir-data-infrastructure.client.NetworksTable');
@@ -67,17 +73,17 @@ function NetworksTable(props){
 
   let { 
     children, 
+    id,
 
+    data,
     networks,
     selectedNetworkId,
-
     query,
     paginationLimit,
     disablePagination,
 
     hideCheckbox,
     hideActionIcons,
-
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -86,15 +92,20 @@ function NetworksTable(props){
     showActionButton,
     actionButtonLabel,
   
+    
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
-
+    size,
+    appHeight,
     formFactorLayout,
-    checklist,
+
+    page,
+    onSetPage,
+
     count,
-    tableRowSize,
+    multiline,
 
     ...otherProps 
   } = props;
@@ -132,6 +143,39 @@ function NetworksTable(props){
     }
   }
 
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -243,39 +287,7 @@ function NetworksTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
+  
   
   
   //---------------------------------------------------------------------
@@ -296,16 +308,21 @@ function NetworksTable(props){
 
 
   if(networks){
-    if(networks.length > 0){              
+    if(networks.length > 0){            
+      let count = 0;    
+
       networks.forEach(function(network){
-        networksToRender.push(FhirDehydrator.dehydrateNetwork(network, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          networksToRender.push(FhirDehydrator.dehydrateNetwork(network, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(networksToRender.length === 0){
@@ -396,6 +413,8 @@ NetworksTable.defaultProps = {
 
   checklist: true,
   selectedNetworkId: '',
+  multiline: false,
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'

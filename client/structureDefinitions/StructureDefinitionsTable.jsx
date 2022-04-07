@@ -14,9 +14,7 @@ import {
 import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -57,6 +55,14 @@ let styles = {
 
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selecteDefinitions', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
 
 function StructureDefinitionsTable(props){
   logger.info('Rendering the StructureDefinitionsTable');
@@ -67,7 +73,9 @@ function StructureDefinitionsTable(props){
 
   let { 
     children, 
+    id,
 
+    data,
     structureDefinitions,
     selectedStructureDefinitionId,
 
@@ -98,14 +106,19 @@ function StructureDefinitionsTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
-
+    size,
+    appHeight,
     formFactorLayout,
-    checklist,
+
+    page,
+    onSetPage,
+
     count,
-    tableRowSize,
+    multiline,
+    checklist,
 
     ...otherProps 
   } = props;
@@ -185,6 +198,39 @@ function StructureDefinitionsTable(props){
     }
   }
 
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -386,39 +432,6 @@ function StructureDefinitionsTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
   
   
   //---------------------------------------------------------------------
@@ -439,9 +452,13 @@ function StructureDefinitionsTable(props){
 
 
   if(structureDefinitions){
-    if(structureDefinitions.length > 0){              
+    if(structureDefinitions.length > 0){   
+      let count = 0;               
       structureDefinitions.forEach(function(structureDefinition){
-        structureDefinitionsToRender.push(FhirDehydrator.dehydrateStructureDefinition(structureDefinition, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          structureDefinitionsToRender.push(FhirDehydrator.dehydrateStructureDefinition(structureDefinition, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -557,7 +574,9 @@ StructureDefinitionsTable.propTypes = {
   formFactorLayout: PropTypes.string,
   checklist: PropTypes.bool,
 
-  dateFormat: PropTypes.string
+  dateFormat: PropTypes.string,
+  page: PropTypes.number,
+
 };
 StructureDefinitionsTable.defaultProps = {
   hideCheckbox: true,
@@ -577,6 +596,7 @@ StructureDefinitionsTable.defaultProps = {
 
   checklist: true,
   selectedStructureDefinitionId: '',
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export',

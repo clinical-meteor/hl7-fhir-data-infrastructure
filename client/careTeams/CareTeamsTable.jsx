@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
+  Button,
   Checkbox, 
   Table, 
   TableRow, 
@@ -14,18 +15,13 @@ import {
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import { get } from 'lodash';
-
 import moment from 'moment';
+import { get, set } from 'lodash';
 
 import { browserHistory } from 'react-router';
 
-// import { Icon } from 'react-icons-kit'
-// import { tag } from 'react-icons-kit/fa/tag'
-// import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
-import { FhirUtilities } from '../../lib/FhirUtilities';
-
+import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
@@ -64,6 +60,13 @@ let styles = {
 }
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedTeams', []);
+
+//===========================================================================
+// MAIN COMPONENT
 
 
 function CareTeamsTable(props){
@@ -79,8 +82,9 @@ function CareTeamsTable(props){
 
     careTeams,
     selectedCarePlanId,
-    dateFormat,
-    showMinutes,
+    query,
+    paginationLimit,
+    disablePagination,
 
     hideCheckboxes,
     hideActionIcons,
@@ -106,14 +110,19 @@ function CareTeamsTable(props){
     showActionButton,
     actionButtonLabel,
 
-    query,
-    paginationLimit,
-    disablePagination,
     rowsPerPage,
     tableRowSize,
+    dateFormat,
+    showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
+
+    page,
+    onSetPage,
 
     count,
-    formFactorLayout,
+    multiline,
 
     ...otherProps 
   } = props;
@@ -222,6 +231,43 @@ function CareTeamsTable(props){
         break;            
     }
   }
+
+
+
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -492,41 +538,6 @@ function CareTeamsTable(props){
       );
     }
   }
-
-  //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-
 
 
   //---------------------------------------------------------------------

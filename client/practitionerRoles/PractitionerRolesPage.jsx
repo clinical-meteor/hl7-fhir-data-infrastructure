@@ -1,3 +1,6 @@
+import React  from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Container,
   Divider,
@@ -13,8 +16,6 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
 
 import PractitionerRoleDetail from './PractitionerRoleDetail';
 import PractitionerRolesTable from './PractitionerRolesTable';
@@ -24,9 +25,81 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 // import { PractitionerRoles } from '../../lib/schemas/PractitionerRoles';
 
+
+//=============================================================================================================================================
+// GLOBAL THEMING
+
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
+// This is necessary for the Material UI component render layer
+let theme = {
+  primaryColor: "rgb(108, 183, 110)",
+  primaryText: "rgba(255, 255, 255, 1) !important",
+
+  secondaryColor: "rgb(108, 183, 110)",
+  secondaryText: "rgba(255, 255, 255, 1) !important",
+
+  cardColor: "rgba(255, 255, 255, 1) !important",
+  cardTextColor: "rgba(0, 0, 0, 1) !important",
+
+  errorColor: "rgb(128,20,60) !important",
+  errorText: "#ffffff !important",
+
+  appBarColor: "#f5f5f5 !important",
+  appBarTextColor: "rgba(0, 0, 0, 1) !important",
+
+  paperColor: "#f5f5f5 !important",
+  paperTextColor: "rgba(0, 0, 0, 1) !important",
+
+  backgroundCanvas: "rgba(255, 255, 255, 1) !important",
+  background: "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
+
+  nivoTheme: "greens"
+}
+
+// if we have a globally defined theme from a settings file
+if(get(Meteor, 'settings.public.theme.palette')){
+  theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
+}
+
+const muiTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+  palette: {
+    primary: {
+      main: theme.primaryColor,
+      contrastText: theme.primaryText
+    },
+    secondary: {
+      main: theme.secondaryColor,
+      contrastText: theme.errorText
+    },
+    appBar: {
+      main: theme.appBarColor,
+      contrastText: theme.appBarTextColor
+    },
+    cards: {
+      main: theme.cardColor,
+      contrastText: theme.cardTextColor
+    },
+    paper: {
+      main: theme.paperColor,
+      contrastText: theme.paperTextColor
+    },
+    error: {
+      main: theme.errorColor,
+      contrastText: theme.secondaryText
+    },
+    background: {
+      default: theme.backgroundCanvas
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.2
+  }
+});
 
 //---------------------------------------------------------------
 // Session Variables
@@ -41,17 +114,12 @@ Session.setDefault('practitionerRolesArray', []);
 Session.setDefault('PractitionerRolesPage.onePageLayout', true)
 Session.setDefault('PractitionerRolesTable.hideCheckbox', true)
 
-//---------------------------------------------------------------
-// Theming
-
-const muiTheme = Theming.createMuiTheme();
-
+Session.setDefault('practitionerRoleChecklistMode', false)
 
 
 //===========================================================================
 // MAIN COMPONENT  
 
-Session.setDefault('practitionerRoleChecklistMode', false)
 
 export function PractitionerRolesPage(props){
 
@@ -111,84 +179,6 @@ export function PractitionerRolesPage(props){
     return Session.get('practitionerRoleChecklistMode')
   }, [])
 
-
-  // function onCancelUpsertPractitionerRole(context){
-  //   Session.set('practitionerRolePageTabIndex', 1);
-  // }
-  // function onDeletePractitionerRole(context){
-  //   PractitionerRoles._collection.remove({_id: get(context, 'state.practitionerRoleId')}, function(error, result){
-  //     if (error) {
-  //       if(process.env.NODE_ENV === "test") console.log('PractitionerRoles.insert[error]', error);
-  //       Bert.alert(error.reason, 'danger');
-  //     }
-  //     if (result) {
-  //       Session.set('selectedPractitionerRoleId', '');
-  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});        
-  //     }
-  //   });
-  //   Session.set('practitionerRolePageTabIndex', 1);
-  // }
-  // function onUpsertPractitionerRole(context){
-  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-  //   console.log('Saving a new PractitionerRole...', context.state)
-
-  //   if(get(context, 'state.practitionerRole')){
-  //     let self = context;
-  //     let fhirPractitionerRoleData = Object.assign({}, get(context, 'state.practitionerRole'));
-  
-  //     // if(process.env.NODE_ENV === "test") console.log('fhirPractitionerRoleData', fhirPractitionerRoleData);
-  
-  //     let practitionerRoleValidator = PractitionerRoleSchema.newContext();
-  //     // console.log('practitionerRoleValidator', practitionerRoleValidator)
-  //     practitionerRoleValidator.validate(fhirPractitionerRoleData)
-  
-  //     if(process.env.NODE_ENV === "development"){
-  //       console.log('IsValid: ', practitionerRoleValidator.isValid())
-  //       console.log('ValidationErrors: ', practitionerRoleValidator.validationErrors());
-  
-  //     }
-  
-  //     console.log('Checking context.state again...', context.state)
-  //     if (get(context, 'state.practitionerRoleId')) {
-  //       if(process.env.NODE_ENV === "development") {
-  //         console.log("Updating practitionerRole...");
-  //       }
-
-  //       delete fhirPractitionerRoleData._id;
-  
-  //       // not sure why we're having to respecify this; fix for a bug elsewhere
-  //       fhirPractitionerRoleData.resourceType = 'PractitionerRole';
-  
-  //       PractitionerRoles._collection.update({_id: get(context, 'state.practitionerRoleId')}, {$set: fhirPractitionerRoleData }, function(error, result){
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test") console.log("PractitionerRoles.insert[error]", error);
-          
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});
-  //           Session.set('selectedPractitionerRoleId', '');
-  //           Session.set('practitionerRolePageTabIndex', 1);
-  //         }
-  //       });
-  //     } else {
-  //       // if(process.env.NODE_ENV === "test") 
-  //       console.log("Creating a new practitionerRole...", fhirPractitionerRoleData);
-  
-  //       fhirPractitionerRoleData.effectiveDateTime = new Date();
-  //       PractitionerRoles._collection.insert(fhirPractitionerRoleData, function(error, result) {
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test")  console.log('PractitionerRoles.insert[error]', error);           
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "PractitionerRoles", recordId: context.state.practitionerRoleId});
-  //           Session.set('practitionerRolePageTabIndex', 1);
-  //           Session.set('selectedPractitionerRoleId', '');
-  //         }
-  //       });
-  //     }
-  //   } 
-  //   Session.set('practitionerRolePageTabIndex', 1);
-  // }
   function handleRowClick(practitionerRoleId){
     console.log('PractitionerRolesPage.handleRowClick', practitionerRoleId)
     let practitionerRole = PractitionerRoles.findOne({id: practitionerRoleId});
@@ -237,7 +227,11 @@ export function PractitionerRolesPage(props){
       <CardContent>
 
         <PractitionerRolesTable 
+          formFactorLayout={formFactor}
           practitionerRoles={ data.practitionerRoles }
+          count={data.practitionerRoles.length}
+          selectedPractitionerRoleId={ data.selectedPractitionerRoleId }
+          onRowClick={ handleRowClick.bind(this) }
           hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
@@ -246,10 +240,8 @@ export function PractitionerRolesPage(props){
           hideExperimental={false}
           paginationLimit={10}     
           checklist={data.practitionerRoleChecklistMode}
-          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          formFactorLayout={formFactor}
-          count={data.practitionerRoles.length}
+          size="small"
           />
         </CardContent>
       </StyledCard>
@@ -261,9 +253,10 @@ export function PractitionerRolesPage(props){
           <CardContent>
             <PractitionerRolesTable 
               practitionerRoles={ data.practitionerRoles }
+              count={data.practitionerRoles.length}
               selectedPractitionerRoleId={ data.selectedPractitionerRoleId }
-              hideIdentifier={true} 
               hideCheckbox={data.hideCheckbox}
+              hideIdentifier={true} 
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}
@@ -274,7 +267,7 @@ export function PractitionerRolesPage(props){
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               formFactorLayout={formFactor}
-              count={data.practitionerRoles.length}
+              size="medium"              
               />
           </CardContent>
         </StyledCard>

@@ -21,21 +21,29 @@ import {
 // import { tag } from 'react-icons-kit/fa/tag'
 // import {iosTrashOutline} from 'react-icons-kit/ionicons/iosTrashOutline'
 
-// import TableNoData from '../components/TableNoData';
+// import { useTheme } from '@material-ui/styles';
 
-import { useTheme } from '@material-ui/styles';
-
-import moment from 'moment';
-
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import moment from 'moment'
+import { get, set } from 'lodash';
 
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
 //===========================================================================
 // THEMING
+
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
+}));
 
 let styles = {
   hideOnPhone: {
@@ -50,34 +58,8 @@ let styles = {
   },
   cell: {
     paddingTop: '16px'
-  },
-  avatar: {
-    backgroundColor: 'rgb(188, 188, 188)',
-    userSelect: 'none',
-    borderRadius: '2px',
-    height: '40px',
-    width: '40px'
   }
-};
-
-import { makeStyles } from '@material-ui/styles';
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexShrink: 0,
-    marginLeft: theme.spacing(2.5),
-  },
-  button: {
-    background: theme.background,
-    border: 0,
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: theme.buttonText,
-    height: 48,
-    padding: '0 30px',
-  }
-}));
-
-
+}
 
 
 //===========================================================================
@@ -217,67 +199,72 @@ function dehydrateRelatedPerson(relatedPerson, dateFormat){
 }
 
 
+// //===========================================================================
+// // PAGINATION  
+
+// function TablePaginationActions(props) {
+//   const classes = useStyles();
+//   const theme = useTheme();
+//   const { count, page, rowsPerPage, onChangePage } = props;
+
+//   const handleFirstPageButtonClick = event => {
+//     onChangePage(event, 0);
+//   };
+
+//   const handleBackButtonClick = event => {
+//     onChangePage(event, page - 1);
+//   };
+
+//   const handleNextButtonClick = event => {
+//     onChangePage(event, page + 1);
+//   };
+
+//   const handleLastPageButtonClick = event => {
+//     onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+//   };
+
+//   return (
+//     <div className={classes.root}>
+//       <IconButton
+//         onClick={handleFirstPageButtonClick}
+//         disabled={page === 0}
+//         aria-label="first page"
+//       >
+//         {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+//       </IconButton>
+//       <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+//         {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+//       </IconButton>
+//       <IconButton
+//         onClick={handleNextButtonClick}
+//         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+//         aria-label="next page"
+//       >
+//         {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+//       </IconButton>
+//       <IconButton
+//         onClick={handleLastPageButtonClick}
+//         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+//         aria-label="last page"
+//       >
+//         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+//       </IconButton>
+//     </div>
+//   );
+// }
+
+// TablePaginationActions.propTypes = {
+//   count: PropTypes.number.isRequired,
+//   onChangePage: PropTypes.func.isRequired,
+//   page: PropTypes.number.isRequired,
+//   rowsPerPage: PropTypes.number.isRequired,
+// };
+
+
 //===========================================================================
-// PAGINATION  
+// SESSION VARIABLES
 
-function TablePaginationActions(props) {
-  const classes = useStyles();
-  const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
-
-  const handleFirstPageButtonClick = event => {
-    onChangePage(event, 0);
-  };
-
-  const handleBackButtonClick = event => {
-    onChangePage(event, page - 1);
-  };
-
-  const handleNextButtonClick = event => {
-    onChangePage(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = event => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <div className={classes.root}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
-        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </div>
-  );
-}
-
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
+Session.setDefault('selectedPersons', []);
 
 
 //===========================================================================
@@ -285,14 +272,20 @@ TablePaginationActions.propTypes = {
 
 function RelatedPersonsTable(props){
   // console.log('RelatedPersonsTable', props)
+  logger.info('Rendering the RelatedPersonsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.RelatedPersonsTable');
+  logger.data('RelatedPersonsTable.props', {data: props}, {source: "RelatedPersonsTable.jsx"});
+
 
   let { 
     children, 
-
     id,
     fhirVersion,
     relatedPersons,
     selectedRelatedPersonId,
+    query,
+    paginationLimit,
+    disablePagination,
 
     hideCheckbox,
     hideActionIcons,
@@ -322,19 +315,19 @@ function RelatedPersonsTable(props){
     actionButtonLabel,
 
     defaultAvatar,
-    disablePagination,
-    paginationLimit,
-    paginationCount,
-    dateFormat,
-    hideCounts,
-    cursors, 
-    font3of9,
 
+    tableRowSize,
+    dateFormat,
+    showMinutes,
+    size,
+    appHeight,
     formFactorLayout,
-    multiline,
+
+    page,
+    onSetPage,
 
     count,
-    tableRowSize,
+    multiline,
 
     ...otherProps 
   } = props;
@@ -439,34 +432,39 @@ function RelatedPersonsTable(props){
   }
 
 
-    //---------------------------------------------------------------------
-  // Table Rows
+  // //---------------------------------------------------------------------
+  // // Pagination
 
-  let tableRows = [];
-  let footer;
+  let rows = [];
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPageToRender] = useState(rowsPerPage);
-  const [rows, setRows] = useState([]);
-
-  const emptyRows = rowsPerPageToRender - Math.min(rowsPerPageToRender, rows.length - page * rowsPerPageToRender);
-
-
-  if(paginationCount){
-    paginationCount = paginationCount;
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
   } else {
     paginationCount = rows.length;
   }
 
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPageToRender(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
 
   //================================================================
@@ -919,15 +917,27 @@ function RelatedPersonsTable(props){
 
   //================================================================
   // Table
-  const classes = useStyles();
 
+  let tableRows = [];
   let relatedPersonsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+  
+  if(showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(dateFormat){
+    internalDateFormat = dateFormat;
+  }
+
+  // const classes = useStyles();
+
+  
   if(relatedPersons){
     if(relatedPersons.length > 0){            
       let count = 0;  
       relatedPersons.forEach(function(relatedPerson){
         if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
-          relatedPersonsToRender.push(dehydrateRelatedPerson(relatedPerson, dateFormat));
+          relatedPersonsToRender.push(dehydrateRelatedPerson(relatedPerson, internalDateFormat));
         }
         count++;
       });  
@@ -945,7 +955,7 @@ function RelatedPersonsTable(props){
 
       let rowStyle = {
         cursor: 'pointer', 
-        height: '52px'
+        height: '55px'
       }
       if(get(relatedPersonsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
@@ -984,23 +994,6 @@ function RelatedPersonsTable(props){
     }
   }
 
-
-
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      onChangeRowsPerPage={handleChangeRowsPerPage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
 
   return(
     <div>
@@ -1116,7 +1109,12 @@ RelatedPersonsTable.defaultProps = {
 
   font3of9: true,
   hideFhirBarcode: false,
-  multiline: false
+  multiline: false,
+  page: 0,
+  rowsPerPage: 5,
+  tableRowSize: 'medium',
+  actionButtonLabel: 'Export'
+
 }
 
 export default RelatedPersonsTable;

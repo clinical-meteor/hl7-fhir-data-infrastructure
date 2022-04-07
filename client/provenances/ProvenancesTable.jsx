@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -12,19 +11,12 @@ import {
   TableHead,
   TableRow,
   TableFooter,
-  TablePagination,
-  IconButton,
-  FirstPageIcon,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  LastPageIcon
+  TablePagination
 } from '@material-ui/core';
 
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 // import { Icon } from 'react-icons-kit'
 // import { tag } from 'react-icons-kit/fa/tag'
@@ -49,6 +41,16 @@ const useStyles = makeStyles(theme => ({
     padding: '0 30px',
   }
 }));
+
+
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedProvenances', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
 
 function ProvenancesTable(props){
   logger.info('Rendering the ProvenancesTable');
@@ -95,24 +97,19 @@ function ProvenancesTable(props){
     tableRowSize,
     dateFormat,
     showMinutes,
+    size,
+    appHeight,
     formFactorLayout,
+
+    page,
+    onSetPage,
+
     count,
     multiline,
 
     ...otherProps 
   } = props;
 
-  // ------------------------------------------------------------------------
-  // Form Factors
-
-  let internalDateFormat = "YYYY-MM-DD";
-
-  if(showMinutes){
-    internalDateFormat = "YYYY-MM-DD hh:mm";
-  }
-  if(dateFormat){
-    internalDateFormat = dateFormat;
-  }
 
   // ------------------------------------------------------------------------
   // Form Factors
@@ -181,26 +178,10 @@ function ProvenancesTable(props){
   }
 
 
-  //---------------------------------------------------------------------
-  // Styles
-
-  const classes = useStyles();
-
-  //---------------------------------------------------------------------
-  // Pagination
+  // //---------------------------------------------------------------------
+  // // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-  // if(rowsPerPage){
-  //   // if we receive an override as a prop, render that many rows
-  //   // best to use rowsPerPageToRender with disablePagination
-  //   setRowsPerPage(rowsPerPage)
-  // } else {
-  //   // otherwise default to the user selection
-  //   setRowsPerPage(rowsPerPage)
-  // }
 
   let paginationCount = 101;
   if(count){
@@ -208,6 +189,28 @@ function ProvenancesTable(props){
   } else {
     paginationCount = rows.length;
   }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
 
   //---------------------------------------------------------------------
   // Helper Functions
@@ -475,8 +478,21 @@ function ProvenancesTable(props){
   }
 
 
+
+  //---------------------------------------------------------------------
+  // Table Rows
+
   let tableRows = [];
   let provenancesToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
+  
+  if(showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(dateFormat){
+    internalDateFormat = dateFormat;
+  }
+
 
   if(provenances){
     if(provenances.length > 0){     
@@ -492,7 +508,7 @@ function ProvenancesTable(props){
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
   if(provenancesToRender.length === 0){
     logger.trace('ProvenancesTable:  No provenances to render.');
@@ -532,26 +548,6 @@ function ProvenancesTable(props){
     }
   }
 
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-
   return(
     <div>
       <Table id="provenancesTable" size={tableRowSize} aria-label="a dense table" { ...otherProps } >
@@ -586,6 +582,7 @@ function ProvenancesTable(props){
 ProvenancesTable.propTypes = {
   id: PropTypes.string,
 
+  data: PropTypes.array,
   provenances: PropTypes.array,
   selectedProvenanceId: PropTypes.string,
   paginationLimit: PropTypes.number,
@@ -616,12 +613,14 @@ ProvenancesTable.propTypes = {
   hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 
-  rowsPerPageToRender: PropTypes.number,
+  rowsPerPage: PropTypes.number,
   tableRowSize: PropTypes.string,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   count: PropTypes.number,
   multiline: PropTypes.bool,
+
+  page: PropTypes.number,
 
   formFactorLayout: PropTypes.string
 };
@@ -634,6 +633,8 @@ ProvenancesTable.defaultProps = {
   hideTargetReference: true,
   hideSignature: true,
   multiline: false,
+  page: 0,
+  rowsPerPage: 5,
   tableRowSize: 'medium'
 }
 

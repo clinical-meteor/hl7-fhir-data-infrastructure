@@ -20,41 +20,49 @@ import { get } from 'lodash';
 import moment from 'moment';
 
 
-import { StyledCard, PageCanvas } from 'fhir-starter';
 import { FhirUtilities } from '../../lib/FhirUtilities';
-import { Theming } from '../../lib/Theming';
-
+import { StyledCard, PageCanvas } from 'fhir-starter';
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 
-// //===========================================================================
-// // THEMING
+//===========================================================================
+// THEMING
 
-// import { ThemeProvider, makeStyles } from '@material-ui/styles';
-// const useStyles = makeStyles(theme => ({
-//   button: {
-//     background: theme.background,
-//     border: 0,
-//     borderRadius: 3,
-//     boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-//     color: theme.buttonText,
-//     height: 48,
-//     padding: '0 30px',
-//   },
-//   hideOnPhone: {
-//     visibility: 'visible',
-//     hide: 'table'
-//   },
-//   cellHideOnPhone: {
-//     visibility: 'visible',
-//     hide: 'table',
-//     paddingTop: '16px',
-//     maxWidth: '120px'
-//   },
-//   cell: {
-//     paddingTop: '16px'
-//   }
-// }));
+import { ThemeProvider, makeStyles } from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
+}));
+
+let styles = {
+  hideOnPhone: {
+    visibility: 'visible',
+    display: 'table'
+  },
+  cellHideOnPhone: {
+    visibility: 'visible',
+    display: 'table',
+    paddingTop: '16px',
+    maxWidth: '120px'
+  },
+  cell: {
+    paddingTop: '16px'
+  }
+}
+
+
+
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedCommunicationRequests', []);
 
 
 //===========================================================================
@@ -95,19 +103,24 @@ export function CommunicationRequestsTable(props){
     actionButtonLabel,
   
     autoColumns,
+
+
     rowsPerPage,
     tableRowSize,
     dateFormat,
     showMinutes,
-    hideEnteredInError,
+    size,
+    appHeight,
     formFactorLayout,
+
+    page,
+    onSetPage,
+
     count,
+    multiline,
 
     ...otherProps 
   } = props;
-
-
-
 
 
 
@@ -128,6 +141,41 @@ export function CommunicationRequestsTable(props){
         break;            
     }
   }
+
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
 
 
   //--------------------------------------------------
@@ -336,40 +384,6 @@ export function CommunicationRequestsTable(props){
     }
   }
 
-    //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-
   //--------------------------------------------------
   // Render
 
@@ -399,7 +413,7 @@ export function CommunicationRequestsTable(props){
 
   let rowStyle = {
     cursor: 'pointer',
-    height: '52px'
+    height: '55px'
   }
 
   console.log('CommunicationRequestsTable.communicationRequestsToRender', communicationRequestsToRender)
@@ -539,7 +553,13 @@ CommunicationRequestsTable.defaultProps = {
   hideRequestor: false,
   hideStatus: false,
   hideCategory: false,
-  hideBarcode: false
+  hideBarcode: false,
+  multiline: false,
+  page: 0,
+  rowsPerPage: 5,
+  tableRowSize: 'medium',
+  actionButtonLabel: 'Export'
+
 }
 
 export default CommunicationRequestsTable;

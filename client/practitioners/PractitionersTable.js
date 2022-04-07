@@ -9,12 +9,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TablePagination,
-  IconButton,
-  FirstPageIcon,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  LastPageIcon
+  TablePagination
 } from '@material-ui/core';
 
 
@@ -27,19 +22,12 @@ let has = _.has;
 import moment from 'moment';
 
 import FhirUtilities from '../../lib/FhirUtilities';
-
 import { StyledCard, PageCanvas } from 'fhir-starter';
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
-
-//===========================================================================
-// SESSION VARIABLES  
-
-Session.setDefault('selectedPractitioner', false);
 
 
 //===========================================================================
 // THEMING
-
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
@@ -73,6 +61,11 @@ let styles = {
 
 
 //===========================================================================
+// SESSION VARIABLES  
+
+Session.setDefault('selectedPractitioners', []);
+
+//===========================================================================
 // MAIN COMPONENT
 
 function PractitionersTable(props){
@@ -88,7 +81,7 @@ function PractitionersTable(props){
 
     data,
     practitioners,
-    selectedPractitionerId,
+    selectedPractitionersId,
     query,
     paginationLimit,
     disablePagination,
@@ -127,6 +120,7 @@ function PractitionersTable(props){
     dateFormat,
     showMinutes,
     size,
+    appHeight,
     formFactorLayout,
 
     page,
@@ -236,8 +230,8 @@ function PractitionersTable(props){
   // Pagination
 
   let rows = [];
-  // const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  // // const [page, setPage] = useState(0);
+  // const [rowsPerPage, setRowsPerPage] = useState(rowsPerPage);
 
 
   let paginationCount = 101;
@@ -261,7 +255,7 @@ function PractitionersTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -577,7 +571,7 @@ function PractitionersTable(props){
       let count = 0;    
 
       practitioners.forEach(function(practitioner){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           practitionersToRender.push(FhirDehydrator.dehydratePractitioner(practitioner));
         }
         count++;
@@ -594,7 +588,7 @@ function PractitionersTable(props){
   } else {
     for (var i = 0; i < practitionersToRender.length; i++) {
       let selected = false;
-      if(practitionersToRender[i].id === selectedPractitionerId){
+      if(practitionersToRender[i].id === selectedPractitionersId){
         selected = true;
       }
       if(get(practitionersToRender[i], 'modifierExtension[0]')){

@@ -11,12 +11,8 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
-
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -55,7 +51,13 @@ let styles = {
   }
 }
 
+//===========================================================================
+// SESSION VARIABLES
 
+Session.setDefault('selectedParameters', []);
+
+//===========================================================================
+// MAIN COMPONENT
 
 
 function SearchParametersTable(props){
@@ -67,10 +69,11 @@ function SearchParametersTable(props){
 
   let { 
     children, 
+    id,
+    data,
 
     searchParameters,
     selectedSearchParameterId,
-
     query,
     paginationLimit,
     disablePagination,
@@ -98,14 +101,19 @@ function SearchParametersTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
-
+    size,
+    appHeight,
     formFactorLayout,
-    checklist,
+
+    page,
+    onSetPage,
+
     count,
-    tableRowSize,
+    multiline,
+    checklist,
 
     ...otherProps 
   } = props;
@@ -183,6 +191,39 @@ function SearchParametersTable(props){
         hideBarcode = true;
         break;            
     }
+  }
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
   }
 
 
@@ -386,39 +427,7 @@ function SearchParametersTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
 
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
   
   
   //---------------------------------------------------------------------
@@ -439,9 +448,13 @@ function SearchParametersTable(props){
 
 
   if(searchParameters){
-    if(searchParameters.length > 0){              
+    if(searchParameters.length > 0){   
+      let count = 0;               
       searchParameters.forEach(function(searchParameter){
-        searchParametersToRender.push(FhirDehydrator.dehydrateSearchParameter(searchParameter, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          searchParametersToRender.push(FhirDehydrator.dehydrateSearchParameter(searchParameter, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -557,7 +570,9 @@ SearchParametersTable.propTypes = {
   formFactorLayout: PropTypes.string,
   checklist: PropTypes.bool,
 
-  dateFormat: PropTypes.string
+  dateFormat: PropTypes.string,
+
+  page: PropTypes.number,
 };
 SearchParametersTable.defaultProps = {
   hideCheckbox: true,
@@ -577,6 +592,7 @@ SearchParametersTable.defaultProps = {
 
   checklist: true,
   selectedSearchParameterId: '',
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export',

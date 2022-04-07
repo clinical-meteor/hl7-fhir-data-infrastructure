@@ -11,12 +11,8 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
-
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -56,6 +52,14 @@ let styles = {
 }
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedRestrictions', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
 
 
 function RestrictionsTable(props){
@@ -63,14 +67,15 @@ function RestrictionsTable(props){
   logger.verbose('clinical:hl7-fhir-data-infrastructure.client.RestrictionsTable');
   logger.data('RestrictionsTable.props', {data: props}, {source: "RestrictionsTable.jsx"});
 
-  const classes = useStyles();
+  // const classes = useStyles();
 
   let { 
     children, 
+    id,
+    data,
 
     restrictions,
     selectedRestrictionId,
-
     query,
     paginationLimit,
     disablePagination,
@@ -86,15 +91,20 @@ function RestrictionsTable(props){
     showActionButton,
     actionButtonLabel,
   
+    
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
-
+    size,
+    appHeight,
     formFactorLayout,
-    checklist,
+
+    page,
+    onSetPage,
+
     count,
-    tableRowSize,
+    multiline,
 
     ...otherProps 
   } = props;
@@ -132,6 +142,39 @@ function RestrictionsTable(props){
     }
   }
 
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -243,40 +286,6 @@ function RestrictionsTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-  
   
   //---------------------------------------------------------------------
   // Table Rows
@@ -296,16 +305,20 @@ function RestrictionsTable(props){
 
 
   if(restrictions){
-    if(restrictions.length > 0){              
+    if(restrictions.length > 0){      
+      let count = 0;            
       restrictions.forEach(function(restriction){
-        restrictionsToRender.push(FhirDehydrator.dehydrateRestriction(restriction, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          restrictionsToRender.push(FhirDehydrator.dehydrateRestriction(restriction, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(restrictionsToRender.length === 0){
@@ -387,7 +400,9 @@ RestrictionsTable.propTypes = {
   tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
-  checklist: PropTypes.bool
+  checklist: PropTypes.bool,
+
+  page: PropTypes.number,
 };
 RestrictionsTable.defaultProps = {
   hideCheckbox: true,
@@ -396,6 +411,8 @@ RestrictionsTable.defaultProps = {
 
   checklist: true,
   selectedRestrictionId: '',
+  multiline: false,
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'

@@ -1,4 +1,5 @@
 import { 
+  Grid, 
   Container,
   Divider,
   Card,
@@ -6,10 +7,9 @@ import {
   CardContent,
   Button,
   Typography,
-  Box,
-  Grid
+  Box
 } from '@material-ui/core';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -24,8 +24,81 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
+// import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+// // import { InsurancePlans } from '../../lib/schemas/InsurancePlans';
+
+//=============================================================================================================================================
+// GLOBAL THEMING
+
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-// import { InsurancePlans } from '../../lib/schemas/InsurancePlans';
+
+// This is necessary for the Material UI component render layer
+let theme = {
+  primaryColor: "rgb(108, 183, 110)",
+  primaryText: "rgba(255, 255, 255, 1) !important",
+
+  secondaryColor: "rgb(108, 183, 110)",
+  secondaryText: "rgba(255, 255, 255, 1) !important",
+
+  cardColor: "rgba(255, 255, 255, 1) !important",
+  cardTextColor: "rgba(0, 0, 0, 1) !important",
+
+  errorColor: "rgb(128,20,60) !important",
+  errorText: "#ffffff !important",
+
+  appBarColor: "#f5f5f5 !important",
+  appBarTextColor: "rgba(0, 0, 0, 1) !important",
+
+  paperColor: "#f5f5f5 !important",
+  paperTextColor: "rgba(0, 0, 0, 1) !important",
+
+  backgroundCanvas: "rgba(255, 255, 255, 1) !important",
+  background: "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
+
+  nivoTheme: "greens"
+}
+
+// if we have a globally defined theme from a settings file
+if(get(Meteor, 'settings.public.theme.palette')){
+  theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
+}
+
+const muiTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+  palette: {
+    primary: {
+      main: theme.primaryColor,
+      contrastText: theme.primaryText
+    },
+    secondary: {
+      main: theme.secondaryColor,
+      contrastText: theme.errorText
+    },
+    appBar: {
+      main: theme.appBarColor,
+      contrastText: theme.appBarTextColor
+    },
+    cards: {
+      main: theme.cardColor,
+      contrastText: theme.cardTextColor
+    },
+    paper: {
+      main: theme.paperColor,
+      contrastText: theme.paperTextColor
+    },
+    error: {
+      main: theme.errorColor,
+      contrastText: theme.secondaryText
+    },
+    background: {
+      default: theme.backgroundCanvas
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.2
+  }
+});
 
 //---------------------------------------------------------------
 // Session Variables
@@ -40,17 +113,12 @@ Session.setDefault('insurancePlansArray', []);
 Session.setDefault('InsurancePlansPage.onePageLayout', true)
 Session.setDefault('InsurancePlansTable.hideCheckbox', true)
 
-//---------------------------------------------------------------
-// Theming
-
-const muiTheme = Theming.createMuiTheme();
-
+Session.setDefault('insurancePlanChecklistMode', false)
 
 
 //===========================================================================
 // MAIN COMPONENT  
 
-Session.setDefault('insurancePlanChecklistMode', false)
 
 export function InsurancePlansPage(props){
 
@@ -234,7 +302,11 @@ export function InsurancePlansPage(props){
       <CardContent>
 
         <InsurancePlansTable 
+          formFactorLayout={formFactor}
           insurancePlans={ data.insurancePlans }
+          count={data.insurancePlans.length}
+          selectedInsurancePlanId={ data.selectedInsurancePlanId }
+          onRowClick={ handleRowClick.bind(this) }
           hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
@@ -242,11 +314,9 @@ export function InsurancePlansPage(props){
           hideVersion={false}
           hideExperimental={false}
           paginationLimit={10}     
-          checklist={data.insurancePlanChecklistMode}
-          onRowClick={ handleRowClick.bind(this) }
+          checklist={data.insurancePlanChecklistMode}          
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          formFactorLayout={formFactor}
-          count={data.insurancePlans.length}
+          size="small"
           />
         </CardContent>
       </StyledCard>
@@ -258,9 +328,9 @@ export function InsurancePlansPage(props){
           <CardContent>
             <InsurancePlansTable 
               insurancePlans={ data.insurancePlans }
-              selectedInsurancePlanId={ data.selectedInsurancePlanId }
-              hideIdentifier={true} 
+              count={data.organizations.length}
               hideCheckbox={data.hideCheckbox}
+              hideIdentifier={true} 
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}
@@ -268,10 +338,11 @@ export function InsurancePlansPage(props){
               hideVersion={false}
               hideExperimental={false}    
               hideBarcode={true}
+              selectedInsurancePlanId={ data.selectedInsurancePlanId }
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               formFactorLayout={formFactor}
-              count={data.insurancePlans.length}
+              size="medium"
               />
           </CardContent>
         </StyledCard>

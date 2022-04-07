@@ -11,9 +11,7 @@ import {
 } from '@material-ui/core';
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
 import FhirUtilities from '../../lib/FhirUtilities';
@@ -53,6 +51,14 @@ let styles = {
 }
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedValueSets', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
 
 
 
@@ -66,10 +72,11 @@ function ValueSetsTable(props){
 
   let { 
     children, 
-
+    id,
+    
+    data,
     valueSets,
     selectedValueSetId,
-
     query,
     paginationLimit,
     disablePagination,
@@ -87,10 +94,19 @@ function ValueSetsTable(props){
     actionButtonLabel,
   
     rowsPerPage,
-    formFactorLayout,
-    count,
-    showMinutes,
+    tableRowSize,
     dateFormat,
+    showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
+
+    page,
+    onSetPage,
+
+    count,
+    multiline,
+
 
     ...otherProps 
   } = props;
@@ -152,6 +168,40 @@ function ValueSetsTable(props){
         hideBarcode = false;s
         break;            
     }
+  }
+
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
   }
 
 
@@ -264,39 +314,6 @@ function ValueSetsTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-  
   
   //---------------------------------------------------------------------
   // Table Rows
@@ -317,8 +334,13 @@ function ValueSetsTable(props){
 
   if(valueSets){
     if(valueSets.length > 0){              
+      let count = 0;    
+
       valueSets.forEach(function(valueSet){
-        valueSetsToRender.push(FhirDehydrator.dehydrateValueSet(valueSet, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          valueSetsToRender.push(FhirDehydrator.dehydrateValueSet(valueSet, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -338,6 +360,13 @@ function ValueSetsTable(props){
       if(valueSetsToRender[i].id === selectedValueSetId){
         selected = true;
       }
+      if(get(valueSetsToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+
       tableRows.push(
         <TableRow 
           className="valueSetRow" 
@@ -410,7 +439,10 @@ ValueSetsTable.defaultProps = {
   hideActionIcons: true,
   hideBarcode: true,
   selectedValueSetId: '',
-  rowsPerPage: 5
+  page: 0,
+  rowsPerPage: 5,
+  tableRowSize: 'medium',
+  actionButtonLabel: 'Export'
 }
 
 export default ValueSetsTable; 

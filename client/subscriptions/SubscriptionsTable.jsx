@@ -11,12 +11,8 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
-
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -57,6 +53,15 @@ let styles = {
 
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedSubscriptions', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
+
 
 function SubscriptionsTable(props){
   logger.info('Rendering the SubscriptionsTable');
@@ -67,17 +72,17 @@ function SubscriptionsTable(props){
 
   let { 
     children, 
+    id,
+    data,
 
     subscriptions,
     selectedSubscriptionId,
-
     query,
     paginationLimit,
     disablePagination,
 
     hideCheckbox,
     hideActionIcons,
-
     hideStatus,
     hideContact,
     hideEnd,
@@ -97,19 +102,20 @@ function SubscriptionsTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
     displayEnteredInError, 
 
-    formFactorLayout,
     checklist,
 
     page,
     onSetPage,
-
     count,
     multiline,
-    tableRowSize,
 
     ...otherProps 
   } = props;
@@ -187,6 +193,39 @@ function SubscriptionsTable(props){
     }
   }
 
+
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -400,43 +439,6 @@ function SubscriptionsTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  // const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-
-  function handleChangePage(event, newPage){
-    if(typeof onSetPage === "function"){
-      onSetPage(newPage);
-    }
-  }
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-  
   
   //---------------------------------------------------------------------
   // Table Rows

@@ -1,3 +1,6 @@
+import React  from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Container,
   Divider,
@@ -13,9 +16,6 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
-
 
 import VerificationResultDetail from './VerificationResultDetail';
 import VerificationResultsTable from './VerificationResultsTable';
@@ -25,8 +25,79 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
+
+//=============================================================================================================================================
+// GLOBAL THEMING
+
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
+// This is necessary for the Material UI component render layer
+let theme = {
+  primaryColor: "rgb(108, 183, 110)",
+  primaryText: "rgba(255, 255, 255, 1) !important",
+
+  secondaryColor: "rgb(108, 183, 110)",
+  secondaryText: "rgba(255, 255, 255, 1) !important",
+
+  cardColor: "rgba(255, 255, 255, 1) !important",
+  cardTextColor: "rgba(0, 0, 0, 1) !important",
+
+  errorColor: "rgb(128,20,60) !important",
+  errorText: "#ffffff !important",
+
+  appBarColor: "#f5f5f5 !important",
+  appBarTextColor: "rgba(0, 0, 0, 1) !important",
+
+  paperColor: "#f5f5f5 !important",
+  paperTextColor: "rgba(0, 0, 0, 1) !important",
+
+  backgroundCanvas: "rgba(255, 255, 255, 1) !important",
+  background: "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
+
+  nivoTheme: "greens"
+}
+
+// if we have a globally defined theme from a settings file
+if(get(Meteor, 'settings.public.theme.palette')){
+  theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
+}
+
+const muiTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+  palette: {
+    primary: {
+      main: theme.primaryColor,
+      contrastText: theme.primaryText
+    },
+    secondary: {
+      main: theme.secondaryColor,
+      contrastText: theme.errorText
+    },
+    appBar: {
+      main: theme.appBarColor,
+      contrastText: theme.appBarTextColor
+    },
+    cards: {
+      main: theme.cardColor,
+      contrastText: theme.cardTextColor
+    },
+    paper: {
+      main: theme.paperColor,
+      contrastText: theme.paperTextColor
+    },
+    error: {
+      main: theme.errorColor,
+      contrastText: theme.secondaryText
+    },
+    background: {
+      default: theme.backgroundCanvas
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.2
+  }
+});
 
 
 //---------------------------------------------------------------
@@ -42,19 +113,18 @@ Session.setDefault('verificationResultsArray', []);
 Session.setDefault('VerificationResultsPage.onePageLayout', true)
 Session.setDefault('VerificationResultsTable.hideCheckbox', true)
 
-//---------------------------------------------------------------
-// Theming
-
-const muiTheme = Theming.createMuiTheme();
-
+Session.setDefault('verificationResultChecklistMode', false)
 
 
 //===========================================================================
 // MAIN COMPONENT  
 
-Session.setDefault('verificationResultChecklistMode', false)
 
 export function VerificationResultsPage(props){
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let data = {
     selectedAuditEventId: '',
@@ -70,9 +140,6 @@ export function VerificationResultsPage(props){
     },
     verificationResultChecklistMode: false
   };
-
-  
-
 
   data.onePageLayout = useTracker(function(){
     return Session.get('VerificationResultsPage.onePageLayout');
@@ -145,7 +212,10 @@ export function VerificationResultsPage(props){
       <CardContent>
 
         <VerificationResultsTable 
+          formFactorLayout={formFactor}  
           verificationResults={ data.verificationResults }
+          count={data.verificationResults.length}
+          selectedVerificationResultId={ data.selectedVerificationResultId }
           hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
@@ -156,7 +226,8 @@ export function VerificationResultsPage(props){
           checklist={data.verificationResultChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           onRowClick={ handleRowClick.bind(this) }
-          count={data.verificationResults.length}
+          size="small"
+          
           />
         </CardContent>
       </StyledCard>
@@ -167,6 +238,7 @@ export function VerificationResultsPage(props){
           <CardHeader title={data.verificationResults.length + " Verification Results"} />
           <CardContent>
             <VerificationResultsTable 
+              formFactorLayout={formFactor}  
               selectedVerificationResultId={ data.selectedVerificationResultId }
               verificationResults={ data.verificationResults }
               hideCheckbox={data.hideCheckbox}
@@ -181,6 +253,7 @@ export function VerificationResultsPage(props){
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               count={data.verificationResults.length}
+              size="medium"
               />
           </CardContent>
         </StyledCard>
@@ -207,11 +280,6 @@ export function VerificationResultsPage(props){
       </Grid>
     </Grid>
   }
-
-
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   return (
     <PageCanvas id="verificationResultsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>

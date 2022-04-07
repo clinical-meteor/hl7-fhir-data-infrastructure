@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
+  Button,
+  Checkbox,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  TablePagination,
-  Checkbox
+  TablePagination
 } from '@material-ui/core';
-
-import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
 import _ from 'lodash';
@@ -57,6 +56,12 @@ let styles = {
 
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedEndpoints', []);
+
+
 
 function EndpointsTable(props){
   logger.info('Rendering the EndpointsTable');
@@ -67,17 +72,17 @@ function EndpointsTable(props){
 
   let { 
     children, 
+    id,
 
+    data,
     endpoints,
     selectedEndpointId,
-
     query,
     paginationLimit,
     disablePagination,
 
     hideCheckbox,
     hideActionIcons,
-
     hideStatus,
     hideConnectionType,
     hideName,
@@ -95,19 +100,20 @@ function EndpointsTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
     displayEnteredInError, 
 
-    formFactorLayout,
     checklist,
 
     page,
     onSetPage,
-
     count,
     multiline,
-    tableRowSize,
 
     ...otherProps 
   } = props;
@@ -158,6 +164,39 @@ function EndpointsTable(props){
         hideAddress = false;
         break;            
     }
+  }
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
   }
 
 
@@ -341,42 +380,42 @@ function EndpointsTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
+  // //---------------------------------------------------------------------
+  // // Pagination
 
-  let rows = [];
-  // const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
+  // let rows = [];
+  // // const [page, setPage] = useState(0);
+  // const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
-  function handleChangePage(event, newPage){
-    if(typeof onSetPage === "function"){
-      onSetPage(newPage);
-    }
-  }
+  // let paginationCount = 101;
+  // if(count){
+  //   paginationCount = count;
+  // } else {
+  //   paginationCount = rows.length;
+  // }
 
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
+
+  // function handleChangePage(event, newPage){
+  //   if(typeof onSetPage === "function"){
+  //     onSetPage(newPage);
+  //   }
+  // }
+
+  // let paginationFooter;
+  // if(!disablePagination){
+  //   paginationFooter = <TablePagination
+  //     component="div"
+  //     // rowsPerPageOptions={[5, 10, 25, 100]}
+  //     rowsPerPageOptions={['']}
+  //     colSpan={3}
+  //     count={paginationCount}
+  //     rowsPerPage={rowsPerPageToRender}
+  //     page={page}
+  //     onChangePage={handleChangePage}
+  //     style={{float: 'right', border: 'none'}}
+  //   />
+  // }
   
   
   //---------------------------------------------------------------------
@@ -493,7 +532,7 @@ EndpointsTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
-  
+
   hideStatus: PropTypes.bool,
   hideConnectionType: PropTypes.bool,
   hideVersion: PropTypes.bool,
@@ -511,10 +550,15 @@ EndpointsTable.propTypes = {
   tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
-  checklist: PropTypes.bool,
+  rowsPerPage: PropTypes.number,
+  tableRowSize: PropTypes.string,
+  dateFormat: PropTypes.string,
+  showMinutes: PropTypes.bool,
+  size: PropTypes.string,
 
   page: PropTypes.number,
-  count: PropTypes.number
+  count: PropTypes.number,
+  multiline: PropTypes.bool
 };
 EndpointsTable.defaultProps = {
   hideCheckbox: true,

@@ -11,12 +11,9 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -57,6 +54,16 @@ let styles = {
 
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedCodeSystems', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
+
+
 
 function CodeSystemsTable(props){
   logger.info('Rendering the CodeSystemsTable');
@@ -70,14 +77,12 @@ function CodeSystemsTable(props){
 
     codeSystems,
     selectedCodeSystemId,
-
     query,
     paginationLimit,
     disablePagination,
 
     hideCheckbox,
     hideActionIcons,
-
     hideVersion,
     hideName,
     hideTitle,
@@ -98,14 +103,21 @@ function CodeSystemsTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
+
     displayEnteredInError,
 
-    formFactorLayout,
+    page,
+    onSetPage,
+
     checklist,
     count,
-    tableRowSize,
+    multiline,
 
     ...otherProps 
   } = props;
@@ -186,6 +198,38 @@ function CodeSystemsTable(props){
   }
 
 
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
   // ------------------------------------------------------------------------
   // Helper Functions
 
@@ -387,41 +431,6 @@ function CodeSystemsTable(props){
   }
 
   //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-  
-  
-  //---------------------------------------------------------------------
   // Table Rows
 
 
@@ -440,8 +449,13 @@ function CodeSystemsTable(props){
 
   if(codeSystems){
     if(codeSystems.length > 0){              
+      let count = 0;    
+
       codeSystems.forEach(function(codeSystem){
-        codeSystemsToRender.push(FhirDehydrator.dehydrateCodeSystem(codeSystem, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          codeSystemsToRender.push(FhirDehydrator.dehydrateCodeSystem(codeSystem, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -576,6 +590,7 @@ CodeSystemsTable.defaultProps = {
   checklist: true,
   selectedCodeSystemId: '',
   rowsPerPage: 5,
+  page: 0,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'
 }

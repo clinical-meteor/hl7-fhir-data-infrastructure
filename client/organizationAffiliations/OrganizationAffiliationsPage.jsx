@@ -24,9 +24,79 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-// import { OrganizationAffiliations } from '../../lib/schemas/OrganizationAffiliations';
 
+//=============================================================================================================================================
+// GLOBAL THEMING
+
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
+// This is necessary for the Material UI component render layer
+let theme = {
+  primaryColor: "rgb(108, 183, 110)",
+  primaryText: "rgba(255, 255, 255, 1) !important",
+
+  secondaryColor: "rgb(108, 183, 110)",
+  secondaryText: "rgba(255, 255, 255, 1) !important",
+
+  cardColor: "rgba(255, 255, 255, 1) !important",
+  cardTextColor: "rgba(0, 0, 0, 1) !important",
+
+  errorColor: "rgb(128,20,60) !important",
+  errorText: "#ffffff !important",
+
+  appBarColor: "#f5f5f5 !important",
+  appBarTextColor: "rgba(0, 0, 0, 1) !important",
+
+  paperColor: "#f5f5f5 !important",
+  paperTextColor: "rgba(0, 0, 0, 1) !important",
+
+  backgroundCanvas: "rgba(255, 255, 255, 1) !important",
+  background: "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
+
+  nivoTheme: "greens"
+}
+
+// if we have a globally defined theme from a settings file
+if(get(Meteor, 'settings.public.theme.palette')){
+  theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
+}
+
+const muiTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+  palette: {
+    primary: {
+      main: theme.primaryColor,
+      contrastText: theme.primaryText
+    },
+    secondary: {
+      main: theme.secondaryColor,
+      contrastText: theme.errorText
+    },
+    appBar: {
+      main: theme.appBarColor,
+      contrastText: theme.appBarTextColor
+    },
+    cards: {
+      main: theme.cardColor,
+      contrastText: theme.cardTextColor
+    },
+    paper: {
+      main: theme.paperColor,
+      contrastText: theme.paperTextColor
+    },
+    error: {
+      main: theme.errorColor,
+      contrastText: theme.secondaryText
+    },
+    background: {
+      default: theme.backgroundCanvas
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.2
+  }
+});
 
 //---------------------------------------------------------------
 // Session Variables
@@ -41,17 +111,13 @@ Session.setDefault('organizationAffiliationsArray', []);
 Session.setDefault('OrganizationAffiliationsPage.onePageLayout', true)
 Session.setDefault('OrganizationAffiliationsTable.hideCheckbox', true)
 
-//---------------------------------------------------------------
-// Theming
 
-const muiTheme = Theming.createMuiTheme();
-
+Session.setDefault('organizationAffiliationChecklistMode', false)
 
 
 //===========================================================================
 // MAIN COMPONENT  
 
-Session.setDefault('organizationAffiliationChecklistMode', false)
 
 export function OrganizationAffiliationsPage(props){
 
@@ -239,7 +305,10 @@ export function OrganizationAffiliationsPage(props){
       <CardContent>
 
         <OrganizationAffiliationsTable 
+          formFactorLayout={formFactor}  
           organizationAffiliations={ data.organizationAffiliations }
+          count={data.organizationAffiliations.length}
+          selectedOrganizationAffiliationId={ data.selectedOrganizationAffiliationId }
           hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
@@ -250,8 +319,7 @@ export function OrganizationAffiliationsPage(props){
           checklist={data.organizationAffiliationChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          formFactorLayout={formFactor}
-          count={data.organizationAffiliations.length}
+          size="small"
           />
         </CardContent>
       </StyledCard>
@@ -264,8 +332,8 @@ export function OrganizationAffiliationsPage(props){
             <OrganizationAffiliationsTable 
               organizationAffiliations={ data.organizationAffiliations }
               selectedOrganizationAffiliationId={ data.selectedOrganizationAffiliationId }
-              hideIdentifier={true} 
               hideCheckbox={data.hideCheckbox}
+              hideIdentifier={true} 
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}
@@ -277,6 +345,7 @@ export function OrganizationAffiliationsPage(props){
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               formFactorLayout={formFactor}
               count={data.organizationAffiliations.length}
+              size="medium"
               />
           </CardContent>
         </StyledCard>

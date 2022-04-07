@@ -19,9 +19,83 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
+import LayoutHelpers from '../../lib/LayoutHelpers';
+
+
+
+//=============================================================================================================================================
+// GLOBAL THEMING
+
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-import LayoutHelpers from '../../lib/LayoutHelpers';
+// This is necessary for the Material UI component render layer
+let theme = {
+  primaryColor: "rgb(108, 183, 110)",
+  primaryText: "rgba(255, 255, 255, 1) !important",
+
+  secondaryColor: "rgb(108, 183, 110)",
+  secondaryText: "rgba(255, 255, 255, 1) !important",
+
+  cardColor: "rgba(255, 255, 255, 1) !important",
+  cardTextColor: "rgba(0, 0, 0, 1) !important",
+
+  errorColor: "rgb(128,20,60) !important",
+  errorText: "#ffffff !important",
+
+  appBarColor: "#f5f5f5 !important",
+  appBarTextColor: "rgba(0, 0, 0, 1) !important",
+
+  paperColor: "#f5f5f5 !important",
+  paperTextColor: "rgba(0, 0, 0, 1) !important",
+
+  backgroundCanvas: "rgba(255, 255, 255, 1) !important",
+  background: "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
+
+  nivoTheme: "greens"
+}
+
+// if we have a globally defined theme from a settings file
+if(get(Meteor, 'settings.public.theme.palette')){
+  theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
+}
+
+const muiTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+  palette: {
+    primary: {
+      main: theme.primaryColor,
+      contrastText: theme.primaryText
+    },
+    secondary: {
+      main: theme.secondaryColor,
+      contrastText: theme.errorText
+    },
+    appBar: {
+      main: theme.appBarColor,
+      contrastText: theme.appBarTextColor
+    },
+    cards: {
+      main: theme.cardColor,
+      contrastText: theme.cardTextColor
+    },
+    paper: {
+      main: theme.paperColor,
+      contrastText: theme.paperTextColor
+    },
+    error: {
+      main: theme.errorColor,
+      contrastText: theme.secondaryText
+    },
+    background: {
+      default: theme.backgroundCanvas
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.2
+  }
+});
+
 
 //---------------------------------------------------------------
 // Session Variables
@@ -36,19 +110,19 @@ Session.setDefault('subscriptionsArray', []);
 Session.setDefault('SubscriptionsPage.onePageLayout', true)
 Session.setDefault('SubscriptionsTable.hideCheckbox', true)
 
-//---------------------------------------------------------------
-// Theming
-
-const muiTheme = Theming.createMuiTheme();
-
+Session.setDefault('subscriptionChecklistMode', false)
 
 
 //===========================================================================
 // MAIN COMPONENT  
 
-Session.setDefault('subscriptionChecklistMode', false)
 
 export function SubscriptionsPage(props){
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
 
   let data = {
     selectedAuditEventId: '',
@@ -150,7 +224,9 @@ export function SubscriptionsPage(props){
       <CardContent>
 
         <SubscriptionsTable 
+          formFactorLayout={formFactor}  
           subscriptions={ data.subscriptions }
+          count={data.subscriptions.length}
           hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
@@ -161,7 +237,7 @@ export function SubscriptionsPage(props){
           checklist={data.subscriptionChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          count={data.subscriptions.length}
+          size="medium"
           />
         </CardContent>
       </StyledCard>
@@ -172,7 +248,9 @@ export function SubscriptionsPage(props){
           <CardHeader title={data.subscriptions.length + " Code Systems"} />
           <CardContent>
             <SubscriptionsTable 
+              formFactorLayout={formFactor}  
               subscriptions={ data.subscriptions }
+              count={data.subscriptions.length}
               selectedSubscriptionId={ data.selectedSubscriptionId }
               hideIdentifier={true} 
               hideCheckbox={data.hideCheckbox}
@@ -184,7 +262,7 @@ export function SubscriptionsPage(props){
               hideAddress={false}    
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              count={data.subscriptions.length}
+              size="small"
               />
           </CardContent>
         </StyledCard>
@@ -212,10 +290,6 @@ export function SubscriptionsPage(props){
     </Grid>
   }
 
-
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   return (
     <PageCanvas id="subscriptionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>

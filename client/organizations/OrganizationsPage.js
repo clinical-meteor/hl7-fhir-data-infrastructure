@@ -1,3 +1,6 @@
+import React  from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Grid, 
   Container,
@@ -17,13 +20,9 @@ import { Session } from 'meteor/session';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
 
-
 import OrganizationDetail from './OrganizationDetail';
 import OrganizationsTable from './OrganizationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
-import React  from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
 
 // import { Organizations } from '../../lib/schemas/Organizations';
 
@@ -115,12 +114,14 @@ Session.setDefault('OrganizationsPage.onePageLayout', true)
 Session.setDefault('OrganizationsTable.hideCheckbox', true)
 
 
-
-
 //=============================================================================================================================================
 // MAIN COMPONENT
 
 export function OrganizationsPage(props){
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let data = {
     selectedOrganizationId: '',
@@ -174,9 +175,6 @@ export function OrganizationsPage(props){
   }
 
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
   
@@ -209,6 +207,7 @@ export function OrganizationsPage(props){
           <CardHeader title={data.organizations.length + " Organizations"} />
           <CardContent>
             <OrganizationsTable
+              formFactorLayout={formFactor}  
               organizations={data.organizations}
               count={data.organizations.length}
               hideCheckbox={data.hideCheckbox}

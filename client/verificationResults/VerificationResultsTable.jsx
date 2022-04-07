@@ -11,12 +11,9 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -57,6 +54,15 @@ let styles = {
 
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedResults', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
+
 
 function VerificationResultsTable(props){
   logger.info('Rendering the VerificationResultsTable');
@@ -67,17 +73,17 @@ function VerificationResultsTable(props){
 
   let { 
     children, 
+    id,
 
+    data,
     verificationResults,
     selectedVerificationResultId,
-
     query,
     paginationLimit,
     disablePagination,
 
     hideCheckbox,
     hideActionIcons,
-
     hideTarget,
     hideStatus,
     hideStatusDate,
@@ -94,15 +100,21 @@ function VerificationResultsTable(props){
     showActionButton,
     actionButtonLabel,
   
+    
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
-    displayEnteredInError,
-
+    size,
+    appHeight,
     formFactorLayout,
-    checklist,
+
+    page,
+    onSetPage,
+
     count,
-    tableRowSize,
+    multiline,
+    checklist,
 
     ...otherProps 
   } = props;
@@ -176,6 +188,38 @@ function VerificationResultsTable(props){
     }
   }
 
+    //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -374,45 +418,9 @@ function VerificationResultsTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-  
   
   //---------------------------------------------------------------------
   // Table Rows
-
-
 
   let tableRows = [];
   let verificationResultsToRender = [];
@@ -427,16 +435,21 @@ function VerificationResultsTable(props){
 
 
   if(verificationResults){
-    if(verificationResults.length > 0){              
+    if(verificationResults.length > 0){  
+      let count = 0;    
+
       verificationResults.forEach(function(verificationResult){
-        verificationResultsToRender.push(FhirDehydrator.dehydrateVerificationResult(verificationResult, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          verificationResultsToRender.push(FhirDehydrator.dehydrateVerificationResult(verificationResult, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
 
   if(verificationResultsToRender.length === 0){
@@ -547,6 +560,7 @@ VerificationResultsTable.defaultProps = {
 
   checklist: true,
   selectedVerificationResultId: '',
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'

@@ -134,31 +134,18 @@ export function PractitionersPage(props){
           <CardContent>
             <PractitionersTable 
                 practitioners={data.practitioners}
-                fhirVersion={data.fhirVersion} 
-                formFactorLayout={formFactor}
-                showBarcodes={false} 
-                count={data.practitioners.length}
-                formFactorLayout={formFactor}
+                // fhirVersion={data.fhirVersion} 
+                // formFactorLayout={formFactor}
+                // showBarcodes={false} 
+                // count={data.practitioners.length}
+                // formFactorLayout={formFactor}
+                // rowsPerPage={10}
                 hideCheckbox={data.hideCheckbox}
-                rowsPerPage={10}
+                selectedPractitionerId={ data.selectedPractitionerId }
                 onRowClick={ handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                size="medium"
                 />
-
-            {/* <Tabs id="practitionersPageTabs" value={data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
-              <Tab label="Practitioners" value={0} />
-              <Tab label="New" value={1} />
-            </Tabs>
-            <TabPanel >
-              <PractitionersTable 
-                fhirVersion={data.fhirVersion} 
-                showBarcodes={false} />
-            </TabPanel>              
-            <TabPanel >
-              <PractitionerDetail 
-                id='practitionerDetails' 
-                practitioner={ data.selectedPractitioner }
-                practitionerId={ data.selectedPractitionerId } />  
-            </TabPanel>               */}
           </CardContent>
           { blockchainTab }
        </StyledCard>

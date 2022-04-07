@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
+  Button,
+  Checkbox,
   Table,
-  TableBody,
+  TableBody, 
   TableCell,
   TableHead,
   TableRow,
-  TablePagination,
-  Checkbox
+  TableFooter,
+  TablePagination
 } from '@material-ui/core';
-
-import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
 import _ from 'lodash';
@@ -55,6 +55,10 @@ let styles = {
   }
 }
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedInsurancePlans', []);
 
 
 
@@ -67,10 +71,11 @@ function InsurancePlansTable(props){
 
   let { 
     children, 
+    id,
 
+    data,
     insurancePlans,
     selectedInsurancePlanId,
-
     query,
     paginationLimit,
     disablePagination,
@@ -97,14 +102,20 @@ function InsurancePlansTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
     displayEnteredInError,
 
-    formFactorLayout,
+    page,
+    onSetPage,
+
     checklist,
     count,
-    tableRowSize,
+    multiline,
 
     ...otherProps 
   } = props;
@@ -185,6 +196,40 @@ function InsurancePlansTable(props){
         hideNumEndpoints = false;
         break;            
     }
+  }
+
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
   }
 
 
@@ -428,36 +473,36 @@ function InsurancePlansTable(props){
   //---------------------------------------------------------------------
   // Pagination
 
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  // let rows = [];
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
+  // let paginationCount = 101;
+  // if(count){
+  //   paginationCount = count;
+  // } else {
+  //   paginationCount = rows.length;
+  // }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
+  // let paginationFooter;
+  // if(!disablePagination){
+  //   paginationFooter = <TablePagination
+  //     component="div"
+  //     // rowsPerPageOptions={[5, 10, 25, 100]}
+  //     rowsPerPageOptions={['']}
+  //     colSpan={3}
+  //     count={paginationCount}
+  //     rowsPerPage={rowsPerPageToRender}
+  //     page={page}
+  //     onChangePage={handleChangePage}
+  //     style={{float: 'right', border: 'none'}}
+  //   />
+  // }
   
   
   //---------------------------------------------------------------------
@@ -478,9 +523,13 @@ function InsurancePlansTable(props){
 
 
   if(insurancePlans){
-    if(insurancePlans.length > 0){              
+    if(insurancePlans.length > 0){       
+      let count = 0;           
       insurancePlans.forEach(function(insurancePlan){
-        insurancePlansToRender.push(FhirDehydrator.dehydrateInsurancePlan(insurancePlan, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          insurancePlansToRender.push(FhirDehydrator.dehydrateInsurancePlan(insurancePlan, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -568,16 +617,15 @@ function InsurancePlansTable(props){
 InsurancePlansTable.propTypes = {
   barcodes: PropTypes.bool,
   insurancePlans: PropTypes.array,
-  selectedInsurancePlanId: PropTypes.string,
-
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
-  showMinutes: PropTypes.bool,
+  disablePagination: PropTypes.bool,
+  selectedInsurancePlanId: PropTypes.string,
+
 
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
-
   hideStatus: PropTypes.bool,
   hideType: PropTypes.bool,
   hideName: PropTypes.bool,
@@ -595,7 +643,17 @@ InsurancePlansTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
+  hideExtensions: PropTypes.bool,
+
+  rowsPerPage: PropTypes.number,
   tableRowSize: PropTypes.string,
+  dateFormat: PropTypes.string,
+  showMinutes: PropTypes.bool,
+  size: PropTypes.string,
+
+  page: PropTypes.number,
+  count: PropTypes.number,
+  multiline: PropTypes.bool,
 
   formFactorLayout: PropTypes.string,
   checklist: PropTypes.bool
@@ -616,6 +674,8 @@ InsurancePlansTable.defaultProps = {
   hideNumEndpoints: false,
   checklist: true,
   selectedInsurancePlanId: '',
+  multiline: false,
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'

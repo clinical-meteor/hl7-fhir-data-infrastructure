@@ -14,15 +14,11 @@ import {
 } from '@material-ui/core';
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas } from 'fhir-starter';
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
-
-
 
 
 //===========================================================================
@@ -58,46 +54,6 @@ let styles = {
 }
 
 
-  // //===========================================================================
-  // // FLATTENING / MAPPING
-
-  // dehydrateOrganization = function(organization){
-  //   let result = {
-  //     _id: '',
-  //     id: '',
-  //     meta: '',
-  //     name: '',
-  //     identifier: '',
-  //     phone: '',
-  //     addressLine: '',
-  //     text: '',
-  //     city: '',
-  //     state: '',
-  //     postalCode: '',
-  //     extension: ''
-  //   };
-
-  //   result._id =  get(organization, 'id') ? get(organization, 'id') : get(organization, '_id');
-  //   result.id = get(organization, 'id', '');
-  //   result.identifier = get(organization, 'identifier[0].value', '');
-
-  //   result.name = get(organization, 'name', '')
-
-  //   result.phone = FhirUtilities.pluckPhone(get(organization, 'telecom'));
-  //   result.email = FhirUtilities.pluckEmail(get(organization, 'telecom'));
-
-  //   result.addressLine = get(organization, 'address[0].line[0]');
-  //   result.state = get(organization, 'address[0].state');
-  //   result.postalCode = get(organization, 'address[0].postalCode');
-  //   result.country = get(organization, 'address[0].country');
-
-  //   // S.A.N.E.R. Reporting Extensions
-  //   if(Array.isArray(get(organization, 'extension'))){
-  //     result.extension = get(organization, 'extension[0].valueQuantity');
-  //   }
-
-  //   return result;
-  // }
 
 //===========================================================================
 // SESSION VARIABLES
@@ -149,12 +105,14 @@ function OrganizationsTable(props){
     hideExtensions,
     hideNumEndpoints,
   
+    onActionButtonClick,
+    showActionButton,
+
     rowsPerPage,
     tableRowSize,
     dateFormat,
     showMinutes,
     size,
-
     appHeight,
     formFactorLayout,
 
@@ -238,9 +196,8 @@ function OrganizationsTable(props){
   }
 
 
-
-  // //---------------------------------------------------------------------
-  // // Pagination
+  //---------------------------------------------------------------------
+  // Pagination
 
   let rows = [];
 
@@ -520,8 +477,16 @@ function OrganizationsTable(props){
 
   let tableRows = [];
   let organizationsToRender = [];
-
+  let internalDateFormat = "YYYY-MM-DD";
   
+  if(showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(dateFormat){
+    internalDateFormat = dateFormat;
+  }
+
+
   if(organizations){
     if(organizations.length > 0){     
       let count = 0;    
@@ -536,7 +501,8 @@ function OrganizationsTable(props){
   }
 
   let rowStyle = {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    height: '55px'
   }
   if(organizationsToRender.length === 0){
     logger.trace('OrganizationsTable: No organizations to render.');
@@ -550,6 +516,10 @@ function OrganizationsTable(props){
       if(get(organizationsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+
       logger.trace('organizationsToRender[i]', organizationsToRender[i])
       tableRows.push(
         <TableRow className="organizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, organizationsToRender[i].id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
@@ -667,7 +637,8 @@ OrganizationsTable.defaultProps = {
   multiline: false,
   page: 0,
   rowsPerPage: 5,
-  tableRowSize: 'medium'
+  tableRowSize: 'medium',
+  actionButtonLabel: 'Export'
 }
 
 export default OrganizationsTable;

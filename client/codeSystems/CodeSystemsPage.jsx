@@ -7,7 +7,7 @@ import {
   Button,
   Typography,
   Box,
-  Grid
+  Grid 
 } from '@material-ui/core';
 import styled from 'styled-components';
 
@@ -24,9 +24,82 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
+import { CodeSystems } from '../../lib/schemas/CodeSystems';
+
+
+
+//=============================================================================================================================================
+// GLOBAL THEMING
+
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-import { CodeSystems } from '../../lib/schemas/CodeSystems';
+// This is necessary for the Material UI component render layer
+let theme = {
+  primaryColor: "rgb(108, 183, 110)",
+  primaryText: "rgba(255, 255, 255, 1) !important",
+
+  secondaryColor: "rgb(108, 183, 110)",
+  secondaryText: "rgba(255, 255, 255, 1) !important",
+
+  cardColor: "rgba(255, 255, 255, 1) !important",
+  cardTextColor: "rgba(0, 0, 0, 1) !important",
+
+  errorColor: "rgb(128,20,60) !important",
+  errorText: "#ffffff !important",
+
+  appBarColor: "#f5f5f5 !important",
+  appBarTextColor: "rgba(0, 0, 0, 1) !important",
+
+  paperColor: "#f5f5f5 !important",
+  paperTextColor: "rgba(0, 0, 0, 1) !important",
+
+  backgroundCanvas: "rgba(255, 255, 255, 1) !important",
+  background: "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
+
+  nivoTheme: "greens"
+}
+
+// if we have a globally defined theme from a settings file
+if(get(Meteor, 'settings.public.theme.palette')){
+  theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
+}
+
+const muiTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+  palette: {
+    primary: {
+      main: theme.primaryColor,
+      contrastText: theme.primaryText
+    },
+    secondary: {
+      main: theme.secondaryColor,
+      contrastText: theme.errorText
+    },
+    appBar: {
+      main: theme.appBarColor,
+      contrastText: theme.appBarTextColor
+    },
+    cards: {
+      main: theme.cardColor,
+      contrastText: theme.cardTextColor
+    },
+    paper: {
+      main: theme.paperColor,
+      contrastText: theme.paperTextColor
+    },
+    error: {
+      main: theme.errorColor,
+      contrastText: theme.secondaryText
+    },
+    background: {
+      default: theme.backgroundCanvas
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.2
+  }
+});
 
 
 //---------------------------------------------------------------
@@ -41,19 +114,21 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('codeSystemsArray', []);
 Session.setDefault('CodeSystemsPage.onePageLayout', true)
 Session.setDefault('CodeSystemsTable.hideCheckbox', true)
-//---------------------------------------------------------------
-// Theming
 
-const muiTheme = Theming.createMuiTheme();
-
+Session.setDefault('codeSystemChecklistMode', false)
 
 
 //===========================================================================
 // MAIN COMPONENT  
 
-Session.setDefault('codeSystemChecklistMode', false)
 
 export function CodeSystemsPage(props){
+
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
 
   let data = {
     selectedAuditEventId: '',
@@ -231,7 +306,9 @@ export function CodeSystemsPage(props){
       <CardContent>
 
         <CodeSystemsTable 
+          formFactorLayout={formFactor}  
           codeSystems={ data.codeSystems }
+          count={data.codeSystems.length}
           hideCheckbox={data.hideCheckbox}
           hideStatus={false}
           hideName={false}
@@ -242,7 +319,8 @@ export function CodeSystemsPage(props){
           onRowClick={ handleRowClick.bind(this) } 
           checklist={data.codeSystemChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          count={data.codeSystems.length}
+          size="small"
+          
           />
         </CardContent>
       </StyledCard>
@@ -253,7 +331,9 @@ export function CodeSystemsPage(props){
           <CardHeader title={data.codeSystems.length + " Code Systems"} />
           <CardContent>
             <CodeSystemsTable 
+              formFactorLayout={formFactor}  
               codeSystems={ data.codeSystems }
+              count={data.codeSystems.length}
               selectedCodeSystemId={ data.selectedCodeSystemId }
               hideIdentifier={true} 
               hideCheckbox={data.hideCheckbox}
@@ -266,7 +346,7 @@ export function CodeSystemsPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              count={data.codeSystems.length}
+              size="medium"
               />
           </CardContent>
         </StyledCard>
@@ -294,10 +374,6 @@ export function CodeSystemsPage(props){
     </Grid>
   }
 
-
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   return (
     <PageCanvas id="codeSystemsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>

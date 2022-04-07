@@ -11,7 +11,6 @@ import {
   Checkbox
 } from '@material-ui/core';
 
-import TableNoData from 'fhir-starter';
 
 import moment from 'moment'
 import _ from 'lodash';
@@ -56,6 +55,12 @@ let styles = {
 }
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedRoles', []);
+
+
 
 
 function PractitionerRolesTable(props){
@@ -67,17 +72,16 @@ function PractitionerRolesTable(props){
 
   let { 
     children, 
+    id,
 
     practitionerRoles,
     selectedPractitionerRoleId,
-
     query,
     paginationLimit,
     disablePagination,
 
     hideCheckbox,
     hideActionIcons,
-
     hideIdentifier,
     hidePractitioner,
     hideOrganization,
@@ -98,14 +102,20 @@ function PractitionerRolesTable(props){
     actionButtonLabel,
   
     rowsPerPage,
+    tableRowSize,
     dateFormat,
     showMinutes,
+    size,
+    appHeight,
     displayEnteredInError,
+
+    page,
+    onSetPage,
+    multiline,
 
     formFactorLayout,
     checklist,
     count,
-    tableRowSize,
 
     ...otherProps 
   } = props;
@@ -193,6 +203,40 @@ function PractitionerRolesTable(props){
     }
   }
 
+
+
+  // //---------------------------------------------------------------------
+  // // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
   // ------------------------------------------------------------------------
   // Helper Functions
@@ -448,41 +492,6 @@ function PractitionerRolesTable(props){
   }
 
   //---------------------------------------------------------------------
-  // Pagination
-
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
-  
-  
-  //---------------------------------------------------------------------
   // Table Rows
 
 
@@ -500,9 +509,13 @@ function PractitionerRolesTable(props){
 
 
   if(practitionerRoles){
-    if(practitionerRoles.length > 0){              
+    if(practitionerRoles.length > 0){     
+      let count = 0;             
       practitionerRoles.forEach(function(practitionerRole){
-        practitionerRolesToRender.push(FhirDehydrator.dehydratePractitionerRole(practitionerRole, internalDateFormat));
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+          practitionerRolesToRender.push(FhirDehydrator.dehydratePractitionerRole(practitionerRole, internalDateFormat));
+        }
+        count++;
       });  
     }
   }
@@ -642,6 +655,7 @@ PractitionerRolesTable.defaultProps = {
 
   checklist: true,
   selectedPractitionerRoleId: '',
+  page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export'
