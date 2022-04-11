@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import SearchParameterDetail from './SearchParameterDetail';
@@ -297,6 +297,8 @@ export function SearchParametersPage(props){
   }
 
 
+  let [searchParametersIndex, setSearchParametersIndex] = setState(0);
+
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
@@ -317,6 +319,10 @@ export function SearchParametersPage(props){
           checklist={data.searchParameterChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           onRowClick={ handleRowClick.bind(this) }
+          onSetPage={function(index){
+            setSearchParametersIndex(index)
+          }}  
+          page={searchParametersIndex}
           size="small"
           />
         </CardContent>
@@ -342,6 +348,10 @@ export function SearchParametersPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setSearchParametersIndex(index)
+              }}          
+              page={searchParametersIndex}
               size="medium"
               />
           </CardContent>

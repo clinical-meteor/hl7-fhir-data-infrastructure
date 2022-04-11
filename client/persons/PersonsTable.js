@@ -336,6 +336,9 @@ function PersonsTable(props){
     count,
     tableRowSize,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -439,29 +442,15 @@ function PersonsTable(props){
   }
 
 
-    //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
   // Table Rows
 
   let tableRows = [];
-  let footer;
 
-  const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPageToRender] = useState(rowsPerPage);
-  const [rows, setRows] = useState([]);
 
   const emptyRows = rowsPerPageToRender - Math.min(rowsPerPageToRender, rows.length - page * rowsPerPageToRender);
 
-
-  if(paginationCount){
-    paginationCount = paginationCount;
-  } else {
-    paginationCount = rows.length;
-  }
-
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
   const handleChangeRowsPerPage = event => {
     setRowsPerPageToRender(parseInt(event.target.value, 10));
@@ -986,20 +975,40 @@ function PersonsTable(props){
 
 
 
+  //---------------------------------------------------------------------
+  // Pagination
+
+  let rows = [];
+
+  if(paginationCount){
+    paginationCount = paginationCount;
+  } else {
+    paginationCount = rows.length;
+  }
+
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
   let paginationFooter;
   if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
-      rowsPerPageOptions={[5, 10, 25, 100]}
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
-      onChangeRowsPerPage={handleChangeRowsPerPage}
       style={{float: 'right', border: 'none'}}
     />
   }
+
+
 
   return(
     <div>
@@ -1076,6 +1085,9 @@ PersonsTable.propTypes = {
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func, 
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   defaultAvatar: PropTypes.string,
   disablePagination: PropTypes.bool,

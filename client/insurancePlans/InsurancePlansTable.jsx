@@ -198,9 +198,7 @@ function InsurancePlansTable(props){
     }
   }
 
-
-  // //---------------------------------------------------------------------
-  // // Pagination
+  // Pagination
 
   let rows = [];
 
@@ -642,6 +640,9 @@ InsurancePlansTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   hideExtensions: PropTypes.bool,
 

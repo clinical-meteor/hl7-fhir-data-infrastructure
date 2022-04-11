@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import MeasureDetail from './MeasureDetail';
@@ -235,7 +235,7 @@ export function MeasuresPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-
+  let [measuresPageIndex, setMeasuresPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -268,6 +268,10 @@ export function MeasuresPage(props){
           paginationLimit={10}     
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setMeasuresPageIndex(index)
+          }}        
+          page={measuresPageIndex}                  
           count={data.measuresCount}
           />
         </CardContent>
@@ -296,6 +300,10 @@ export function MeasuresPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setMeasuresPageIndex(index)
+              }}                 
+              page={measuresPageIndex}                               
               count={data.measuresCount}
               />
           </CardContent>

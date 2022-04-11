@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 
@@ -108,6 +108,7 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('endpointsArray', []);
 Session.setDefault('EndpointsPage.onePageLayout', true)
 Session.setDefault('EndpointsTable.hideCheckbox', true)
+Session.setDefault('EndpointsTable.endpointsPageIndex', 0)
 
 Session.setDefault('endpointChecklistMode', false)
 
@@ -136,7 +137,8 @@ export function EndpointsPage(props){
         lastModified: -1
       }
     },
-    endpointChecklistMode: false
+    endpointChecklistMode: false,
+    endpointsPageIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -172,85 +174,16 @@ export function EndpointsPage(props){
   data.endpointChecklistMode = useTracker(function(){
     return Session.get('endpointChecklistMode')
   }, [])
+  data.endpointsPageIndex = useTracker(function(){
+    return Session.get('OrganizationsTable.endpointsPageIndex')
+  }, [])
 
 
-  // function onCancelUpsertEndpoint(context){
-  //   Session.set('endpointPageTabIndex', 1);
-  // }
-  // function onDeleteEndpoint(context){
-  //   Endpoints._collection.remove({_id: get(context, 'state.endpointId')}, function(error, result){
-  //     if (error) {
-  //       if(process.env.NODE_ENV === "test") console.log('Endpoints.insert[error]', error);
-  //       Bert.alert(error.reason, 'danger');
-  //     }
-  //     if (result) {
-  //       Session.set('selectedEndpointId', '');
-  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});        
-  //     }
-  //   });
-  //   Session.set('endpointPageTabIndex', 1);
-  // }
-  // function onUpsertEndpoint(context){
-  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-  //   console.log('Saving a new Endpoint...', context.state)
+  function setEndpointsPageIndex(newIndex){
+    Session.set('OrganizationsTable.endpointsPageIndex', newIndex)
+  }
 
-  //   if(get(context, 'state.endpoint')){
-  //     let self = context;
-  //     let fhirEndpointData = Object.assign({}, get(context, 'state.endpoint'));
   
-  //     // if(process.env.NODE_ENV === "test") console.log('fhirEndpointData', fhirEndpointData);
-  
-  //     let endpointValidator = EndpointSchema.newContext();
-  //     // console.log('endpointValidator', endpointValidator)
-  //     endpointValidator.validate(fhirEndpointData)
-  
-  //     if(process.env.NODE_ENV === "development"){
-  //       console.log('IsValid: ', endpointValidator.isValid())
-  //       console.log('ValidationErrors: ', endpointValidator.validationErrors());
-  
-  //     }
-  
-  //     console.log('Checking context.state again...', context.state)
-  //     if (get(context, 'state.endpointId')) {
-  //       if(process.env.NODE_ENV === "development") {
-  //         console.log("Updating endpoint...");
-  //       }
-
-  //       delete fhirEndpointData._id;
-  
-  //       // not sure why we're having to respecify this; fix for a bug elsewhere
-  //       fhirEndpointData.resourceType = 'Endpoint';
-  
-  //       Endpoints._collection.update({_id: get(context, 'state.endpointId')}, {$set: fhirEndpointData }, function(error, result){
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test") console.log("Endpoints.insert[error]", error);
-          
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});
-  //           Session.set('selectedEndpointId', '');
-  //           Session.set('endpointPageTabIndex', 1);
-  //         }
-  //       });
-  //     } else {
-  //       // if(process.env.NODE_ENV === "test") 
-  //       console.log("Creating a new endpoint...", fhirEndpointData);
-  
-  //       fhirEndpointData.effectiveDateTime = new Date();
-  //       Endpoints._collection.insert(fhirEndpointData, function(error, result) {
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test")  console.log('Endpoints.insert[error]', error);           
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Endpoints", recordId: context.state.endpointId});
-  //           Session.set('endpointPageTabIndex', 1);
-  //           Session.set('selectedEndpointId', '');
-  //         }
-  //       });
-  //     }
-  //   } 
-  //   Session.set('endpointPageTabIndex', 1);
-  // }
   function handleRowClick(endpointId){
     console.log('EndpointsPage.handleRowClick', endpointId)
     let endpoint = Endpoints.findOne({id: endpointId});
@@ -292,6 +225,7 @@ export function EndpointsPage(props){
     Session.set('endpointPageTabIndex', newValue)
   }
 
+  // let [endpointsPageIndex, setEndpointsPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -313,6 +247,10 @@ export function EndpointsPage(props){
           checklist={data.endpointChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setEndpointsPageIndex(index)
+          }}                  
+          page={data.endpointsPageIndex}
           size="small"
           />
         </CardContent>
@@ -336,6 +274,10 @@ export function EndpointsPage(props){
               hideOrganization={false}
               hideAddress={false}    
               onRowClick={ handleRowClick.bind(this) }
+              onSetPage={function(index){
+                setEndpointsPageIndex(index)
+              }}     
+              page={data.endpointsPageIndex}                 
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               size="medium"
               />

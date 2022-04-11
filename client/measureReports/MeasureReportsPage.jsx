@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import MeasureReportDetail from './MeasureReportDetail';
@@ -230,6 +230,7 @@ export function MeasureReportsPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
+  let [measureReportsPageIndex, setMeasureReportsPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -247,13 +248,16 @@ export function MeasureReportsPage(props){
           selectedMeasureReportId={ data.selectedMeasureReportId }
           hideMeasureUrl={false}
           paginationLimit={10}
-          hideSubjects={true}
           hideClassCode={false}
           hideReasonCode={false}
           hideReason={false}
           hideHistory={false}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setMeasureReportsPageIndex(index)
+          }}           
+          page={measureReportsPageIndex}               
           tableRowSize="medium"
         />
         </CardContent>
@@ -285,6 +289,10 @@ export function MeasureReportsPage(props){
             hideDenominator={true}
             onRowClick={ handleRowClick.bind(this) }
             rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onSetPage={function(index){
+              setMeasureReportsPageIndex(index)
+            }}          
+            page={measureReportsPageIndex}                               
             tableRowSize="medium"
             />
         </CardContent>

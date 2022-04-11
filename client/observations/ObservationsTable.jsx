@@ -822,6 +822,7 @@ ObservationsTable.propTypes = {
   onActionButtonClick: PropTypes.func,
   onSetPage: PropTypes.func,
 
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,

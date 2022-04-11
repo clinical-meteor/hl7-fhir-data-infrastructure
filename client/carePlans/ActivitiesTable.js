@@ -19,16 +19,15 @@ import {
 
 
   export function ActivitiesTable(props){
-      
     let data = {
         activities: []
     }
+
     //---------------------------------------------
     // Trackers
 
     data.activities = useTracker(function(){
         return [];
-        // return Activities.find().fetch();
     }, [])
 
     //---------------------------------------------
@@ -198,7 +197,11 @@ import {
     hideIdentifier: PropTypes.bool,
     hideCheckbox: PropTypes.bool,
     hideActionIcons: PropTypes.bool,
-    onRemoveRecord: PropTypes.func
+    onRemoveRecord: PropTypes.func,
+    onSetPage: PropTypes.func,
+
+    page: PropTypes.number,
+  
   };
 
   export default ActivitiesTable;

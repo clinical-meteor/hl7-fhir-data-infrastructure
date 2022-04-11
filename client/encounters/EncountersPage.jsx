@@ -15,7 +15,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import EncounterDetail from './EncounterDetail';
@@ -139,6 +139,8 @@ export function EncountersPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [encountersPageIndex, setEncountersPageIndex] = setState(0);
+
   return (
     <PageCanvas id="encountersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
@@ -152,19 +154,21 @@ export function EncountersPage(props){
                 hideCheckboxes={true} 
                 hideSubjects={false}
                 actionButtonLabel="Send"
-                hideSubjects={false}
                 hideClassCode={false}
                 hideReasonCode={false}
                 hideReason={false}
                 hideHistory={false}
                 encounters={ data.encounters }
-                rowsPerPage={rowsPerPage}
                 count={data.encountersCount}      
                 showMinutes={true}
                 hideActionIcons={true}
                 hideBarcode={false}
                 rowsPerPage={LayoutHelpers.calcTableRows()}
-                />
+                onSetPage={function(index){
+                  setEncountersPageIndex(index)
+                }}                  
+                page={encountersPageIndex}
+              />
             </CardContent>
           </StyledCard>
       </MuiThemeProvider>

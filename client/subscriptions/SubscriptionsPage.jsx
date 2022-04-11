@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 
 import { 
   CardHeader,
@@ -216,6 +216,7 @@ export function SubscriptionsPage(props){
     Session.set('subscriptionPageTabIndex', newValue)
   }
 
+  let [subscriptionsIndex, setSubscriptionsIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -237,6 +238,10 @@ export function SubscriptionsPage(props){
           checklist={data.subscriptionChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setSubscriptionsIndex(index)
+          }}     
+          page={subscriptionsIndex}  
           size="medium"
           />
         </CardContent>
@@ -262,6 +267,10 @@ export function SubscriptionsPage(props){
               hideAddress={false}    
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setSubscriptionsIndex(index)
+              }}    
+              page={subscriptionsIndex}    
               size="small"
               />
           </CardContent>
@@ -281,7 +290,6 @@ export function SubscriptionsPage(props){
                 subscriptionId={ data.selectedSubscriptionId } 
                 showSubscriptionInputs={true}
                 showHints={false}
-
               />
             </CardContent>
           </CardContent>

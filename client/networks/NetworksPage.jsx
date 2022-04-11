@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
@@ -292,6 +292,7 @@ export function NetworksPage(props){
     Session.set('networkPageTabIndex', newValue)
   }
 
+  let [networksIndex, setNetworksIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -314,6 +315,10 @@ export function NetworksPage(props){
           paginationLimit={10}     
           checklist={data.networkChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setNetworksIndex(index)
+          }}         
+          page={networksIndex}                       
           size="small"
           />
         </CardContent>
@@ -340,6 +345,10 @@ export function NetworksPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setNetworksIndex(index)
+              }}         
+              page={networksIndex}                       
               size="medium"
               />
           </CardContent>
@@ -359,7 +368,6 @@ export function NetworksPage(props){
                 networkId={ data.selectedNetworkId } 
                 showNetworkInputs={true}
                 showHints={false}
-
               />
             </CardContent>
           </CardContent>

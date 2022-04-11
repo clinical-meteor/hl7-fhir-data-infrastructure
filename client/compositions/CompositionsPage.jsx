@@ -15,7 +15,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import CompositionDetail from './CompositionDetail';
@@ -83,6 +83,8 @@ export function CompositionsPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
+  let [compositionsPageIndex, setCompositionsPageIndex] = setState(0);
   
   let layoutContents;
   if(data.onePageLayout){
@@ -127,6 +129,10 @@ export function CompositionsPage(props){
               hideIdentifier={true}
               hideSubjectReference={true}
               onRowClick={compositionRowClick.bind(this)}
+              onSetPage={function(index){
+                setCompositionsPageIndex(index)
+              }}        
+              page={compositionsPageIndex}
             />            
           </CardContent>
         </StyledCard>

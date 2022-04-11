@@ -22,7 +22,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { get, cloneDeep } from 'lodash';
@@ -135,6 +135,8 @@ export function DiagnosticReportsPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [diagnosticReportsPageIndex, setDiagnosticReportsPageIndex] = setState(0);
+
   return (
     <PageCanvas id="measuresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme}>
@@ -148,6 +150,10 @@ export function DiagnosticReportsPage(props){
               hideCheckbox={true}
               hideActionIcons={true}
               rowsPerPage={LayoutHelpers.calcTableRows()}
+              onSetPage={function(index){
+                setDiagnosticReportsPageIndex(index)
+              }}         
+              page={diagnosticReportsPageIndex}       
             />
           </CardContent>
         </StyledCard>

@@ -304,12 +304,19 @@ export function ConsentsPage(props){
   ];
 
   let consentPageContent;
+
+  let [consentsPageIndex, setConsentsPageIndex] = setState(0);
+
   if(true){
     consentPageContent = <ConsentsTable 
       showBarcodes={true} 
       hideIdentifier={true}
       consents={data.consents}
       noDataMessage={false}
+      onSetPage={function(index){
+        setConsentsPageIndex(index)
+      }}        
+      page={consentsPageIndex}
       // patient={ data.consentSearchFilter }
       // query={ data.consentSearchQuery }
       sort="periodStart"

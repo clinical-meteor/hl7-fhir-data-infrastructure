@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
@@ -219,6 +219,8 @@ export function PractitionerRolesPage(props){
     Session.set('practitionerRolePageTabIndex', newValue)
   }
 
+  let [practitionerRolesIndex, setPractitionerRolesIndex] = setPage(0);
+
 
   let layoutContents;
   if(data.onePageLayout){
@@ -241,6 +243,10 @@ export function PractitionerRolesPage(props){
           paginationLimit={10}     
           checklist={data.practitionerRoleChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setPractitionerRolesIndex(index)
+          }}  
+          page={practitionerRolesIndex}
           size="small"
           />
         </CardContent>
@@ -267,6 +273,10 @@ export function PractitionerRolesPage(props){
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               formFactorLayout={formFactor}
+              onSetPage={function(index){
+                setPractitionerRolesIndex(index)
+              }}  
+              page={practitionerRolesIndex}
               size="medium"              
               />
           </CardContent>

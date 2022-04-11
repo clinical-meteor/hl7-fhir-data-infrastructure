@@ -547,6 +547,9 @@ VerificationResultsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   tableRowSize: PropTypes.string,
 

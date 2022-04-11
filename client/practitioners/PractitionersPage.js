@@ -24,7 +24,7 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { Package } from 'meteor/meteor';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 
@@ -57,6 +57,7 @@ Session.setDefault('practitionerPageTabIndex', 1);
 Session.setDefault('practitionerSearchFilter', '');
 Session.setDefault('PractitionersPage.onePageLayout', false);
 Session.setDefault('PractitionersTable.hideCheckbox', true);
+Session.setDefault('PractitionersTable.practitionersIndex', 0);
 Session.setDefault('selectedPractitionerId', false);
 Session.setDefault('blockchainPractitionerData', []);
 Session.setDefault('fhirVersion', 'v1.0.2');
@@ -72,7 +73,8 @@ export function PractitionersPage(props){
     selectedPractitioner: null,
     practitioners: [],
     onePageLayout: true,
-    hideCheckbox: true
+    hideCheckbox: true,
+    practitionersIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -90,6 +92,15 @@ export function PractitionersPage(props){
   data.practitioners = useTracker(function(){
     return Practitioners.find().fetch();
   }, [])
+
+  data.practitionersIndex = useTracker(function(){
+    return Session.get('PractitionersTable.practitionersIndex')
+  }, [])
+
+
+  function setPractitionersIndex(newIndex){
+    Session.set('PractitionersTable.practitionersIndex', newIndex)
+  }
 
 
   function handleRowClick(practitionerId){
@@ -127,6 +138,8 @@ export function PractitionersPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  // let [practitionersIndex, setPractitionersIndex] = setState(0);
+
   return (      
     <PageCanvas id="practitionersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
@@ -134,16 +147,14 @@ export function PractitionersPage(props){
           <CardContent>
             <PractitionersTable 
                 practitioners={data.practitioners}
-                // fhirVersion={data.fhirVersion} 
-                // formFactorLayout={formFactor}
-                // showBarcodes={false} 
-                // count={data.practitioners.length}
-                // formFactorLayout={formFactor}
-                // rowsPerPage={10}
                 hideCheckbox={data.hideCheckbox}
                 selectedPractitionerId={ data.selectedPractitionerId }
                 onRowClick={ handleRowClick.bind(this) }
                 rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                onSetPage={function(index){
+                  setPractitionersIndex(index)
+                }}    
+                page={data.practitionersIndex}
                 size="medium"
                 />
           </CardContent>

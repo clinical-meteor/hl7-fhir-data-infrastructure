@@ -16,7 +16,7 @@ import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import ObservationDetail from './ObservationDetail';
@@ -180,6 +180,8 @@ export function ObservationsPage(props){
   let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
   let noDataCardStyle = {};
 
+  let [observationsIndex, setObservationsIndex] = setState(0);
+
   let observationContent;
   if(data.observations.length > 0){
     observationContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
@@ -195,6 +197,10 @@ export function ObservationsPage(props){
           onCellClick={ this.onTableCellClick }
           onActionButtonClick={this.tableActionButtonClick}
           onRemoveRecord={ this.onDeleteObservation }
+          onSetPage={function(index){
+            setObservationsIndex(index)
+          }}  
+          page={observationsIndex}                              
           tableRowSize="medium"
         />
       </CardContent>            

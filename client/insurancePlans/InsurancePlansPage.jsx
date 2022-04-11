@@ -13,7 +13,7 @@ import {
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import InsurancePlanDetail from './InsurancePlanDetail';
@@ -112,6 +112,7 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('insurancePlansArray', []);
 Session.setDefault('InsurancePlansPage.onePageLayout', true)
 Session.setDefault('InsurancePlansTable.hideCheckbox', true)
+Session.setDefault('InsurancePlansTable.insurancePlansPageIndex', 0)
 
 Session.setDefault('insurancePlanChecklistMode', false)
 
@@ -139,7 +140,8 @@ export function InsurancePlansPage(props){
         lastModified: -1
       }
     },
-    insurancePlanChecklistMode: false
+    insurancePlanChecklistMode: false,
+    jinsurancePlansPageIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -175,6 +177,14 @@ export function InsurancePlansPage(props){
   data.insurancePlanChecklistMode = useTracker(function(){
     return Session.get('insurancePlanChecklistMode')
   }, [])
+  data.insurancePlansPageIndex = useTracker(function(){
+    return Session.get('InsurancePlansTable.insurancePlansPageIndex')
+  }, [])
+
+
+  function setInsurancePlansPageIndex(newIndex){
+    Session.set('InsurancePlansTable.insurancePlansPageIndex', newIndex)
+  }
 
 
   function onCancelUpsertInsurancePlan(context){
@@ -294,6 +304,7 @@ export function InsurancePlansPage(props){
     Session.set('insurancePlanPageTabIndex', newValue)
   }
 
+  // let [insurancePlansPageIndex, setInsurancePlansPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -316,6 +327,10 @@ export function InsurancePlansPage(props){
           paginationLimit={10}     
           checklist={data.insurancePlanChecklistMode}          
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setInsurancePlansPageIndex(index)
+          }}                 
+          page={data.insurancePlansPageIndex}       
           size="small"
           />
         </CardContent>
@@ -341,6 +356,10 @@ export function InsurancePlansPage(props){
               selectedInsurancePlanId={ data.selectedInsurancePlanId }
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setInsurancePlansPageIndex(index)
+              }}                 
+              page={data.insurancePlansPageIndex}       
               formFactorLayout={formFactor}
               size="medium"
               />
@@ -361,7 +380,6 @@ export function InsurancePlansPage(props){
                 insurancePlanId={ data.selectedInsurancePlanId } 
                 showInsurancePlanInputs={true}
                 showHints={false}
-
               />
             </CardContent>
           </CardContent>

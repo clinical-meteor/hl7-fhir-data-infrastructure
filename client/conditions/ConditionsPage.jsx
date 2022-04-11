@@ -11,7 +11,7 @@ import {
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -60,6 +60,8 @@ export function ConditionsPage(props){
   let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
   let noDataCardStyle = {};
 
+  let [conditionsPageIndex, setConditionsPageIndex] = setState(0);
+
   let conditionContent;
   if(data.conditions.length > 0){
     conditionContent = <StyledCard height="auto" scrollable={true} margin={20}>
@@ -76,6 +78,10 @@ export function ConditionsPage(props){
           onActionButtonClick={function(selectedId){
             Conditions._collection.remove({_id: selectedId})
           }}
+          onSetPage={function(index){
+            setConditionsPageIndex(index)
+          }}        
+          page={conditionsPageIndex}
         />
       </CardContent>
     </StyledCard>

@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import ListDetail from './ListDetail';
@@ -150,20 +150,25 @@ export function ListsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [listsPageIndex, setListsPageIndex] = setState(0);
+
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
       <CardHeader title={data.lists.length + " Lists"} />
-      <CardContent>
-
-        <ListsTable 
-          lists={ data.lists }
-          hideCheckbox={true} 
-          hideActionIcons={true}
-          hideIdentifier={true} 
-          hideTitle={false} 
-          hideItemCount={false}
-          paginationLimit={10}     
+        <CardContent>
+          <ListsTable 
+            lists={ data.lists }
+            hideCheckbox={true} 
+            hideActionIcons={true}
+            hideIdentifier={true} 
+            hideTitle={false} 
+            hideItemCount={false}
+            paginationLimit={10}     
+            onSetPage={function(index){
+              setListsPageIndex(index)
+            }}    
+            page={listsPageIndex}                    
           />
         </CardContent>
       </StyledCard>
@@ -182,6 +187,10 @@ export function ListsPage(props){
               paginationLimit={10}            
               hideActionIcons={true}
               onRowClick={this.handleRowClick.bind(this) }
+              onSetPage={function(index){
+                setListsPageIndex(index)
+              }}            
+              page={listsPageIndex}                                  
               count={data.listsCount}
               />
           </CardContent>

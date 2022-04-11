@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import ExplanationOfBenefitDetail from './ExplanationOfBenefitDetail';
@@ -143,6 +143,8 @@ export function ExplanationOfBenefitsPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [explanationOfBenefitsPageIndex, setExplanationOfBenefitsPageIndex] = setState(0);
+
   let layoutContents;
   if( data.onePageLayout){
     layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
@@ -176,7 +178,10 @@ export function ExplanationOfBenefitsPage(props){
           hidePaymentDate={true}
           hideBarcode={false}
           count={ data.explanationOfBenefitsCount}
-      
+          onSetPage={function(index){
+            setExplanationOfBenefitsPageIndex(index)
+          }}    
+          page={explanationOfBenefitsPageIndex}              
           paginationLimit={10}     
           />
         </CardContent>
@@ -213,10 +218,12 @@ export function ExplanationOfBenefitsPage(props){
               hidePaymentDate={true}
               hideBarcode={true}
               count={ data.explanationOfBenefitsCount}
-                  
+              onSetPage={function(index){
+                setExplanationOfBenefitsPageIndex(index)
+              }}      
+              page={explanationOfBenefitsPageIndex}                              
               hideActionIcons={true}
               onRowClick={this.handleRowClick.bind(this) }
-              count={ data.explanationOfBenefitsCount}
               rowsPerPage={LayoutHelpers.calcTableRows()}
               />
           </CardContent>

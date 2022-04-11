@@ -166,6 +166,9 @@ function ProceduresTable(props){
     count,
     multiline,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -253,21 +256,11 @@ function ProceduresTable(props){
 
   const classes = useStyles();
 
+  
   //---------------------------------------------------------------------
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
-  // if(rowsPerPage){
-  //   // if we receive an override as a prop, render that many rows
-  //   // best to use rowsPerPageToRender with disablePagination
-  //   setRowsPerPage(rowsPerPage)
-  // } else {
-  //   // otherwise default to the user selection
-  //   setRowsPerPage(rowsPerPage)
-  // }
 
   let paginationCount = 101;
   if(count){
@@ -275,6 +268,28 @@ function ProceduresTable(props){
   } else {
     paginationCount = rows.length;
   }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
+
 
   //---------------------------------------------------------------------
   // Helper Functions
@@ -644,24 +659,6 @@ function ProceduresTable(props){
   }
 
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
 
   return(
     <div>
@@ -725,6 +722,9 @@ ProceduresTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 

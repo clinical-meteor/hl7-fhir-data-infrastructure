@@ -95,6 +95,9 @@ function BasicsTable(props){
     count,
     tableRowSize,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -382,6 +385,9 @@ BasicsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   tableRowSize: PropTypes.string,
 

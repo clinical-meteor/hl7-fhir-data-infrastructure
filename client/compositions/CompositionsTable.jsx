@@ -106,8 +106,46 @@ function CompositionsTable(props){
     actionButtonLabel,
     formFactorLayout,
 
+    page,
+    onSetPage,
+
     tableRowSize
   } = props;
+
+    //-------------------------------------------------------------
+    // Pagination
+
+    let rows = [];
+
+    let paginationCount = 101;
+    if(count){
+      paginationCount = count;
+    } else {
+      paginationCount = rows.length;
+    }
+  
+    function handleChangePage(event, newPage){
+      if(typeof onSetPage === "function"){
+        onSetPage(newPage);
+      }
+    }
+  
+    let paginationFooter;
+    if(!disablePagination){
+      paginationFooter = <TablePagination
+        component="div"
+        // rowsPerPageOptions={[5, 10, 25, 100]}
+        rowsPerPageOptions={['']}
+        colSpan={3}
+        count={paginationCount}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        style={{float: 'right', border: 'none'}}
+      />
+    }
+
+
 
 
   const classes = useStyles();
@@ -634,6 +672,9 @@ CompositionsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+  
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   formFactorLayout: PropTypes.string,
   tableRowSize: PropTypes.string

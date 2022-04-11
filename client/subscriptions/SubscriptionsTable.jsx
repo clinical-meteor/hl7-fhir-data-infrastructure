@@ -114,6 +114,7 @@ function SubscriptionsTable(props){
 
     page,
     onSetPage,
+    
     count,
     multiline,
 
@@ -576,13 +577,13 @@ SubscriptionsTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onSetPage: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
   checklist: PropTypes.bool,
-
-  page: PropTypes.number,
   count: PropTypes.number
 };
 SubscriptionsTable.defaultProps = {

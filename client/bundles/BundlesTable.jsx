@@ -112,6 +112,9 @@ function BundlesTable(props){
     displayEnteredInError,
     formFactorLayout,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -370,7 +373,7 @@ function BundlesTable(props){
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
@@ -381,9 +384,12 @@ function BundlesTable(props){
     paginationCount = rows.length;
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
 
   let paginationFooter;
   if(!disablePagination){
@@ -697,6 +703,9 @@ BundlesTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   showActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 

@@ -109,13 +109,18 @@ function EncountersTable(props){
     tableRowSize,
     formFactorLayout,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
   let rows = [];
 
   const classes = useStyles();
-  const [page, setPage] = useState(0);
+
+
+
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
   let paginationCount = 101;
@@ -511,28 +516,19 @@ function EncountersTable(props){
       }
     }
   }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
+  
+  
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       // rowsPerPageOptions={[5, 10, 25, 100]}
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
-      // SelectProps={{
-      //   inputProps: { 'aria-label': 'rows per page' },
-      //   native: true
-      // }}
       onChangePage={handleChangePage}
-      //onChangeRowsPerPage={handleChangeRowsPerPage}
-      // ActionsComponent={TablePaginationActions}
       style={{float: 'right', border: 'none'}}
     />
   }
@@ -599,6 +595,9 @@ EncountersTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   hideEndDateTime: PropTypes.bool,
   hideStartDateTime: PropTypes.bool,

@@ -196,38 +196,38 @@ function OrganizationsTable(props){
   }
 
 
-  //---------------------------------------------------------------------
-  // Pagination
+    //---------------------------------------------------------------------
+    // Pagination
 
-  let rows = [];
+    let rows = [];
 
-  let paginationCount = 101;
-  if(count){
-    paginationCount = count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  function handleChangePage(event, newPage){
-    if(typeof onSetPage === "function"){
-      onSetPage(newPage);
+    let paginationCount = 101;
+    if(count){
+      paginationCount = count;
+    } else {
+      paginationCount = rows.length;
     }
-  }
 
-  let paginationFooter;
-  if(!disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPage}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
+    function handleChangePage(event, newPage){
+      if(typeof onSetPage === "function"){
+        onSetPage(newPage);
+      }
+    }
+
+    let paginationFooter;
+    if(!disablePagination){
+      paginationFooter = <TablePagination
+        component="div"
+        // rowsPerPageOptions={[5, 10, 25, 100]}
+        rowsPerPageOptions={['']}
+        colSpan={3}
+        count={paginationCount}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        style={{float: 'right', border: 'none'}}
+      />
+    }
 
 
   //---------------------------------------------------------------------
@@ -608,6 +608,9 @@ OrganizationsTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButton: PropTypes.func,
   onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
+
   hideActionButton: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   actionButtonLabel: PropTypes.string,

@@ -564,15 +564,16 @@ SearchParametersTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   tableRowSize: PropTypes.string,
 
   formFactorLayout: PropTypes.string,
   checklist: PropTypes.bool,
 
-  dateFormat: PropTypes.string,
-
-  page: PropTypes.number,
+  dateFormat: PropTypes.string
 };
 SearchParametersTable.defaultProps = {
   hideCheckbox: true,

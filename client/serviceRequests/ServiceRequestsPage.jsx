@@ -300,8 +300,10 @@ export function ServiceRequestsPage(props){
       color="primary"
       keyboardFocused={true}
       onClick={handleSearch.bind(this) }
-    />,
+    />
   ];
+
+  let [serviceRequestsIndex, setServiceRequestsIndex] = setState(0);
 
   let serviceRequestPageContent;
   if(true){
@@ -312,6 +314,10 @@ export function ServiceRequestsPage(props){
       hideRequestorReference={true}
       noDataMessage={false}
       rowsPerPage={LayoutHelpers.calcTableRows()}
+      onSetPage={function(index){
+        setServiceRequestsIndex(index)
+      }}  
+      page={serviceRequestsIndex}
       sort="occurrenceDateTime"
     />
   }

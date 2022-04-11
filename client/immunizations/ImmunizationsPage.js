@@ -18,7 +18,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Session } from 'meteor/session';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { get } from 'lodash';
@@ -60,6 +60,8 @@ export function ImmunizationsPage(props){
   let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
   let noDataCardStyle = {};
 
+  let [immunizationsPageIndex, setImmunizationsPageIndex] = setState(0);
+
   let immunizationContent;
   if(data.immunizations.length > 0){
     immunizationContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
@@ -71,6 +73,10 @@ export function ImmunizationsPage(props){
               immunizations={data.immunizations }    
               count={ data.immunizations.length }    
               formFactorLayout={formFactor}
+              onSetPage={function(index){
+                setImmunizationsPageIndex(index)
+              }}    
+              page={immunizationsPageIndex}                      
             />
           </Grid>
         </Grid>

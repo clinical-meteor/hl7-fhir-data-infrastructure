@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 
 import { 
   Card,
@@ -151,6 +151,8 @@ function RelatedPersonsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [relatedPersonsIndex, setRelatedPersonsIndex] = setState(0);
+
   return (
     <PageCanvas id='relatedPersonsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
@@ -164,6 +166,10 @@ function RelatedPersonsPage(props){
             onRowClick={ handleRowClick.bind(this) }
             selectedRelatedPersonId={ data.selectedRelatedPersonId }
             rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onSetPage={function(index){
+              setRelatedPersonsIndex(index)
+            }}  
+            page={relatedPersonsIndex}
             size="medium"
           />
         </CardContent>

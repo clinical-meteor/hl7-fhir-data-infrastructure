@@ -454,9 +454,7 @@ export function MeasureReportsTable(props){
 
   
 
-
-  // //---------------------------------------------------------------------
-  // // Pagination
+  // Pagination
 
   let rows = [];
 
@@ -467,11 +465,11 @@ export function MeasureReportsTable(props){
     paginationCount = rows.length;
   }
 
-  const handleChangePage = (event, newPage) => {
+  function handleChangePage(event, newPage){
     if(typeof onSetPage === "function"){
       onSetPage(newPage);
-    }    
-  };
+    }
+  }
 
   let paginationFooter;
   if(!disablePagination){
@@ -637,6 +635,8 @@ MeasureReportsTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   onSetPage: PropTypes.func,
+  
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   showActionButton: PropTypes.bool,
 

@@ -539,6 +539,8 @@ CommunicationRequestsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   formFactorLayout: PropTypes.string,
   count: PropTypes.number

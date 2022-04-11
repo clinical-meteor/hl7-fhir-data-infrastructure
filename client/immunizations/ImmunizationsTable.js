@@ -116,6 +116,9 @@ function ImmunizationsTable(props){
     formFactorLayout,
     count,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -146,14 +149,9 @@ function ImmunizationsTable(props){
     }
   }
 
-
-  //---------------------------------------------------------------------
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
 
   let paginationCount = 101;
   if(count){
@@ -163,7 +161,9 @@ function ImmunizationsTable(props){
   }
 
   function handleChangePage(event, newPage){
-    setPage(newPage);
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
   }
 
   let paginationFooter;
@@ -174,13 +174,13 @@ function ImmunizationsTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
     />
   }
-
+  
 
   //---------------------------------------------------------------------
   // Helper Functions
@@ -523,6 +523,9 @@ ImmunizationsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   showActionButton: PropTypes.bool,
 

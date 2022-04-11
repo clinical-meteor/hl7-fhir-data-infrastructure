@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 
@@ -33,6 +33,8 @@ Session.setDefault('AuditEventsPage.onePageLayout', true)
 
 export function AuditEventsPage(props){
 
+  let [auditEventsPageIndex, setAuditEventsPageIndex] = setState(0);
+
   let data = {
     selectedAuditEventId: '',
     selectedAuditEvent: null,
@@ -65,6 +67,7 @@ export function AuditEventsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  
   return (
     <PageCanvas id="auditEventsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
@@ -75,6 +78,10 @@ export function AuditEventsPage(props){
             count={data.auditEvents.length}
             formFactorLayout={formFactor}
             rowsPerPage={LayoutHelpers.calcTableRows()}
+            page={auditEventsPageIndex}
+            onSetPage={function(index){
+              setAuditEventsPageIndex(index)
+            }}
           />
         </CardContent>
       </StyledCard>

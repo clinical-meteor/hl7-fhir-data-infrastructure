@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
@@ -112,12 +112,17 @@ Session.setDefault('selectedOrganization', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('OrganizationsPage.onePageLayout', true)
 Session.setDefault('OrganizationsTable.hideCheckbox', true)
+Session.setDefault('OrganizationsTable.organizationsIndex', 0)
 
 
 //=============================================================================================================================================
 // MAIN COMPONENT
 
 export function OrganizationsPage(props){
+
+  // Meteor Atmosphere packages is breaking Rule of Hooks
+  // when we try to implement useState  
+  // let [organizationsIndex, setOrganizationsIndex] = useState(0);
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
@@ -127,7 +132,8 @@ export function OrganizationsPage(props){
     selectedOrganizationId: '',
     selectedOrganization: null,
     organizations: [],
-    onePageLayout: true
+    onePageLayout: true,
+    organizationsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -145,8 +151,14 @@ export function OrganizationsPage(props){
   data.organizations = useTracker(function(){
     return Organizations.find().fetch();
   }, [])
+  data.organizationsIndex = useTracker(function(){
+    return Session.get('OrganizationsTable.organizationsIndex')
+  }, [])
 
 
+  function setOrganizationsIndex(newIndex){
+    Session.set('OrganizationsTable.organizationsIndex', newIndex)
+  }
 
   function handleRowClick(organizationId){
     console.log('OrganizationsPage.handleRowClick', organizationId)
@@ -177,6 +189,8 @@ export function OrganizationsPage(props){
 
 
   let cardWidth = window.innerWidth - paddingWidth;
+
+  
   
   let layoutContents;
   if(data.onePageLayout){
@@ -195,6 +209,10 @@ export function OrganizationsPage(props){
           hideActionIcons={true}
           hideNumEndpoints={false}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setOrganizationsIndex(index)
+          }}
+          page={data.organizationsIndex}
           size="small"
         />                                
         </CardContent>
@@ -219,6 +237,10 @@ export function OrganizationsPage(props){
               selectedOrganizationId={ data.selectedOrganizationId }
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setOrganizationsIndex(index)
+              }}
+              page={data.organizationsIndex}
               size="medium"
             />              
           </CardContent>

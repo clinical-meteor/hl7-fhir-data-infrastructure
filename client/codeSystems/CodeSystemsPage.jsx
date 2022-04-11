@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import CodeSystemDetail from './CodeSystemDetail';
@@ -299,28 +299,32 @@ export function CodeSystemsPage(props){
   }
 
 
+  let [codeSystemsPageIndex, setCodeSystemsPageIndex] = setState(0); 
+
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
       <CardHeader title={data.codeSystems.length + " Code Systems"} />
-      <CardContent>
-
-        <CodeSystemsTable 
-          formFactorLayout={formFactor}  
-          codeSystems={ data.codeSystems }
-          count={data.codeSystems.length}
-          hideCheckbox={data.hideCheckbox}
-          hideStatus={false}
-          hideName={false}
-          hideTitle={false}
-          hideVersion={false}
-          hideExperimental={false}
-          paginationLimit={10}    
-          onRowClick={ handleRowClick.bind(this) } 
-          checklist={data.codeSystemChecklistMode}
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          size="small"
-          
+        <CardContent>
+          <CodeSystemsTable 
+            formFactorLayout={formFactor}  
+            codeSystems={ data.codeSystems }
+            count={data.codeSystems.length}
+            hideCheckbox={data.hideCheckbox}
+            hideStatus={false}
+            hideName={false}
+            hideTitle={false}
+            hideVersion={false}
+            hideExperimental={false}
+            paginationLimit={10}    
+            onRowClick={ handleRowClick.bind(this) } 
+            checklist={data.codeSystemChecklistMode}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onSetPage={function(index){
+              setCodeSystemsPageIndex(index)
+            }}    
+            page={codeSystemsPageIndex}
+            size="small"
           />
         </CardContent>
       </StyledCard>
@@ -346,6 +350,10 @@ export function CodeSystemsPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setCodeSystemsPageIndex(index)
+              }}  
+              page={codeSystemsPageIndex}
               size="medium"
               />
           </CardContent>
@@ -365,7 +373,6 @@ export function CodeSystemsPage(props){
                 codeSystemId={ data.selectedCodeSystemId } 
                 showCodeSystemInputs={true}
                 showHints={false}
-
               />
             </CardContent>
           </CardContent>

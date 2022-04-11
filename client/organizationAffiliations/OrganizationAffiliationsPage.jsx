@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import OrganizationAffiliationDetail from './OrganizationAffiliationDetail';
@@ -297,6 +297,8 @@ export function OrganizationAffiliationsPage(props){
     Session.set('organizationAffiliationPageTabIndex', newValue)
   }
 
+  let [observationAffiliationsIndex, setObservationAffiliationsIndex] = setState(0);
+
 
   let layoutContents;
   if(data.onePageLayout){
@@ -319,6 +321,10 @@ export function OrganizationAffiliationsPage(props){
           checklist={data.organizationAffiliationChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setObservationAffiliationsIndex(index)
+          }}
+          page={observationAffiliationsIndex}
           size="small"
           />
         </CardContent>
@@ -343,6 +349,10 @@ export function OrganizationAffiliationsPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setObservationAffiliationsIndex(index)
+              }}
+              page={observationAffiliationsIndex}
               formFactorLayout={formFactor}
               count={data.organizationAffiliations.length}
               size="medium"
@@ -364,7 +374,6 @@ export function OrganizationAffiliationsPage(props){
                 organizationAffiliationId={ data.selectedOrganizationAffiliationId } 
                 showOrganizationAffiliationInputs={true}
                 showHints={false}
-
               />
             </CardContent>
           </CardContent>

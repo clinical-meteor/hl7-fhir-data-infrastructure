@@ -697,6 +697,7 @@ PractitionersTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClihandle: PropTypes.func,
   onSetPage: PropTypes.func,
+  
   hideActionButton: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   actionButtonLabel: PropTypes.string,

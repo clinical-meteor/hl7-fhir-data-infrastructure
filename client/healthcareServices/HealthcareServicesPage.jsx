@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import HealthcareServicesTable from './HealthcareServicesTable';
@@ -112,6 +112,7 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('healthcareServicesArray', []);
 Session.setDefault('HealthcareServicesPage.onePageLayout', true)
 Session.setDefault('HealthcareServicesTable.hideCheckbox', true)
+Session.setDefault('HealthcareServicesTable.healthcareServicesPageIndex', 0)
 Session.setDefault('healthcareServiceChecklistMode', false)
 
 
@@ -175,84 +176,15 @@ export function HealthcareServicesPage(props){
     return Session.get('healthcareServiceChecklistMode')
   }, [])
 
+  data.healthcareServicesPageIndex = useTracker(function(){
+    return Session.get('HealthcareServicesTable.healthcareServicesPageIndex')
+  }, [])
 
-  // function onCancelUpsertHealthcareService(context){
-  //   Session.set('healthcareServicePageTabIndex', 1);
-  // }
-  // function onDeleteHealthcareService(context){
-  //   HealthcareServices._collection.remove({_id: get(context, 'state.healthcareServiceId')}, function(error, result){
-  //     if (error) {
-  //       if(process.env.NODE_ENV === "test") console.log('HealthcareServices.insert[error]', error);
-  //       Bert.alert(error.reason, 'danger');
-  //     }
-  //     if (result) {
-  //       Session.set('selectedHealthcareServiceId', '');
-  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});        
-  //     }
-  //   });
-  //   Session.set('healthcareServicePageTabIndex', 1);
-  // }
-  // function onUpsertHealthcareService(context){
-  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-  //   console.log('Saving a new HealthcareService...', context.state)
 
-  //   if(get(context, 'state.healthcareService')){
-  //     let self = context;
-  //     let fhirHealthcareServiceData = Object.assign({}, get(context, 'state.healthcareService'));
-  
-  //     // if(process.env.NODE_ENV === "test") console.log('fhirHealthcareServiceData', fhirHealthcareServiceData);
-  
-  //     let healthcareServiceValidator = HealthcareServiceSchema.newContext();
-  //     // console.log('healthcareServiceValidator', healthcareServiceValidator)
-  //     healthcareServiceValidator.validate(fhirHealthcareServiceData)
-  
-  //     if(process.env.NODE_ENV === "development"){
-  //       console.log('IsValid: ', healthcareServiceValidator.isValid())
-  //       console.log('ValidationErrors: ', healthcareServiceValidator.validationErrors());
-  
-  //     }
-  
-  //     console.log('Checking context.state again...', context.state)
-  //     if (get(context, 'state.healthcareServiceId')) {
-  //       if(process.env.NODE_ENV === "development") {
-  //         console.log("Updating healthcareService...");
-  //       }
+  function setHealthcareServicesPageIndex(newIndex){
+    Session.set('HealthcareServicesTable.healthcareServicesPageIndex', newIndex)
+  }
 
-  //       delete fhirHealthcareServiceData._id;
-  
-  //       // not sure why we're having to respecify this; fix for a bug elsewhere
-  //       fhirHealthcareServiceData.resourceType = 'HealthcareService';
-  
-  //       HealthcareServices._collection.update({_id: get(context, 'state.healthcareServiceId')}, {$set: fhirHealthcareServiceData }, function(error, result){
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test") console.log("HealthcareServices.insert[error]", error);
-          
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});
-  //           Session.set('selectedHealthcareServiceId', '');
-  //           Session.set('healthcareServicePageTabIndex', 1);
-  //         }
-  //       });
-  //     } else {
-  //       // if(process.env.NODE_ENV === "test") 
-  //       console.log("Creating a new healthcareService...", fhirHealthcareServiceData);
-  
-  //       fhirHealthcareServiceData.effectiveDateTime = new Date();
-  //       HealthcareServices._collection.insert(fhirHealthcareServiceData, function(error, result) {
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test")  console.log('HealthcareServices.insert[error]', error);           
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "HealthcareServices", recordId: context.state.healthcareServiceId});
-  //           Session.set('healthcareServicePageTabIndex', 1);
-  //           Session.set('selectedHealthcareServiceId', '');
-  //         }
-  //       });
-  //     }
-  //   } 
-  //   Session.set('healthcareServicePageTabIndex', 1);
-  // }
 
   function handleRowClick(healthcareServiceId){
     console.log('HealthcareServicesPage.handleRowClick', healthcareServiceId)
@@ -297,6 +229,8 @@ export function HealthcareServicesPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
+  // let [healthcareServicesPageIndex, setHealthcareServicesPageIndex] = setState(0);
+
 
   let layoutContents;
   if(data.onePageLayout){
@@ -318,7 +252,10 @@ export function HealthcareServicesPage(props){
           paginationLimit={10}     
           checklist={data.healthcareServiceChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          count={data.healthcareServices.length}
+          onSetPage={function(index){
+            setHealthcareServicesPageIndex(index)
+          }}                 
+          page={data.healthcareServicesPageIndex}     
           size="small"
           />
         </CardContent>
@@ -345,6 +282,10 @@ export function HealthcareServicesPage(props){
               hideExperimental={false}    
               hideBarcode={true}
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setHealthcareServicesPageIndex(index)
+              }}         
+              page={data.healthcareServicesPageIndex}                  
               size="medium"
               />
           </CardContent>

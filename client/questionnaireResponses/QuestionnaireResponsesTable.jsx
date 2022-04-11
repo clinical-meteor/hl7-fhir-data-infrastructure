@@ -142,6 +142,9 @@ function QuestionnaireResponsesTable(props){
     formFactorLayout,
     multiline,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -563,6 +566,9 @@ QuestionnaireResponsesTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   onCheck: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
 
   rowsPerPage: PropTypes.number,

@@ -471,6 +471,9 @@ MedicationRequestsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   showActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 

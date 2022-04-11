@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import MedicationDetail from './MedicationDetail';
@@ -59,6 +59,8 @@ export function MedicationsPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [medicationsIndex, setMedicationsIndex] = setState(0);
+
   return (
     <PageCanvas id='medicationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
@@ -71,6 +73,10 @@ export function MedicationsPage(props){
               count={data.medications.length}
               selectedMedicationId={data.selectedMedicationId}
               rowsPerPage={LayoutHelpers.calcTableRows()}
+              onSetPage={function(index){
+                setMedicationsIndex(index)
+              }}     
+              page={medicationsIndex}                         
             />
           </CardContent>
         </StyledCard>

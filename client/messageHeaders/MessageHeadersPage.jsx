@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import MessageHeaderDetail from './MessageHeaderDetail';
@@ -227,33 +227,38 @@ export function MessageHeadersPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
+  let [messageHeadersIndex, setMessageHeadersIndex] = setState(0);
+
     let layoutContents;
     if(data.onePageLayout){
       layoutContents = <StyledCard height="auto" margin={20} >
         <CardHeader title={data.messageHeadersCount + " MessageHeaders"} />
-        <CardContent>
-
-          <MessageHeadersTable 
-            messageHeaders={ data.messageHeaders }
-            hideCheckbox={true} 
-            hideActionIcons={true}
-            hideIdentifier={true} 
-            hideTitle={false} 
-            hideDescription={false} 
-            hideApprovalDate={false}
-            hideLastReviewed={false}
-            hideVersion={false}
-            hideStatus={false}
-            hideAuthor={true}
-            hidePublisher={false}
-            hideReviewer={false}
-            hideEditor={false}
-            hideEndorser={false}
-            hideType={false}
-            hideRiskAdjustment={true}
-            hideRateAggregation={true}
-            hideScoring={false}
-            paginationLimit={10}     
+          <CardContent>
+            <MessageHeadersTable 
+              messageHeaders={ data.messageHeaders }
+              hideCheckbox={true} 
+              hideActionIcons={true}
+              hideIdentifier={true} 
+              hideTitle={false} 
+              hideDescription={false} 
+              hideApprovalDate={false}
+              hideLastReviewed={false}
+              hideVersion={false}
+              hideStatus={false}
+              hideAuthor={true}
+              hidePublisher={false}
+              hideReviewer={false}
+              hideEditor={false}
+              hideEndorser={false}
+              hideType={false}
+              hideRiskAdjustment={true}
+              hideRateAggregation={true}
+              hideScoring={false}
+              paginationLimit={10}    
+              onSetPage={function(index){
+                setMessageHeadersIndex(index)
+              }}                    
+              page={messageHeadersIndex}          
             />
           </CardContent>
         </StyledCard>
@@ -279,6 +284,10 @@ export function MessageHeadersPage(props){
                 paginationLimit={10}            
                 hideActionIcons={true}
                 onRowClick={this.handleRowClick.bind(this) }
+                onSetPage={function(index){
+                  setMessageHeadersIndex(index)
+                }}                              
+                page={messageHeadersIndex}            
                 count={data.messageHeadersCount}
                 />
             </CardContent>

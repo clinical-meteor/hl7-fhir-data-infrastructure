@@ -177,6 +177,8 @@ function BundlesPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [bundlesPageIndex, setBundlesPageIndex] = setState(0);
+
   return(
     <PageCanvas id="bundlesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
@@ -202,7 +204,11 @@ function BundlesPage(props){
                     Session.set('selectedBundle', Bundles.findOne({_id: bundelId}))
                   }}
                   formFactorLayout={formFactor}
-                  />
+                  page={bundlesPageIndex}
+                  onSetPage={function(index){
+                    setBundlesPageIndex(index)
+                  }}  
+                />
               </CardContent>
             </StyledCard>
           </Grid>

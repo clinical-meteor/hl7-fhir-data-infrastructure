@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
@@ -205,6 +205,8 @@ export function VerificationResultsPage(props){
   }
 
 
+  let [verificationResultsIndex, setVerificationResultsIndex] = setState(0);
+
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
@@ -225,6 +227,10 @@ export function VerificationResultsPage(props){
           paginationLimit={10}     
           checklist={data.verificationResultChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setVerificationResultsIndex(index)
+          }}    
+          page={verificationResultsIndex}  
           onRowClick={ handleRowClick.bind(this) }
           size="small"
           
@@ -252,6 +258,10 @@ export function VerificationResultsPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setVerificationResultsIndex(index)
+              }}   
+              page={verificationResultsIndex}         
               count={data.verificationResults.length}
               size="medium"
               />

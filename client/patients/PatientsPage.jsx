@@ -184,6 +184,7 @@ export function PatientsPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
   
+  let [patientsIndex, setPatientsIndex] = setState(0);
 
   return (
     <PageCanvas id="patientsPageClass" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -207,6 +208,10 @@ export function PatientsPage(props){
                   props.history.replace(get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick', '/'))
                 }
               }}
+              onSetPage={function(index){
+                setPatientsIndex(index)
+              }}
+              page={patientsIndex}
               formFactorLayout={formFactor}    
               rowsPerPage={LayoutHelpers.calcTableRows()}      
               logger={window.logger ? window.logger : null}

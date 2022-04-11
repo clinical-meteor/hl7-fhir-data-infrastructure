@@ -20,7 +20,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { get } from 'lodash';
@@ -64,6 +64,8 @@ export function MedicationStatementsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [medicationStatementsIndex, setMedicationStatementsIndex] = setState(0);
+
   return (
     <PageCanvas id="medicationStatementsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
@@ -75,6 +77,10 @@ export function MedicationStatementsPage(props){
               count={data.medicationStatements.length}
               rowsPerPage={20}
               medicationsCursor={Medications}
+              onSetPage={function(index){
+                setMedicationStatementsIndex(index)
+              }}       
+              page={medicationStatementsIndex}                       
             />
           </CardContent>
       </StyledCard>        

@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import ReactMixin  from 'react-mixin';
 import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
@@ -141,6 +141,8 @@ export function DevicesPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
   
+  let [devicesPageIndex, setDevicesPageIndex] = setState(0);
+
   return (
     <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
@@ -152,6 +154,10 @@ export function DevicesPage(props){
               count={data.devices.length}
               formFactorLayout={formFactor}
               rowsPerPage={LayoutHelpers.calcTableRows()}
+              onSetPage={function(index){
+                setDevicesPageIndex(index)
+              }}                
+              page={devicesPageIndex}
             />
           </CardContent>
       </StyledCard>

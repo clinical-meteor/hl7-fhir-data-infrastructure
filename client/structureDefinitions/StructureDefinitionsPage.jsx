@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
@@ -299,6 +299,7 @@ export function StructureDefinitionsPage(props){
     Session.set('structureDefinitionPageTabIndex', newValue)
   }
 
+  let [structureDefinitionsIndex, setStructureDefinitionsIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -321,6 +322,10 @@ export function StructureDefinitionsPage(props){
           checklist={data.structureDefinitionChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setStructureDefinitionsIndex(index)
+          }}  
+          page={structureDefinitionsIndex}
           size="small"
           />
         </CardContent>
@@ -347,6 +352,10 @@ export function StructureDefinitionsPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setStructureDefinitionsIndex(index)
+              }}  
+              page={structureDefinitionsIndex}    
               size="medium"
               />
           </CardContent>
@@ -366,7 +375,6 @@ export function StructureDefinitionsPage(props){
                 structureDefinitionId={ data.selectedStructureDefinitionId } 
                 showStructureDefinitionInputs={true}
                 showHints={false}
-
               />
             </CardContent>
           </CardContent>

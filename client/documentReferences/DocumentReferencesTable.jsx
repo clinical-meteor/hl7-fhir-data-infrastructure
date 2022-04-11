@@ -117,6 +117,9 @@ function DocumentReferencesTable(props){
     hideEnteredInError,
     formFactorLayout,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -244,40 +247,37 @@ function DocumentReferencesTable(props){
     }
   }
 
-    //---------------------------------------------------------------------
     // Pagination
 
     let rows = [];
-    const [page, setPage] = useState(0);
-    const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
 
     let paginationCount = 101;
-    if(props.count){
-      paginationCount = props.count;
+    if(count){
+      paginationCount = count;
     } else {
       paginationCount = rows.length;
     }
-
-    const handleChangePage = (event, newPage) => {
-      setPage(newPage);
-    };
+  
+    function handleChangePage(event, newPage){
+      if(typeof onSetPage === "function"){
+        onSetPage(newPage);
+      }
+    }
   
     let paginationFooter;
-    if(!props.disablePagination){
+    if(!disablePagination){
       paginationFooter = <TablePagination
         component="div"
         // rowsPerPageOptions={[5, 10, 25, 100]}
         rowsPerPageOptions={['']}
         colSpan={3}
         count={paginationCount}
-        rowsPerPage={rowsPerPageToRender}
+        rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
         style={{float: 'right', border: 'none'}}
       />
     }
-
 
   //---------------------------------------------------------------------
   // Helper Functions
@@ -781,6 +781,9 @@ DocumentReferencesTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 

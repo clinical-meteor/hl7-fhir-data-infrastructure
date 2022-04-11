@@ -178,6 +178,8 @@ export function QuestionnaireResponsesPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [questionaireResponsesIndex, setQuestionaireResponsesIndex] = setState(0);
+
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
@@ -200,6 +202,10 @@ export function QuestionnaireResponsesPage(props){
             Session.set('selectedQuestionnaireResponseId', responseId);                  
             Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne(responseId));                  
           }}
+          onSetPage={function(index){
+            setQuestionaireResponsesIndex(index)
+          }}  
+          page={questionaireResponsesIndex}
           formFactorLayout={formFactor}
           />
       </CardContent>
@@ -228,6 +234,10 @@ export function QuestionnaireResponsesPage(props){
                 Session.set('selectedQuestionnaireResponseId', responseId);                  
                 Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne({id: responseId}));                  
               }}
+              onSetPage={function(index){
+                setQuestionaireResponsesIndex(index)
+              }}  
+              page={questionaireResponsesIndex}
               formFactorLayout={formFactor}
             />
           </CardContent>

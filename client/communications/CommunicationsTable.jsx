@@ -592,8 +592,10 @@ CommunicationsTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
+  onSetPage: PropTypes.func,
   showActionButton: PropTypes.bool,
 
+  page: PropTypes.number,
   count: PropTypes.number,
   tableRowSize: PropTypes.string,
   formFactorLayout: PropTypes.string

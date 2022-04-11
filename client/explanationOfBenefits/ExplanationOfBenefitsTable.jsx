@@ -206,6 +206,9 @@ function ExplanationOfBenefitsTable(props){
     tableRowSize,
     formFactorLayout,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -594,39 +597,37 @@ function ExplanationOfBenefitsTable(props){
     }
   }
 
-  //---------------------------------------------------------------------
-  // Pagination
+    // Pagination
 
-  let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+    let rows = [];
 
-
-  let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
-  } else {
-    paginationCount = rows.length;
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  let paginationFooter;
-  if(!props.disablePagination){
-    paginationFooter = <TablePagination
-      component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
-      colSpan={3}
-      count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
-      page={page}
-      onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
-    />
-  }
+    let paginationCount = 101;
+    if(count){
+      paginationCount = count;
+    } else {
+      paginationCount = rows.length;
+    }
+  
+    function handleChangePage(event, newPage){
+      if(typeof onSetPage === "function"){
+        onSetPage(newPage);
+      }
+    }
+  
+    let paginationFooter;
+    if(!disablePagination){
+      paginationFooter = <TablePagination
+        component="div"
+        // rowsPerPageOptions={[5, 10, 25, 100]}
+        rowsPerPageOptions={['']}
+        colSpan={3}
+        count={paginationCount}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        style={{float: 'right', border: 'none'}}
+      />
+    }
   
   
   //---------------------------------------------------------------------
@@ -788,6 +789,9 @@ ExplanationOfBenefitsTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
 
   formFactorLayout: PropTypes.string

@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import ListDetail from './ListDetail';
@@ -149,18 +149,23 @@ export function GoalsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [goalsPageIndex, setGoalsPageIndex] = setState(0);
+
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
       <CardHeader title={data.goals.length + " Goals"} />
-      <CardContent>
-
-        <GoalsTable 
-          goals={ data.goals }
-          hideCheckbox={true} 
-          hideActionIcons={true}
-          hideIdentifier={true} 
-          paginationLimit={10}     
+        <CardContent>
+          <GoalsTable 
+            goals={ data.goals }
+            hideCheckbox={true} 
+            hideActionIcons={true}
+            hideIdentifier={true} 
+            paginationLimit={10}   
+            onSetPage={function(index){
+              setGoalsPageIndex(index)
+            }}   
+            page={goalsPageIndex}                 
           />
         </CardContent>
       </StyledCard>
@@ -186,6 +191,10 @@ export function GoalsPage(props){
               paginationLimit={10}            
               hideActionIcons={true}
               onRowClick={this.handleRowClick.bind(this) }
+              onSetPage={function(index){
+                setGoalsPageIndex(index)
+              }}         
+              page={goalsPageIndex}                              
               count={data.goalsCount}
               />
           </CardContent>

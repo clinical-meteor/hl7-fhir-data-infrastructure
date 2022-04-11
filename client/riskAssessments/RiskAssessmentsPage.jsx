@@ -303,6 +303,8 @@ export function RiskAssessmentsPage(props){
     />,
   ];
 
+  let [riskAssessmentsIndex, setRiskAssessmentsIndex] = setState(0);
+
   let riskAssessmentPageContent;
   if(true){
     riskAssessmentPageContent = <RiskAssessmentsTable 
@@ -313,6 +315,10 @@ export function RiskAssessmentsPage(props){
       riskAssessments={data.riskAssessments}
       noDataMessage={false}
       rowsPerPage={LayoutHelpers.calcTableRows()}
+      onSetPage={function(index){
+        setRiskAssessmentsIndex(index)
+      }}  
+      page={riskAssessmentsIndex}
       sort="authoredOn"
     />
   }

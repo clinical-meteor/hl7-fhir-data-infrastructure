@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
@@ -173,6 +173,7 @@ export function ValueSetsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [valueSetsIndex, setValueSetsIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -188,6 +189,10 @@ export function ValueSetsPage(props){
           onRowClick={ handleRowClick.bind(this) }
           hideCheckbox={data.hideCheckbox}
           rowsPerPage={LayoutHelpers.calcTableRows()}  
+          onSetPage={function(index){
+            setValueSetsIndex(index)
+          }}    
+          page={valueSetsIndex}  
           size="small"
           />
         </CardContent>
@@ -206,6 +211,10 @@ export function ValueSetsPage(props){
               onRowClick={ handleRowClick.bind(this) }
               hideCheckbox={data.hideCheckbox}
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  data.appHeight) }
+              onSetPage={function(index){
+                setValueSetsIndex(index)
+              }}  
+              page={valueSetsIndex}      
               size="medium"
               />
           </CardContent>

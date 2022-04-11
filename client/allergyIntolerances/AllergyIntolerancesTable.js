@@ -128,6 +128,9 @@ function AllergyIntolerancesTable(props){
     count,
     formFactorLayout,
 
+    page,
+    onSetPage,
+
     ...otherProps 
   } = props;
 
@@ -504,7 +507,7 @@ function AllergyIntolerancesTable(props){
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
@@ -515,9 +518,12 @@ function AllergyIntolerancesTable(props){
     paginationCount = rows.length;
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
 
   let paginationFooter;
   if(!disablePagination){
@@ -833,6 +839,8 @@ AllergyIntolerancesTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+  
   showActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 

@@ -21,7 +21,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 // import { Locations } from '../../lib/schemas/Locations';
 
@@ -42,6 +42,9 @@ Session.setDefault('selectedLocation', null);
 Session.setDefault('selectedLocationId', false);
 Session.setDefault('LocationsPage.onePageLayout', true)
 Session.setDefault('LocationsTable.hideCheckbox', true)
+Session.setDefault('LocationsTable.locationsPageIndex', 0)
+
+
 
 
 //=============================================================================================================================================
@@ -142,7 +145,8 @@ export function LocationsPage(props){
     selectedLocationId: '',
     selectedLocation: null,
     locations: [],
-    onePageLayout: false
+    onePageLayout: false,
+    locationsPageIndex: 0
   };
 
   data.style.page.height = useTracker(function(){
@@ -167,7 +171,13 @@ export function LocationsPage(props){
   data.locations = useTracker(function(){
     return Locations.find().fetch();
   }, [])
+  data.locationsPageIndex = useTracker(function(){
+    return Session.get('LocationsTable.locationsPageIndex')
+  }, [])
 
+  function setLocationsPageIndex(newIndex){
+    Session.set('LocationsTable.locationsPageIndex', newIndex)
+  }
 
 
   function handleRowClick(locationId){
@@ -199,6 +209,7 @@ export function LocationsPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
+  // let [locationsPageIndex, setLocationsPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -214,6 +225,10 @@ export function LocationsPage(props){
           hideCheckbox={data.hideCheckbox}
           count={data.locations.length}  
           onRowClick={ handleRowClick.bind(this) }    
+          onSetPage={function(index){
+            setLocationsPageIndex(index)
+          }}     
+          page={data.locationsPageIndex}                   
         />
       </CardContent>
     </StyledCard>
@@ -229,7 +244,10 @@ export function LocationsPage(props){
               locations={data.locations}
               rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
               hideCheckbox={data.hideCheckbox}
-              // tableRowSize="medium"
+              onSetPage={function(index){
+                setLocationsPageIndex(index)
+              }}          
+              page={data.locationsPageIndex}                                     
               count={data.locations.length}   
               onRowClick={ handleRowClick.bind(this) }    
             />

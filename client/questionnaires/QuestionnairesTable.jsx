@@ -95,6 +95,9 @@ function QuestionnairesTable(props){
     showMinutes,
 
     formFactorLayout,
+
+    page,
+    onSetPage,
     
     ...otherProps 
   } = props;
@@ -488,7 +491,9 @@ QuestionnairesTable.propTypes = {
   onActionButtonClick: PropTypes.func,
   onCheck: PropTypes.func,
   onToggle: PropTypes.func,
+  onSetPage: PropTypes.func,
 
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   hideActionButton: PropTypes.bool,
 

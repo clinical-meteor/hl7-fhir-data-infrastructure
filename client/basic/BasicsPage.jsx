@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import BasicDetail from './BasicDetail';
@@ -205,6 +205,7 @@ export function BasicsPage(props){
     Session.set('basicPageTabIndex', newValue)
   }
 
+  let [basicsPageIndex, setBasicsPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -224,6 +225,10 @@ export function BasicsPage(props){
           checklist={data.basicChecklistMode}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           count={data.basics.length}
+          page={basicsPageIndex}
+          onSetPage={function(index){
+            setBasicsPageIndex(index)
+          }}  
           />
         </CardContent>
       </StyledCard>
@@ -248,6 +253,10 @@ export function BasicsPage(props){
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               count={data.basics.length}
+              page={basicsPageIndex}
+              onSetPage={function(index){
+                setBasicsPageIndex(index)
+              }}  
               />
           </CardContent>
         </StyledCard>
@@ -266,7 +275,9 @@ export function BasicsPage(props){
                 basicId={ data.selectedBasicId } 
                 showBasicInputs={true}
                 showHints={false}
-
+                onSetPage={function(index){
+                  setBasicsPageIndex(index)
+                }}    
               />
             </CardContent>
           </CardContent>

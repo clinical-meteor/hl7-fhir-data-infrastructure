@@ -20,7 +20,7 @@ import { Session } from 'meteor/session';
 import ProvenancesTable from './ProvenancesTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -173,6 +173,8 @@ export function ProvenancesPage(props){
   let cardWidth = window.innerWidth - paddingWidth;
   let proceduresTitle = data.procedures.length + " Provenances";
 
+  let [provenancesIndex, setProvenancesIndex] = setState(0);
+
   return (
     <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
@@ -188,6 +190,10 @@ export function ProvenancesPage(props){
                 onRowClick={ handleRowClick.bind(this) }
                 tableRowSize="medium"
                 hideCheckbox={data.hideCheckbox}
+                onSetPage={function(index){
+                  setProvenancesIndex(index)
+                }}  
+                page={provenancesIndex}
               />
             </CardContent>
           </StyledCard>

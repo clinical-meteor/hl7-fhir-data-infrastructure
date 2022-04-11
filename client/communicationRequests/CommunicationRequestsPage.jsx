@@ -188,6 +188,8 @@ export function CommunicationRequestPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
+  let [communicationRequestsPageIndex, setCommunicationRequestsPageIndex] = setState(0);
+
   return (
     <PageCanvas id="communicationRequestsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       {/* <CommunicationRequestDetail 
@@ -211,9 +213,13 @@ export function CommunicationRequestPage(props){
             onRemoveRecord={function(recordId){
               CommunicationRequest.remove({_id: recordId})
             }}
+            onSetPage={function(index){
+              setCommunicationRequestsPageIndex(index)
+            }}  
             onRowClick={ handleRowClick.bind(this) }
             actionButtonLabel="Enroll"
             rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            page={communicationRequestsPageIndex}
             size="medium"
           />
         </CardContent>

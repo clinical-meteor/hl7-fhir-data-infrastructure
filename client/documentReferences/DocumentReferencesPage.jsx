@@ -147,6 +147,8 @@ export function DocumentReferencesPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
+  let [documentReferencesPageIndex, setDocumentReferencesPageIndex] = setState(0);
   
   let layoutContents;
   if(data.onePageLayout){
@@ -162,6 +164,10 @@ export function DocumentReferencesPage(props){
           hideBarcode={false}
           paginationLimit={10}     
           onRowClick={ handleRowClick.bind(this) }
+          onSetPage={function(index){
+            setDocumentReferencesPageIndex(index)
+          }}                
+          page={documentReferencesPageIndex}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           count={data.documentReferences.length}
           formFactorLayout={formFactor}
@@ -185,6 +191,10 @@ export function DocumentReferencesPage(props){
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               count={data.documentReferences.length}
               formFactorLayout={formFactor}
+              onSetPage={function(index){
+                setDocumentReferencesPageIndex(index)
+              }}           
+              page={documentReferencesPageIndex}     
             />
           </CardContent>
         </StyledCard>

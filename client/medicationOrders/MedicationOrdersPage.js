@@ -20,7 +20,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { get, cloneDeep } from 'lodash';
@@ -133,6 +133,8 @@ export function MedicationOrdersPage(props){
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
 
+  let [medicationOrdersIndex, setMedicationOrdersIndex] = setState(0);
+
   return (
     <PageCanvas id="medicationOrdersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
@@ -147,6 +149,10 @@ export function MedicationOrdersPage(props){
               hideActionIcons={false}
               hideCheckbox={true}
               count={data.medicationOrdersCount}
+              onSetPage={function(index){
+                setMedicationOrdersIndex(index)
+              }}      
+              page={medicationOrdersIndex}                        
             />
           </CardContent>
         </StyledCard>

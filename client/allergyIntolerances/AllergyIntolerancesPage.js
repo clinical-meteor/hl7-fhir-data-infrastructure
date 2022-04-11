@@ -6,7 +6,7 @@
 //
 // =======================================================================
 
-import React  from 'react';
+import React, { useState } from 'react';
 
 import { 
   Grid, 
@@ -43,12 +43,13 @@ Session.setDefault('selectedAllergyIntolerance', false);
 
 export function AllergyIntolerancesPage(props){
 
+  let [allergyIntolerancePageIndex, setAllergyIntolerancePageIndex] = setState(0); 
+
   let data = {
     allergyIntoleranceId: '',
     selectedAllergy: null,
     allergyIntolerances: []  
   };
-
 
   data.selectedAllergyIntoleranceId = useTracker(function(){
     return Session.get('selectedAllergyIntoleranceId');
@@ -79,7 +80,11 @@ export function AllergyIntolerancesPage(props){
               fhirVersion={ data.fhirVersion } 
               allergyIntolerances={data.allergyIntolerances}
               formFactorLayout={formFactor}
-              />
+              page={allergyIntolerancePageIndex}
+              onSetPage={function(index){
+                setAllergyIntolerancePageIndex(index)
+              }}
+            />
           </CardContent>
       </StyledCard>
     </PageCanvas>

@@ -52,6 +52,9 @@ import {
       count,
       formFactorLayout,
 
+      page,
+      onSetPage,
+
       children 
     } = props;
 
@@ -280,7 +283,7 @@ import {
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
@@ -291,9 +294,12 @@ import {
     paginationCount = rows.length;
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
 
   let paginationFooter;
   if(!disablePagination){
@@ -433,7 +439,9 @@ import {
     hideSubjectReference: PropTypes.bool,
     onRemoveRecord: PropTypes.func,
     onToggle: PropTypes.func,
+    onSetPage: PropTypes.func,
 
+    page: PropTypes.number,
     count: PropTypes.number,
     tableRowSize: PropTypes.string,
     formFactorLayout: PropTypes.string

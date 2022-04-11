@@ -184,7 +184,7 @@ export function CommunicationsPage(props){
     }
   }
 
-
+  let [communicationsPageIndex, setCommunicationsPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -197,15 +197,18 @@ export function CommunicationsPage(props){
           count={data.communications.length}
           hideCheckbox={data.hideCheckbox}
           selectedCommunicationId={ data.selectedCommunicationId }
-          hideCheckbox={data.hideCheckbox}
           hideIdentifier={true}
           hideActionIcons={true}
           hideBarcode={false} 
           onRemoveRecord={function(recordId){
             Communications.remove({_id: recordId})
           }}
+          onSetPage={function(index){
+            setCommunicationsPageIndex(index)
+          }}    
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          page = {communicationsPageIndex}
           actionButtonLabel="Enroll"
           size="small"
         />
@@ -229,8 +232,12 @@ export function CommunicationsPage(props){
               onRemoveRecord={function(recordId){
                 Communications.remove({_id: recordId})
               }}
+              onSetPage={function(index){
+                setCommunicationsPageIndex(index)
+              }}    
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              page = {communicationsPageIndex}
               actionButtonLabel="Enroll"
               size="medium"
             />

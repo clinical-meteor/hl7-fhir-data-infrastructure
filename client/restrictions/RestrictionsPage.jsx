@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import RestrictionDetail from './RestrictionDetail';
@@ -296,29 +296,33 @@ export function RestrictionsPage(props){
   }
 
 
+  let [restrictionsIndex, setRestrictionsIndex ] = setState(0);
+
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
       <CardHeader title={data.restrictions.length + " Restrictions"} />
-      <CardContent>
-
-        <RestrictionsTable 
-          formFactorLayout={formFactor}  
-          restrictions={ data.restrictions }
-          count={data.restrictions.length}
-          selectedRestrictionId={ data.selectedRestrictionId }
-          hideCheckbox={data.hideCheckbox}
-          hideStatus={false}
-          hideName={false}
-          hideTitle={false}
-          hideVersion={false}
-          hideExperimental={false}
-          paginationLimit={10}     
-          checklist={data.restrictionChecklistMode}
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          onRowClick={ handleRowClick.bind(this) }
-          size="small"
-          
+        <CardContent>
+          <RestrictionsTable 
+            formFactorLayout={formFactor}  
+            restrictions={ data.restrictions }
+            count={data.restrictions.length}
+            selectedRestrictionId={ data.selectedRestrictionId }
+            hideCheckbox={data.hideCheckbox}
+            hideStatus={false}
+            hideName={false}
+            hideTitle={false}
+            hideVersion={false}
+            hideExperimental={false}
+            paginationLimit={10}     
+            checklist={data.restrictionChecklistMode}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onRowClick={ handleRowClick.bind(this) }
+            onSetPage={function(index){
+              setRestrictionsIndex(index)
+            }}     
+            page={restrictionsIndex} 
+            size="small"
           />
         </CardContent>
       </StyledCard>
@@ -344,6 +348,10 @@ export function RestrictionsPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setRestrictionsIndex(index)
+              }}  
+              page={restrictionsIndex} 
               size="medium"
               />
           </CardContent>
@@ -363,7 +371,6 @@ export function RestrictionsPage(props){
                 restrictionId={ data.selectedRestrictionId } 
                 showRestrictionInputs={true}
                 showHints={false}
-
               />
             </CardContent>
           </CardContent>

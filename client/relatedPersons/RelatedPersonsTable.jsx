@@ -1071,6 +1071,9 @@ RelatedPersonsTable.propTypes = {
   onRowClick: PropTypes.func,
   onMetaClick: PropTypes.func, 
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   defaultAvatar: PropTypes.string,
   disablePagination: PropTypes.bool,

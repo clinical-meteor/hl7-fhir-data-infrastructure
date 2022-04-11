@@ -20,7 +20,7 @@ import { Session } from 'meteor/session';
 import ProceduresTable from './ProceduresTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -141,18 +141,24 @@ export function ProceduresPage(props){
   let cardWidth = window.innerWidth - paddingWidth;
   let proceduresTitle = data.procedures.length + " Procedures";
 
+  let [proceduresIndex, setProceduresIndex] = setState(0);
+
   return (
     <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
           <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
             <CardHeader title={proceduresTitle} />
-            <CardContent>
-              <ProceduresTable 
-                procedures={data.procedures}
-                count={data.procedures.length}
-                tableRowSize="medium"
-                formFactorLayout={formFactor}
-                rowsPerPage={LayoutHelpers.calcTableRows()}
+              <CardContent>
+                <ProceduresTable 
+                  procedures={data.procedures}
+                  count={data.procedures.length}
+                  tableRowSize="medium"
+                  formFactorLayout={formFactor}
+                  rowsPerPage={LayoutHelpers.calcTableRows()}
+                  onSetPage={function(index){
+                    setProceduresIndex(index)
+                  }}  
+                  page={proceduresIndex}
                 />
             </CardContent>
           </StyledCard>

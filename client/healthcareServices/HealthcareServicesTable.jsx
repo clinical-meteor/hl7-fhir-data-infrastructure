@@ -114,6 +114,7 @@ function HealthcareServicesTable(props){
 
     page,
     onSetPage,
+    
     count,
     multiline,
 
@@ -184,9 +185,7 @@ function HealthcareServicesTable(props){
   }
 
 
-
-  // //---------------------------------------------------------------------
-  // // Pagination
+  // Pagination
 
   let rows = [];
 
@@ -545,6 +544,9 @@ HealthcareServicesTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   tableRowSize: PropTypes.string,
 

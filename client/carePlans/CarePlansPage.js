@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 
 import { 
   Card,
@@ -49,6 +49,8 @@ function CarePlansPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let [carePlansPageIndex, setCarePlansPageIndex] = setState(0);
+
   return (
     <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
@@ -59,6 +61,10 @@ function CarePlansPage(props){
             count={ data.carePlans.length}
             formFactorLayout={formFactor}
             rowsPerPage={LayoutHelpers.calcTableRows()}
+            onSetPage={function(index){
+              setCarePlansPageIndex(index)
+            }}  
+            page={carePlansPageIndex}
           />
         </CardContent>
       </StyledCard>

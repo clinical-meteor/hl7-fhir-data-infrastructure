@@ -557,6 +557,8 @@ export function QuestionnairesPage(props){
     constructionZoneButton = <Button id='saveAnswersButton' onClick={handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>;
   }
 
+  let [questionairesIndex, setQuestionairesIndex] = setState(0);
+
   return (
     <PageCanvas id="questionnairesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
@@ -577,6 +579,10 @@ export function QuestionnairesPage(props){
                   Session.set('selectedQuestionnaireId', questionnaireId)
                   Session.set('selectedQuestionnaire', Questionnaires.findOne({id: questionnaireId}))
                 }}
+                onSetPage={function(index){
+                  setQuestionairesIndex(index)
+                }}    
+                page={questionairesIndex}
                 formFactorLayout={formFactor}              
               />
             </StyledCard>

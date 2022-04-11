@@ -610,6 +610,9 @@ ProvenancesTable.propTypes = {
   onMetaClick: PropTypes.func,
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 

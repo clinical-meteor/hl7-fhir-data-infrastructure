@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React  from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 // import TaskDetail from './TaskDetail';
@@ -293,6 +293,7 @@ export function TasksPage(props){
     Session.set('taskPageTabIndex', newValue)
   }
 
+  let [tasksIndex, setTasksIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -305,22 +306,14 @@ export function TasksPage(props){
           hideCheckbox={false}
           count={data.tasks.length}
           selectedTaskId={ data.selectedTaskId }
-          // hideActionIcons={true}
-          // hideAuthoredOn={false}
-          // hideLastModified={true}
-          // hideDescription={true}
-          // hideFocus={false}
-          // hideFor={false}
-          // hideIntent={true}
-          // hideRequestor={true}
-          // hideStatus={false}
-          // hideBusinessStatus={false}
-          // hideCode={true}
-          // hideBarcode={true}
           paginationLimit={10}     
           checklist={data.taskChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setTasksIndex(index)
+          }}        
+          page={tasksIndex}
           size="small"
           />
         </CardContent>
@@ -341,6 +334,10 @@ export function TasksPage(props){
               hideBarcode={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setTasksIndex(index)
+              }}     
+              page={tasksIndex} 
               size="medium"
               />
           </CardContent>
@@ -360,7 +357,6 @@ export function TasksPage(props){
                 taskId={ data.selectedTaskId } 
                 showTaskInputs={true}
                 showHints={false}
-
               />
             </CardContent>
           </CardContent>

@@ -112,6 +112,9 @@ export function ServiceRequestsTable(props){
     noDataMessage,
     noDataMessagePadding,
 
+    page,
+    onSetPage
+
   } = props;
 
   //------------------------------------------------------------------------------------
@@ -609,9 +612,6 @@ export function ServiceRequestsTable(props){
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
-
 
   let paginationCount = 101;
   if(count){
@@ -620,9 +620,11 @@ export function ServiceRequestsTable(props){
     paginationCount = rows.length;
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
 
   let paginationFooter;
   if(!disablePagination){
@@ -632,12 +634,14 @@ export function ServiceRequestsTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
     />
   }
+
+
 
 
   //---------------------------------------------------------------------
@@ -807,6 +811,9 @@ ServiceRequestsTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onRevoke: PropTypes.func,
   onActionButtonClick: PropTypes.func,
+  onSetPage: PropTypes.func,
+
+  page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
 
   sourceReference: PropTypes.bool,
