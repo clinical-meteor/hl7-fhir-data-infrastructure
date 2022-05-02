@@ -82,6 +82,10 @@ export function CodeSystemDetail(props){
     return Session.get('CodeSystem.Current');
   }, [])
 
+  if(codeSystem){
+    activeCodeSystem = codeSystem;
+  }
+
   function updateField(path, event){
     console.log('updateField', event.currentTarget.value);
 

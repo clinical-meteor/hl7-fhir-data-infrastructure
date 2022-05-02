@@ -82,6 +82,7 @@ import CareTeamDetail from './client/careTeams/CareTeamDetail';
 import CodeSystemsPage from './client/codeSystems/CodeSystemsPage';
 import CodeSystemsTable from './client/codeSystems/CodeSystemsTable';
 import CodeSystemDetail from './client/codeSystems/CodeSystemDetail';
+import CodeSystemsConceptsTable from './client/codeSystems/CodeSystemsConceptsTable';
 
 import CompositionsPage from './client/compositions/CompositionsPage';
 import CompositionsTable from './client/compositions/CompositionsTable';
@@ -1033,6 +1034,7 @@ export {
   CodeSystemDetail,
   CodeSystemsPage,
   CodeSystemsTable,
+  CodeSystemsConceptsTable,
 
   CareTeamsPage,
   CareTeamsTable,
