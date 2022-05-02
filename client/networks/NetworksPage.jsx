@@ -113,6 +113,9 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('networksArray', []);
 Session.setDefault('NetworksPage.onePageLayout', true)
 Session.setDefault('networkChecklistMode', false)
+Session.setDefault('NetworksTable.networksIndex', 0)
+
+
 
 
 //===========================================================================
@@ -174,85 +177,15 @@ export function NetworksPage(props){
   data.networkChecklistMode = useTracker(function(){
     return Session.get('networkChecklistMode')
   }, [])
+  data.networksIndex = useTracker(function(){
+    return Session.get('NetworksTable.networksIndex')
+  }, [])
 
 
-  // function onCancelUpsertNetwork(context){
-  //   Session.set('networkPageTabIndex', 1);
-  // }
-  // function onDeleteNetwork(context){
-  //   Networks._collection.remove({_id: get(context, 'state.networkId')}, function(error, result){
-  //     if (error) {
-  //       if(process.env.NODE_ENV === "test") console.log('Networks.insert[error]', error);
-  //       Bert.alert(error.reason, 'danger');
-  //     }
-  //     if (result) {
-  //       Session.set('selectedNetworkId', '');
-  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});        
-  //     }
-  //   });
-  //   Session.set('networkPageTabIndex', 1);
-  // }
-  // function onUpsertNetwork(context){
-  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-  //   console.log('Saving a new Network...', context.state)
+  function setNetworksIndex(newIndex){
+    Session.set('NetworksTable.networksIndex', newIndex)
+  }
 
-  //   if(get(context, 'state.network')){
-  //     let self = context;
-  //     let fhirNetworkData = Object.assign({}, get(context, 'state.network'));
-  
-  //     // if(process.env.NODE_ENV === "test") console.log('fhirNetworkData', fhirNetworkData);
-  
-  //     let networkValidator = NetworkSchema.newContext();
-  //     // console.log('networkValidator', networkValidator)
-  //     networkValidator.validate(fhirNetworkData)
-  
-  //     if(process.env.NODE_ENV === "development"){
-  //       console.log('IsValid: ', networkValidator.isValid())
-  //       console.log('ValidationErrors: ', networkValidator.validationErrors());
-  
-  //     }
-  
-  //     console.log('Checking context.state again...', context.state)
-  //     if (get(context, 'state.networkId')) {
-  //       if(process.env.NODE_ENV === "development") {
-  //         console.log("Updating network...");
-  //       }
-
-  //       delete fhirNetworkData._id;
-  
-  //       // not sure why we're having to respecify this; fix for a bug elsewhere
-  //       fhirNetworkData.resourceType = 'Network';
-  
-  //       Networks._collection.update({_id: get(context, 'state.networkId')}, {$set: fhirNetworkData }, function(error, result){
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test") console.log("Networks.insert[error]", error);
-          
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});
-  //           Session.set('selectedNetworkId', '');
-  //           Session.set('networkPageTabIndex', 1);
-  //         }
-  //       });
-  //     } else {
-  //       // if(process.env.NODE_ENV === "test") 
-  //       console.log("Creating a new network...", fhirNetworkData);
-  
-  //       fhirNetworkData.effectiveDateTime = new Date();
-  //       Networks._collection.insert(fhirNetworkData, function(error, result) {
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test")  console.log('Networks.insert[error]', error);           
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: context.state.networkId});
-  //           Session.set('networkPageTabIndex', 1);
-  //           Session.set('selectedNetworkId', '');
-  //         }
-  //       });
-  //     }
-  //   } 
-  //   Session.set('networkPageTabIndex', 1);
-  // }
   function handleRowClick(networkId){
     console.log('NetworksPage.handleRowClick', networkId)
     let network = Networks.findOne({id: networkId});
@@ -276,23 +209,11 @@ export function NetworksPage(props){
       }      
     }
   }
-  // function onInsert(networkId){
-  //   Session.set('selectedNetworkId', '');
-  //   Session.set('networkPageTabIndex', 1);
-  //   HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Networks", recordId: networkId});
-  // }
-  // function onCancel(){
-  //   Session.set('networkPageTabIndex', 1);
-  // } 
-
-
-  // console.log('NetworksPage.data', data)
-
   function handleChange(event, newValue) {
     Session.set('networkPageTabIndex', newValue)
   }
 
-  let [networksIndex, setNetworksIndex] = setState(0);
+  // let [networksIndex, setNetworksIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -318,7 +239,7 @@ export function NetworksPage(props){
           onSetPage={function(index){
             setNetworksIndex(index)
           }}         
-          page={networksIndex}                       
+          page={data.networksIndex}                       
           size="small"
           />
         </CardContent>
@@ -348,7 +269,7 @@ export function NetworksPage(props){
               onSetPage={function(index){
                 setNetworksIndex(index)
               }}         
-              page={networksIndex}                       
+              page={data.networksIndex}                       
               size="medium"
               />
           </CardContent>

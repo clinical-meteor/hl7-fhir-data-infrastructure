@@ -209,7 +209,7 @@ export function LocationsPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-  // let [locationsPageIndex, setLocationsPageIndex] = setState(0);
+
 
   let layoutContents;
   if(data.onePageLayout){

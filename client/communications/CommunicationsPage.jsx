@@ -121,6 +121,7 @@ Session.setDefault('selectedCommunicationId', '');
 Session.setDefault('selectedCommunication', false);
 Session.setDefault('CommunicationsPage.onePageLayout', true)
 Session.setDefault('CommunicationsTable.hideCheckbox', true)
+Session.setDefault('CommunicationsTable.communicationsPageIndex', 0)
 
 
 
@@ -139,7 +140,8 @@ export function CommunicationsPage(props){
     hideCheckbox: true,
     communication: defaultCommunication,
     selectedCommunication: null,
-    selectedCommunicationId: ''
+    selectedCommunicationId: '',
+    codeSystemsPageIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -157,6 +159,14 @@ export function CommunicationsPage(props){
   data.communications = useTracker(function(){
     return Communications.find().fetch();
   }, [])
+  data.codeSystemsPageIndex = useTracker(function(){
+    return Session.get('CommunicationsTable.communicationsPageIndex')
+  }, [])
+
+
+  function setCommunicationsPageIndex(newIndex){
+    Session.set('CommunicationsTable.communicationsPageIndex', newIndex)
+  }
 
   function handleRowClick(communicationId){
     console.log('CommunicationsPage.handleRowClick', communicationId)
@@ -184,7 +194,7 @@ export function CommunicationsPage(props){
     }
   }
 
-  let [communicationsPageIndex, setCommunicationsPageIndex] = setState(0);
+  // let [communicationsPageIndex, setCommunicationsPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -208,7 +218,7 @@ export function CommunicationsPage(props){
           }}    
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          page = {communicationsPageIndex}
+          page = {data.communicationsPageIndex}
           actionButtonLabel="Enroll"
           size="small"
         />
@@ -237,7 +247,7 @@ export function CommunicationsPage(props){
               }}    
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              page = {communicationsPageIndex}
+              page = {data.communicationsPageIndex}
               actionButtonLabel="Enroll"
               size="medium"
             />

@@ -111,6 +111,7 @@ Session.setDefault('selectedOrganizationId', false);
 Session.setDefault('selectedOrganization', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('OrganizationsPage.onePageLayout', true)
+Session.setDefault('OrganizationsPage.defaultQuery', {name: {$not: ""}})
 Session.setDefault('OrganizationsTable.hideCheckbox', true)
 Session.setDefault('OrganizationsTable.organizationsIndex', 0)
 
@@ -149,7 +150,7 @@ export function OrganizationsPage(props){
     return Organizations.findOne(Session.get('selectedOrganizationId'));
   }, [])
   data.organizations = useTracker(function(){
-    return Organizations.find().fetch();
+    return Organizations.find(Session.get('OrganizationsPage.defaultQuery')).fetch();
   }, [])
   data.organizationsIndex = useTracker(function(){
     return Session.get('OrganizationsTable.organizationsIndex')

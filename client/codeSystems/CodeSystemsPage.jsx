@@ -114,6 +114,7 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('codeSystemsArray', []);
 Session.setDefault('CodeSystemsPage.onePageLayout', true)
 Session.setDefault('CodeSystemsTable.hideCheckbox', true)
+Session.setDefault('CodeSystemsTable.codeSystemsPageIndex', 0)
 
 Session.setDefault('codeSystemChecklistMode', false)
 
@@ -181,8 +182,14 @@ export function CodeSystemsPage(props){
   data.codeSystemChecklistMode = useTracker(function(){
     return Session.get('codeSystemChecklistMode')
   }, [])
+  data.codeSystemsPageIndex = useTracker(function(){
+    return Session.get('CodeSystemsTable.codeSystemsPageIndex')
+  }, [])
 
 
+  function setCodeSystemsPageIndex(newIndex){
+    Session.set('CodeSystemsTable.codeSystemsPageIndex', newIndex)
+  }
   function onCancelUpsertCodeSystem(context){
     Session.set('codeSystemPageTabIndex', 1);
   }
@@ -290,16 +297,12 @@ export function CodeSystemsPage(props){
   function onCancel(){
     Session.set('codeSystemPageTabIndex', 1);
   } 
-
-
-  // console.log('CodeSystemsPage.data', data)
-
   function handleChange(event, newValue) {
     Session.set('codeSystemPageTabIndex', newValue)
   }
 
 
-  let [codeSystemsPageIndex, setCodeSystemsPageIndex] = setState(0); 
+  // let [codeSystemsPageIndex, setCodeSystemsPageIndex] = setState(0); 
 
   let layoutContents;
   if(data.onePageLayout){
@@ -323,7 +326,7 @@ export function CodeSystemsPage(props){
             onSetPage={function(index){
               setCodeSystemsPageIndex(index)
             }}    
-            page={codeSystemsPageIndex}
+            page={data.codeSystemsPageIndex}
             size="small"
           />
         </CardContent>
@@ -353,7 +356,7 @@ export function CodeSystemsPage(props){
               onSetPage={function(index){
                 setCodeSystemsPageIndex(index)
               }}  
-              page={codeSystemsPageIndex}
+              page={data.codeSystemsPageIndex}
               size="medium"
               />
           </CardContent>

@@ -304,7 +304,7 @@ export function InsurancePlansPage(props){
     Session.set('insurancePlanPageTabIndex', newValue)
   }
 
-  // let [insurancePlansPageIndex, setInsurancePlansPageIndex] = setState(0);
+
 
   let layoutContents;
   if(data.onePageLayout){

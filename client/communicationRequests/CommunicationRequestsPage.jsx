@@ -119,7 +119,7 @@ let defaultCommunicationRequest = {
 
 Session.setDefault('communicationRequestFormData', defaultCommunicationRequest);
 Session.setDefault('communicationRequestSearchFilter', '');
-
+Session.setDefault('CommunicationRequestsTable.communicationRequestsPageIndex', 0)
 
 
 //=============================================================================================================================================
@@ -132,6 +132,7 @@ export function CommunicationRequestPage(props){
     selectedCommunicationRequestId: '',
     currentCommunicationRequest: null,
     communicationRequests: [],
+    communicationRequestsPageIndex: 0
   };
 
   if (Session.get('communicationRequestFormData')) {
@@ -153,7 +154,14 @@ export function CommunicationRequestPage(props){
   data.communicationRequests = useTracker(function(){
     return CommunicationRequests.find().fetch();
   }, [])
+  data.communicationRequestsPageIndex = useTracker(function(){
+    return Session.get('CommunicationRequestsTable.communicationRequestsPageIndex')
+  }, [])
 
+
+  function setCommunicationRequestsPageIndex(newIndex){
+    Session.set('CommunicationRequestsTable.communicationRequestsPageIndex', newIndex)
+  }
 
   function handleRowClick(communicationRequestId){
     console.log('CommunicationRequestsPage.handleRowClick', communicationRequestId)
@@ -182,13 +190,11 @@ export function CommunicationRequestPage(props){
     }
   }
 
-  console.log('CommunicationRequestsPage.communicationRequests', data.communicationRequests);
-
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-  let [communicationRequestsPageIndex, setCommunicationRequestsPageIndex] = setState(0);
+  // let [communicationRequestsPageIndex, setCommunicationRequestsPageIndex] = setState(0);
 
   return (
     <PageCanvas id="communicationRequestsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -219,7 +225,7 @@ export function CommunicationRequestPage(props){
             onRowClick={ handleRowClick.bind(this) }
             actionButtonLabel="Enroll"
             rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-            page={communicationRequestsPageIndex}
+            page={data.communicationRequestsPageIndex}
             size="medium"
           />
         </CardContent>

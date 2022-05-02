@@ -229,8 +229,6 @@ export function HealthcareServicesPage(props){
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-  // let [healthcareServicesPageIndex, setHealthcareServicesPageIndex] = setState(0);
-
 
   let layoutContents;
   if(data.onePageLayout){

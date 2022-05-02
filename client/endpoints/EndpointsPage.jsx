@@ -225,7 +225,7 @@ export function EndpointsPage(props){
     Session.set('endpointPageTabIndex', newValue)
   }
 
-  // let [endpointsPageIndex, setEndpointsPageIndex] = setState(0);
+
 
   let layoutContents;
   if(data.onePageLayout){
