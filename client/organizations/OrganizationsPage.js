@@ -110,7 +110,7 @@ Session.setDefault('organizationSearchFilter', '');
 Session.setDefault('selectedOrganizationId', false);
 Session.setDefault('selectedOrganization', false)
 Session.setDefault('OrganizationsPage.onePageLayout', true)
-Session.setDefault('OrganizationsPage.defaultQuery', {name: {$not: ""}})
+Session.setDefault('OrganizationsPage.defaultQuery', {})
 Session.setDefault('OrganizationsTable.hideCheckbox', true)
 Session.setDefault('OrganizationsTable.organizationsIndex', 0)
 
