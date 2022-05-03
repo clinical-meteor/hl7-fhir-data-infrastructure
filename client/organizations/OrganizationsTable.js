@@ -493,7 +493,7 @@ function OrganizationsTable(props){
 
       organizations.forEach(function(organization){
         if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
-          organizationsToRender.push(FhirDehydrator.dehydrateOrganization(organization));
+          organizationsToRender.push(FhirDehydrator.dehydrateOrganization(organization, internalDateFormat));
         }
         count++;
       });  
@@ -505,10 +505,12 @@ function OrganizationsTable(props){
     height: '55px'
   }
   if(organizationsToRender.length === 0){
-    logger.trace('OrganizationsTable: No organizations to render.');
+    // logger.trace('OrganizationsTable: No organizations to render.');
+    console.log('OrganizationsTable: No organizations to render.');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < organizationsToRender.length; i++) {
+      
       let selected = false;
       if(organizationsToRender[i].id === selectedOrganizationId){
         selected = true;
@@ -522,7 +524,14 @@ function OrganizationsTable(props){
 
       logger.trace('organizationsToRender[i]', organizationsToRender[i])
       tableRows.push(
-        <TableRow className="organizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, organizationsToRender[i].id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
+        <TableRow 
+          className="organizationRow" 
+          key={i} 
+          onClick={ handleRowClick.bind(this, organizationsToRender[i].id)} 
+          hover={true} 
+          style={rowStyle} 
+          selected={selected} 
+        >            
           { renderCheckbox() }
           { renderActionIcons(organizationsToRender[i]) }
           { renderIdentifier(organizationsToRender[i].identifier ) }

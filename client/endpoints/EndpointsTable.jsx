@@ -62,6 +62,9 @@ let styles = {
 Session.setDefault('selectedEndpoints', []);
 
 
+//===========================================================================
+// MAIN COMPONENT
+
 
 function EndpointsTable(props){
   logger.info('Rendering the EndpointsTable');
@@ -167,6 +170,7 @@ function EndpointsTable(props){
     }
   }
 
+    // ------------------------------------------------------------------------
     // Pagination
 
     let rows = [];
@@ -454,7 +458,7 @@ function EndpointsTable(props){
   }
 
   if(endpointsToRender.length === 0){
-    console.log('No endpoints to render');
+    console.log('EndpointsTable:  No endpoints to render');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < endpointsToRender.length; i++) {

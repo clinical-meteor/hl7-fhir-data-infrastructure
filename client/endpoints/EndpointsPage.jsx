@@ -209,6 +209,7 @@ export function EndpointsPage(props){
       console.log('No endpoint found...')
     }
   }
+  
   function onInsert(endpointId){
     Session.set('selectedEndpointId', '');
     Session.set('endpointPageTabIndex', 1);
@@ -217,10 +218,6 @@ export function EndpointsPage(props){
   function onCancel(){
     Session.set('endpointPageTabIndex', 1);
   } 
-
-
-  // console.log('EndpointsPage.data', data)
-
   function handleChange(event, newValue) {
     Session.set('endpointPageTabIndex', newValue)
   }

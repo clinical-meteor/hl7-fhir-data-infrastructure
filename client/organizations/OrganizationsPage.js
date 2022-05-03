@@ -199,15 +199,15 @@ export function OrganizationsPage(props){
       <CardHeader title={data.organizations.length + " Organizations"} />
       <CardContent>
         <OrganizationsTable        
-          formFactorLayout={formFactor}  
+          // formFactorLayout={formFactor}  
           organizations={data.organizations}
           count={data.organizations.length}
           selectedOrganizationId={ data.selectedOrganizationId }
-          onRowClick={ handleRowClick.bind(this) }
           hideCheckbox={data.hideCheckbox}
           hideBarcode={false}
           hideActionIcons={true}
           hideNumEndpoints={false}
+          onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           onSetPage={function(index){
             setOrganizationsIndex(index)
@@ -225,7 +225,7 @@ export function OrganizationsPage(props){
           <CardHeader title={data.organizations.length + " Organizations"} />
           <CardContent>
             <OrganizationsTable
-              formFactorLayout={formFactor}  
+              // formFactorLayout={formFactor}  
               organizations={data.organizations}
               count={data.organizations.length}
               hideCheckbox={data.hideCheckbox}
@@ -236,11 +236,11 @@ export function OrganizationsPage(props){
               hideNumEndpoints={false}
               selectedOrganizationId={ data.selectedOrganizationId }
               onRowClick={ handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               onSetPage={function(index){
                 setOrganizationsIndex(index)
               }}
               page={data.organizationsIndex}
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               size="medium"
             />              
           </CardContent>

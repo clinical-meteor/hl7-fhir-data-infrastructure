@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 
 import moment from 'moment'
-import { get, has, findIndex } from 'lodash';
+import { get, set, has, findIndex } from 'lodash';
 
 import FhirUtilities from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
@@ -26,7 +26,15 @@ import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
 import { ThemeProvider, makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
-  foo: {}
+  button: {
+    background: theme.background,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: theme.buttonText,
+    height: 48,
+    padding: '0 30px',
+  }
 }));
 
 let styles = {
@@ -46,13 +54,19 @@ let styles = {
 }
 
 
+
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedLocations', []);
+
+
+
 //===========================================================================
 // MAIN COMPONENT
 
 
 
-
-// Session.setDefault('selectedLocations', []);
 
 function LocationsTable(props){
   logger.debug('Rendering the LocationsTable');
@@ -65,6 +79,9 @@ function LocationsTable(props){
 
   let { 
     children, 
+    id,
+
+    data,
     locations,
 
     hideIdentifier,
@@ -86,13 +103,10 @@ function LocationsTable(props){
     extensionLabel,
     extensionUnit,
 
-    multiline,
-
     query,
     paginationLimit,
     disablePagination,
     rowsPerPage,
-    count,
 
     page,
     onSetPage,
@@ -100,54 +114,86 @@ function LocationsTable(props){
     formFactorLayout,
     tableRowSize,
 
+    count,
+    multiline,
+
+
     ...otherProps 
   } = props;
 
-    // Pagination
 
-    let rows = [];
 
-    let paginationCount = 101;
-    if(count){
-      paginationCount = count;
-    } else {
-      paginationCount = rows.length;
+  // ------------------------------------------------------------------------
+  // Form Factors
+
+  if(formFactorLayout){
+    switch (formFactorLayout) {
+      case "phone":
+        hideActionIcons = true;
+        break;
+      case "tablet":
+        hideActionIcons = true;
+        break;
+      case "web":
+        hideActionIcons = true;
+        break;
+      case "desktop":
+        hideActionIcons = true;
+        break;
+      case "videowall":
+        hideActionIcons = true;
+        break;            
     }
-  
-    function handleChangePage(event, newPage){
-      if(typeof onSetPage === "function"){
-        onSetPage(newPage);
-      }
+  }
+
+
+  // ------------------------------------------------------------------------
+
+  // Pagination
+
+  let rows = [];
+
+  let paginationCount = 101;
+  if(count){
+    paginationCount = count;
+  } else {
+    paginationCount = rows.length;
+  }
+
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
     }
-  
-    let paginationFooter;
-    if(!disablePagination){
-      paginationFooter = <TablePagination
-        component="div"
-        // rowsPerPageOptions={[5, 10, 25, 100]}
-        rowsPerPageOptions={['']}
-        colSpan={3}
-        count={paginationCount}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        style={{float: 'right', border: 'none'}}
-      />
-    }
+  }
+
+  let paginationFooter;
+  if(!disablePagination){
+    paginationFooter = <TablePagination
+      component="div"
+      // rowsPerPageOptions={[5, 10, 25, 100]}
+      rowsPerPageOptions={['']}
+      colSpan={3}
+      count={paginationCount}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onChangePage={handleChangePage}
+      style={{float: 'right', border: 'none'}}
+    />
+  }
 
   //---------------------------------------------------------------------
   // Methods
 
 
   function renderNameHeader(){
-    if (!props.hideName) {
+    if (!hideName) {
       return (
         <TableCell className="name">Name</TableCell>
       );
     }
   }
   function renderName(name, address, latitude, longitude){
-    if (!props.hideName) {
+    if (!hideName) {
       let cellContents = [];
 
       if(Number.isFinite(latitude)){
@@ -157,7 +203,7 @@ function LocationsTable(props){
         longitude = longitude.toFixed(6);
       }
 
-      if(props.multiline){
+      if(multiline){
         cellContents.push(<div key='location_name' className="location_name">{name}</div>)
         cellContents.push(<div key='location_address' className="location_address" style={{color: '#222222'}}>{address}</div>)
         cellContents.push(<div key='location_latlng' className="location_latlng" style={{color: 'cornflowerblue', fontSize: '80%'}}>{longitude}, {latitude}</div>)
@@ -172,126 +218,126 @@ function LocationsTable(props){
     }
   }
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className="identifier">Identifier</TableCell>
       );
     }
   }
   function renderIdentifier(identifier){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );  
     }
   }
   function renderAddressHeader(){
-    if (!props.hideAddress) {
+    if (!hideAddress) {
       return (
         <TableCell className="address">Address</TableCell>
       );
     }
   }
   function renderAddress(address){
-    if (!props.hideAddress) {
+    if (!hideAddress) {
       return (
         <TableCell className='address'>{ address }</TableCell>
       );  
     }
   }
   function renderCityHeader(){
-    if (!props.hideCity) {
+    if (!hideCity) {
       return (
         <TableCell className="city">City</TableCell>
       );
     }
   }
   function renderCity(city){
-    if (!props.hideCity) {
+    if (!hideCity) {
       return (
         <TableCell className='city'>{ city }</TableCell>
       );  
     }
   }
   function renderStateHeader(){
-    if (!props.hideState) {
+    if (!hideState) {
       return (
         <TableCell className="state">State</TableCell>
       );
     }
   }
   function renderState(state){
-    if (!props.hideState) {
+    if (!hideState) {
       return (
         <TableCell className='state'>{ state }</TableCell>
       );  
     }
   }
   function renderPostalCodeHeader(){
-    if (!props.hidePostalCode) {
+    if (!hidePostalCode) {
       return (
         <TableCell className="postalCode">Postal Code</TableCell>
       );
     }
   }
   function renderPostalCode(postalCode){
-    if (!props.hidePostalCode) {
+    if (!hidePostalCode) {
       return (
         <TableCell className='postalCode'>{ postalCode }</TableCell>
       );  
     }
   }
   function renderCountryHeader(){
-    if (!props.hideCountry) {
+    if (!hideCountry) {
       return (
         <TableCell className="country">Country</TableCell>
       );
     }
   }
   function renderCountry(country){
-    if (!props.hideCountry) {
+    if (!hideCountry) {
       return (
         <TableCell className='country'>{ country }</TableCell>
       );  
     }
   }
   function renderTypeHeader(){
-    if (!props.hideType) {
+    if (!hideType) {
       return (
         <TableCell className="type">Type</TableCell>
       );
     }
   }
   function renderType(type){
-    if (!props.hideType) {
+    if (!hideType) {
       return (
         <TableCell className='type'>{ type }</TableCell>
       );  
     }
   }
   function renderLatitudeHeader(){
-    if (!props.hideLatitude) {
+    if (!hideLatitude) {
       return (
         <TableCell className="latitude">Latitude</TableCell>
       );
     }
   }
   function renderLatitude(latitude){
-    if (!props.hideLatitude) {
+    if (!hideLatitude) {
       return (
         <TableCell className='latitude'>{ latitude }</TableCell>
       );  
     }
   }
   function renderLatLngHeader(){
-    if (!props.hideLatLng) {
+    if (!hideLatLng) {
       return (
         <TableCell className="latitude">Distance</TableCell>
       );
     }
   }
   function renderLatLng(latitude, longitude, distance){
-    if (!props.hideLatLng) {
+    if (!hideLatLng) {
       let textStyle = {
         color: '#bbbbbb'
       }
@@ -310,14 +356,14 @@ function LocationsTable(props){
     }
   }
   function renderLongitudeHeader(){
-    if (!props.hideLongitude) {
+    if (!hideLongitude) {
       return (
         <TableCell className="longitude">Longitude</TableCell>
       );
     }
   }
   function renderLongitude(longitude){
-    if (!props.hideLongitude) {
+    if (!hideLongitude) {
       return (
         <TableCell className='longitude'>{ longitude }</TableCell>
       );  
@@ -325,17 +371,17 @@ function LocationsTable(props){
   }
 
   function renderExtensionsHeader(){
-    if (!props.hideExtensions) {
+    if (!hideExtensions) {
       return (
-        <TableCell className="extensions">{props.extensionLabel}</TableCell>
+        <TableCell className="extensions">{extensionLabel}</TableCell>
       );
     }
   }
   function renderExtensions(extensions){
-    if (!props.hideExtensions) {
+    if (!hideExtensions) {
       let cellText = "";
-      if(props.extensionUnit){
-        cellText = extensions + " " + props.extensionUnit;
+      if(extensionUnit){
+        cellText = extensions + " " + extensionUnit;
       } else {
         cellText = extensions;
       }
@@ -358,12 +404,21 @@ function LocationsTable(props){
 
   let tableRows = [];
   let locationsToRender = [];
+  let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.locations){
-    if(props.locations.length > 0){     
+  if(showMinutes){
+    internalDateFormat = "YYYY-MM-DD hh:mm";
+  }
+  if(dateFormat){
+    internalDateFormat = dateFormat;
+  }
+
+
+  if(locations){
+    if(locations.length > 0){     
       let count = 0;    
 
-      props.locations.forEach(function(location){
+      locations.forEach(function(location){
         if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           locationsToRender.push(FhirDehydrator.dehydrateLocation(location, simplifiedAddress, extensionUrl));
         }
@@ -372,17 +427,38 @@ function LocationsTable(props){
     }
   }
 
-  // console.log('locationsToRender', locationsToRender)
-
+  let rowStyle = {
+    cursor: 'pointer', 
+    height: '55px'
+  }
 
   if(locationsToRender.length === 0){
-    logger.trace('LocationsTable: No locations to render.');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+    // logger.trace('LocationsTable: No locations to render.');
+    console.log('LocationsTable: No locations to render.');
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < locationsToRender.length; i++) {
       logger.trace('locationsToRender[i]', locationsToRender[i])
+
+      let selected = false;
+      if(endpointsToRender[i].id === selectedEndpointId){
+        selected = true;
+      }
+      if(get(endpointsToRender[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+      if(tableRowSize === "small"){
+        rowStyle.height = '32px';
+      }
+
       tableRows.push(
-        <TableRow className='locationRow' key={i} onClick={ rowClick.bind(this, get(locationsToRender[i], "_id")) } hover={true} style={{height: '42px'}} >
+        <TableRow 
+          className='locationRow' 
+          key={i} 
+          onClick={ rowClick.bind(this, get(locationsToRender[i], "_id")) } 
+          hover={true} 
+          selected={selected}
+          style={rowStyle} >
            { renderIdentifier(get(locationsToRender[i], "identifier")) }
            { renderName(get(locationsToRender[i], "name"), get(locationsToRender[i], "address"), get(locationsToRender[i], "latitude"), get(locationsToRender[i], "longitude")) }
            { renderAddress(get(locationsToRender[i], "address")) }
@@ -404,7 +480,7 @@ function LocationsTable(props){
 
   return(
     <div>
-      <Table size="small" aria-label="a dense table" { ...otherProps }>
+      <Table size="small" aria-label="a dense table" >
         <TableHead>
           <TableRow >
             {/* <TableCell className="cardinality hidden-on-phone">Cardinality</TableCell> */}
@@ -484,7 +560,8 @@ LocationsTable.defaultProps = {
   multiline: false,
   tableRowSize: 'medium',
   page: 0,
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  tableRowSize: 'medium'
 }
 
 export default LocationsTable;

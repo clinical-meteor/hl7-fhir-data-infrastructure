@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Divider,
   Card,
@@ -12,39 +15,19 @@ import {
   Grid
 } from '@material-ui/core';
 
-import { StyledCard, PageCanvas } from 'fhir-starter';
+import { Meteor } from 'meteor/meteor';
+import { Session } from 'meteor/session';
+
 
 import LocationDetail from './LocationDetail';
 import LocationsTable from './LocationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
 // import { Locations } from '../../lib/schemas/Locations';
 
 import { get } from 'lodash';
-
-//=============================================================================================================================================
-// Session Variables
-
-Session.setDefault('locationPageTabIndex', 1); 
-Session.setDefault('locationSearchFilter', ''); 
-Session.setDefault('shapefileDataLayer', false);
-Session.setDefault('tspRoute', []);
-Session.setDefault('mortalityLayer', true);
-Session.setDefault('proximityDistance', '5000');
-Session.setDefault('priximityLocations', false);
-
-Session.setDefault('selectedLocation', null);
-Session.setDefault('selectedLocationId', false);
-Session.setDefault('LocationsPage.onePageLayout', true)
-Session.setDefault('LocationsTable.hideCheckbox', true)
-Session.setDefault('LocationsTable.locationsPageIndex', 0)
-
-
 
 
 //=============================================================================================================================================
@@ -82,6 +65,7 @@ let theme = {
 if(get(Meteor, 'settings.public.theme.palette')){
   theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
 }
+
 
 const muiTheme = createMuiTheme({
   typography: {
@@ -121,12 +105,39 @@ const muiTheme = createMuiTheme({
 });
 
 
+//=============================================================================================================================================
+// Session Variables
+
+Session.setDefault('locationPageTabIndex', 1); 
+Session.setDefault('locationSearchFilter', ''); 
+Session.setDefault('shapefileDataLayer', false);
+Session.setDefault('tspRoute', []);
+Session.setDefault('mortalityLayer', true);
+Session.setDefault('proximityDistance', '5000');
+Session.setDefault('priximityLocations', false);
+
+Session.setDefault('selectedLocation', null);
+Session.setDefault('selectedLocationId', false);
+Session.setDefault('LocationsPage.onePageLayout', true)
+Session.setDefault('LocationsTable.hideCheckbox', true)
+Session.setDefault('LocationsTable.locationsPageIndex', 0)
+
+
+
+
+
 
 
 //=============================================================================================================================================
 // MAIN COMPONENT
 
 export function LocationsPage(props){
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+
+
   let data = {
     style: {
       page: {
@@ -195,35 +206,31 @@ export function LocationsPage(props){
         Session.set('mainAppDialogComponent', "LocationDetail");
         Session.set('mainAppDialogTitle', "Edit Location");
         Session.set('mainAppDialogMaxWidth', "sm");
+
+        if(Meteor.currentUserId()){
+          Session.set('mainAppDialogTitle', "Edit Endpoint");
+        } else {
+          Session.set('mainAppDialogTitle', "View Endpoint");
+        }
       }      
+    } else {
+      console.log('No location found...')
     }
   }
 
 
-  let self = this;
-  let markers = [];
-
-  const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
-
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-
-
   let layoutContents;
   if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" scrollable={true} margin={20}  >
-      <CardHeader
-        title="Locations"
-      />
+    layoutContents = <StyledCard height="auto" margin={20} scrollable >
+      <CardHeader title={data.locations.length + " Locations"} />
+      
       <CardContent>
         <LocationsTable 
           locations={data.locations}
+          count={data.locations.length}  
+          hideCheckbox={data.hideCheckbox}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
           tableRowSize="medium"
-          hideCheckbox={data.hideCheckbox}
-          count={data.locations.length}  
           onRowClick={ handleRowClick.bind(this) }    
           onSetPage={function(index){
             setLocationsPageIndex(index)
@@ -235,21 +242,21 @@ export function LocationsPage(props){
   } else {
     layoutContents = <Grid container spacing={3}>
       <Grid item lg={6}>
-        <StyledCard height="auto" scrollable={true} margin={20} >
+      <StyledCard height="auto" margin={20} >
           <CardHeader
             title="Locations"
           />
           <CardContent>
             <LocationsTable 
               locations={data.locations}
+              count={data.locations.length}   
               rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
               hideCheckbox={data.hideCheckbox}
+              page={data.locationsPageIndex}                                     
+              onRowClick={ handleRowClick.bind(this) }    
               onSetPage={function(index){
                 setLocationsPageIndex(index)
               }}          
-              page={data.locationsPageIndex}                                     
-              count={data.locations.length}   
-              onRowClick={ handleRowClick.bind(this) }    
             />
           </CardContent>
         </StyledCard>
