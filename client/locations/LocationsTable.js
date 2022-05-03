@@ -83,6 +83,10 @@ function LocationsTable(props){
 
     data,
     locations,
+    selectedLocationId,
+    query,
+    paginationLimit,
+    disablePagination,
 
     hideIdentifier,
     hideName,
@@ -103,9 +107,9 @@ function LocationsTable(props){
     extensionLabel,
     extensionUnit,
 
-    query,
-    paginationLimit,
-    disablePagination,
+    showMinutes,
+    dateFormat,
+
     rowsPerPage,
 
     page,
@@ -437,14 +441,15 @@ function LocationsTable(props){
     console.log('LocationsTable: No locations to render.');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
+    console.log('selectedLocationId', selectedLocationId)
     for (var i = 0; i < locationsToRender.length; i++) {
       logger.trace('locationsToRender[i]', locationsToRender[i])
 
-      let selected = false;
-      if(endpointsToRender[i].id === selectedEndpointId){
-        selected = true;
+      let isSelected = false;
+      if(get(locationsToRender[i], 'id') === selectedLocationId){
+        isSelected = true;
       }
-      if(get(endpointsToRender[i], 'modifierExtension[0]')){
+      if(get(locationsToRender[i], 'modifierExtension[0]')){
         rowStyle.color = "orange";
       }
       if(tableRowSize === "small"){
@@ -457,7 +462,7 @@ function LocationsTable(props){
           key={i} 
           onClick={ rowClick.bind(this, get(locationsToRender[i], "_id")) } 
           hover={true} 
-          selected={selected}
+          selected={isSelected}
           style={rowStyle} >
            { renderIdentifier(get(locationsToRender[i], "identifier")) }
            { renderName(get(locationsToRender[i], "name"), get(locationsToRender[i], "address"), get(locationsToRender[i], "latitude"), get(locationsToRender[i], "longitude")) }
@@ -479,11 +484,10 @@ function LocationsTable(props){
   
 
   return(
-    <div>
-      <Table size="small" aria-label="a dense table" >
+    <div id={id} className="tableWithPagination">
+      <Table className='locationsTable' size={tableRowSize} aria-label="a size table" { ...otherProps }>
         <TableHead>
           <TableRow >
-            {/* <TableCell className="cardinality hidden-on-phone">Cardinality</TableCell> */}
             { renderIdentifierHeader() }
             { renderNameHeader() }
             { renderAddressHeader() }
@@ -510,6 +514,8 @@ function LocationsTable(props){
 
 LocationsTable.propTypes = {
   locations: PropTypes.array,
+  selectedLocationId: PropTypes.string,
+
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
@@ -537,11 +543,15 @@ LocationsTable.propTypes = {
   extensionUnit: PropTypes.string,
   multiline: PropTypes.bool,
 
+  showMinutes: PropTypes.bool,
+  dateFormat: PropTypes.string,
+
   formFactorLayout: PropTypes.string,
   tableRowSize: PropTypes.string
 }
 
 LocationsTable.defaultProps = {
+  selectedLocationId: '',
   hideIdentifier: true,
   hideName: false,
   hideAddress: false,
@@ -553,6 +563,7 @@ LocationsTable.defaultProps = {
   hideExtensions: true,
   hideLongitude: false,
   hideLatLng: true,
+  showMinutes: false,
   extensionUrl: '',
   extensionLabel: 'Extension',
   extensionUnit: '',
@@ -561,6 +572,7 @@ LocationsTable.defaultProps = {
   tableRowSize: 'medium',
   page: 0,
   rowsPerPage: 5,
+  dateFormat: "YYYY-MM-DD",
   tableRowSize: 'medium'
 }
 

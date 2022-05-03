@@ -129,7 +129,7 @@ function OrganizationsTable(props){
   // Form Factors
 
   if(formFactorLayout){
-    logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
+    // logger.verbose('formFactorLayout', formFactorLayout + ' ' + window.innerWidth);
     switch (formFactorLayout) {
       case "phone":
         hideActionIcons = true;
@@ -487,17 +487,22 @@ function OrganizationsTable(props){
   }
 
 
-  if(organizations){
-    if(organizations.length > 0){     
-      let count = 0;    
-
-      organizations.forEach(function(organization){
-        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
-          organizationsToRender.push(FhirDehydrator.dehydrateOrganization(organization, internalDateFormat));
-        }
-        count++;
-      });  
-    }
+  if(Array.isArray(organizations)){
+    console.log('OrganizationsTable: Parsing ' + organizations.length + " organizations.")
+    if(organizations){
+      if(organizations.length > 0){     
+        let count = 0;    
+  
+        organizations.forEach(function(organization){
+          if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+            organizationsToRender.push(FhirDehydrator.dehydrateOrganization(organization, internalDateFormat));
+          }
+          count++;
+        });  
+      }
+    }  
+  } else {
+    console.log('OrganizationsTable: Did not receive an array of organizations.');
   }
 
   let rowStyle = {
@@ -512,7 +517,7 @@ function OrganizationsTable(props){
     for (var i = 0; i < organizationsToRender.length; i++) {
       
       let selected = false;
-      if(organizationsToRender[i].id === selectedOrganizationId){
+      if(get(organizationsToRender[i], 'id') === selectedOrganizationId){
         selected = true;
       }
       if(get(organizationsToRender[i], 'modifierExtension[0]')){
@@ -522,7 +527,7 @@ function OrganizationsTable(props){
         rowStyle.height = '32px';
       }
 
-      logger.trace('organizationsToRender[i]', organizationsToRender[i])
+      // logger.trace('organizationsToRender[i]', organizationsToRender[i])
       tableRows.push(
         <TableRow 
           className="organizationRow" 
@@ -596,6 +601,7 @@ OrganizationsTable.propTypes = {
 
   data: PropTypes.array,
   organizations: PropTypes.array,
+  selectedOrganizationId: PropTypes.string,
   query: PropTypes.object,
   paginationLimit: PropTypes.number,
   disablePagination: PropTypes.bool,
@@ -640,6 +646,8 @@ OrganizationsTable.propTypes = {
 };
 
 OrganizationsTable.defaultProps = {
+  selectedOrganizationId: '',
+  organizations: [],
   hideName: false,
   hideActionButton: true,
   hideCheckbox: true,
@@ -650,7 +658,9 @@ OrganizationsTable.defaultProps = {
   page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
-  actionButtonLabel: 'Export'
+  actionButtonLabel: 'Export',
+  dateFormat: "YYYY-MM-DD",
+  tableRowSize: 'medium'
 }
 
 export default OrganizationsTable;

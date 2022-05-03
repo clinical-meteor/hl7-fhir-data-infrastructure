@@ -464,7 +464,7 @@ function EndpointsTable(props){
     for (var i = 0; i < endpointsToRender.length; i++) {
 
       let selected = false;
-      if(endpointsToRender[i].id === selectedEndpointId){
+      if(get(endpointsToRender[i], 'id') === selectedEndpointId){
         selected = true;
       }
       if(get(endpointsToRender[i], 'modifierExtension[0]')){
