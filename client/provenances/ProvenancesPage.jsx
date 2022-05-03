@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Grid, 
   Container,
@@ -16,14 +19,11 @@ import styled from 'styled-components';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-// import ProvenanceDetail from './ProvenanceDetail';
+import { StyledCard, PageCanvas } from 'fhir-starter';
+
+import ProvenanceDetail from './ProvenanceDetail';
 import ProvenancesTable from './ProvenancesTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
-
-import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
@@ -109,7 +109,12 @@ const muiTheme = createMuiTheme({
 
 Session.setDefault('selectedProvenanceId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
+
 Session.setDefault('ProvenancesPage.onePageLayout', true)
+Session.setDefault('ProvenancesPage.defaultQuery', {})
+Session.setDefault('ProvenancesTable.hideCheckbox', true)
+Session.setDefault('ProvenancesTable.provenancesIndex', 0)
+
 
 //=============================================================================================================================================
 // MAIN COMPONENT
@@ -124,7 +129,8 @@ export function ProvenancesPage(props){
     selectedProvenanceId: '',
     selectedProvenances: null,
     procedures: [],
-    onePageLayout: true
+    onePageLayout: true,
+    provenancesIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -139,9 +145,16 @@ export function ProvenancesPage(props){
   data.procedures = useTracker(function(){
     return Provenances.find().fetch();
   }, [])
+  data.provenancesIndex = useTracker(function(){
+    return Session.get('ProvenancesTable.provenancesIndex')
+  }, [])
 
   if(process.env.NODE_ENV === "test") console.log('In ProvenancesPage render');
 
+  function setProvenancesIndex(newIndex){
+    Session.set('ProvenancesTable.provenancesIndex', newIndex)
+  }
+  
 
   function handleRowClick(provenanceId){
     console.log('ProvenancesPage.handleRowClick', provenanceId)
@@ -173,8 +186,6 @@ export function ProvenancesPage(props){
   let cardWidth = window.innerWidth - paddingWidth;
   let proceduresTitle = data.procedures.length + " Provenances";
 
-  let [provenancesIndex, setProvenancesIndex] = setState(0);
-
   return (
     <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
@@ -193,7 +204,7 @@ export function ProvenancesPage(props){
                 onSetPage={function(index){
                   setProvenancesIndex(index)
                 }}  
-                page={provenancesIndex}
+                page={data.provenancesIndex}
               />
             </CardContent>
           </StyledCard>

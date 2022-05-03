@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Container,
   Divider,
@@ -9,18 +12,16 @@ import {
   Box,
   Grid
 } from '@material-ui/core';
-import styled from 'styled-components';
+
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
-
-// import RestrictionDetail from './RestrictionDetail';
-import RestrictionsTable from './RestrictionsTable';
-import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
+
+import RestrictionDetail from './RestrictionDetail';
+import RestrictionsTable from './RestrictionsTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { get, cloneDeep } from 'lodash';
 
@@ -111,6 +112,9 @@ Session.setDefault('selectedRestriction', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('restrictionsArray', []);
 Session.setDefault('RestrictionsPage.onePageLayout', true)
+Session.setDefault('RestrictionsPage.defaultQuery', {name: {$not: ""}})
+Session.setDefault('RestrictionsTable.hideCheckbox', true)
+Session.setDefault('RestrictionsTable.restrictionsIndex', 0)
 
 Session.setDefault('restrictionChecklistMode', false)
 
@@ -138,7 +142,8 @@ export function RestrictionsPage(props){
         lastModified: -1
       }
     },
-    restrictionChecklistMode: false
+    restrictionChecklistMode: false,
+    restrictionsIndex: 0
   };
 
   
@@ -174,85 +179,14 @@ export function RestrictionsPage(props){
   data.restrictionChecklistMode = useTracker(function(){
     return Session.get('restrictionChecklistMode')
   }, [])
+  data.restrictionsIndex = useTracker(function(){
+    return Session.get('RestrictionsTable.restrictionsIndex')
+  }, [])
 
 
-  // function onCancelUpsertRestriction(context){
-  //   Session.set('restrictionPageTabIndex', 1);
-  // }
-  // function onDeleteRestriction(context){
-  //   Restrictions._collection.remove({_id: get(context, 'state.restrictionId')}, function(error, result){
-  //     if (error) {
-  //       if(process.env.NODE_ENV === "test") console.log('Restrictions.insert[error]', error);
-  //       Bert.alert(error.reason, 'danger');
-  //     }
-  //     if (result) {
-  //       Session.set('selectedRestrictionId', '');
-  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Restrictions", recordId: context.state.restrictionId});        
-  //     }
-  //   });
-  //   Session.set('restrictionPageTabIndex', 1);
-  // }
-  // function onUpsertRestriction(context){
-  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-  //   console.log('Saving a new Restriction...', context.state)
-
-  //   if(get(context, 'state.restriction')){
-  //     let self = context;
-  //     let fhirRestrictionData = Object.assign({}, get(context, 'state.restriction'));
-  
-  //     // if(process.env.NODE_ENV === "test") console.log('fhirRestrictionData', fhirRestrictionData);
-  
-  //     let restrictionValidator = RestrictionSchema.newContext();
-  //     // console.log('restrictionValidator', restrictionValidator)
-  //     restrictionValidator.validate(fhirRestrictionData)
-  
-  //     if(process.env.NODE_ENV === "development"){
-  //       console.log('IsValid: ', restrictionValidator.isValid())
-  //       console.log('ValidationErrors: ', restrictionValidator.validationErrors());
-  
-  //     }
-  
-  //     console.log('Checking context.state again...', context.state)
-  //     if (get(context, 'state.restrictionId')) {
-  //       if(process.env.NODE_ENV === "development") {
-  //         console.log("Updating restriction...");
-  //       }
-
-  //       delete fhirRestrictionData._id;
-  
-  //       // not sure why we're having to respecify this; fix for a bug elsewhere
-  //       fhirRestrictionData.resourceType = 'Restriction';
-  
-  //       Restrictions._collection.update({_id: get(context, 'state.restrictionId')}, {$set: fhirRestrictionData }, function(error, result){
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test") console.log("Restrictions.insert[error]", error);
-          
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Restrictions", recordId: context.state.restrictionId});
-  //           Session.set('selectedRestrictionId', '');
-  //           Session.set('restrictionPageTabIndex', 1);
-  //         }
-  //       });
-  //     } else {
-  //       // if(process.env.NODE_ENV === "test") 
-  //       console.log("Creating a new restriction...", fhirRestrictionData);
-  
-  //       fhirRestrictionData.effectiveDateTime = new Date();
-  //       Restrictions._collection.insert(fhirRestrictionData, function(error, result) {
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test")  console.log('Restrictions.insert[error]', error);           
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Restrictions", recordId: context.state.restrictionId});
-  //           Session.set('restrictionPageTabIndex', 1);
-  //           Session.set('selectedRestrictionId', '');
-  //         }
-  //       });
-  //     }
-  //   } 
-  //   Session.set('restrictionPageTabIndex', 1);
-  // }
+  function setRestrictionsIndex(newIndex){
+    Session.set('RestrictionsTable.restrictionsIndex', newIndex)
+  }
 
   function handleRowClick(restrictionId){
     console.log('RestrictionsPage.handleRowClick', restrictionId)
@@ -296,8 +230,6 @@ export function RestrictionsPage(props){
   }
 
 
-  let [restrictionsIndex, setRestrictionsIndex ] = setState(0);
-
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
@@ -321,7 +253,7 @@ export function RestrictionsPage(props){
             onSetPage={function(index){
               setRestrictionsIndex(index)
             }}     
-            page={restrictionsIndex} 
+            page={data.restrictionsIndex} 
             size="small"
           />
         </CardContent>
@@ -351,7 +283,7 @@ export function RestrictionsPage(props){
               onSetPage={function(index){
                 setRestrictionsIndex(index)
               }}  
-              page={restrictionsIndex} 
+              page={data.restrictionsIndex} 
               size="medium"
               />
           </CardContent>

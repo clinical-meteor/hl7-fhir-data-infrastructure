@@ -112,7 +112,9 @@ Session.setDefault('selectedPractitionerRole', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('practitionerRolesArray', []);
 Session.setDefault('PractitionerRolesPage.onePageLayout', true)
+Session.setDefault('PractitionerRolesPage.defaultQuery', {})
 Session.setDefault('PractitionerRolesTable.hideCheckbox', true)
+Session.setDefault('PractitionerRolesTable.rolesIndex', 0)
 
 Session.setDefault('practitionerRoleChecklistMode', false)
 
@@ -139,7 +141,8 @@ export function PractitionerRolesPage(props){
         lastModified: -1
       }
     },
-    practitionerRoleChecklistMode: false
+    practitionerRoleChecklistMode: false,
+    rolesIndex: 0
   };
 
   
@@ -178,6 +181,15 @@ export function PractitionerRolesPage(props){
   data.practitionerRoleChecklistMode = useTracker(function(){
     return Session.get('practitionerRoleChecklistMode')
   }, [])
+
+  data.rolesIndex = useTracker(function(){
+    return Session.get('PractitionerRolesTable.rolesIndex')
+  }, []);
+
+  function setPractitionerRolesIndex(newIndex){
+    Session.set('PractitionerRolesTable.rolesIndex', newIndex)
+  }
+  
 
   function handleRowClick(practitionerRoleId){
     console.log('PractitionerRolesPage.handleRowClick', practitionerRoleId)
@@ -219,7 +231,7 @@ export function PractitionerRolesPage(props){
     Session.set('practitionerRolePageTabIndex', newValue)
   }
 
-  let [practitionerRolesIndex, setPractitionerRolesIndex] = setPage(0);
+  // let [practitionerRolesIndex, setPractitionerRolesIndex] = setPage(0);
 
 
   let layoutContents;
@@ -246,7 +258,7 @@ export function PractitionerRolesPage(props){
           onSetPage={function(index){
             setPractitionerRolesIndex(index)
           }}  
-          page={practitionerRolesIndex}
+          page={data.rolesIndex}
           size="small"
           />
         </CardContent>
@@ -276,7 +288,7 @@ export function PractitionerRolesPage(props){
               onSetPage={function(index){
                 setPractitionerRolesIndex(index)
               }}  
-              page={practitionerRolesIndex}
+              page={data.rolesIndex}
               size="medium"              
               />
           </CardContent>

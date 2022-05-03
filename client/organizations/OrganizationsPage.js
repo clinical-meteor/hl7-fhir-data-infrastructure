@@ -108,8 +108,7 @@ const muiTheme = createMuiTheme({
 Session.setDefault('organizationPageTabIndex', 1); 
 Session.setDefault('organizationSearchFilter', ''); 
 Session.setDefault('selectedOrganizationId', false);
-Session.setDefault('selectedOrganization', false);
-Session.setDefault('fhirVersion', 'v1.0.2');
+Session.setDefault('selectedOrganization', false)
 Session.setDefault('OrganizationsPage.onePageLayout', true)
 Session.setDefault('OrganizationsPage.defaultQuery', {name: {$not: ""}})
 Session.setDefault('OrganizationsTable.hideCheckbox', true)
@@ -216,7 +215,7 @@ export function OrganizationsPage(props){
           page={data.organizationsIndex}
           size="small"
         />                                
-        </CardContent>
+        </CardContent> 
       </StyledCard>
     </Grid>
   } else {

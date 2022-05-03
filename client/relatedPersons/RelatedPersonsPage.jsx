@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
   Card,
@@ -9,18 +10,16 @@ import {
   Typography,
   Box
 } from '@material-ui/core';
-import { StyledCard, PageCanvas } from 'fhir-starter';
+
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
+import { StyledCard, PageCanvas } from 'fhir-starter';
+
 import RelatedPersonDetail from './RelatedPersonDetail';
 import RelatedPersonsTable from './RelatedPersonsTable';
-
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
-import { useTracker } from 'meteor/react-meteor-data';
-import FhirDehydrator from '../../lib/FhirDehydrator';
 
 import { get } from 'lodash';
 
@@ -101,6 +100,12 @@ const muiTheme = createMuiTheme({
 //=============================================================================================================================================
 // SESSION VARIABLES
 
+Session.setDefault('RelatedPersonsPage.onePageLayout', true)
+Session.setDefault('RelatedPersonsPage.defaultQuery', {name: {$not: ""}})
+Session.setDefault('RelatedPersonsTable.hideCheckbox', true)
+Session.setDefault('RelatedPersonsTable.personsIndex', 0)
+
+
 //=============================================================================================================================================
 // COMPONENT
 
@@ -113,7 +118,8 @@ function RelatedPersonsPage(props){
 
   let data = {    
     selectedCarePlanId: null,
-    relatedPersons: []
+    relatedPersons: [],
+    relatedPersonsIndex: 0
   };
 
   data.selectedCarePlanId = useTracker(function(){
@@ -122,6 +128,13 @@ function RelatedPersonsPage(props){
   data.relatedPersons = useTracker(function(){
     return RelatedPersons.find().fetch();
   }, [])
+  data.relatedPersonsIndex = useTracker(function(){
+    return Session.get('RelatedPersonsTable.relatedPersonsIndex')
+  }, [])
+
+  function setRelatedPersonsIndex(newIndex){
+    Session.set('RelatedPersonsTable.relatedPersonsIndex', newIndex)
+  }
 
   function handleRowClick(relatedPersonId){
     console.log('RelatedPersonsPage.handleRowClick', relatedPersonId)
@@ -151,8 +164,6 @@ function RelatedPersonsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
-  let [relatedPersonsIndex, setRelatedPersonsIndex] = setState(0);
-
   return (
     <PageCanvas id='relatedPersonsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
@@ -169,7 +180,7 @@ function RelatedPersonsPage(props){
             onSetPage={function(index){
               setRelatedPersonsIndex(index)
             }}  
-            page={relatedPersonsIndex}
+            page={data.relatedPersonsIndex}
             size="medium"
           />
         </CardContent>

@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Container,
   Divider,
@@ -9,18 +12,16 @@ import {
   Box,
   Grid
 } from '@material-ui/core';
-import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
+
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import OrganizationAffiliationDetail from './OrganizationAffiliationDetail';
 import OrganizationAffiliationsTable from './OrganizationAffiliationsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
@@ -108,9 +109,11 @@ Session.setDefault('selectedOrganizationAffiliationId', '');
 Session.setDefault('selectedOrganizationAffiliation', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('organizationAffiliationsArray', []);
-Session.setDefault('OrganizationAffiliationsPage.onePageLayout', true)
-Session.setDefault('OrganizationAffiliationsTable.hideCheckbox', true)
 
+Session.setDefault('OrganizationAffiliationsPage.onePageLayout', true)
+Session.setDefault('OrganizationAffiliationsPage.defaultQuery', {})
+Session.setDefault('OrganizationAffiliationsTable.hideCheckbox', true)
+Session.setDefault('OrganizationAffiliationsTable.affiliationsIndex', 0)
 
 Session.setDefault('organizationAffiliationChecklistMode', false)
 
@@ -138,7 +141,8 @@ export function OrganizationAffiliationsPage(props){
         lastModified: -1
       }
     },
-    organizationAffiliationChecklistMode: false
+    organizationAffiliationChecklistMode: false,
+    affiliationsIndex: 0
   };
 
   
@@ -177,6 +181,14 @@ export function OrganizationAffiliationsPage(props){
   data.organizationAffiliationChecklistMode = useTracker(function(){
     return Session.get('organizationAffiliationChecklistMode')
   }, [])
+  data.affiliationsIndex = useTracker(function(){
+    return Session.get('OrganizationAffiliationsTable.affiliationsIndex')
+  }, []);
+
+
+  function setAffiliationsIndex(newIndex){
+    Session.set('OrganizationAffiliationsTable.affiliationsIndex', newIndex)
+  }
 
 
   function onCancelUpsertOrganizationAffiliation(context){
@@ -297,9 +309,6 @@ export function OrganizationAffiliationsPage(props){
     Session.set('organizationAffiliationPageTabIndex', newValue)
   }
 
-  let [observationAffiliationsIndex, setObservationAffiliationsIndex] = setState(0);
-
-
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
@@ -322,9 +331,9 @@ export function OrganizationAffiliationsPage(props){
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           onSetPage={function(index){
-            setObservationAffiliationsIndex(index)
+            setAffiliationsIndex(index)
           }}
-          page={observationAffiliationsIndex}
+          page={data.affiliationsIndex}
           size="small"
           />
         </CardContent>
@@ -350,9 +359,9 @@ export function OrganizationAffiliationsPage(props){
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               onSetPage={function(index){
-                setObservationAffiliationsIndex(index)
+                setAffiliationsIndex(index)
               }}
-              page={observationAffiliationsIndex}
+              page={data.affiliationsIndex}
               formFactorLayout={formFactor}
               count={data.organizationAffiliations.length}
               size="medium"

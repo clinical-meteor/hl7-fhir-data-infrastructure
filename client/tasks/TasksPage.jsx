@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Container,
   Divider,
@@ -9,18 +12,15 @@ import {
   Box,
   Grid 
 } from '@material-ui/core';
-import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
-
-// import TaskDetail from './TaskDetail';
-import TasksTable from './TasksTable';
-import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
+
+import TaskDetail from './TaskDetail';
+import TasksTable from './TasksTable';
+import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { get, cloneDeep } from 'lodash';
 
@@ -110,7 +110,11 @@ Session.setDefault('selectedTaskId', '');
 Session.setDefault('selectedTask', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('tasksArray', []);
+
 Session.setDefault('TasksPage.onePageLayout', true)
+Session.setDefault('TasksPage.defaultQuery', {})
+Session.setDefault('TasksTable.hideCheckbox', true)
+Session.setDefault('TasksTable.tasksIndex', 0)
 
 Session.setDefault('taskChecklistMode', false)
 
@@ -137,7 +141,8 @@ export function TasksPage(props){
         lastModified: -1
       }
     },
-    taskChecklistMode: false
+    taskChecklistMode: false,
+    tasksIndex: 0
   };
 
   
@@ -174,84 +179,15 @@ export function TasksPage(props){
     return Session.get('taskChecklistMode')
   }, [])
 
+  data.tasksIndex = useTracker(function(){
+    return Session.get('TasksTable.tasksIndex')
+  }, [])
 
-  // function onCancelUpsertTask(context){
-  //   Session.set('taskPageTabIndex', 1);
-  // }
-  // function onDeleteTask(context){
-  //   Tasks._collection.remove({_id: get(context, 'state.taskId')}, function(error, result){
-  //     if (error) {
-  //       if(process.env.NODE_ENV === "test") console.log('Tasks.insert[error]', error);
-  //       Bert.alert(error.reason, 'danger');
-  //     }
-  //     if (result) {
-  //       Session.set('selectedTaskId', '');
-  //       HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});        
-  //     }
-  //   });
-  //   Session.set('taskPageTabIndex', 1);
-  // }
-  // function onUpsertTask(context){
-  //   //if(process.env.NODE_ENV === "test") console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&&')
-  //   console.log('Saving a new Task...', context.state)
+  function setTasksIndex(newIndex){
+    Session.set('TasksTable.tasksIndex', newIndex)
+  }
 
-  //   if(get(context, 'state.task')){
-  //     let self = context;
-  //     let fhirTaskData = Object.assign({}, get(context, 'state.task'));
   
-  //     // if(process.env.NODE_ENV === "test") console.log('fhirTaskData', fhirTaskData);
-  
-  //     let taskValidator = TaskSchema.newContext();
-  //     // console.log('taskValidator', taskValidator)
-  //     taskValidator.validate(fhirTaskData)
-  
-  //     if(process.env.NODE_ENV === "development"){
-  //       console.log('IsValid: ', taskValidator.isValid())
-  //       console.log('ValidationErrors: ', taskValidator.validationErrors());
-  
-  //     }
-  
-  //     console.log('Checking context.state again...', context.state)
-  //     if (get(context, 'state.taskId')) {
-  //       if(process.env.NODE_ENV === "development") {
-  //         console.log("Updating task...");
-  //       }
-
-  //       delete fhirTaskData._id;
-  
-  //       // not sure why we're having to respecify this; fix for a bug elsewhere
-  //       fhirTaskData.resourceType = 'Task';
-  
-  //       Tasks._collection.update({_id: get(context, 'state.taskId')}, {$set: fhirTaskData }, function(error, result){
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test") console.log("Tasks.insert[error]", error);
-          
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
-  //           Session.set('selectedTaskId', '');
-  //           Session.set('taskPageTabIndex', 1);
-  //         }
-  //       });
-  //     } else {
-  //       // if(process.env.NODE_ENV === "test") 
-  //       console.log("Creating a new task...", fhirTaskData);
-  
-  //       fhirTaskData.effectiveDateTime = new Date();
-  //       Tasks._collection.insert(fhirTaskData, function(error, result) {
-  //         if (error) {
-  //           if(process.env.NODE_ENV === "test")  console.log('Tasks.insert[error]', error);           
-  //         }
-  //         if (result) {
-  //           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: context.state.taskId});
-  //           Session.set('taskPageTabIndex', 1);
-  //           Session.set('selectedTaskId', '');
-  //         }
-  //       });
-  //     }
-  //   } 
-  //   Session.set('taskPageTabIndex', 1);
-  // }
   function handleRowClick(taskId){
     console.log('TasksPage.handleRowClick', taskId)
     let task = Tasks.findOne({id: taskId});
@@ -277,23 +213,10 @@ export function TasksPage(props){
       console.log('No task found...')
     }
   }
-  // function onInsert(taskId){
-  //   Session.set('selectedTaskId', '');
-  //   Session.set('taskPageTabIndex', 1);
-  //   HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Tasks", recordId: taskId});
-  // }
-  // function onCancel(){
-  //   Session.set('taskPageTabIndex', 1);
-  // } 
-
-
-  // console.log('TasksPage.data', data)
 
   function handleChange(event, newValue) {
     Session.set('taskPageTabIndex', newValue)
   }
-
-  let [tasksIndex, setTasksIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -313,7 +236,7 @@ export function TasksPage(props){
           onSetPage={function(index){
             setTasksIndex(index)
           }}        
-          page={tasksIndex}
+          page={data.tasksIndex}
           size="small"
           />
         </CardContent>
@@ -337,7 +260,7 @@ export function TasksPage(props){
               onSetPage={function(index){
                 setTasksIndex(index)
               }}     
-              page={tasksIndex} 
+              page={data.tasksIndex} 
               size="medium"
               />
           </CardContent>

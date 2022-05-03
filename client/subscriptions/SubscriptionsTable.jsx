@@ -127,8 +127,7 @@ function SubscriptionsTable(props){
   if(formFactorLayout){
     switch (formFactorLayout) {
       case "phone":
-        hideActionIcons = false;
-        hideStatus = false;
+        hideActionIcons = true;
         hideStatus = true
         hideContact = true
         hideEnd = true
@@ -140,9 +139,8 @@ function SubscriptionsTable(props){
         hideBarcode = true
         break;
       case "tablet":
-        hideActionIcons = false;
-        hideStatus = false;
-        hideStatus = true
+        hideActionIcons = true;
+        hideStatus = true;
         hideContact = true
         hideEnd = true
         hideReason = true
@@ -153,9 +151,8 @@ function SubscriptionsTable(props){
         hideBarcode = true
         break;
       case "web":
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideStatus = false;
-        hideStatus = true
         hideContact = true
         hideEnd = true
         hideReason = true
@@ -166,17 +163,16 @@ function SubscriptionsTable(props){
         hideBarcode = true
         break;
       case "desktop":
-        hideActionIcons = false;
+        hideActionIcons = true;
         hideStatus = false;
-        hideStatus = false
-        hideContact = false
-        hideEnd = false
-        hideReason = false
+        hideContact = true
+        hideEnd = true
+        hideReason = true
         hideCriteria = false
-        hideError = false
+        hideError = true
         hideChannelType = false
         hideChannelEndpoint = false
-        hideBarcode = true
+        hideBarcode = false
         break;
       case "videowall":
         hideActionIcons = false;

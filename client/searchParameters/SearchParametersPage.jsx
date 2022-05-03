@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Container,
   Divider,
@@ -9,22 +12,17 @@ import {
   Box,
   Grid
 } from '@material-ui/core';
-import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
+
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import SearchParameterDetail from './SearchParameterDetail';
 import SearchParametersTable from './SearchParametersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-import { StyledCard, PageCanvas } from 'fhir-starter';
-
 import { get, cloneDeep } from 'lodash';
-
-// import { SearchParameters } from '../../lib/schemas/SearchParameters';
 
 
 //=============================================================================================================================================
@@ -111,7 +109,9 @@ Session.setDefault('selectedSearchParameter', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('searchParametersArray', []);
 Session.setDefault('SearchParametersPage.onePageLayout', true)
+Session.setDefault('SearchParametersPage.defaultQuery', {})
 Session.setDefault('SearchParametersTable.hideCheckbox', true)
+Session.setDefault('SearchParametersTable.parametersIndex', 0)
 
 Session.setDefault('searchParameterChecklistMode', false)
 
@@ -137,7 +137,8 @@ export function SearchParametersPage(props){
         lastModified: -1
       }
     },
-    searchParameterChecklistMode: false
+    searchParameterChecklistMode: false,
+    parametersIndex: 0
   };
 
   
@@ -176,7 +177,14 @@ export function SearchParametersPage(props){
   data.searchParameterChecklistMode = useTracker(function(){
     return Session.get('searchParameterChecklistMode')
   }, [])
+  data.parametersIndex = useTracker(function(){
+    return Session.get('SearchParametersTable.parametersIndex')
+  }, [])
 
+
+  function setParametersIndex(newIndex){
+    Session.set('SearchParametersTable.parametersIndex', newIndex)
+  }
 
   function onCancelUpsertSearchParameter(context){
     Session.set('searchParameterPageTabIndex', 1);
@@ -297,8 +305,6 @@ export function SearchParametersPage(props){
   }
 
 
-  let [searchParametersIndex, setSearchParametersIndex] = setState(0);
-
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
@@ -320,9 +326,9 @@ export function SearchParametersPage(props){
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           onRowClick={ handleRowClick.bind(this) }
           onSetPage={function(index){
-            setSearchParametersIndex(index)
+            setParametersIndex(index)
           }}  
-          page={searchParametersIndex}
+          page={data.parametersIndex}
           size="small"
           />
         </CardContent>
@@ -349,9 +355,9 @@ export function SearchParametersPage(props){
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               onSetPage={function(index){
-                setSearchParametersIndex(index)
+                setParametersIndex(index)
               }}          
-              page={searchParametersIndex}
+              page={data.parametersIndex}
               size="medium"
               />
           </CardContent>

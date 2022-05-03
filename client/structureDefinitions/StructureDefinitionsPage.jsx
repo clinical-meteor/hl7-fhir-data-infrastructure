@@ -12,16 +12,15 @@ import {
   Box,
   Grid 
 } from '@material-ui/core';
-import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
+import { StyledCard, PageCanvas } from 'fhir-starter';
+
 import StructureDefinitionDetail from './StructureDefinitionDetail';
 import StructureDefinitionsTable from './StructureDefinitionsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
-import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
@@ -112,7 +111,9 @@ Session.setDefault('selectedStructureDefinition', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('structureDefinitionsArray', []);
 Session.setDefault('StructureDefinitionsPage.onePageLayout', true)
+Session.setDefault('StructureDefinitionsPage.defaultQuery', {name: {$not: ""}})
 Session.setDefault('StructureDefinitionsTable.hideCheckbox', true)
+Session.setDefault('StructureDefinitionsTable.definitionsIndex', 0)
 
 Session.setDefault('structureDefinitionChecklistMode', false)
 
@@ -179,8 +180,14 @@ export function StructureDefinitionsPage(props){
   data.structureDefinitionChecklistMode = useTracker(function(){
     return Session.get('structureDefinitionChecklistMode')
   }, [])
+  data.definitionsIndex = useTracker(function(){
+    return Session.get('StructureDefinitionsTable.definitionsIndex')
+  }, [])
+  
 
-
+  function setDefinitionsIndex(newIndex){
+    Session.set('StructureDefinitionsTable.definitionsIndex', newIndex)
+  }
   function onCancelUpsertStructureDefinition(context){
     Session.set('structureDefinitionPageTabIndex', 1);
   }
@@ -299,8 +306,6 @@ export function StructureDefinitionsPage(props){
     Session.set('structureDefinitionPageTabIndex', newValue)
   }
 
-  let [structureDefinitionsIndex, setStructureDefinitionsIndex] = setState(0);
-
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
@@ -323,9 +328,9 @@ export function StructureDefinitionsPage(props){
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           onSetPage={function(index){
-            setStructureDefinitionsIndex(index)
+            setDefinitionsIndex(index)
           }}  
-          page={structureDefinitionsIndex}
+          page={data.definitionsIndex}
           size="small"
           />
         </CardContent>
@@ -353,9 +358,9 @@ export function StructureDefinitionsPage(props){
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               onSetPage={function(index){
-                setStructureDefinitionsIndex(index)
+                setDefinitionsIndex(index)
               }}  
-              page={structureDefinitionsIndex}    
+              page={data.definitionsIndex}    
               size="medium"
               />
           </CardContent>

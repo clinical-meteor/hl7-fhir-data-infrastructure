@@ -12,16 +12,15 @@ import {
   Box,
   Grid
 } from '@material-ui/core';
-import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
+import { StyledCard, PageCanvas } from 'fhir-starter';
+
 import VerificationResultDetail from './VerificationResultDetail';
 import VerificationResultsTable from './VerificationResultsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
-import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
@@ -111,7 +110,9 @@ Session.setDefault('selectedVerificationResult', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('verificationResultsArray', []);
 Session.setDefault('VerificationResultsPage.onePageLayout', true)
+Session.setDefault('VerificationResultsPage.defaultQuery', {})
 Session.setDefault('VerificationResultsTable.hideCheckbox', true)
+Session.setDefault('VerificationResultsTable.verificationsIndex', 0)
 
 Session.setDefault('verificationResultChecklistMode', false)
 
@@ -174,6 +175,13 @@ export function VerificationResultsPage(props){
   data.verificationResultChecklistMode = useTracker(function(){
     return Session.get('verificationResultChecklistMode')
   }, [])
+  data.verificationsIndex = useTracker(function(){
+    return Session.get('VerificationResultsTable.verificationsIndex')
+  }, [])
+
+  function setVerificationResultsIndex(newIndex){
+    Session.set('VerificationResultsTable.verificationsIndex', newIndex)
+  }
 
   function handleRowClick(verificationResultId){
     console.log('VerificationResultsPage.handleRowClick', verificationResultId)
@@ -204,9 +212,6 @@ export function VerificationResultsPage(props){
     Session.set('verificationResultPageTabIndex', newValue)
   }
 
-
-  let [verificationResultsIndex, setVerificationResultsIndex] = setState(0);
-
   let layoutContents;
   if(data.onePageLayout){
     layoutContents = <StyledCard height="auto" margin={20} scrollable >
@@ -230,7 +235,7 @@ export function VerificationResultsPage(props){
           onSetPage={function(index){
             setVerificationResultsIndex(index)
           }}    
-          page={verificationResultsIndex}  
+          page={data.verificationsIndex}  
           onRowClick={ handleRowClick.bind(this) }
           size="small"
           
@@ -261,7 +266,7 @@ export function VerificationResultsPage(props){
               onSetPage={function(index){
                 setVerificationResultsIndex(index)
               }}   
-              page={verificationResultsIndex}         
+              page={data.verificationsIndex}         
               count={data.verificationResults.length}
               size="medium"
               />

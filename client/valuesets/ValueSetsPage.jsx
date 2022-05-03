@@ -106,8 +106,9 @@ Session.setDefault('selectedValueSet', null);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('valueSetsArray', []);
 Session.setDefault('ValueSetsPage.onePageLayout', true)
+Session.setDefault('ValueSetsPage.defaultQuery', {})
 Session.setDefault('ValueSetsTable.hideCheckbox', false)
-
+Session.setDefault('ValueSetsTable.valueSetsIndex', 0)
 
 
 //===========================================================================
@@ -126,7 +127,8 @@ export function ValueSetsPage(props){
     valueSets: [],
     onePageLayout: false,
     valueSetSearchFilter: '',
-    appHeight: window.innerHeight
+    appHeight: window.innerHeight,
+    valueSetsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -151,6 +153,14 @@ export function ValueSetsPage(props){
     return Session.get('appHeight')
   }, [props.lastUpdated])
 
+  data.valueSetsIndex = useTracker(function(){
+    return Session.get('ValueSetsTable.valueSetsIndex')
+  }, [props.lastUpdated])
+
+  function setValueSetsIndex(newIndex){
+    Session.set('ValueSetsTable.valueSetsIndex', newIndex)
+  }
+
   function handleRowClick(valueSetId){
     console.log('ValueSetsPage.handleRowClick', valueSetId)
     let valueSet = ValueSets.findOne({id: valueSetId});
@@ -173,7 +183,6 @@ export function ValueSetsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
-  let [valueSetsIndex, setValueSetsIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -192,7 +201,7 @@ export function ValueSetsPage(props){
           onSetPage={function(index){
             setValueSetsIndex(index)
           }}    
-          page={valueSetsIndex}  
+          page={data.valueSetsIndex}  
           size="small"
           />
         </CardContent>
@@ -214,7 +223,7 @@ export function ValueSetsPage(props){
               onSetPage={function(index){
                 setValueSetsIndex(index)
               }}  
-              page={valueSetsIndex}      
+              page={data.valueSetsIndex}      
               size="medium"
               />
           </CardContent>

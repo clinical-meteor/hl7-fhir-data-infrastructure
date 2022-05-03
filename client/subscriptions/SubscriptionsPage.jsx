@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
+  Grid, 
+  Container,
+  Divider,
+  Card,
   CardHeader,
   CardContent,
-  Grid
+  Button,
+  Tab, 
+  Tabs,
+  Typography,
+  Box
 } from '@material-ui/core';
-import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import { useTracker } from 'meteor/react-meteor-data';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import SubscriptionDetail from './SubscriptionDetail';
 import SubscriptionsTable from './SubscriptionsTable';
-
-import { StyledCard, PageCanvas } from 'fhir-starter';
-
-import { get, cloneDeep } from 'lodash';
-
 import LayoutHelpers from '../../lib/LayoutHelpers';
+
+
+import { get, set, cloneDeep } from 'lodash';
+
 
 
 
@@ -104,11 +111,12 @@ const muiTheme = createMuiTheme({
 Session.setDefault('subscriptionPageTabIndex', 0);
 Session.setDefault('subscriptionSearchFilter', '');
 Session.setDefault('selectedSubscriptionId', '');
-Session.setDefault('selectedSubscription', false);
-Session.setDefault('fhirVersion', 'v1.0.2');
+Session.setDefault('selectedSubscription', false)
 Session.setDefault('subscriptionsArray', []);
 Session.setDefault('SubscriptionsPage.onePageLayout', true)
+Session.setDefault('SubscriptionsPage.defaultQuery', {name: {$not: ""}})
 Session.setDefault('SubscriptionsTable.hideCheckbox', true)
+Session.setDefault('SubscriptionsTable.subscriptionsIndex', 0)
 
 Session.setDefault('subscriptionChecklistMode', false)
 
@@ -118,6 +126,8 @@ Session.setDefault('subscriptionChecklistMode', false)
 
 
 export function SubscriptionsPage(props){
+
+  // let [subscriptionsIndex, setSubscriptionsIndex] = useState(0);
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
@@ -137,7 +147,8 @@ export function SubscriptionsPage(props){
         lastModified: -1
       }
     },
-    subscriptionChecklistMode: false
+    subscriptionChecklistMode: false,
+    organizationsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -173,8 +184,14 @@ export function SubscriptionsPage(props){
   data.subscriptionChecklistMode = useTracker(function(){
     return Session.get('subscriptionChecklistMode')
   }, [])
+  data.subscriptionsIndex = useTracker(function(){
+    return Session.get('SubscriptionsTable.subscriptionsIndex')
+  }, [])
 
-
+  function setSubscriptionsIndex(newIndex){
+    Session.set('SubscriptionsTable.subscriptionsIndex', newIndex)
+  }
+  
   function handleRowClick(subscriptionId){
     console.log('SubscriptionsPage.handleRowClick', subscriptionId)
     let subscription = Subscriptions.findOne({id: subscriptionId});
@@ -216,7 +233,7 @@ export function SubscriptionsPage(props){
     Session.set('subscriptionPageTabIndex', newValue)
   }
 
-  let [subscriptionsIndex, setSubscriptionsIndex] = setState(0);
+  
 
   let layoutContents;
   if(data.onePageLayout){
@@ -229,11 +246,14 @@ export function SubscriptionsPage(props){
           subscriptions={ data.subscriptions }
           count={data.subscriptions.length}
           hideCheckbox={data.hideCheckbox}
+          hideActionIcons={true}
           hideStatus={false}
           hideName={false}
+          hideContact={true}
           hideConnectionType={false}
           hideOrganization={false}
           hideAddress={false}    
+          hideError={true}
           paginationLimit={10}     
           checklist={data.subscriptionChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
@@ -241,7 +261,7 @@ export function SubscriptionsPage(props){
           onSetPage={function(index){
             setSubscriptionsIndex(index)
           }}     
-          page={subscriptionsIndex}  
+          page={data.subscriptionsIndex}  
           size="medium"
           />
         </CardContent>
@@ -260,8 +280,10 @@ export function SubscriptionsPage(props){
               hideIdentifier={true} 
               hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
+              hideContact={true}
               hideStatus={false}
               hideName={false}
+              hideError={true}
               hideConnectionType={false}
               hideOrganization={false}
               hideAddress={false}    
@@ -270,7 +292,7 @@ export function SubscriptionsPage(props){
               onSetPage={function(index){
                 setSubscriptionsIndex(index)
               }}    
-              page={subscriptionsIndex}    
+              page={data.subscriptionsIndex}    
               size="small"
               />
           </CardContent>
