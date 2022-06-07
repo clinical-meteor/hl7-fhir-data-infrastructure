@@ -258,7 +258,7 @@ function PractitionersTable(props){
       rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
-      style={{float: 'right', border: 'none'}}
+      style={{float: 'right', border: 'none', userSelect: 'none'}}
     />
   }
 

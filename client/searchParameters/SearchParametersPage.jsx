@@ -348,10 +348,14 @@ export function SearchParametersPage(props){
               hideActionIcons={true}
               hideStatus={false}
               hideName={false}
-              hideTitle={false}
+              hideTitle={true}
               hideVersion={false}
-              hideExperimental={false}    
-              hideBarcode={true}
+              hideExperimental={true}   
+              hideCode={false}
+              hideBase={false} 
+              hideExpression={false} 
+              hideBarcode={true}f
+              hidePublisher={true}
               onRowClick={ handleRowClick.bind(this) }
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               onSetPage={function(index){

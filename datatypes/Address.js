@@ -76,10 +76,6 @@ Address = {
 
 // Add  the schema for a collection
 AddressSchema = new SimpleSchema({
-  "resourceType" : {
-    type: String,
-    defaultValue: "Address"
-    },
   "use" : {
     optional: true,
     type: Code

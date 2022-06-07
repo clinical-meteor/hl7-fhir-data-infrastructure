@@ -2,10 +2,6 @@ import SimpleSchema from 'simpl-schema';
 import PeriodSchema from './Period';
 
 ContactPointSchema = new SimpleSchema({
-  "resourceType" : {
-    type: String,
-    defaultValue: "ContactPoint",
-    },
   "system" : {
     optional: true,
     type: Code

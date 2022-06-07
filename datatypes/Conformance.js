@@ -1,11 +1,6 @@
 import SimpleSchema from 'simpl-schema';
 
 ConformanceSchema = new SimpleSchema({
-  "resourceType" : {
-    type: "Conformance",
-    // from Resource: id, meta, implicitRules, and language
-    // from DomainResource: text, contained, extension, and modifierExtension
-  },
   "url" : {
     optional: true,
     type: String  // Logical uri to reference this statement

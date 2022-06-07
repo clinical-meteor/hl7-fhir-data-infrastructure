@@ -2,10 +2,6 @@ import SimpleSchema from 'simpl-schema';
 import PeriodSchema from './Period';
 
 HumanNameSchema = new SimpleSchema({
-  "resourceType" : {
-    type: String,
-    defaultValue: "HumanName"
-    },
   "use" : {
     optional: true,
     type: Code

@@ -116,7 +116,7 @@ export function ValueSetDetail(props){
 
   if(Array.isArray(composeIncludes)){
     composeIncludes.forEach(function(includeSystem, includeSystemIndex){
-      renderElements.push(<Grid item xs={12}>
+      renderElements.push(<Grid item xs={12} key={includeSystemIndex + "z"}>
         <TextField
           id={"includeSystem-" + includeSystemIndex}
           name={"includeSystem-" + includeSystemIndex}
@@ -126,6 +126,7 @@ export function ValueSetDetail(props){
           fullWidth          
           style={{marginTop: '20px'}}
           disabled
+          key={includeSystemIndex + 'm'}
         />
 
       </Grid>)
@@ -133,7 +134,7 @@ export function ValueSetDetail(props){
       let includeConcepts = get(includeSystem, 'concept');
       if(Array.isArray(includeConcepts) && !hideConcepts){
         includeConcepts.forEach(function(concept, index){          
-          renderElements.push(<Grid item xs={3}>
+          renderElements.push(<Grid item xs={3} key={includeSystemIndex + "y"}>
             <TextField
               id={"concecptCode-" + get(concept, 'code')}
               name={"concecptCode-" + get(concept, 'code')}
@@ -142,11 +143,12 @@ export function ValueSetDetail(props){
               value={get(concept, 'code')}
               fullWidth   
               InputLabelProps={index === 0 ? {shrink: true} : null }
+              key={index + 'a'}
               // style={index === 0 ? {marginBottom: '20px'} : null }
             />  
 
           </Grid>)
-          renderElements.push(<Grid item xs={9}>
+          renderElements.push(<Grid item xs={9} key={includeSystemIndex + "w"}>
             <TextField
               id={"conceptDisplay-" + get(concept, 'code')}
               name={"conceptDisplay-" + get(concept, 'code')}
@@ -155,6 +157,7 @@ export function ValueSetDetail(props){
               value={get(concept, 'display')}
               fullWidth   
               InputLabelProps={index === 0 ? {shrink: true} : null }
+              key={index + 'b'}
               // style={index === 0 ? {marginBottom: '20px'} : null }         
             />  
           </Grid>)
@@ -166,7 +169,7 @@ export function ValueSetDetail(props){
       if(Array.isArray(includeConcepts) && hideTable){
         let tableElements = [];
         includeConcepts.forEach(function(concept, index){          
-          tableElements.push(<TableRow key={index}>
+          tableElements.push(<TableRow key={index} key={includeSystemIndex}>
             <TableCell>
               <TextField
                 id={"concecptCode-" + get(concept, 'code')}
@@ -176,6 +179,7 @@ export function ValueSetDetail(props){
                 value={get(concept, 'code')}
                 fullWidth   
                 InputLabelProps={index === 0 ? {shrink: true} : null }
+                key={includeSystemIndex + 'n'}
                 // style={index === 0 ? {marginBottom: '20px'} : null }
               />
             </TableCell>  
@@ -189,6 +193,7 @@ export function ValueSetDetail(props){
               value={get(concept, 'display')}
               fullWidth   
               InputLabelProps={index === 0 ? {shrink: true} : null }
+              key={includeSystemIndex + 'p'}
               // style={index === 0 ? {marginBottom: '20px'} : null }         
             />  
           </TableRow>)

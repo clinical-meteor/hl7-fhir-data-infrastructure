@@ -92,6 +92,10 @@ function SearchParametersTable(props){
     hideDescription,
     hideBarcode,
 
+    hideCode,
+    hideBase,
+    hideExpression,
+
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -123,71 +127,67 @@ function SearchParametersTable(props){
 
   if(formFactorLayout){
     switch (formFactorLayout) {
-      case "phone":
-        hideActionIcons = false;
+      case "phone":        
 
         hideVersion = false;
         hideName = false;
-        hideTitle = false;
-        hideStatus = false;
-        hideExperimental = false;
         hideDate = false;
-        hidePublisher = false;
-        hideContact = false;
-        hideDescription = false;
+        // hideTitle = false;
+        // hideStatus = false;
+        // hideExperimental = false;
+        // hidePublisher = false;
+        // hideContact = false;
+        // hideDescription = false;
         
         hideBarcode = true;
         break;
-      case "tablet":
-        hideActionIcons = false;
+      case "tablet":        
         hideVersion = false;
         hideName = false;
-        hideTitle = false;
-        hideStatus = false;
-        hideExperimental = false;
         hideDate = false;
-        hidePublisher = false;
-        hideContact = false;
-        hideDescription = false;
+
+        // hideTitle = false;
+        // hideStatus = false;
+        // hideExperimental = false;
+        // hidePublisher = false;
+        // hideContact = false;
+        // hideDescription = false;
         hideBarcode = true;
         break;
-      case "web":
-        hideActionIcons = false;
+      case "web":        
         hideVersion = false;
         hideName = false;
-        hideTitle = false;
-        hideStatus = false;
-        hideExperimental = false;
         hideDate = false;
-        hidePublisher = false;
-        hideContact = false;
-        hideDescription = false;
+        // hideTitle = false;
+        // hideStatus = false;
+        // hideExperimental = false;
+        // hidePublisher = false;
+        // hideContact = false;
+        // hideDescription = false;
         hideBarcode = true;
         break;
-      case "desktop":
-        hideActionIcons = false;
+      case "desktop":        
         hideVersion = false;
         hideName = false;
-        hideTitle = false;
-        hideStatus = false;
-        hideExperimental = false;
         hideDate = false;
-        hidePublisher = false;
-        hideContact = false;
-        hideDescription = false;
+        // hideTitle = false;
+        // hideStatus = false;
+        // hideExperimental = false;
+        // hidePublisher = false;
+        // hideContact = false;
+        // hideDescription = false;
         hideBarcode = true;
         break;
-      case "videowall":
-        hideActionIcons = false;
+      case "videowall":        
         hideVersion = false;
         hideName = false;
-        hideTitle = false;
-        hideStatus = false;
-        hideExperimental = false;
         hideDate = false;
-        hidePublisher = false;
-        hideContact = false;
-        hideDescription = false;
+        // hideTitle = false;
+        // hideStatus = false;
+        // hideExperimental = false;
+        // hidePublisher = false;
+        // hideContact = false;
+        // hideDescription = false;
         hideBarcode = true;
         break;            
     }
@@ -317,6 +317,49 @@ function SearchParametersTable(props){
     if (!hideStatus) {
       return (
         <TableCell className='status'>Status</TableCell>
+      );
+    }
+  }
+
+  function renderCode(code){
+    if (!hideCode) {
+      return (
+        <TableCell className='code'>{ code }</TableCell>
+      );
+    }
+  }
+  function renderCodeHeader(){
+    if (!hideCode) {
+      return (
+        <TableCell className='code'>Code</TableCell>
+      );
+    }
+  }
+  function renderBase(base){
+    if (!hideBase) {
+      return (
+        <TableCell className='base'>{ base }</TableCell>
+      );
+    }
+  }
+  function renderBaseHeader(){
+    if (!hideBase) {
+      return (
+        <TableCell className='base'>Base</TableCell>
+      );
+    }
+  }
+  function renderExpression(expression){
+    if (!hideExpression) {
+      return (
+        <TableCell className='expression'>{ expression }</TableCell>
+      );
+    }
+  }
+  function renderExpressionHeader(){
+    if (!hideExpression) {
+      return (
+        <TableCell className='expression'>Expression</TableCell>
       );
     }
   }
@@ -496,10 +539,14 @@ function SearchParametersTable(props){
 
           { renderVersion(searchParametersToRender[i].version) }
           { renderName(searchParametersToRender[i].name) }
-          { renderTitle(searchParametersToRender[i].title) }
-          { renderExperimental(searchParametersToRender[i].experimental) }
+          {/* { renderTitle(searchParametersToRender[i].title) }
+          { renderExperimental(searchParametersToRender[i].experimental) } */}
           { renderDate(searchParametersToRender[i].date) }
           { renderPublisher(searchParametersToRender[i].publisher) }
+
+          { renderCode(searchParametersToRender[i].code) }
+          { renderBase(searchParametersToRender[i].base) }
+          { renderExpression(searchParametersToRender[i].expression) }
 
           { renderBarcode(searchParametersToRender[i].id)}
         </TableRow>
@@ -518,10 +565,14 @@ function SearchParametersTable(props){
             
             { renderVersionHeader() }
             { renderNameHeader() }
-            { renderTitleHeader() }
-            { renderExperimentalHeader() }
+            {/* { renderTitleHeader() }
+            { renderExperimentalHeader() } */}
             { renderDateHeader() }
             { renderPublisherHeader() }
+
+            { renderCodeHeader() }
+            { renderBaseHeader() }
+            { renderExpressionHeader() }
 
             { renderBarcodeHeader() }
           </TableRow>
@@ -557,6 +608,10 @@ SearchParametersTable.propTypes = {
   hideContact: PropTypes.bool,
   hideDescription: PropTypes.bool,
 
+  hideCode: PropTypes.bool,
+  hideBase: PropTypes.bool,
+  hideExpression: PropTypes.bool,
+
   hideBarcode: PropTypes.bool,
 
   onCellClick: PropTypes.func,
@@ -581,13 +636,16 @@ SearchParametersTable.defaultProps = {
 
   hideVersion: false,
   hideName: false,
-  hideTitle: false,
-  hideStatus: false,
-  hideExperimental: false,
+  hideTitle: true,
+  hideStatus: true,
+  hideExperimental: true,
   hideDate: false,
-  hidePublisher: false,
-  hideContact: false,
-  hideDescription: false,
+  hidePublisher: true,
+  hideContact: true,
+  hideCode: false,
+  hideBase: false,
+  hideExpression: false,
+  hideDescription: true,
 
   hideBarcode: true,
 

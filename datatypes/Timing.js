@@ -6,10 +6,6 @@ import CodeableConceptSchema from './CodableConcept';
 import Code from './Code';
 
 TimingSchema = new SimpleSchema({
-  "resourceType": {
-    type: String,
-    defaultValue: "Timing"
-  },
   "event": {
     optional: true,
     type: Array
