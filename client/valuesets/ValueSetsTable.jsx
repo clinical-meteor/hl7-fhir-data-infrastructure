@@ -84,6 +84,7 @@ function ValueSetsTable(props){
     hideCheckbox,
     hideActionIcons,
     hideBarcode,
+    hideId,
 
     onCellClick,
     onRowClick,
@@ -299,6 +300,21 @@ function ValueSetsTable(props){
     }
   }
 
+  function renderId(id){
+    if (!hideId) {
+      return (
+        <TableCell className='id'>{ id }</TableCell>
+      );
+    }
+  }
+  function renderIdHeader(){
+    if (!hideId) {
+      return (
+        <TableCell className='id'>Id</TableCell>
+      );
+    }
+  }
+
   function renderBarcode(id){
     if (!hideBarcode) {
       return (
@@ -378,9 +394,8 @@ function ValueSetsTable(props){
         >
           { renderToggle() }
           { renderActionIcons(valueSetsToRender[i]) }
+          { renderId(valueSetsToRender[i].id) }   
           { renderTitle(valueSetsToRender[i].title) }          
-          
-          
           { renderBarcode(valueSetsToRender[i].id)}
         </TableRow>
       );       
@@ -394,9 +409,8 @@ function ValueSetsTable(props){
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
+            { renderIdHeader() }
             { renderTitleHeader() }
-            
-            
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -422,6 +436,7 @@ ValueSetsTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+  hideId: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -441,6 +456,7 @@ ValueSetsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
+  hideId: true,
   selectedValueSetId: '',
   page: 0,
   rowsPerPage: 5,

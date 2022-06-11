@@ -197,6 +197,7 @@ export function ValueSetsPage(props){
           selectedValueSetId={ data.selectedValueSetId }         
           onRowClick={ handleRowClick.bind(this) }
           hideCheckbox={data.hideCheckbox}
+          hideId={false}
           rowsPerPage={LayoutHelpers.calcTableRows()}  
           onSetPage={function(index){
             setValueSetsIndex(index)
@@ -219,6 +220,7 @@ export function ValueSetsPage(props){
               selectedValueSetId={ data.selectedValueSetId }      
               onRowClick={ handleRowClick.bind(this) }
               hideCheckbox={data.hideCheckbox}
+              hideId={false}
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  data.appHeight) }
               onSetPage={function(index){
                 setValueSetsIndex(index)
