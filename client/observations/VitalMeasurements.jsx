@@ -30,10 +30,6 @@ import {pulse} from 'react-icons-kit/iconic/pulse'
 
 
 
-
-
-// var FontAwesome = require('react-fontawesome');
-
 //=============================================================================================================================================
 // TABS
 
