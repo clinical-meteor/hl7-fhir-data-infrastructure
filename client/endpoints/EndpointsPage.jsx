@@ -138,6 +138,8 @@ export function EndpointsPage(props){
       }
     },
     endpointChecklistMode: false,
+    showSystemIds: false,
+    showFhirIds: false,
     endpointsPageIndex: 0
   };
 
@@ -176,6 +178,12 @@ export function EndpointsPage(props){
   }, [])
   data.endpointsPageIndex = useTracker(function(){
     return Session.get('OrganizationsTable.endpointsPageIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
@@ -240,6 +248,8 @@ export function EndpointsPage(props){
           hideConnectionType={false}
           hideOrganization={false}
           hideAddress={false}    
+          hideBarcode={!data.showSystemIds}
+          hideFhirId={!data.showFhirIds}
           paginationLimit={10}     
           checklist={data.endpointChecklistMode}
           onRowClick={ handleRowClick.bind(this) }
@@ -262,6 +272,7 @@ export function EndpointsPage(props){
               endpoints={ data.endpoints }
               count={data.endpoints.length}
               selectedEndpointId={ data.selectedEndpointId }
+              hideId={!data.showFhirIds}
               hideIdentifier={true} 
               hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}
@@ -270,6 +281,7 @@ export function EndpointsPage(props){
               hideConnectionType={false}
               hideOrganization={false}
               hideAddress={false}    
+              hideBarcode={!data.showSystemIds}
               onRowClick={ handleRowClick.bind(this) }
               onSetPage={function(index){
                 setEndpointsPageIndex(index)

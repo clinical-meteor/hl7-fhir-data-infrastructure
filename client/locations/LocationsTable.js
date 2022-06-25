@@ -101,6 +101,7 @@ function LocationsTable(props){
     hideLongitude,
     hideLatLng,
     hideActionIcons,
+    hideFhirId,
 
     simplifiedAddress,
     extensionUrl,
@@ -235,6 +236,20 @@ function LocationsTable(props){
       );  
     }
   }
+  function renderFhirId(fhirId){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>{ fhirId }</TableCell>
+      );
+    }
+  }
+  function renderFhirIdHeader(){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>FHIR ID</TableCell>
+      );
+    }
+  }
   function renderAddressHeader(){
     if (!hideAddress) {
       return (
@@ -279,6 +294,7 @@ function LocationsTable(props){
   }
   function renderPostalCodeHeader(){
     if (!hidePostalCode) {
+      
       return (
         <TableCell className="postalCode">Postal Code</TableCell>
       );
@@ -286,8 +302,13 @@ function LocationsTable(props){
   }
   function renderPostalCode(postalCode){
     if (!hidePostalCode) {
+      let postalCodeString = postalCode
+      if(postalCode.length === 9){
+        postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+      }
+
       return (
-        <TableCell className='postalCode'>{ postalCode }</TableCell>
+        <TableCell className='postalCode'>{ postalCodeString }</TableCell>
       );  
     }
   }
@@ -464,6 +485,7 @@ function LocationsTable(props){
           hover={true} 
           selected={isSelected}
           style={rowStyle} >
+           { renderFhirId(get(locationsToRender[i], "id")) }
            { renderIdentifier(get(locationsToRender[i], "identifier")) }
            { renderName(get(locationsToRender[i], "name"), get(locationsToRender[i], "address"), get(locationsToRender[i], "latitude"), get(locationsToRender[i], "longitude")) }
            { renderAddress(get(locationsToRender[i], "address")) }
@@ -488,6 +510,7 @@ function LocationsTable(props){
       <Table className='locationsTable' size={tableRowSize} aria-label="a size table" { ...otherProps }>
         <TableHead>
           <TableRow >
+            { renderFhirIdHeader() }
             { renderIdentifierHeader() }
             { renderNameHeader() }
             { renderAddressHeader() }
@@ -525,6 +548,7 @@ LocationsTable.propTypes = {
   page: PropTypes.number,
   onSetPage: PropTypes.func,
 
+  hideFhirId: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideName: PropTypes.bool,
   hideAddress: PropTypes.bool,
@@ -552,15 +576,16 @@ LocationsTable.propTypes = {
 
 LocationsTable.defaultProps = {
   selectedLocationId: '',
+  hideFhirId: true,
   hideIdentifier: true,
   hideName: false,
   hideAddress: false,
   hideCity: false,
   hideState: false,
   hidePostalCode: false,
-  hideType: false,
   hideCountry: false,
   hideExtensions: true,
+  hideType: false,
   hideLongitude: false,
   hideLatLng: true,
   showMinutes: false,

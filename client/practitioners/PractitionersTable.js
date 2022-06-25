@@ -97,6 +97,7 @@ function PractitionersTable(props){
     hideState,
     hidePostalCode,
     hideFullAddress,
+    hideFhirId,
     
     hideIssuer,
     hideQualification,
@@ -355,6 +356,20 @@ function PractitionersTable(props){
       );
     }
   }
+  function renderFhirId(fhirId){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>{ fhirId }</TableCell>
+      );
+    }
+  }
+  function renderFhirIdHeader(){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>FHIR ID</TableCell>
+      );
+    }
+  }
 
   function renderFullName(name){
     if (!hideFullName) {
@@ -372,8 +387,13 @@ function PractitionersTable(props){
   }
   function renderPhone(phone){
     if (!hidePhone) {
+      let phoneString = phone
+      if(phone.length === 10){
+        phoneString = phone.substring(0,3) + "-" + phone.substring(3,6) + "-" + phone.substring(6,10)
+      }
+
       return (
-        <TableCell className="phone">{ phone }</TableCell>
+        <TableCell className="phone">{ phoneString }</TableCell>
       );
     }
   }
@@ -442,8 +462,12 @@ function PractitionersTable(props){
   }
   function renderPostalCode(postalCode){
     if (!hidePostalCode) {
+      let postalCodeString = postalCode
+      if(postalCode.length === 9){
+        postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+      }
       return (
-        <TableCell className="postalCode">{ postalCode }</TableCell>
+        <TableCell className="postalCode">{ postalCodeString }</TableCell>
       );
     }
   }
@@ -600,6 +624,7 @@ function PractitionersTable(props){
           { renderCheckbox() }
           { renderActionIcons(practitionersToRender[i]) }
           { renderIdentifier(practitionersToRender[i].identifier ) }
+          { renderFhirId(get(practitionersToRender[i], "id")) }
 
           { renderFullName(practitionersToRender[i].fullName, practitionersToRender[i].fullAddress)}
           { renderPhone(practitionersToRender[i].phone)}
@@ -635,7 +660,7 @@ function PractitionersTable(props){
             { renderCheckboxHeader() } 
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
-
+            { renderFhirIdHeader() }
             { renderFullNameHeader() }
             { renderPhoneHeader() }
             { renderEmailHeader() }
@@ -666,7 +691,8 @@ function PractitionersTable(props){
 
 PractitionersTable.propTypes = {
   id: PropTypes.string,
-
+  
+  
   data: PropTypes.array,
   practitioners: PropTypes.array,
   query: PropTypes.object,
@@ -675,6 +701,7 @@ PractitionersTable.propTypes = {
 
   hideCheckbox:  PropTypes.bool,
   hideActionIcons:  PropTypes.bool,
+  hideFhirId: PropTypes.bool,
   hideIdentifier:  PropTypes.bool,
   hideFullName:  PropTypes.bool,
   hidePhone:  PropTypes.bool,
@@ -716,6 +743,7 @@ PractitionersTable.propTypes = {
 };
 
 PractitionersTable.defaultProps = {
+  hideFhirId: true,
   hideFullName: false,
   hideActionIcons: true,
   hideActionButton: true,

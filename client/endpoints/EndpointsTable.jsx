@@ -93,6 +93,7 @@ function EndpointsTable(props){
     hideOrganization,
     hideAddress,
     hideBarcode,
+    hideFhirId,
 
     onCellClick,
     onRowClick,
@@ -282,6 +283,21 @@ function EndpointsTable(props){
       );
     }
   } 
+
+  function renderFhirId(fhirId){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>{ fhirId }</TableCell>
+      );
+    }
+  }
+  function renderFhirIdHeader(){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>FHIR ID</TableCell>
+      );
+    }
+  }
 
   function renderStatus(status){
     if (!hideStatus) {
@@ -485,6 +501,7 @@ function EndpointsTable(props){
         >
           { renderCheckbox(endpointsToRender[i]) }
           { renderActionIcons(endpointsToRender[i]) }
+          { renderFhirId(endpointsToRender[i].id) }
 
           { renderStatus(endpointsToRender[i].status) }
           { renderConnectionType(endpointsToRender[i].connectionType) }
@@ -506,6 +523,7 @@ function EndpointsTable(props){
           <TableRow>
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
+            { renderFhirIdHeader() }
             { renderStatusHeader() }
             { renderConnectionTypeHeader() }
             { renderVersionHeader() }
@@ -536,6 +554,7 @@ EndpointsTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+  hideFhirId: PropTypes.bool,
 
   hideStatus: PropTypes.bool,
   hideConnectionType: PropTypes.bool,
@@ -571,6 +590,7 @@ EndpointsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
+  hideFhirId: true,
 
   hideStatus: false,
   hideConnectionType: false,

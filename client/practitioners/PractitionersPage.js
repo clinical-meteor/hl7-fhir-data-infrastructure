@@ -57,7 +57,7 @@ Session.setDefault('practitionerPageTabIndex', 1);
 Session.setDefault('practitionerSearchFilter', '');
 Session.setDefault('PractitionersPage.onePageLayout', false);
 Session.setDefault('PractitionersTable.hideCheckbox', true);
-Session.setDefault('PractitionersTable.practitionersIndex', 0);
+Session.setDefault('PractitionersTable.practitionersPageIndex', 0);
 Session.setDefault('selectedPractitionerId', false);
 Session.setDefault('blockchainPractitionerData', []);
 Session.setDefault('fhirVersion', 'v1.0.2');
@@ -74,7 +74,9 @@ export function PractitionersPage(props){
     practitioners: [],
     onePageLayout: true,
     hideCheckbox: true,
-    practitionersIndex: 0
+    showSystemIds: false,
+    showFhirIds: false,
+    practitionersPageIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -93,13 +95,19 @@ export function PractitionersPage(props){
     return Practitioners.find().fetch();
   }, [])
 
-  data.practitionersIndex = useTracker(function(){
-    return Session.get('PractitionersTable.practitionersIndex')
+  data.practitionersPageIndex = useTracker(function(){
+    return Session.get('PractitionersTable.practitionersPageIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
   function setPractitionersIndex(newIndex){
-    Session.set('PractitionersTable.practitionersIndex', newIndex)
+    Session.set('PractitionersTable.practitionersPageIndex', newIndex)
   }
 
 
@@ -147,14 +155,18 @@ export function PractitionersPage(props){
           <CardContent>
             <PractitionersTable 
                 practitioners={data.practitioners}
+                count={data.practitioners.length}
                 hideCheckbox={data.hideCheckbox}
+                hideBarcode={!data.showSystemIds}
+                hideFhirId={!data.showFhirIds}
+                hideQualification={true}
                 selectedPractitionerId={ data.selectedPractitionerId }
                 onRowClick={ handleRowClick.bind(this) }
                 rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
                 onSetPage={function(index){
                   setPractitionersIndex(index)
                 }}    
-                page={data.practitionersIndex}
+                page={data.practitionersPageIndex}
                 size="medium"
                 />
           </CardContent>

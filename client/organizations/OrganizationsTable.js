@@ -93,6 +93,7 @@ function OrganizationsTable(props){
     hideCity,
     hideState,
     hidePostalCode,
+    hideFhirId,
   
     onCellClick,
     onRowClick,
@@ -307,6 +308,20 @@ function OrganizationsTable(props){
       );
     }
   }
+  function renderFhirId(fhirId){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>{ fhirId }</TableCell>
+      );
+    }
+  }
+  function renderFhirIdHeader(){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>FHIR ID</TableCell>
+      );
+    }
+  }
   function renderExtensions(extensions){
     if (!hideExtensions) {
       return (
@@ -345,8 +360,13 @@ function OrganizationsTable(props){
   }
   function renderPhone(phone){
     if (!hidePhone) {
+      let phoneString = phone
+      if(phone.length === 10){
+        phoneString = phone.substring(0,3) + "-" + phone.substring(3,6) + "-" + phone.substring(6,10)
+      }
+
       return (
-        <TableCell className="phone">{ phone }</TableCell>
+        <TableCell className="phone" style={{minWidth: '100px'}}>{ phoneString }</TableCell>
       );
     }
   }
@@ -415,8 +435,13 @@ function OrganizationsTable(props){
   }
   function renderPostalCode(postalCode){
     if (!hidePostalCode) {
+      let postalCodeString = postalCode
+      if(postalCode.length === 9){
+        postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+      }
+
       return (
-        <TableCell className="postalCode hidden-on-phone">{ postalCode }</TableCell>
+        <TableCell className="postalCode hidden-on-phone">{ postalCodeString }</TableCell>
       );
     }
   }
@@ -540,6 +565,7 @@ function OrganizationsTable(props){
           { renderCheckbox() }
           { renderActionIcons(organizationsToRender[i]) }
           { renderIdentifier(organizationsToRender[i].identifier ) }
+          { renderFhirId(get(organizationsToRender[i], "id")) }
 
           {renderName(organizationsToRender[i].name, organizationsToRender[i].fullAddress)}
           {renderPhone(organizationsToRender[i].phone)}
@@ -570,6 +596,7 @@ function OrganizationsTable(props){
             { renderCheckboxHeader() } 
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
+            { renderFhirIdHeader() }
 
             { renderNameHeader() }
             { renderPhoneHeader() }
@@ -608,6 +635,7 @@ OrganizationsTable.propTypes = {
 
   hideCheckbox:  PropTypes.bool,
   hideActionIcons:  PropTypes.bool,
+  hideFhirId: PropTypes.bool,
   hideIdentifier:  PropTypes.bool,
   hideName:  PropTypes.bool,
   hidePhone:  PropTypes.bool,
@@ -648,6 +676,7 @@ OrganizationsTable.propTypes = {
 OrganizationsTable.defaultProps = {
   selectedOrganizationId: '',
   organizations: [],
+  hideFhirId: true,
   hideName: false,
   hideActionButton: true,
   hideCheckbox: true,

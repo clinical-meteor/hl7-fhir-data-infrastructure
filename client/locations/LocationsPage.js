@@ -122,7 +122,7 @@ Session.setDefault('LocationsPage.onePageLayout', true)
 Session.setDefault('LocationsTable.hideCheckbox', true)
 Session.setDefault('LocationsTable.locationsPageIndex', 0)
 
-
+Session.setDefault('showLatLng', false); 
 
 
 
@@ -157,7 +157,10 @@ export function LocationsPage(props){
     selectedLocation: null,
     locations: [],
     onePageLayout: false,
-    locationsPageIndex: 0
+    locationsPageIndex: 0,
+    showLatLng: true,
+    showSystemIds: false,
+    showFhirIds: false
   };
 
   data.style.page.height = useTracker(function(){
@@ -185,6 +188,16 @@ export function LocationsPage(props){
   data.locationsPageIndex = useTracker(function(){
     return Session.get('LocationsTable.locationsPageIndex')
   }, [])
+  data.showLatLng = useTracker(function(){
+    return Session.get('showLatLng')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
+
 
   function setLocationsPageIndex(newIndex){
     Session.set('LocationsTable.locationsPageIndex', newIndex)
@@ -229,12 +242,18 @@ export function LocationsPage(props){
           locations={data.locations}
           count={data.locations.length}  
           hideCheckbox={data.hideCheckbox}
+          hideFhirId={!data.showFhirIds}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
           tableRowSize="medium"
           onRowClick={ handleRowClick.bind(this) }    
           onSetPage={function(index){
             setLocationsPageIndex(index)
           }}     
+          // hideLatLng={!data.showLatLng}
+          hideType={true}
+          hideLatitude={!data.showLatLng}
+          hideLongitude={!data.showLatLng}       
+          hideBarcode={!data.showSystemIds} 
           page={data.locationsPageIndex}                   
         />
       </CardContent>
@@ -252,6 +271,7 @@ export function LocationsPage(props){
               count={data.locations.length}   
               rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
               hideCheckbox={data.hideCheckbox}
+              hideBarcode={!data.showSystemIds}
               page={data.locationsPageIndex}                                     
               onRowClick={ handleRowClick.bind(this) }    
               onSetPage={function(index){

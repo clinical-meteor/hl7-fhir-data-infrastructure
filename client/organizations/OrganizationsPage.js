@@ -133,6 +133,8 @@ export function OrganizationsPage(props){
     selectedOrganization: null,
     organizations: [],
     onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
     organizationsIndex: 0
   };
 
@@ -154,6 +156,14 @@ export function OrganizationsPage(props){
   data.organizationsIndex = useTracker(function(){
     return Session.get('OrganizationsTable.organizationsIndex')
   }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
+
+  
 
 
   function setOrganizationsIndex(newIndex){
@@ -204,9 +214,11 @@ export function OrganizationsPage(props){
           count={data.organizations.length}
           selectedOrganizationId={ data.selectedOrganizationId }
           hideCheckbox={data.hideCheckbox}
-          hideBarcode={false}
           hideActionIcons={true}
           hideNumEndpoints={false}
+          hideIdentifier={true}
+          hideBarcode={!data.showSystemIds}
+          hideFhirId={!data.showFhirIds}
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           onSetPage={function(index){
@@ -229,11 +241,12 @@ export function OrganizationsPage(props){
               organizations={data.organizations}
               count={data.organizations.length}
               hideCheckbox={data.hideCheckbox}
-              hideBarcode={true}
+              hideBarcode={!data.showSystemIds}
               hidePhone={true}
               hideEmail={true}
               hideActionIcons={true}
               hideNumEndpoints={false}
+              hideIdentifier={true}
               selectedOrganizationId={ data.selectedOrganizationId }
               onRowClick={ handleRowClick.bind(this) }
               onSetPage={function(index){
