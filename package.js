@@ -12,7 +12,7 @@ Package.onUse(function (api) {
 
   api.use('meteor@1.10.0');
   api.use('webapp');
-  api.use('ecmascript');
+  api.use('ecmascript@0.16.0');
   api.use('react-meteor-data@2.5.1');
 
   api.use('ddp@1.4.0');
