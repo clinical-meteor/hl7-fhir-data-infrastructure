@@ -502,7 +502,6 @@ function EndpointsTable(props){
           { renderCheckbox(endpointsToRender[i]) }
           { renderActionIcons(endpointsToRender[i]) }
           { renderFhirId(endpointsToRender[i].id) }
-
           { renderStatus(endpointsToRender[i].status) }
           { renderConnectionType(endpointsToRender[i].connectionType) }
           { renderVersion(endpointsToRender[i].version) }

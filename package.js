@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.25.1',
+  version: '6.25.3',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -11,8 +11,8 @@ Package.onUse(function (api) {
   api.versionsFrom('1.1.0.3');
 
   api.use('meteor@1.10.0');
-  api.use('webapp@1.13.1');
-  api.use('ecmascript@0.16.2');
+  api.use('webapp');
+  api.use('ecmascript');
   api.use('react-meteor-data@2.5.1');
 
   api.use('ddp@1.4.0');

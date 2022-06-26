@@ -136,7 +136,8 @@ export function HealthcareServicesPage(props){
         lastModified: -1
       }
     },
-    healthcareServiceChecklistMode: false
+    healthcareServiceChecklistMode: false,
+    showFhirIds: false
   };
 
   
@@ -178,6 +179,9 @@ export function HealthcareServicesPage(props){
 
   data.healthcareServicesPageIndex = useTracker(function(){
     return Session.get('HealthcareServicesTable.healthcareServicesPageIndex')
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
@@ -242,6 +246,7 @@ export function HealthcareServicesPage(props){
           count={data.healthcareServices.length}
           hideCheckbox={data.hideCheckbox}
           onRowClick={ handleRowClick.bind(this) }
+          hideFhirId={!data.showFhirIds}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -271,6 +276,7 @@ export function HealthcareServicesPage(props){
               selectedHealthcareServiceId={ data.selectedHealthcareServiceId }
               onRowClick={ handleRowClick.bind(this) }
               hideCheckbox={data.hideCheckbox}
+              hideFhirId={!data.showFhirIds}
               hideIdentifier={true} 
               hideActionIcons={true}
               hideStatus={false}

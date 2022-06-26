@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { 
+import {  
   Button,
   Checkbox,
   Table,
@@ -92,6 +92,8 @@ function InsurancePlansTable(props){
     hideCoverageType,
     hideCoverageBenefitType,
     hideNumEndpoints,
+    hideFhirId,
+    hideBarcode,
 
     onCellClick,
     onRowClick,
@@ -127,7 +129,7 @@ function InsurancePlansTable(props){
     switch (formFactorLayout) {
       case "phone":
         hideActionIcons = true;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideStatus = false;
         hideType = false;
         hideName = false;
@@ -141,7 +143,7 @@ function InsurancePlansTable(props){
         break;
       case "tablet":
         hideActionIcons = true;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideStatus = false;
         hideType = false;
         hideName = false;
@@ -155,7 +157,7 @@ function InsurancePlansTable(props){
         break;
       case "web":
         hideActionIcons = false;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideStatus = false;
         hideType = false;
         hideName = false;
@@ -169,7 +171,7 @@ function InsurancePlansTable(props){
         break;
       case "desktop":
         hideActionIcons = true;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideStatus = false;
         hideType = false;
         hideName = false;
@@ -183,7 +185,7 @@ function InsurancePlansTable(props){
         break;
       case "videowall":
         hideActionIcons = true;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideStatus = false;
         hideType = false;
         hideName = false;
@@ -267,6 +269,20 @@ function InsurancePlansTable(props){
   // ------------------------------------------------------------------------
   // Column Rendering
 
+  function renderFhirId(fhirId){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>{ fhirId }</TableCell>
+      );
+    }
+  }
+  function renderFhirIdHeader(){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>FHIR ID</TableCell>
+      );
+    }
+  }
   function renderCheckboxHeader(){
     if (!hideCheckbox) {
       return (
@@ -566,7 +582,7 @@ function InsurancePlansTable(props){
           { renderCheckbox() }
           { renderActionIcons(insurancePlansToRender[i]) }
           { renderStatus(insurancePlansToRender[i].status) }
-
+          { renderFhirId(insurancePlansToRender[i].id) }
           { renderType(insurancePlansToRender[i].type) }
           { renderName(insurancePlansToRender[i].name) }
           { renderAlias(insurancePlansToRender[i].alias) }
@@ -590,7 +606,7 @@ function InsurancePlansTable(props){
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
             { renderStatusHeader() }
-
+            { renderFhirIdHeader() }
             { renderTypeHeader() }
             { renderNameHeader() }
             { renderAliasHeader() }
@@ -634,6 +650,7 @@ InsurancePlansTable.propTypes = {
   hideCoverageType: PropTypes.bool,
   hideCoverageBenefitType: PropTypes.bool,
   hideNumEndpoints: PropTypes.bool,
+  hideFhirId: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -673,6 +690,8 @@ InsurancePlansTable.defaultProps = {
   hideCoverageType: false,
   hideCoverageBenefitType: false,
   hideNumEndpoints: false,
+  hideFhirId: true,
+
   checklist: true,
   selectedInsurancePlanId: '',
   multiline: false,

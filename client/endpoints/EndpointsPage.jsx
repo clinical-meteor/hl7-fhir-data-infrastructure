@@ -272,7 +272,7 @@ export function EndpointsPage(props){
               endpoints={ data.endpoints }
               count={data.endpoints.length}
               selectedEndpointId={ data.selectedEndpointId }
-              hideId={!data.showFhirIds}
+              hideFhirId={!data.showFhirIds}
               hideIdentifier={true} 
               hideCheckbox={data.hideCheckbox}
               hideActionIcons={true}

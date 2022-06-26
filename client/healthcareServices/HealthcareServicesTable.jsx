@@ -94,7 +94,9 @@ function HealthcareServicesTable(props){
     hideLocationDisplay,
     hideProvidedBy,
     hideNumEndpoints,
-  
+    hideFhirId,
+    hideBarcode,
+    
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -128,7 +130,7 @@ function HealthcareServicesTable(props){
     switch (formFactorLayout) {
       case "phone":
         hideActionIcons = false;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideCategory = false;
         hideType = false;
         hideSpecialty = false;
@@ -139,7 +141,7 @@ function HealthcareServicesTable(props){
         break;
       case "tablet":
         hideActionIcons = false;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideCategory = false;
         hideType = false;
         hideSpecialty = false;
@@ -150,7 +152,7 @@ function HealthcareServicesTable(props){
         break;
       case "web":
         hideActionIcons = false;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideCategory = false;
         hideType = false;
         hideSpecialty = false;
@@ -161,7 +163,7 @@ function HealthcareServicesTable(props){
         break;
       case "desktop":
         hideActionIcons = false;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideCategory = false;
         hideType = false;
         hideSpecialty = false;
@@ -172,7 +174,7 @@ function HealthcareServicesTable(props){
         break;
       case "videowall":
         hideActionIcons = false;
-        hideBarcode = true;
+        // hideBarcode = true;
         hideCategory = false;
         hideType = false;
         hideSpecialty = false;
@@ -273,6 +275,20 @@ function HealthcareServicesTable(props){
               defaultChecked={true}
             />
         </TableCell>
+      );
+    }
+  }
+  function renderFhirId(fhirId){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>{ fhirId }</TableCell>
+      );
+    }
+  }
+  function renderFhirIdHeader(){
+    if (!hideFhirId) {
+      return (
+        <TableCell className='fhirId'>FHIR ID</TableCell>
       );
     }
   }
@@ -479,6 +495,8 @@ function HealthcareServicesTable(props){
         >
           { renderCheckbox() }
           { renderActionIcons(healthcareServicesToRender[i]) }
+          { renderFhirId(healthcareServicesToRender[i].id) }
+
           { renderCategory(healthcareServicesToRender[i].category) }
           { renderType(healthcareServicesToRender[i].type) }
           { renderSpecialty(healthcareServicesToRender[i].specialty) }
@@ -499,6 +517,7 @@ function HealthcareServicesTable(props){
           <TableRow>
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
+            { renderFhirIdHeader() }
             { renderCategoryHeader() }
             { renderTypeHeader() }
             { renderSpecialtyHeader() }
@@ -557,6 +576,7 @@ HealthcareServicesTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
   hideBarcode: true,
+  hideFhirId: true,
 
   hideCategory: false,
   hideType: false,

@@ -2,7 +2,7 @@ import {
   Grid, 
   Container,
   Divider,
-  Card,
+  Card, 
   CardHeader,
   CardContent,
   Button,
@@ -141,6 +141,7 @@ export function InsurancePlansPage(props){
       }
     },
     insurancePlanChecklistMode: false,
+    showFhirIds: false,
     jinsurancePlansPageIndex: 0
   };
 
@@ -179,6 +180,9 @@ export function InsurancePlansPage(props){
   }, [])
   data.insurancePlansPageIndex = useTracker(function(){
     return Session.get('InsurancePlansTable.insurancePlansPageIndex')
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
@@ -319,6 +323,7 @@ export function InsurancePlansPage(props){
           selectedInsurancePlanId={ data.selectedInsurancePlanId }
           onRowClick={ handleRowClick.bind(this) }
           hideCheckbox={data.hideCheckbox}
+          hideFhirId={!data.showFhirIds}
           hideStatus={false}
           hideName={false}
           hideTitle={false}
@@ -345,6 +350,7 @@ export function InsurancePlansPage(props){
               insurancePlans={ data.insurancePlans }
               count={data.organizations.length}
               hideCheckbox={data.hideCheckbox}
+              hideFhirId={!data.showFhirIds}
               hideIdentifier={true} 
               hideActionIcons={true}
               hideStatus={false}
