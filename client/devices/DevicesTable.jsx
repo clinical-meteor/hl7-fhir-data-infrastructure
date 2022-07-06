@@ -107,6 +107,7 @@ function DevicesTable(props){
     hideEnteredInError,
     formFactorLayout,
 
+    count,
     page,
     onSetPage,
 
@@ -541,7 +542,9 @@ DevicesTable.propTypes = {
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,
   hideEnteredInError: PropTypes.bool,
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+
+  count: PropTypes.number,
 };
 
 DevicesTable.defaultProps = {
@@ -560,7 +563,8 @@ DevicesTable.defaultProps = {
   disablePagination: false,
   hideActionButton: true,
   rowsPerPage: 5,
-  tableRowSize: 'medium'
+  tableRowSize: 'medium',
+  count: 0
 }
 
 export default DevicesTable;

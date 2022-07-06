@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Grid, 
   Container,
@@ -11,16 +14,12 @@ import {
 } from '@material-ui/core'; 
 
 
-
 // import RiskAssessmentDetail from './RiskAssessmentDetail';
 import RiskAssessmentsTable from './RiskAssessmentsTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-
-import React, { useEffect, useState }  from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
 
@@ -47,9 +46,11 @@ Session.setDefault('riskAssessmentSearchFilter', '');
 Session.setDefault('riskAssessmentSearchQuery', {});
 Session.setDefault('riskAssessmentDialogOpen', false);
 Session.setDefault('selectedRiskAssessmentId', false);
-Session.setDefault('fhirVersion', 'v1.0.2');
-
-
+Session.setDefault('selectedRiskAssessment', false);
+Session.setDefault('RiskAssessmentsPage.onePageLayout', true)
+Session.setDefault('RiskAssessmentsPage.defaultQuery', {})
+Session.setDefault('RiskAssessmentsTable.hideCheckbox', true)
+Session.setDefault('RiskAssessmentsTable.riskAssessmentsIndex', 0)
 
 
 //===============================================================================================================
@@ -156,6 +157,9 @@ export function RiskAssessmentsPage(props){
   data.riskAssessment = useTracker(function(){
     return Session.get('riskAssessmentFormData');
   })
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('RiskAssessmentsTable.hideCheckbox');
+  }, [])
   data.riskAssessmentSearchFilter = useTracker(function(){
     return Session.get('riskAssessmentSearchFilter');
   })
@@ -175,6 +179,15 @@ export function RiskAssessmentsPage(props){
   data.riskAssessments = useTracker(function(){
     return RiskAssessments.find().fetch()
   })
+  data.riskAssessmentsIndex = useTracker(function(){
+    return Session.get('RiskAssessmentsTable.riskAssessmentsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
 
   // ???????
@@ -193,12 +206,6 @@ export function RiskAssessmentsPage(props){
   //---------------------------------------------------------------------------------------------------------
   // Lifecycle
 
-  useEffect(function(){
-  //   if(get(this, 'props.params.riskAssessmentId')){
-  //     Session.set('selectedRiskAssessmentId', get(this, 'props.params.riskAssessmentId'))
-  //     Session.set('riskAssessmentPageTabIndex', 2);
-  //   }
-  }, [])
 
   function handleTabChange(index){
     Session.set('riskAssessmentPageTabIndex', index);
@@ -229,7 +236,7 @@ export function RiskAssessmentsPage(props){
     let searchForm = state.searchForm;
     searchForm.category = value;
 
-    setState({searchForm: searchForm})
+    // setState({searchForm: searchForm})
   }
   function updateFormData(formData, field, textValue){
     if(process.env.NODE_ENV === "test") console.log("RiskAssessmentDetail.updateFormData", formData, field, textValue);
@@ -279,8 +286,8 @@ export function RiskAssessmentsPage(props){
     if(process.env.NODE_ENV === "test") console.log("searchQuery", searchQuery);
     if(process.env.NODE_ENV === "test") console.log("searchForm", searchForm);
 
-    setState({searchQuery: searchQuery})
-    setState({searchForm: searchForm})
+    // setState({searchQuery: searchQuery})
+    // setState({searchForm: searchForm})
   }
 
 
@@ -303,7 +310,7 @@ export function RiskAssessmentsPage(props){
     />,
   ];
 
-  let [riskAssessmentsIndex, setRiskAssessmentsIndex] = setState(0);
+  // let [riskAssessmentsIndex, setRiskAssessmentsIndex] = setState(0);
 
   let riskAssessmentPageContent;
   if(true){
@@ -318,7 +325,7 @@ export function RiskAssessmentsPage(props){
       onSetPage={function(index){
         setRiskAssessmentsIndex(index)
       }}  
-      page={riskAssessmentsIndex}
+      page={data.riskAssessmentsIndex}
       sort="authoredOn"
     />
   }
@@ -328,18 +335,31 @@ export function RiskAssessmentsPage(props){
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+
+  let layoutContent;
+  if(data.riskAssessments.length > 0){
+    layoutContent = <StyledCard height="auto" width={cardWidth + 'px'} margin={20} >
+      <CardHeader title={ data.riskAssessments.length + " RiskAssessments"} />
+      <CardContent>
+        { riskAssessmentPageContent }
+      </CardContent>
+    </StyledCard>
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
 
   return (
       <PageCanvas id="riskAssessmentsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height="auto" width={cardWidth + 'px'} margin={20} >
-          <CardHeader
-            title={ data.riskAssessments.length + " RiskAssessments"}
-          />
-          <CardContent>
-            { riskAssessmentPageContent }
-          </CardContent>
-        </StyledCard>
-        
+        { layoutContent }        
       </PageCanvas>
   );
 

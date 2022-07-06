@@ -1,14 +1,16 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   CardHeader,
   CardContent,
+  Container,
   Grid
 } from '@material-ui/core';
 import styled from 'styled-components';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
 
 import MeasureDetail from './MeasureDetail';
 import MeasuresTable from './MeasuresTable';
@@ -31,7 +33,9 @@ Session.setDefault('selectedMeasure', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('measuresArray', []);
 Session.setDefault('MeasuresPage.onePageLayout', true)
-
+Session.setDefault('MeasuresPage.defaultQuery', {})
+Session.setDefault('MeasuresTable.hideCheckbox', true)
+Session.setDefault('MeasuresTable.measuresIndex', 0)
 
 //===========================================================================
 // THEMING
@@ -122,6 +126,9 @@ export function MeasuresPage(props){
   data.onePageLayout = useTracker(function(){
     return Session.get('MeasuresPage.onePageLayout');
   }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('MeasuresTable.hideCheckbox');
+  }, [])
   data.selectedMeasureId = useTracker(function(){
     return Session.get('selectedMeasureId');
   }, [])
@@ -131,7 +138,15 @@ export function MeasuresPage(props){
   data.measures = useTracker(function(){
     return Measures.find().fetch();
   }, [])
-
+  data.measuresIndex = useTracker(function(){
+    return Session.get('MeasuresTable.measuresIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
   function onCancelUpsertMeasure(context){
     Session.set('measurePageTabIndex', 1);
@@ -234,111 +249,123 @@ export function MeasuresPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
-  let [measuresPageIndex, setMeasuresPageIndex] = setState(0);
 
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={data.measures.length + " Measures"} />
-      <CardContent>
-
-        <MeasuresTable 
-          measures={ data.measures }
-          hideCheckbox={true} 
-          hideActionIcons={true}
-          hideIdentifier={true} 
-          hideName={false} 
-          hideTitle={false} 
-          hideDescription={true} 
-          hideApprovalDate={false}
-          hideLastReviewed={false}
-          hideVersion={false}
-          hideStatus={false}
-          hideAuthor={true}
-          hidePublisher={false}
-          hideReviewer={false}
-          hideEditor={false}
-          hideEndorser={false}
-          hideType={false}
-          hideRiskAdjustment={true}
-          hideRateAggregation={true}
-          hideScoring={false}
-          hideBarcode={false}
-          paginationLimit={10}     
-          onRowClick={ handleRowClick.bind(this) }
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          onSetPage={function(index){
-            setMeasuresPageIndex(index)
-          }}        
-          page={measuresPageIndex}                  
-          count={data.measuresCount}
-          />
-        </CardContent>
-      </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.measures.length + " Measures"} />
-          <CardContent>
-            <MeasuresTable 
-              measures={ data.measures }
-              selectedMeasureId={ data.selectedMeasureId }
-              hideIdentifier={true} 
-              hideCheckbox={true} 
-              hideApprovalDate={false}
-              hideLastReviewed={false}
-              hideVersion={false}
-              hideStatus={false}
-              hidePublisher={true}
-              hideReviewer={true}
-              hideScoring={true}
-              hideEndorser={true}
-              paginationLimit={10}            
-              hideActionIcons={true}
-              hideBarcode={true}
-              onRowClick={ handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              onSetPage={function(index){
-                setMeasuresPageIndex(index)
-              }}                 
-              page={measuresPageIndex}                               
-              count={data.measuresCount}
-              />
+  let layoutContent;
+  if(data.measures.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <StyledCard height="auto" margin={20} >
+        <CardHeader title={data.measures.length + " Measures"} />
+        <CardContent>
+  
+          <MeasuresTable 
+            measures={ data.measures }
+            hideCheckbox={true} 
+            hideActionIcons={true}
+            hideIdentifier={true} 
+            hideName={false} 
+            hideTitle={false} 
+            hideDescription={true} 
+            hideApprovalDate={false}
+            hideLastReviewed={false}
+            hideVersion={false}
+            hideStatus={false}
+            hideAuthor={true}
+            hidePublisher={false}
+            hideReviewer={false}
+            hideEditor={false}
+            hideEndorser={false}
+            hideType={false}
+            hideRiskAdjustment={true}
+            hideRateAggregation={true}
+            hideScoring={false}
+            hideBarcode={false}
+            paginationLimit={10}     
+            onRowClick={ handleRowClick.bind(this) }
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onSetPage={function(index){
+              setMeasuresPageIndex(index)
+            }}        
+            page={data.measuresIndex}                  
+            count={data.measuresCount}
+            />
           </CardContent>
         </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureId }</h1>
-          {/* <CardHeader title={data.selectedMeasureId } className="helveticas barcode" /> */}
-          <CardContent>
+    } else {
+      layoutContent = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} >
+            <CardHeader title={data.measures.length + " Measures"} />
             <CardContent>
-              <MeasureDetail 
-                id='measureDetails' 
-                displayDatePicker={true} 
-                displayBarcodes={false}
-                measure={ data.selectedMeasure }
-                measureId={ data.selectedMeasureId } 
-                showMeasureInputs={true}
-                showHints={false}
-                // onInsert={  onInsert }
-                // onDelete={  onDeleteMeasure }
-                // onUpsert={  onUpsertMeasure }
-                // onCancel={  onCancelUpsertMeasure } 
-              />
+              <MeasuresTable 
+                measures={ data.measures }
+                selectedMeasureId={ data.selectedMeasureId }
+                hideIdentifier={true} 
+                hideCheckbox={true} 
+                hideApprovalDate={false}
+                hideLastReviewed={false}
+                hideVersion={false}
+                hideStatus={false}
+                hidePublisher={true}
+                hideReviewer={true}
+                hideScoring={true}
+                hideEndorser={true}
+                paginationLimit={10}            
+                hideActionIcons={true}
+                hideBarcode={true}
+                onRowClick={ handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                onSetPage={function(index){
+                  setMeasuresPageIndex(index)
+                }}                 
+                page={data.measuresIndex}                               
+                count={data.measuresCount}
+                />
             </CardContent>
-          </CardContent>
-        </StyledCard>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureId }</h1>
+            {/* <CardHeader title={data.selectedMeasureId } className="helveticas barcode" /> */}
+            <CardContent>
+              <CardContent>
+                <MeasureDetail 
+                  id='measureDetails' 
+                  displayDatePicker={true} 
+                  displayBarcodes={false}
+                  measure={ data.selectedMeasure }
+                  measureId={ data.selectedMeasureId } 
+                  showMeasureInputs={true}
+                  showHints={false}
+                  // onInsert={  onInsert }
+                  // onDelete={  onDeleteMeasure }
+                  // onUpsert={  onUpsertMeasure }
+                  // onCancel={  onCancelUpsertMeasure } 
+                />
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
       </Grid>
-    </Grid>
+    }  
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>  
   }
 
   return (
     <PageCanvas id="measuresPage" headerHeight={headerHeight}>
       <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

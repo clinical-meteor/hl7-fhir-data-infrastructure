@@ -98,9 +98,11 @@ function MedicationsTable(props){
     dateFormat,
     showMinutes,
     formFactorLayout,
+    disablePagination,
 
     selectedMedicationId,
 
+    count,
     page,
     onSetPage,
 
@@ -431,6 +433,7 @@ MedicationsTable.propTypes = {
   onActionButtonClick: PropTypes.func,
   onSetPage: PropTypes.func,
 
+  count: PropTypes.number,
   page: PropTypes.number,
   hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
@@ -448,10 +451,12 @@ MedicationsTable.defaultProps = {
   tableRowSize: 'medium',
   rowsPerPage: 5,
   dateFormat: "YYYY-MM-DD hh:mm:ss",
+  disablePagination: false,
   hideCheckbox: true,
   hideActionIcons: true,
   hideIdentifier: true,  
-  medications: []
+  medications: [],
+  count: 0
 }
 
 

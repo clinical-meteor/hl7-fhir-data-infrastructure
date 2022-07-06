@@ -98,7 +98,7 @@ Session.setDefault('sortableItems', []);
 // Main Component  
 
 
-function QuestionnaireExpansionPanels(props){
+export function QuestionnaireExpansionPanels(props){
 
   let { 
     children, 

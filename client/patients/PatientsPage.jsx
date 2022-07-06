@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
   Card,
   CardHeader,
   CardContent,
+  Container,
   Tab, 
   Tabs,
   Typography,
@@ -14,8 +16,6 @@ import PropTypes from 'prop-types';
 
 import { PatientsTable, PatientDetail, PageCanvas, StyledCard } from 'fhir-starter';
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
-import { useTracker } from 'meteor/react-meteor-data';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
@@ -116,8 +116,14 @@ let defaultPatient = {
 Session.setDefault('patientFormData', defaultPatient);
 Session.setDefault('patientSearchFilter', '');
 Session.setDefault('selectedPatientId', '');
+Session.setDefault('selectedPatient', '');
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('patientPageTabIndex', 0)
+Session.setDefault('PatientsPage.onePageLayout', true)
+Session.setDefault('PatientsPage.defaultQuery', {})
+Session.setDefault('PatientsTable.hideCheckbox', true)
+Session.setDefault('PatientsTable.patientsIndex', 0)
+
 
 //===========================================================================
 // MAIN COMPONENT  
@@ -128,11 +134,17 @@ export function PatientsPage(props){
     selectedPatientId: '',
     selectedPatient: null,
     patients: [],
-    onePageLayout: true
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    organizationsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
     return Session.get('PatientsPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('PatientsTable.hideCheckbox');
   }, [])
   data.selectedPatientId = useTracker(function(){
     return Session.get('selectedPatientId');
@@ -143,82 +155,72 @@ export function PatientsPage(props){
   data.patients = useTracker(function(){
     return Patients.find().fetch();
   }, [])
-
-  // function onTableRowClick(patientId){
-  //   console.log('onTableRowClick', patientId);
-
-  //   Session.set('selectedPatientId', patientId);
-  //   Session.set('selectedPatient', Patients.findOne({id: patientId}));
-
-  //   if(has(Meteor, 'settings.public.modules.fhir.Patient.openUrlOnRowClick')){
-  //     props.history.replace(get(Meteor, 'settings.public.modules.fhir.Patient.openUrlOnRowClick', '/'))
-  //   }
-  // }
-
-  // Patients.find().forEach(function(patient){
-  //   data.dataCursors.push({
-  //     Patients: (typeof Patients !== "undefined") ? Patients.find({id: patient.id}).count() : 0,
-  //     AllergyIntolerances: (typeof AllergyIntolerances !== "undefined") ? AllergyIntolerances.find({id: patient.id}).count() : 0,
-  //     Conditions: (typeof Conditions !== "undefined") ? Conditions.find({id: patient.id}).count() : 0,
-  //     CarePlans: (typeof CarePlans !== "undefined") ? CarePlans.find({id: patient.id}).count() : 0,
-  //     Devices: (typeof Devices !== "undefined") ? Devices.find({id: patient.id}).count() : 0,
-  //     Encounters: (typeof Encounters !== "undefined") ? Encounters.find({'patient.reference': 'Patient/' + patient.id}).count() : 0,
-  //     Immunizations: (typeof Immunizations !== "undefined") ? Immunizations.find({id: patient.id}).count() : 0,
-  //     Medications: (typeof Medications !== "undefined") ? Medications.find({id: patient.id}).count() : 0,
-  //     MedicationOrders: (typeof MedicationOrders !== "undefined") ? MedicationOrders.find({id: patient.id}).count() : 0,
-  //     MedicationStatements: (typeof MedicationStatements !== "undefined") ? MedicationStatements.find({id: patient.id}).count() : 0,
-  //     Observations: (typeof Observations !== "undefined") ? Observations.find({'subject.reference': 'Patient/' + patient.id}).count() : 0,
-  //     Organizations: (typeof Organizations !== "undefined") ? Organizations.find({id: patient.id}).count() : 0,
-  //     Persons: (typeof Persons !== "undefined") ? Persons.find({id: patient.id}).count() : 0,
-  //     Practitioners: (typeof Practitioners !== "undefined") ? Practitioners.find({id: patient.id}).count() : 0,
-  //     RelatedPersons: (typeof RelatedPersons !== "undefined") ? RelatedPersons.find({id: patient.id}).count() : 0,
-  //     Procedures: (typeof Procedures !== "undefined") ? Procedures.find({'subject.reference': 'Patient/' + patient.id}).count() : 0
-  //   })
-  // })
-
-  // const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 25);
+  data.patientsIndex = useTracker(function(){
+    return Session.get('PatientsTable.patientsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
   
   let cardWidth = window.innerWidth - paddingWidth;
-  
-  let [patientsIndex, setPatientsIndex] = setState(0);
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+
+
+  let layoutContent;
+  if(data.patients.length > 0){
+    layoutContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+      <CardHeader title={data.patients.length + " Patients"} />
+      <CardContent>
+        <PatientsTable 
+          noDataMessagePadding={100}
+          patients={ data.patients }
+          count={data.patients.length}
+          rowClickMode="id"
+          onRowClick={function(patientId){
+            console.log('onTableRowClick', patientId);
+
+            Session.set('selectedPatientId', patientId);
+            Session.set('selectedPatient', Patients.findOne({id: patientId}));
+
+            console.log('openUrlOnRowClick', get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick', ''))
+            if(get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick')){
+              props.history.replace(get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick', '/'))
+            }
+          }}
+          onSetPage={function(index){
+            setPatientsIndex(index)
+          }}
+          page={data.patientsIndex}
+          formFactorLayout={formFactor}    
+          rowsPerPage={LayoutHelpers.calcTableRows()}      
+          logger={window.logger ? window.logger : null}
+          size="medium"
+        />   
+      </CardContent>
+    </StyledCard>
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
 
   return (
     <PageCanvas id="patientsPageClass" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.patients.length + " Patients"} />
-          <CardContent>
-            <PatientsTable 
-              noDataMessagePadding={100}
-              patients={ data.patients }
-              count={data.patients.length}
-              rowClickMode="id"
-              onRowClick={function(patientId){
-                console.log('onTableRowClick', patientId);
-
-                Session.set('selectedPatientId', patientId);
-                Session.set('selectedPatient', Patients.findOne({id: patientId}));
-
-                console.log('openUrlOnRowClick', get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick', ''))
-                if(get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick')){
-                  props.history.replace(get(Meteor, 'settings.public.modules.fhir.Patients.openUrlOnRowClick', '/'))
-                }
-              }}
-              onSetPage={function(index){
-                setPatientsIndex(index)
-              }}
-              page={patientsIndex}
-              formFactorLayout={formFactor}    
-              rowsPerPage={LayoutHelpers.calcTableRows()}      
-              logger={window.logger ? window.logger : null}
-            />   
-          </CardContent>
-        </StyledCard>                
-
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );
