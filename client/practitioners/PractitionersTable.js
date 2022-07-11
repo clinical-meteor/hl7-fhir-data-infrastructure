@@ -104,6 +104,7 @@ function PractitionersTable(props){
     hideQualificationCode,
     hideQualificationStart,
     hideQualificationEnd,
+    hideSpecialty,
   
     onCellClick,
     onRowClick,
@@ -567,7 +568,21 @@ function PractitionersTable(props){
   }
 
 
-  function renderBarcode(id){
+  function renderSpecialty(specialtyCode){
+    if (!hideSpecialty) {
+      return (
+        <TableCell><span className="specialty">{specialtyCode}</span></TableCell>
+      );
+    }
+  }
+  function renderSpecialtyHeader(){
+    if (!hideSpecialty) {
+      return (
+        <TableCell>Specialty</TableCell>
+      );
+    }
+  }
+    function renderBarcode(id){
     if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helveticas">{id}</span></TableCell>
@@ -620,7 +635,7 @@ function PractitionersTable(props){
       }
       logger.trace('practitionersToRender[i]', practitionersToRender[i])
       tableRows.push(
-        <TableRow className="practitionerRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, practitionersToRender[i].id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
+        <TableRow className="practitionerRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, practitionersToRender[i].id)} hover={true} selected={selected} >            
           { renderCheckbox() }
           { renderActionIcons(practitionersToRender[i]) }
           { renderIdentifier(practitionersToRender[i].identifier ) }
@@ -641,6 +656,7 @@ function PractitionersTable(props){
           { renderQualificationStart(practitionersToRender[i].qualificationStart) }
           { renderQualificationEnd(practitionersToRender[i].qualificationEnd) }
 
+          { renderSpecialty(practitionersToRender[i].specialtyCode)}
           { renderBarcode(practitionersToRender[i]._id)}
         </TableRow>
       );    
@@ -675,7 +691,8 @@ function PractitionersTable(props){
             { renderQualificationCodeHeader() }
             { renderQualificationStartHeader() }
             { renderQualificationEndHeader() }
-
+            
+            { renderSpecialtyHeader() }
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -717,6 +734,7 @@ PractitionersTable.propTypes = {
   hideQualificationCode:  PropTypes.bool,
   hideQualificationStart:  PropTypes.bool,
   hideQualificationEnd:  PropTypes.bool,
+  hideSpecialty:  PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -758,6 +776,7 @@ PractitionersTable.defaultProps = {
   hideQualificationStart: true,
   hideQualificationEnd: true,
   hideFullAddress: true,
+  hideSpecialty: true,
   page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium'

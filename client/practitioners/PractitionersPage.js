@@ -28,7 +28,7 @@ import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 
-import { get } from 'lodash';
+import { get } from 'lodash'; 
 
 //=============================================================================================================================================
 // TABS
@@ -76,7 +76,9 @@ export function PractitionersPage(props){
     hideCheckbox: true,
     showSystemIds: false,
     showFhirIds: false,
-    practitionersPageIndex: 0
+    practitionersPageIndex: 0,
+    currentUser: false,
+    isDisabled: true,
   };
 
   data.onePageLayout = useTracker(function(){
@@ -104,7 +106,16 @@ export function PractitionersPage(props){
   data.showFhirIds = useTracker(function(){
     return Session.get('showFhirIds');
   }, [])
-
+  data.currentUser = useTracker(function(){
+    return Session.get('currentUser');
+  }, [])
+  data.isDisabled = useTracker(function(){
+    if(Session.get('currentUser')){
+      return false;
+    } else {
+      return true;
+    }
+  }, [])
 
   function setPractitionersIndex(newIndex){
     Session.set('PractitionersTable.practitionersPageIndex', newIndex)
@@ -160,6 +171,10 @@ export function PractitionersPage(props){
                 hideBarcode={!data.showSystemIds}
                 hideFhirId={!data.showFhirIds}
                 hideQualification={true}
+                hideIssuer={true}
+                hideEmail={true}
+                hideAddressLine={true}
+                hideSpecialty={false}
                 selectedPractitionerId={ data.selectedPractitionerId }
                 onRowClick={ handleRowClick.bind(this) }
                 rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
