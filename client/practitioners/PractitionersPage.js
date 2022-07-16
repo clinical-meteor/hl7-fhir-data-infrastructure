@@ -156,37 +156,48 @@ export function PractitionersPage(props){
   }
 
   let cardWidth = window.innerWidth - paddingWidth;
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
-  // let [practitionersIndex, setPractitionersIndex] = setState(0);
+
+  let layoutContent;
+  if(data.practitioners.length > 0){
+    layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+      <CardHeader title={data.practitioners.length + ' Practitioners'} />
+      <CardContent>
+        <PractitionersTable 
+            practitioners={data.practitioners}
+            count={data.practitioners.length}
+            hideCheckbox={data.hideCheckbox}
+            hideBarcode={!data.showSystemIds}
+            hideFhirId={!data.showFhirIds}
+            hideQualification={true}
+            selectedPractitionerId={ data.selectedPractitionerId }
+            onRowClick={ handleRowClick.bind(this) }
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onSetPage={function(index){
+              setPractitionersIndex(index)
+            }}    
+            page={data.practitionersPageIndex}
+            size="medium"
+            />
+      </CardContent>
+      { blockchainTab }
+    </StyledCard>
+  } else {
+    layoutContainer = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Selected")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "Please import some vital sign data, and then select a biomarker type.")} 
+        />
+      </CardContent>
+    </Container>
+  }
 
   return (      
     <PageCanvas id="practitionersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-      <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.practitioners.length + ' Practitioners'} />
-          <CardContent>
-            <PractitionersTable 
-                practitioners={data.practitioners}
-                count={data.practitioners.length}
-                hideCheckbox={data.hideCheckbox}
-                hideBarcode={!data.showSystemIds}
-                hideFhirId={!data.showFhirIds}
-                hideQualification={true}
-                hideIssuer={true}
-                hideEmail={true}
-                hideAddressLine={true}
-                hideSpecialty={false}
-                selectedPractitionerId={ data.selectedPractitionerId }
-                onRowClick={ handleRowClick.bind(this) }
-                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-                onSetPage={function(index){
-                  setPractitionersIndex(index)
-                }}    
-                page={data.practitionersPageIndex}
-                size="medium"
-                />
-          </CardContent>
-          { blockchainTab }
-       </StyledCard>
+      { layoutContent }
     </PageCanvas>
   );
 }

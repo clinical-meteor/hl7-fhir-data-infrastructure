@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import ReactMixin  from 'react-mixin';
 import { useTracker } from 'meteor/react-meteor-data';
-import PropTypes from 'prop-types';
 
 import { 
   Grid, 
@@ -28,12 +26,6 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
-
-//=============================================================================================================================================
-// Session Variables
-
-Session.setDefault('fhirVersion', 'v1.0.2');
-Session.setDefault('selectedDeviceId', false);
 
 
 //=============================================================================================================================================
@@ -109,7 +101,18 @@ const muiTheme = createMuiTheme({
   }
 });
 
+//=============================================================================================================================================
+// Session Variables
 
+Session.setDefault('fhirVersion', 'v1.0.2');
+Session.setDefault('devicePageTabIndex', 1); 
+Session.setDefault('deviceSearchFilter', ''); 
+Session.setDefault('selectedDeviceId', false);
+Session.setDefault('selectedDevice', false)
+Session.setDefault('DevicesPage.onePageLayout', true)
+Session.setDefault('DevicesPage.defaultQuery', {})
+Session.setDefault('DevicesTable.hideCheckbox', true)
+Session.setDefault('DevicesTable.devicesIndex', 0)
 
 //=============================================================================================================================================
 // COMPONENTS
@@ -120,9 +123,19 @@ export function DevicesPage(props){
   let data = {
     selectedDeviceId: '',
     selectedDevice: false,
-    devices: []
+    devices: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    devicesIndex: 0
   };
 
+  data.onePageLayout = useTracker(function(){
+    return Session.get('DevicesPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('DevicesTable.hideCheckbox');
+  }, [])
 
   data.selectedDeviceId = useTracker(function(){
     return Session.get('selectedDeviceId');
@@ -133,6 +146,16 @@ export function DevicesPage(props){
   data.devices = useTracker(function(){
     return Devices.find().fetch()
   }, [])
+  data.devicesIndex = useTracker(function(){
+    return Session.get('DevicesTable.devicesIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
+
 
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
@@ -140,12 +163,12 @@ export function DevicesPage(props){
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
   
   let cardWidth = window.innerWidth - paddingWidth;
-  
-  let [devicesPageIndex, setDevicesPageIndex] = setState(0);
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
-  return (
-    <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-      <MuiThemeProvider theme={muiTheme} >
+
+  let layoutContent;
+  if(data.devices.length > 0){
+    layoutContent = <MuiThemeProvider theme={muiTheme} >
         <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
           <CardHeader title={data.devices.length + ' Devices'} />
           <CardContent>
@@ -157,11 +180,27 @@ export function DevicesPage(props){
               onSetPage={function(index){
                 setDevicesPageIndex(index)
               }}                
-              page={devicesPageIndex}
+              page={data.devicesIndex}
             />
           </CardContent>
       </StyledCard>
-      </MuiThemeProvider>
+    </MuiThemeProvider>
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
+
+
+  return (
+    <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+      { layoutContent }      
     </PageCanvas>
   );
 }

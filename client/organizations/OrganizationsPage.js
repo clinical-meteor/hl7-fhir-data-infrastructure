@@ -199,86 +199,101 @@ export function OrganizationsPage(props){
 
 
   let cardWidth = window.innerWidth - paddingWidth;
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
   
   
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <Grid container>
-      <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={data.organizations.length + " Organizations"} />
-      <CardContent>
-        <OrganizationsTable        
-          // formFactorLayout={formFactor}  
-          organizations={data.organizations}
-          count={data.organizations.length}
-          selectedOrganizationId={ data.selectedOrganizationId }
-          hideCheckbox={data.hideCheckbox}
-          hideActionIcons={true}
-          hideNumEndpoints={false}
-          hideIdentifier={true}
-          hideBarcode={!data.showSystemIds}
-          hideFhirId={!data.showFhirIds}
-          onRowClick={ handleRowClick.bind(this) }
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          onSetPage={function(index){
-            setOrganizationsIndex(index)
-          }}
-          page={data.organizationsIndex}
-          size="small"
-        />                                
-        </CardContent> 
-      </StyledCard>
-    </Grid>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.organizations.length + " Organizations"} />
-          <CardContent>
-            <OrganizationsTable
-              // formFactorLayout={formFactor}  
-              organizations={data.organizations}
-              count={data.organizations.length}
-              hideCheckbox={data.hideCheckbox}
-              hideBarcode={!data.showSystemIds}
-              hidePhone={true}
-              hideEmail={true}
-              hideActionIcons={true}
-              hideNumEndpoints={false}
-              hideIdentifier={true}
-              selectedOrganizationId={ data.selectedOrganizationId }
-              onRowClick={ handleRowClick.bind(this) }
-              onSetPage={function(index){
-                setOrganizationsIndex(index)
-              }}
-              page={data.organizationsIndex}
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              size="medium"
-            />              
-          </CardContent>
-        </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedOrganizationId }</h1>
-          <CardContent>
-            <CardContent>
-              <OrganizationDetail 
-                organizationId={data.selectedOrganizationId}
-                organization={data.selectedOrganization}
-              />
-            </CardContent>
-          </CardContent>
-        </StyledCard>
-      </Grid>
-    </Grid>
-  }
+  let layoutContent;
   
+  
+  if(data.organizations.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <Grid container>
+        <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+        <CardHeader title={data.organizations.length + " Organizations"} />
+        <CardContent>
+          <OrganizationsTable        
+            // formFactorLayout={formFactor}  
+            organizations={data.organizations}
+            count={data.organizations.length}
+            selectedOrganizationId={ data.selectedOrganizationId }
+            hideCheckbox={data.hideCheckbox}
+            hideActionIcons={true}
+            hideNumEndpoints={false}
+            hideIdentifier={true}
+            hideBarcode={!data.showSystemIds}
+            hideFhirId={!data.showFhirIds}
+            onRowClick={ handleRowClick.bind(this) }
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onSetPage={function(index){
+              setOrganizationsIndex(index)
+            }}
+            page={data.organizationsIndex}
+            size="small"
+          />                                
+          </CardContent> 
+        </StyledCard>
+      </Grid>
+    } else {
+      layoutContent = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+            <CardHeader title={data.organizations.length + " Organizations"} />
+            <CardContent>
+              <OrganizationsTable
+                // formFactorLayout={formFactor}  
+                organizations={data.organizations}
+                count={data.organizations.length}
+                hideCheckbox={data.hideCheckbox}
+                hideBarcode={!data.showSystemIds}
+                hidePhone={true}
+                hideEmail={true}
+                hideActionIcons={true}
+                hideNumEndpoints={false}
+                hideIdentifier={true}
+                selectedOrganizationId={ data.selectedOrganizationId }
+                onRowClick={ handleRowClick.bind(this) }
+                onSetPage={function(index){
+                  setOrganizationsIndex(index)
+                }}
+                page={data.organizationsIndex}
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                size="medium"
+              />              
+            </CardContent>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedOrganizationId }</h1>
+            <CardContent>
+              <CardContent>
+                <OrganizationDetail 
+                  organizationId={data.selectedOrganizationId}
+                  organization={data.selectedOrganization}
+                />
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+      </Grid>
+    }
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
+
   return (
     <PageCanvas id="organizationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

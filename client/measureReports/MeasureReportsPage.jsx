@@ -225,47 +225,17 @@ export function MeasureReportsPage(props){
     Session.set('currentSelection', measureReport);
   }
 
-
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
 
-  let [measureReportsPageIndex, setMeasureReportsPageIndex] = setState(0);
-
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={data.measureReports.length + " Measure Reports"} />
-      <CardContent>
-        <MeasureReportsTable 
-          hideIdentifier={true} 
-          hideCheckboxes={true} 
-          hideSubjects={false}
-          noDataMessagePadding={100}
-          actionButtonLabel="Send"
-          measureReports={ data.measureReports }
-          count={ data.measureReports.length }
-          selectedMeasureReportId={ data.selectedMeasureReportId }
-          hideMeasureUrl={false}
-          paginationLimit={10}
-          hideClassCode={false}
-          hideReasonCode={false}
-          hideReason={false}
-          hideHistory={false}
-          onRowClick={ handleRowClick.bind(this) }
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          onSetPage={function(index){
-            setMeasureReportsPageIndex(index)
-          }}           
-          page={measureReportsPageIndex}               
-          tableRowSize="medium"
-        />
-        </CardContent>
-      </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-    <Grid item lg={6}>
-      <StyledCard height="auto" margin={20} >
+  let layoutContent;
+  
+  if(data.measureReports.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <StyledCard height="auto" margin={20} >
         <CardHeader title={data.measureReports.length + " Measure Reports"} />
         <CardContent>
           <MeasureReportsTable 
@@ -277,58 +247,101 @@ export function MeasureReportsPage(props){
             measureReports={ data.measureReports }
             count={ data.measureReports.length }
             selectedMeasureReportId={ data.selectedMeasureReportId }
-            paginationLimit={10}
             hideMeasureUrl={false}
-            hideSubjects={true}
+            paginationLimit={10}
             hideClassCode={false}
             hideReasonCode={false}
             hideReason={false}
             hideHistory={false}
-            hideBarcode={true}
-            hideNumerator={true}
-            hideDenominator={true}
             onRowClick={ handleRowClick.bind(this) }
             rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
             onSetPage={function(index){
               setMeasureReportsPageIndex(index)
-            }}          
-            page={measureReportsPageIndex}                               
+            }}           
+            page={measureReportsPageIndex}               
             tableRowSize="medium"
-            />
-        </CardContent>
-      </StyledCard>
-    </Grid>
-    <Grid item lg={4}>
-      <StyledCard height="auto" margin={20}  scrollable>
-        <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureReportId }</h1>
-        <CardContent>
-          <CardContent>
-            <MeasureReportDetail 
-              id='measureReportDetails' 
-              displayDatePicker={true} 
-              displayBarcodes={false}
-              measureReport={ data.selectedMeasureReport }
-              measureReportId={ data.selectedMeasureReportId } 
-              showMeasureReportInputs={true}
-              showHints={false}
-              showPopulationCode={false}
-              // onInsert={  onInsert }
-              // onDelete={  onDeleteMeasureReport }
-              // onUpsert={  onUpsertMeasureReport }
-              // onCancel={  onCancelUpsertMeasureReport } 
-            />
-            
+          />
           </CardContent>
-        </CardContent>
-      </StyledCard>
+        </StyledCard>
+    } else {
+      layoutContent = <Grid container spacing={3}>
+      <Grid item lg={6}>
+        <StyledCard height="auto" margin={20} >
+          <CardHeader title={data.measureReports.length + " Measure Reports"} />
+          <CardContent>
+            <MeasureReportsTable 
+              hideIdentifier={true} 
+              hideCheckboxes={true} 
+              hideSubjects={false}
+              noDataMessagePadding={100}
+              actionButtonLabel="Send"
+              measureReports={ data.measureReports }
+              count={ data.measureReports.length }
+              selectedMeasureReportId={ data.selectedMeasureReportId }
+              paginationLimit={10}
+              hideMeasureUrl={false}
+              hideSubjects={true}
+              hideClassCode={false}
+              hideReasonCode={false}
+              hideReason={false}
+              hideHistory={false}
+              hideBarcode={true}
+              hideNumerator={true}
+              hideDenominator={true}
+              onRowClick={ handleRowClick.bind(this) }
+              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+              onSetPage={function(index){
+                setMeasureReportsPageIndex(index)
+              }}          
+              page={measureReportsPageIndex}                               
+              tableRowSize="medium"
+              />
+          </CardContent>
+        </StyledCard>
+      </Grid>
+      <Grid item lg={4}>
+        <StyledCard height="auto" margin={20}  scrollable>
+          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureReportId }</h1>
+          <CardContent>
+            <CardContent>
+              <MeasureReportDetail 
+                id='measureReportDetails' 
+                displayDatePicker={true} 
+                displayBarcodes={false}
+                measureReport={ data.selectedMeasureReport }
+                measureReportId={ data.selectedMeasureReportId } 
+                showMeasureReportInputs={true}
+                showHints={false}
+                showPopulationCode={false}
+                // onInsert={  onInsert }
+                // onDelete={  onDeleteMeasureReport }
+                // onUpsert={  onUpsertMeasureReport }
+                // onCancel={  onCancelUpsertMeasureReport } 
+              />
+              
+            </CardContent>
+          </CardContent>
+        </StyledCard>
+      </Grid>
     </Grid>
-  </Grid>
+    }
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
+
 
   return (
     <PageCanvas id="measureReportsPage" headerHeight={headerHeight}>
       <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

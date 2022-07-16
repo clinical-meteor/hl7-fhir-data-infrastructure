@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Grid, 
   Container,
@@ -10,9 +13,6 @@ import {
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
 
 import { StyledCard, PageCanvas } from 'fhir-starter';
 
@@ -30,6 +30,15 @@ import { get } from 'lodash';
 Session.setDefault('selectedConditionId', false);
 
 
+Session.setDefault('conditionPageTabIndex', 1); 
+Session.setDefault('conditionSearchFilter', ''); 
+Session.setDefault('selectedConditionId', false);
+Session.setDefault('selectedCondition', false)
+Session.setDefault('ConditionsPage.onePageLayout', true)
+Session.setDefault('ConditionsPage.defaultQuery', {})
+Session.setDefault('ConditionsTable.hideCheckbox', true)
+Session.setDefault('ConditionsTable.conditionsIndex', 0)
+
 
 //=============================================================================================================================================
 // MAIN COMPONENT
@@ -39,9 +48,19 @@ export function ConditionsPage(props){
   let data = {
     currentConditionId: '',
     selectedCondition: null,
-    conditions: []
+    conditions: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    conditionsIndex: 0
   };
 
+  data.onePageLayout = useTracker(function(){
+    return Session.get('ConditionsPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('ConditionsTable.hideCheckbox');
+  }, [])
   data.selectedConditionId = useTracker(function(){
     return Session.get('selectedConditionId');
   }, [])
@@ -50,6 +69,15 @@ export function ConditionsPage(props){
   }, [])
   data.conditions = useTracker(function(){
     return Conditions.find().fetch();
+  }, [])
+  data.conditionsIndex = useTracker(function(){
+    return Session.get('ConditionsTable.conditionsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
@@ -60,11 +88,9 @@ export function ConditionsPage(props){
   let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
   let noDataCardStyle = {};
 
-  let [conditionsPageIndex, setConditionsPageIndex] = setState(0);
-
-  let conditionContent;
+  let layoutContainer;
   if(data.conditions.length > 0){
-    conditionContent = <StyledCard height="auto" scrollable={true} margin={20}>
+    layoutContainer = <StyledCard height="auto" scrollable={true} margin={20}>
       <CardHeader title={ data.conditions.length + " Conditions"} />
       <CardContent>
         <ConditionsTable 
@@ -81,17 +107,17 @@ export function ConditionsPage(props){
           onSetPage={function(index){
             setConditionsPageIndex(index)
           }}        
-          page={conditionsPageIndex}
+          page={data.conditionsIndex}
         />
       </CardContent>
     </StyledCard>
   } else {
-    conditionContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+    layoutContainer = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
       <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
       <CardContent>
         <CardHeader 
-          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Selected")} 
-          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "Please import some vital sign data, and then select a biomarker type.")} 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
         />
       </CardContent>
     </Container>
@@ -99,7 +125,7 @@ export function ConditionsPage(props){
   
   return (
     <PageCanvas id="conditionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-      { conditionContent }
+      { layoutContainer }
     </PageCanvas>
   );
 }

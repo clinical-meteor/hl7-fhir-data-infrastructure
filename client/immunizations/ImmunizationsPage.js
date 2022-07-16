@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   Grid,
   Card,
@@ -18,9 +21,6 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { Session } from 'meteor/session';
 
-import React, { useState } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
-
 import { get } from 'lodash';
 
 
@@ -35,9 +35,19 @@ export function ImmunizationsPage(props){
   let data = {
     selectedImmunizationId: Session.get('selectedImmunizationId'),
     selectedImmunization: false,
-    immunizations: []
+    immunizations: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    immunizationsIndex: 0
   };
 
+  data.onePageLayout = useTracker(function(){
+    return Session.get('ImmunizationsPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('ImmunizationsTable.hideCheckbox');
+  }, [])
   data.selectedImmunizationId = useTracker(function(){
     return Session.get('selectedImmunizationId');
   }, [])
@@ -47,9 +57,18 @@ export function ImmunizationsPage(props){
   data.immunizations = useTracker(function(){
     return Immunizations.find().fetch();
   }, [])
+  data.immunizationsIndex = useTracker(function(){
+    return Session.get('ImmunizationsTable.immunizationsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
 
-  if(process.env.NODE_ENV === "test") console.log('ImmunizationsPage.render()', data);
+  // if(process.env.NODE_ENV === "test") console.log('ImmunizationsPage.render()', data);
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
@@ -60,11 +79,11 @@ export function ImmunizationsPage(props){
   let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
   let noDataCardStyle = {};
 
-  let [immunizationsPageIndex, setImmunizationsPageIndex] = setState(0);
+  // let [immunizationsPageIndex, setImmunizationsPageIndex] = useState(0);
 
-  let immunizationContent;
+  let layoutContent;
   if(data.immunizations.length > 0){
-    immunizationContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+    layoutContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
       <CardHeader title={data.immunizations.length + ' Immunizations'} />
       <CardContent>
         <Grid container>
@@ -73,30 +92,31 @@ export function ImmunizationsPage(props){
               immunizations={data.immunizations }    
               count={ data.immunizations.length }    
               formFactorLayout={formFactor}
+              rowsPerPage={LayoutHelpers.calcTableRows()} 
               onSetPage={function(index){
                 setImmunizationsPageIndex(index)
               }}    
-              page={immunizationsPageIndex}                      
+              page={data.immunizationsIndex}                      
             />
           </Grid>
         </Grid>
       </CardContent>
     </StyledCard>
   } else {
-    immunizationContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
       <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />
       <CardContent>
         <CardHeader 
-          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Selected")} 
-          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "Please import some immunization data.")} 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
         />
       </CardContent>
     </Container>
-  }
+}
 
   return (
     <PageCanvas id='immunizationsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>      
-      { immunizationContent }
+      { layoutContent }
     </PageCanvas>
   );
 }

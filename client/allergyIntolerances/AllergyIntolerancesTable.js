@@ -19,15 +19,7 @@ import {
   TablePagination,
 } from '@material-ui/core';
 
-// import { useTracker } from 'meteor/react-meteor-data';
-// import ReactMixin from 'react-mixin';
-
-import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
-
 import { get, set } from 'lodash';
-
-import moment from 'moment'
 
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
 
@@ -507,8 +499,7 @@ function AllergyIntolerancesTable(props){
   // Pagination
 
   let rows = [];
-  // const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+
 
 
   let paginationCount = 101;
@@ -533,7 +524,7 @@ function AllergyIntolerancesTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -563,7 +554,7 @@ function AllergyIntolerancesTable(props){
       let count = 0;  
 
       allergyIntolerances.forEach(function(allergyIntolerance){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           allergyIntolerancesToRender.push(FhirDehydrator.dehydrateAllergyIntolerance(allergyIntolerance));
         }
         count++;
@@ -656,155 +647,6 @@ function AllergyIntolerancesTable(props){
 }
 
 
-
-// export class AllergyIntolerancesTable extends React.Component {
-
-//   // getMeteorData() {
-//   //   let data = {
-//   //     style: {
-//   //       opacity: Session.get('globalOpacity')
-//   //     },
-//   //     selected: [],
-//   //     allergyIntolerances: [],
-//   //     hideToggle: false,
-//   //     hideIdentifier: false,
-//   //     hideDates: false,
-//   //     hideStatus: false,
-//   //     hideVerification: false,
-//   //     hideType: false,
-//   //     hideCategory: false,
-//   //     fhirVersion: 'v1.0.2'
-//   //   }
-
-//   //   // Data
-//   //   if(props.data){
-//   //     data.allergyIntolerances = props.data;
-//   //   } else {
-//   //     if(AllergyIntolerances.find().count() > 0){
-//   //       data.allergyIntolerances = AllergyIntolerances.find().fetch();
-//   //     }  
-//   //   }
-
-//   //   if(process.env.NODE_ENV === "test") console.log("AllergyIntolerancesTable[data]", data);
-//   //   return data;
-//   // };
-//   // removeRecord(_id){
-//   //   console.log('Remove allergy ', _id)
-//   //   AllergyIntolerances._collection.remove({_id: _id})
-//   // }
-//   // showSecurityDialog(allergy){
-//   //   console.log('showSecurityDialog', allergy)
-
-//   //   Session.set('securityDialogResourceJson', AllergyIntolerances.findOne(get(allergy, '_id')));
-//   //   Session.set('securityDialogResourceType', 'AllergyIntolerance');
-//   //   Session.set('securityDialogResourceId', get(allergy, '_id'));
-//   //   Session.set('securityDialogOpen', true);
-//   // }
-//   // renderTogglesHeader(){
-//   //   if (!hideToggle) {
-//   //     return (
-//   //       <TableHead className="toggle">Toggle</TableHead>
-//   //     );
-//   //   }
-//   // }
-//   // renderToggles(patientId ){
-//   //   if (!hideToggle) {
-//   //     return (
-//   //       <TableCell className="toggle">
-//   //           <Toggle
-//   //             defaultToggled={true}
-//   //           />
-//   //         </TableCell>
-//   //     );
-//   //   }
-//   // }
-
-//   // renderIdentifierHeader(){
-//   //   if (!hideIdentifier) {
-//   //     return (
-//   //       <TableHead className="identifier">Identifier</TableHead>
-//   //     );
-//   //   }
-//   // }
-//   // renderIdentifier(allergyIntolerance ){
-//   //   if (!hideIdentifier) {
-      
-//   //     return (
-//   //       <TableCell className='identifier'>{ get(allergyIntolerance, 'identifier[0].value') }</TableCell>       );
-//   //   }
-//   // }
-
-//   // rowClick(id){
-//   //   Session.set('allergyIntolerancesUpsert', false);
-//   //   Session.set('selectedAllergyIntolerance', id);
-//   //   Session.set('allergyIntolerancePageTabIndex', 2);
-//   // };
-//   render () {
-//     let tableRows = [];
-//     for (var i = 0; i < data.allergyIntolerances.length; i++) {
-//       var newRow = FhirDehydrator.dehydrateAllergyIntolerance(data.allergyIntolerance[i])
-      
-//       let rowStyle = {
-//         cursor: 'pointer'
-//       }
-//       if(get(data.allergyIntolerances[i], 'modifierExtension[0]')){
-//         rowStyle.color = "orange";
-//       }
-
-//       tableRows.push(
-//         <TableRow key={i} className="allergyIntoleranceRow" style={rowStyle} onClick={ rowClick.bind('this', data.allergyIntolerances[i]._id)} >
-//           { renderToggles(newRow) }
-//           { renderActionIcons(newRow) }
-//           { renderIdentifier(newRow.identifier) }
-
-//           { renderSubstance(newRow.substance) }
-//           { renderReaction(newRow.reaction) }
-//           { renderCriticality(newRow.criticality) }
-
-//           { renderType(newRow.type) }
-//           { renderCategory(newRow.category) }
-//           { renderPatientName(newRow.patientDisplay ) } 
-
-//           { renderRecorder(newRow.recorder ) } 
-//           { renderOnset(newRow.onset ) } 
-
-//           { renderClinicalStatus(newRow.clinicalStatus) }
-//           { renderVerificationStatus(newRow.verificationStatus) }
-//         </TableRow>
-//       )
-//     }
-
-//     // return(
-//     //   <Table id='allergyIntolerancesTable' hover >
-//     //     <TableHead>
-//     //       <TableRow>
-//     //         { renderTogglesHeader() }
-//     //         { renderActionIconsHeader() }
-//     //         { renderIdentifierHeader() }
-
-//     //         { renderSubstanceHeader() }
-//     //         { renderReactionHeader() }
-//     //         { renderCriticalityHeader() }
-      
-
-//     //         { renderTypeHeader() }
-//     //         { renderCategoryHeader() }
-//     //         { renderPatientNameHeader() }
-
-//     //         { renderRecorderHeader() }
-//     //         { renderOnsetHeader() }
-
-//     //         { renderClinicalStatusHeader() }
-//     //         { renderVerificationStatusHeader() }
-//     //       </TableRow>
-//     //     </TableHead>
-//     //     <TableBody>
-//     //       { tableRows }
-//     //     </TableBody>
-//     //   </Table>
-//     // );
-//   }
-// }
 
 
 AllergyIntolerancesTable.propTypes = {

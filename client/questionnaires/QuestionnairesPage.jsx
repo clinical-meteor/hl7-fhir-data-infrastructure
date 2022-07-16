@@ -1,12 +1,10 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
-  Select, 
-  MenuItem,
   CardContent, 
   CardHeader, 
-  CardActions, 
-  TextField, 
-  Checkbox, 
+  Container,
   Button,
   Grid
 } from '@material-ui/core';
@@ -25,11 +23,6 @@ import {
   Input,
   InputAdornment
 } from '@material-ui/core';
-
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
 
 import { Session } from 'meteor/session';
 import { Random } from 'meteor/random';
@@ -62,7 +55,14 @@ Session.setDefault('enableCurrentQuestionnaire', false);
 Session.setDefault('activeQuestionnaireName', 'bar');
 Session.setDefault('activeQuestionLinkId', false);
 
-Session.setDefault('selectedQuestionnaireId', '')
+Session.setDefault('selectedQuestionnaireId', '');
+Session.setDefault('selectedQuestionnaire', false)
+Session.setDefault('QuestionnairesPage.onePageLayout', true)
+Session.setDefault('QuestionnairesPage.defaultQuery', {})
+Session.setDefault('QuestionnairesTable.hideCheckbox', true)
+Session.setDefault('QuestionnairesTable.questionnairesIndex', 0)
+
+
 
 //===============================================================================================================
 // Global Theming 
@@ -185,15 +185,21 @@ export function QuestionnairesPage(props){
     isNumber: false,
     isSorting: false,
     activeQuestionLinkId: '',
-    onePageLayout: true,
-    questionnaires: [],
+    questionnaireSearchFilter: '',
     selectedQuestionnaireId: '',
     selectedQuestionnaire: null,
-    questionnaireSearchFilter: ''
+    questionnaires: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    questionnairesIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
     return Session.get('QuestionnairesPage.onePageLayout');
+  }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('QuestionnairesTable.hideCheckbox');
   }, [])
   data.selectedQuestionnaireId = useTracker(function(){
     return Session.get('selectedQuestionnaireId');
@@ -216,6 +222,15 @@ export function QuestionnairesPage(props){
 
   data.questionnaireSearchFilter = useTracker(function(){
     return Session.get('questionnaireSearchFilter');
+  }, [])
+  data.questionnairesIndex = useTracker(function(){
+    return Session.get('QuestionnairesTable.questionnairesIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
@@ -538,6 +553,7 @@ export function QuestionnairesPage(props){
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
 
 
@@ -557,118 +573,117 @@ export function QuestionnairesPage(props){
     constructionZoneButton = <Button id='saveAnswersButton' onClick={handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>;
   }
 
-  let [questionairesIndex, setQuestionairesIndex] = setState(0);
+
+  let layoutContent;
+  if(data.questionnaires.length > 0){
+    layoutContent = <Grid container spacing={3} >
+      <Grid item lg={6} style={{width: '100%'}} >
+        <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+          <CardHeader
+            title={data.questionnaires.length + " Questionnaires"}
+          />
+          <QuestionnairesTable 
+            questionnaires={ data.questionnaires }
+            selectedQuestionnaireId={data.selectedQuestionnaireId}                  
+            onRemoveRecord={function(questionnaireId){
+              Questionnaires.remove({_id: questionnaireId})
+            }}
+            onRowClick={function(questionnaireId){
+              console.log('Clicked on a row.  Questionnaire Id: ' + questionnaireId)
+              Session.set('selectedQuestionnaireId', questionnaireId)
+              Session.set('selectedQuestionnaire', Questionnaires.findOne({id: questionnaireId}))
+            }}
+            onSetPage={function(index){
+              setQuestionairesIndex(index)
+            }}    
+            page={data.questionnairesIndex}
+            formFactorLayout={formFactor}              
+          />
+        </StyledCard>
+      </Grid>
+      <Grid item lg={secondaryGridSize} style={secondaryGridStyle}>
+        <h1 className="barcode helveticas">{get(data, 'selectedQuestionnaireId')}</h1>
+        <StyledCard margin={20} width={cardWidth + 'px'}>
+          <CardContent>
+            <FormControl style={{width: '100%', marginTop: '20px'}}>
+              <InputAdornment style={classes.label}
+              >Questionnaire Title</InputAdornment>
+              <Input
+                id="publisherInput"
+                name="publisherInput"
+                style={classes.input}
+                value={ get(data, 'selectedQuestionnaire.title', '') }
+                onChange={ changeText.bind(this, 'title')}
+                fullWidth              
+              />       
+            </FormControl>    
+            <Grid container spacing={3}>
+              <Grid item md={3}>
+                <FormControl style={{width: '100%', marginTop: '20px'}}>
+                  <InputAdornment 
+                    style={classes.label}
+                  >Date</InputAdornment>
+                  <Input
+                    id="dateInput"
+                    name="dateInput"
+                    style={classes.input}
+                    value={ moment(get(data, 'selectedQuestionnaire.date', '')).format("YYYY-MM-DD") }
+                    fullWidth              
+                  />       
+                </FormControl>    
+              </Grid>
+              <Grid item md={3}>
+                <FormControl style={{width: '100%', marginTop: '20px'}}>
+                  <InputAdornment 
+                    style={classes.label}
+                  >Status</InputAdornment>
+                  <Input
+                    id="statusInput"
+                    name="statusInput"
+                    style={classes.input}
+                    value={ get(data, 'selectedQuestionnaire.status', '') }
+                    fullWidth              
+                  />       
+                </FormControl>    
+              </Grid>
+              <Grid item md={6}>
+                <FormControl style={{width: '100%', marginTop: '20px'}}>
+                  <InputAdornment 
+                    style={classes.label}
+                  >Identifier</InputAdornment>
+                  <Input
+                    id="identifierInput"
+                    name="identifierInput"
+                    style={classes.input}
+                    value={ get(data, 'selectedQuestionnaire.identifier.value', '') }
+                    fullWidth              
+                  />       
+                </FormControl>    
+              </Grid>
+            </Grid>
+          </CardContent>
+        </StyledCard>
+        <DynamicSpacer />
+        { constructionZoneButton }
+      </Grid>
+    </Grid>
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
+
 
   return (
     <PageCanvas id="questionnairesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        <Grid container spacing={3} >
-          <Grid item lg={6} style={{width: '100%'}} >
-            <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-              <CardHeader
-                title={data.questionnaires.length + " Questionnaires"}
-              />
-              <QuestionnairesTable 
-                questionnaires={ data.questionnaires }
-                selectedQuestionnaireId={data.selectedQuestionnaireId}                  
-                onRemoveRecord={function(questionnaireId){
-                  Questionnaires.remove({_id: questionnaireId})
-                }}
-                onRowClick={function(questionnaireId){
-                  console.log('Clicked on a row.  Questionnaire Id: ' + questionnaireId)
-                  Session.set('selectedQuestionnaireId', questionnaireId)
-                  Session.set('selectedQuestionnaire', Questionnaires.findOne({id: questionnaireId}))
-                }}
-                onSetPage={function(index){
-                  setQuestionairesIndex(index)
-                }}    
-                page={questionairesIndex}
-                formFactorLayout={formFactor}              
-              />
-            </StyledCard>
-          </Grid>
-          <Grid item lg={secondaryGridSize} style={secondaryGridStyle}>
-            <h1 className="barcode helveticas">{get(data, 'selectedQuestionnaireId')}</h1>
-            <StyledCard margin={20} width={cardWidth + 'px'}>
-              <CardContent>
-                <FormControl style={{width: '100%', marginTop: '20px'}}>
-                  <InputAdornment style={classes.label}
-                  >Questionnaire Title</InputAdornment>
-                  <Input
-                    id="publisherInput"
-                    name="publisherInput"
-                    style={classes.input}
-                    value={ get(data, 'selectedQuestionnaire.title', '') }
-                    onChange={ changeText.bind(this, 'title')}
-                    fullWidth              
-                  />       
-                </FormControl>    
-                <Grid container spacing={3}>
-                  <Grid item md={3}>
-                    <FormControl style={{width: '100%', marginTop: '20px'}}>
-                      <InputAdornment 
-                        style={classes.label}
-                      >Date</InputAdornment>
-                      <Input
-                        id="dateInput"
-                        name="dateInput"
-                        style={classes.input}
-                        value={ moment(get(data, 'selectedQuestionnaire.date', '')).format("YYYY-MM-DD") }
-                        fullWidth              
-                      />       
-                    </FormControl>    
-                  </Grid>
-                  <Grid item md={3}>
-                    <FormControl style={{width: '100%', marginTop: '20px'}}>
-                      <InputAdornment 
-                        style={classes.label}
-                      >Status</InputAdornment>
-                      <Input
-                        id="statusInput"
-                        name="statusInput"
-                        style={classes.input}
-                        value={ get(data, 'selectedQuestionnaire.status', '') }
-                        fullWidth              
-                      />       
-                    </FormControl>    
-                  </Grid>
-                  <Grid item md={6}>
-                    <FormControl style={{width: '100%', marginTop: '20px'}}>
-                      <InputAdornment 
-                        style={classes.label}
-                      >Identifier</InputAdornment>
-                      <Input
-                        id="identifierInput"
-                        name="identifierInput"
-                        style={classes.input}
-                        value={ get(data, 'selectedQuestionnaire.identifier.value', '') }
-                        fullWidth              
-                      />       
-                    </FormControl>    
-                  </Grid>
-                </Grid>
-              </CardContent>
-              {/* <CardActions>
-                <Button id='isActiveButton' onClick={toggleActiveStatus.bind(this)} primary={ data.isActive } >{isActiveLabel}</Button>
-                <Button id='isSortingButton' onClick={toggleSortStatus.bind(this)} primary={ data.isSorting } >Sort</Button>
-              </CardActions> */}
-            </StyledCard>
-            <DynamicSpacer />
-
-            <QuestionnaireExpansionPanels 
-              id='questionnaireDetails' 
-              selectedQuestionnaire={data.selectedQuestionnaire} 
-              selectedQuestionnaireId={data.selectedQuestionnaireId}
-              autoExpand={true}
-            />
-
-
-            <DynamicSpacer />
-            { constructionZoneButton }
-            
-
-          </Grid>
-        </Grid>
+        { layoutContent }
       </MuiThemeProvider>         
     </PageCanvas>
   );

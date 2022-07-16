@@ -96,13 +96,12 @@ function QuestionnairesTable(props){
 
     formFactorLayout,
 
+    count,
     page,
     onSetPage,
     
     ...otherProps 
   } = props;
-
-  let [ selectedRowIds, setSelectedRowIds ] = useState(selectedIds);
 
 
   // ------------------------------------------------------------------------
@@ -493,6 +492,7 @@ QuestionnairesTable.propTypes = {
   onToggle: PropTypes.func,
   onSetPage: PropTypes.func,
 
+  count: PropTypes.number,
   page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   hideActionButton: PropTypes.bool,
@@ -511,7 +511,8 @@ QuestionnairesTable.defaultProps = {
   hideTitle: false,
   hideStatus: false,
   hideDate: false,
-  hideNumItems: false
+  hideNumItems: false,
+  count: 0
 };
 
 export default QuestionnairesTable;

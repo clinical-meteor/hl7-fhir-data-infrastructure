@@ -1,6 +1,10 @@
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
+
 import { 
   CardContent, 
   CardHeader,
+  Container,
   Grid
 } from '@material-ui/core';
 
@@ -10,9 +14,6 @@ import { DynamicSpacer, Questionnaires, QuestionnaireResponses } from 'meteor/cl
 // import QuestionnaireResponseDetail from './QuestionnaireResponseDetail';
 import QuestionnaireResponsesTable from './QuestionnaireResponsesTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
-
-import React from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
 
 import { Session } from 'meteor/session';
 
@@ -29,6 +30,13 @@ Session.setDefault('questionnaireResponseSearchFilter', '');
 Session.setDefault('selectedQuestionnaireResponse', null);
 Session.setDefault('selectedQuestionnaireResponseId', '');
 Session.setDefault('QuestionnaireResponsesPage.onePageLayout', true)
+
+
+Session.setDefault('QuestionnaireResponsesPage.onePageLayout', true)
+Session.setDefault('QuestionnaireResponsesPage.defaultQuery', {})
+Session.setDefault('QuestionnaireResponsesTable.hideCheckbox', true)
+Session.setDefault('QuestionnaireResponsesTable.questionnaireResponsesIndex', 0)
+
 
 //===============================================================================================================
 // Global Theming 
@@ -110,12 +118,19 @@ export function QuestionnaireResponsesPage(props){
     selectedQuestionnaireResponseId: '',
     selectedQuestionnaireResponse: null,
     questionnaireResponses: [],
-    onePageLayout: true
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    organizationsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
     return Session.get('QuestionnaireResponsesPage.onePageLayout');
   }, [])
+  data.hideCheckbox = useTracker(function(){
+    return Session.get('QuestionnaireResponsesTable.hideCheckbox');
+  }, [])
+
   data.selectedQuestionnaireResponseId = useTracker(function(){
     return Session.get('selectedQuestionnaireResponseId');
   }, [])
@@ -127,6 +142,15 @@ export function QuestionnaireResponsesPage(props){
   }, [])
   data.questionnaireResponseSearchFilter = useTracker(function(){
     return Session.get('questionnaireResponseSearchFilter');
+  }, [])
+  data.questionnaireResponsesIndex = useTracker(function(){
+    return Session.get('QuestionnaireResponsesTable.questionnaireResponsesIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
@@ -177,98 +201,118 @@ export function QuestionnaireResponsesPage(props){
 
 
   let cardWidth = window.innerWidth - paddingWidth;
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
-  let [questionaireResponsesIndex, setQuestionaireResponsesIndex] = setState(0);
 
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={data.questionnaireResponses.length + " Questionnaire Responses"} />
-      <CardContent>
-        <QuestionnaireResponsesTable 
-          questionnaireResponses={data.questionnaireResponses}
-          count={data.questionnaireResponses.length}
-          onCellClick={function(responseId){
-            console.log('responseId', responseId)
-            Session.set('selectedQuestionnaireResponse', responseId)
-            Session.set('questionnaireResponsePageTabIndex', 2)
-          }}
-          onRemoveRecord={function(responseId){
-            console.log('onRemoveRecord()')
-            QuestionnaireResponses.remove({_id: responseId});                      
-          }}
-          onRowClick={function(responseId){
-            console.log('onRowClick()', responseId)
-            Session.set('selectedQuestionnaireResponseId', responseId);                  
-            Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne(responseId));                  
-          }}
-          onSetPage={function(index){
-            setQuestionaireResponsesIndex(index)
-          }}  
-          page={questionaireResponsesIndex}
-          formFactorLayout={formFactor}
-          />
-      </CardContent>
-    </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6} style={{width: '100%'}} >
-        <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.questionnaireResponses.length + " Responses"} />
-          <CardContent>
-            <QuestionnaireResponsesTable 
-              questionnaireResponses={data.questionnaireResponses}
-              count={data.questionnaireResponses.length}
-              onCellClick={function(responseId){
-                console.log('responseId', responseId)
-                Session.set('selectedQuestionnaireResponse', responseId)
-                Session.set('selectedQuestionnaireResponseId', responseId)
-                Session.set('questionnaireResponsePageTabIndex', 2)
-              }}
-              onRemoveRecord={function(responseId){
-                console.log('onRemoveRecord()')
-                QuestionnaireResponses.remove({_id: responseId});                      
-              }}
-              onRowClick={function(responseId){
-                console.log('onRowClick()', responseId)
-                Session.set('selectedQuestionnaireResponseId', responseId);                  
-                Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne({id: responseId}));                  
-              }}
-              onSetPage={function(index){
-                setQuestionaireResponsesIndex(index)
-              }}  
-              page={questionaireResponsesIndex}
-              formFactorLayout={formFactor}
-            />
-          </CardContent>
-        </StyledCard>
-      </Grid>
-      <Grid item lg={5} style={{width: '100%', marginBottom: '80px'}} >
-        <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.questionnaireResponseId }</h1>
-          <CardContent>
-            <CardContent>
-              {/* <code>
-                {JSON.stringify(data.questionnaireResponse)}
-              </code> */}
-
-              <SurveyResponseSummary 
-                id='surveyResponseSummary' 
-                selectedResponse={get(data, 'selectedQuestionnaireResponse', null)} 
-                selectedResponseId={get(data, 'selectedQuestionnaireResponse.id', '')}
-                />
-
-            </CardContent>
-          </CardContent>
-        </StyledCard>
-      </Grid>
-    </Grid>
-  }
+  let layoutContent;
   
+  
+  let layoutContainer;
+  if(data.questionnaireResponses.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+        <CardHeader title={data.questionnaireResponses.length + " Questionnaire Responses"} />
+        <CardContent>
+          <QuestionnaireResponsesTable 
+            questionnaireResponses={data.questionnaireResponses}
+            count={data.questionnaireResponses.length}
+            onCellClick={function(responseId){
+              console.log('responseId', responseId)
+              Session.set('selectedQuestionnaireResponse', responseId)
+              Session.set('questionnaireResponsePageTabIndex', 2)
+            }}
+            onRemoveRecord={function(responseId){
+              console.log('onRemoveRecord()')
+              QuestionnaireResponses.remove({_id: responseId});                      
+            }}
+            onRowClick={function(responseId){
+              console.log('onRowClick()', responseId)
+              Session.set('selectedQuestionnaireResponseId', responseId);                  
+              Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne(responseId));                  
+            }}
+            onSetPage={function(index){
+              setQuestionaireResponsesIndex(index)
+            }}  
+            page={data.questionaireResponsesIndex}
+            formFactorLayout={formFactor}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            size="medium"
+            />
+        </CardContent>
+      </StyledCard>
+    } else {
+      layoutContent = <Grid container spacing={3}>
+        <Grid item lg={6} style={{width: '100%'}} >
+          <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+            <CardHeader title={data.questionnaireResponses.length + " Responses"} />
+            <CardContent>
+              <QuestionnaireResponsesTable 
+                questionnaireResponses={data.questionnaireResponses}
+                count={data.questionnaireResponses.length}
+                onCellClick={function(responseId){
+                  console.log('responseId', responseId)
+                  Session.set('selectedQuestionnaireResponse', responseId)
+                  Session.set('selectedQuestionnaireResponseId', responseId)
+                  Session.set('questionnaireResponsePageTabIndex', 2)
+                }}
+                onRemoveRecord={function(responseId){
+                  console.log('onRemoveRecord()')
+                  QuestionnaireResponses.remove({_id: responseId});                      
+                }}
+                onRowClick={function(responseId){
+                  console.log('onRowClick()', responseId)
+                  Session.set('selectedQuestionnaireResponseId', responseId);                  
+                  Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne({id: responseId}));                  
+                }}
+                onSetPage={function(index){
+                  setQuestionaireResponsesIndex(index)
+                }}  
+                page={data.questionaireResponsesIndex}
+                formFactorLayout={formFactor}
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                size="medium"
+                  />
+            </CardContent>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={5} style={{width: '100%', marginBottom: '80px'}} >
+          <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.questionnaireResponseId }</h1>
+            <CardContent>
+              <CardContent>
+                {/* <code>
+                  {JSON.stringify(data.questionnaireResponse)}
+                </code> */}
+  
+                <SurveyResponseSummary 
+                  id='surveyResponseSummary' 
+                  selectedResponse={get(data, 'selectedQuestionnaireResponse', null)} 
+                  selectedResponseId={get(data, 'selectedQuestionnaireResponse.id', '')}
+                  />
+  
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+      </Grid>
+    }
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
+
+
   return (
     <PageCanvas id="questionnaireResponsesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
        <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );
