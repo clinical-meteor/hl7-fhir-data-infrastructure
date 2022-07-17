@@ -161,30 +161,33 @@ export function PractitionersPage(props){
 
   let layoutContent;
   if(data.practitioners.length > 0){
-    layoutContents = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+    layoutContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
       <CardHeader title={data.practitioners.length + ' Practitioners'} />
       <CardContent>
         <PractitionersTable 
-            practitioners={data.practitioners}
-            count={data.practitioners.length}
-            hideCheckbox={data.hideCheckbox}
-            hideBarcode={!data.showSystemIds}
-            hideFhirId={!data.showFhirIds}
-            hideQualification={true}
-            selectedPractitionerId={ data.selectedPractitionerId }
-            onRowClick={ handleRowClick.bind(this) }
-            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-            onSetPage={function(index){
-              setPractitionersIndex(index)
-            }}    
-            page={data.practitionersPageIndex}
-            size="medium"
-            />
+          practitioners={data.practitioners}
+          count={data.practitioners.length}
+          hideCheckbox={data.hideCheckbox}
+          hideBarcode={!data.showSystemIds}
+          hideFhirId={!data.showFhirIds}
+          hideQualification={true}
+          hideAddressLine={true}
+          hideIssuer={true}
+          hideSpecialty={false}
+          selectedPractitionerId={ data.selectedPractitionerId }
+          onRowClick={ handleRowClick.bind(this) }
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setPractitionersIndex(index)
+          }}    
+          page={data.practitionersPageIndex}
+          size="medium"
+          />
       </CardContent>
-      { blockchainTab }
+      {/* { blockchainTab } */}
     </StyledCard>
   } else {
-    layoutContainer = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
       <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
       <CardContent>
         <CardHeader 
