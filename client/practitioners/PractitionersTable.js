@@ -116,6 +116,7 @@ function PractitionersTable(props){
     hideBarcode,
     actionButtonLabel,
     hideExtensions,
+    hasRestrictions,
   
     rowsPerPage,
     tableRowSize,
@@ -130,6 +131,8 @@ function PractitionersTable(props){
 
     count,
     multiline,
+
+    primaryColor,
 
     ...otherProps 
   } = props;
@@ -263,6 +266,18 @@ function PractitionersTable(props){
       style={{float: 'right', border: 'none', userSelect: 'none'}}
     />
   }
+
+
+  //---------------------------------------------------------------------
+  // Dynamic Styling
+
+  let restrictionStyle = {};
+
+  restrictionStyle.backgroundColor = "#ffffff";
+  restrictionStyle.opacity = 0.8;
+  restrictionStyle.backgroundSize = "18px 18px";
+  restrictionStyle.backgroundImage = "radial-gradient(" + primaryColor + " 1.5px, rgba(0, 0, 0, 0) 1.5px)"
+
 
 
   //---------------------------------------------------------------------
@@ -408,14 +423,14 @@ function PractitionersTable(props){
   function renderEmail(email){
     if (!hideEmail) {
       return (
-        <TableCell className="email hidden-on-phone">{ email }</TableCell>
+        <TableCell className="email hidden-on-phone" style={{maxWidth: '300px', overflowY: 'auto'}}>{ email }</TableCell>
       );
     }
   }
   function renderEmailHeader(){
     if (!hideEmail) {
       return (
-        <TableCell className="email hidden-on-phone">Email</TableCell>
+        <TableCell className="email hidden-on-phone" style={{maxWidth: '300px', overflowY: 'auto'}}>Email</TableCell>
       );
     }
   }
@@ -435,8 +450,12 @@ function PractitionersTable(props){
   }
   function renderCity(city){
     if (!hideCity) {
+      let cityStyle = {};
+      if(hasRestrictions){
+        cityStyle = restrictionStyle;
+      }
       return (
-        <TableCell className="city ">{ city }</TableCell>
+        <TableCell className="city" style={cityStyle}>{ city }</TableCell>
       );
     }
   }
@@ -449,8 +468,13 @@ function PractitionersTable(props){
   }
   function renderState(state){
     if (!hideState) {
+      let stateStyle = {};
+      if(hasRestrictions){
+        stateStyle = restrictionStyle;
+      }
+
       return (
-        <TableCell className="state">{ state }</TableCell>
+        <TableCell className="state" style={stateStyle}>{ state }</TableCell>
       );
     }
   }
@@ -463,12 +487,21 @@ function PractitionersTable(props){
   }
   function renderPostalCode(postalCode){
     if (!hidePostalCode) {
-      let postalCodeString = postalCode
-      if(postalCode.length === 9){
-        postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+      let postalCodeString = "";
+      let postalCodeStyle = {};
+
+      if(postalCode){
+        postalCodeString = postalCode
+        if(postalCode.length === 9){
+          postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+        }  
+      }
+
+      if(hasRestrictions){
+        postalCodeStyle = restrictionStyle;
       }
       return (
-        <TableCell className="postalCode">{ postalCodeString }</TableCell>
+        <TableCell className="postalCode" style={postalCodeStyle}>{ postalCodeString }</TableCell>
       );
     }
   }
@@ -757,7 +790,8 @@ PractitionersTable.propTypes = {
   count: PropTypes.number,
   multiline: PropTypes.bool,
 
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+  primaryColor: PropTypes.string
 };
 
 PractitionersTable.defaultProps = {
@@ -777,9 +811,11 @@ PractitionersTable.defaultProps = {
   hideQualificationEnd: true,
   hideFullAddress: true,
   hideSpecialty: true,
+  hasRestrictions: true,
   page: 0,
   rowsPerPage: 5,
-  tableRowSize: 'medium'
+  tableRowSize: 'medium',
+  primaryColor: "#E5537E"
 }
 
 // ReactMixin(PractitionersTable.prototype, ReactMeteorData);

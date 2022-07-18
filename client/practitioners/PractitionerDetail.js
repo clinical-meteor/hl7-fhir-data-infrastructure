@@ -144,6 +144,7 @@ export function PractitionerDetail(props){
   let { 
     children, 
     practitioner,
+    primaryColor,
     ...otherProps 
   } = props;
 
@@ -262,8 +263,16 @@ export function PractitionerDetail(props){
           </Grid>
         )
       })
-    }
-    
+    }  
+  }
+
+  let restrictionStyle = {};
+
+  if(!data.currentUser){
+    restrictionStyle.backgroundColor = "#ffffff";
+    restrictionStyle.opacity = 0.8;
+    restrictionStyle.backgroundSize = "16px 16px";
+    restrictionStyle.backgroundImage = "radial-gradient(" + primaryColor + " 1.5px, rgba(0, 0, 0, 0) 1.5px)"  
   }
 
   return (
@@ -355,6 +364,7 @@ export function PractitionerDetail(props){
               disabled={data.isDisabled}
               InputProps={customInputProps}
               InputLabelProps={customInputLabelProps}
+              style={restrictionStyle}
               /><br/>
           </Grid>
           <Grid item md={2}>
@@ -371,6 +381,7 @@ export function PractitionerDetail(props){
               disabled={data.isDisabled}
               InputProps={customInputProps}
               InputLabelProps={customInputLabelProps}
+              style={restrictionStyle}
               /><br/>
           </Grid>
           <Grid item md={2}>
@@ -387,6 +398,7 @@ export function PractitionerDetail(props){
               disabled={data.isDisabled}
               InputProps={customInputProps}
               InputLabelProps={customInputLabelProps}
+              style={restrictionStyle}
               /><br/>
           </Grid>
           <Grid item md={2}>
@@ -403,6 +415,7 @@ export function PractitionerDetail(props){
               disabled={data.isDisabled}
               InputProps={customInputProps}
               InputLabelProps={customInputLabelProps}
+              style={restrictionStyle}
               /><br/>
           </Grid>
         </Grid>
@@ -458,8 +471,11 @@ export function PractitionerDetail(props){
 PractitionerDetail.propTypes = {
   id: PropTypes.string,
   fhirVersion: PropTypes.string,
+  primaryColor: PropTypes.string,
   practitionerId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   practitioner: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
-
+PractitionerDetail.defaultProps = {
+  primaryColor: "#E5537E"
+};
 export default PractitionerDetail;

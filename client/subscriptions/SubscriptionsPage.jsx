@@ -249,6 +249,7 @@ export function SubscriptionsPage(props){
           hideActionIcons={true}
           hideStatus={false}
           hideName={false}
+          hideCriteria={false}
           hideContact={true}
           hideConnectionType={false}
           hideOrganization={false}

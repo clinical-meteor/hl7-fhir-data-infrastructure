@@ -510,7 +510,7 @@ function SubscriptionsTable(props){
           { renderChannelType(subscriptionsToRender[i].channelType) }
           { renderChannelEndpoint(subscriptionsToRender[i].channelEndpoint) }
 
-          { renderBarcode(subscriptionsToRender[i].id)}
+          { renderBarcode(subscriptionsToRender[i]._id)}
         </TableRow>
       );       
     }
@@ -565,7 +565,7 @@ SubscriptionsTable.propTypes = {
   hideCriteria: PropTypes.bool,
   hideError: PropTypes.bool,
   hideChannelType: PropTypes.bool,
-  hideChannelEndpoint: PropTypes.bool,
+  hideChannelEndpoint: PropTypes.bool, 
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,

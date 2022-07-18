@@ -174,6 +174,7 @@ export function PractitionersPage(props){
           hideAddressLine={true}
           hideIssuer={true}
           hideSpecialty={false}
+          hasRestrictions={true}
           selectedPractitionerId={ data.selectedPractitionerId }
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
