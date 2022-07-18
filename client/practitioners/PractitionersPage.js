@@ -128,6 +128,13 @@ export function PractitionersPage(props){
   function setPractitionersIndex(newIndex){
     Session.set('PractitionersTable.practitionersPageIndex', newIndex)
   }
+  function enableRestrictionGui(hasRestrictions){
+    let result = false;
+    if(get(Meteor, 'settings.public.defaults.enableAccessRestrictions')){
+      result = hasRestrictions;
+    }
+    return result;
+  }
 
 
   function handleRowClick(practitionerId){
@@ -182,7 +189,7 @@ export function PractitionersPage(props){
           hideAddressLine={true}
           hideIssuer={true}
           hideSpecialty={false}
-          hasRestrictions={data.hasRestrictions}
+          hasRestrictions={enableRestrictionGui(data.hasRestrictions)}
           selectedPractitionerId={ data.selectedPractitionerId }
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }

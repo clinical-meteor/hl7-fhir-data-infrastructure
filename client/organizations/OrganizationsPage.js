@@ -176,6 +176,13 @@ export function OrganizationsPage(props){
   function setOrganizationsIndex(newIndex){
     Session.set('OrganizationsTable.organizationsIndex', newIndex)
   }
+  function enableRestrictionGui(hasRestrictions){
+    let result = false;
+    if(get(Meteor, 'settings.public.defaults.enableAccessRestrictions')){
+      result = hasRestrictions;
+    }
+    return result;
+  }
 
   function handleRowClick(organizationId){
     console.log('OrganizationsPage.handleRowClick', organizationId)
@@ -228,7 +235,7 @@ export function OrganizationsPage(props){
             hideActionIcons={true}
             hideNumEndpoints={false}
             hideIdentifier={true}
-            hasRestrictions={data.hasRestrictions}
+            hasRestrictions={enableRestrictionGui(data.hasRestrictions)}
             hideBarcode={!data.showSystemIds}
             hideFhirId={!data.showFhirIds}
             onRowClick={ handleRowClick.bind(this) }
