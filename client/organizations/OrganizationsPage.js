@@ -135,7 +135,8 @@ export function OrganizationsPage(props){
     onePageLayout: true,
     showSystemIds: false,
     showFhirIds: false,
-    organizationsIndex: 0
+    organizationsIndex: 0,
+    hasRestrictions: false
   };
 
   data.onePageLayout = useTracker(function(){
@@ -162,7 +163,13 @@ export function OrganizationsPage(props){
   data.showFhirIds = useTracker(function(){
     return Session.get('showFhirIds');
   }, [])
-
+  data.hasRestrictions = useTracker(function(){
+    if(Session.get('currentUser')){
+      return false;
+    } else {
+      return true;
+    }
+  }, [])
   
 
 
@@ -221,6 +228,7 @@ export function OrganizationsPage(props){
             hideActionIcons={true}
             hideNumEndpoints={false}
             hideIdentifier={true}
+            hasRestrictions={data.hasRestrictions}
             hideBarcode={!data.showSystemIds}
             hideFhirId={!data.showFhirIds}
             onRowClick={ handleRowClick.bind(this) }
@@ -251,6 +259,7 @@ export function OrganizationsPage(props){
                 hideActionIcons={true}
                 hideNumEndpoints={false}
                 hideIdentifier={true}
+                hasRestrictions={data.hasRestrictions}
                 selectedOrganizationId={ data.selectedOrganizationId }
                 onRowClick={ handleRowClick.bind(this) }
                 onSetPage={function(index){

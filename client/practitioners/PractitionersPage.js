@@ -79,6 +79,7 @@ export function PractitionersPage(props){
     practitionersPageIndex: 0,
     currentUser: false,
     isDisabled: true,
+    hasRestrictions: false
   };
 
   data.onePageLayout = useTracker(function(){
@@ -110,6 +111,13 @@ export function PractitionersPage(props){
     return Session.get('currentUser');
   }, [])
   data.isDisabled = useTracker(function(){
+    if(Session.get('currentUser')){
+      return false;
+    } else {
+      return true;
+    }
+  }, [])
+  data.hasRestrictions = useTracker(function(){
     if(Session.get('currentUser')){
       return false;
     } else {
@@ -174,7 +182,7 @@ export function PractitionersPage(props){
           hideAddressLine={true}
           hideIssuer={true}
           hideSpecialty={false}
-          hasRestrictions={true}
+          hasRestrictions={data.hasRestrictions}
           selectedPractitionerId={ data.selectedPractitionerId }
           onRowClick={ handleRowClick.bind(this) }
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
