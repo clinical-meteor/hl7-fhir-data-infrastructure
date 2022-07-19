@@ -383,7 +383,7 @@ function OrganizationsTable(props){
       }
 
       return (
-        <TableCell className="phone" style={{minWidth: '100px'}}>{ phoneString }</TableCell>
+        <TableCell className="phone" style={{minWidth: '160px'}}>{ phoneString }</TableCell>
       );
     }
   }
@@ -479,7 +479,9 @@ function OrganizationsTable(props){
         }  
       }
 
-      let postalCodeStyle = {};
+      let postalCodeStyle = {
+        minWidth: '140px'
+      };
       if(hasRestrictions){
         postalCodeStyle = restrictionStyle;
       }
@@ -732,7 +734,7 @@ OrganizationsTable.defaultProps = {
   multiline: false,
   page: 0,
   rowsPerPage: 5,
-  hasRestrictions: true,
+  hasRestrictions: false,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export',
   dateFormat: "YYYY-MM-DD",

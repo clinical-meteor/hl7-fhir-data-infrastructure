@@ -811,7 +811,7 @@ PractitionersTable.defaultProps = {
   hideQualificationEnd: true,
   hideFullAddress: true,
   hideSpecialty: true,
-  hasRestrictions: true,
+  hasRestrictions: false,
   page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
