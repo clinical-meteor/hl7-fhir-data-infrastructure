@@ -355,7 +355,7 @@ function HealthcareServicesTable(props){
   function renderSpecialtyHeader(){
     if (!hideSpecialty) {
       return (
-        <TableCell className='specialty'>Specialty</TableCell>
+        <TableCell className='specialty' style={{minWidth: '200px'}}>Specialty</TableCell>
       );
     }
   }
