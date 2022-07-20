@@ -612,9 +612,10 @@ function PractitionersTable(props){
         if(get(specialtyValueSet, 'expansion.contains')){
           if(Array.isArray){
             let valueCode = find(specialtyValueSet.expansion.contains, {code: specialtyCode})
-            let valueParts = (get(valueCode, 'display')).split(";");
-
-            specialtyCodeRenderString = valueParts[valueParts.length - 1];
+            if(get(valueCode, 'display')){
+              let valueParts = (get(valueCode, 'display')).split(";");
+              specialtyCodeRenderString = valueParts[valueParts.length - 1];  
+            }
           }
         }
       }
