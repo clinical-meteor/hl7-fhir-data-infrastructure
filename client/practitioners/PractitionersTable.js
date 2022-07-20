@@ -18,6 +18,7 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 let has = _.has;
+let find = _.find;
 
 import moment from 'moment';
 
@@ -133,6 +134,8 @@ function PractitionersTable(props){
     multiline,
 
     primaryColor,
+    
+    specialtyValueSet,
 
     ...otherProps 
   } = props;
@@ -603,8 +606,20 @@ function PractitionersTable(props){
 
   function renderSpecialty(specialtyCode){
     if (!hideSpecialty) {
+      let specialtyCodeRenderString = specialtyCode;
+      if(specialtyValueSet){
+        console.log('specialtyValueSet', specialtyValueSet)
+        if(get(specialtyValueSet, 'expansion.contains')){
+          if(Array.isArray){
+            let valueCode = find(specialtyValueSet.expansion.contains, {code: specialtyCode})
+            let valueParts = (get(valueCode, 'display')).split(";");
+
+            specialtyCodeRenderString = valueParts[valueParts.length - 1];
+          }
+        }
+      }
       return (
-        <TableCell><span className="specialty">{specialtyCode}</span></TableCell>
+        <TableCell><span className="specialty">{specialtyCodeRenderString}</span></TableCell>
       );
     }
   }
@@ -791,7 +806,8 @@ PractitionersTable.propTypes = {
   multiline: PropTypes.bool,
 
   formFactorLayout: PropTypes.string,
-  primaryColor: PropTypes.string
+  primaryColor: PropTypes.string,
+  specialtyValueSet: PropTypes.object
 };
 
 PractitionersTable.defaultProps = {
@@ -815,7 +831,8 @@ PractitionersTable.defaultProps = {
   page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
-  primaryColor: "#E5537E"
+  primaryColor: "#E5537E",
+  specialtyValueSet: {}
 }
 
 // ReactMixin(PractitionersTable.prototype, ReactMeteorData);

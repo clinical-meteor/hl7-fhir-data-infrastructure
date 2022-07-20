@@ -163,14 +163,17 @@ export function OrganizationsPage(props){
   data.showFhirIds = useTracker(function(){
     return Session.get('showFhirIds');
   }, [])
+  // data.hasRestrictions = useTracker(function(){
+  //   if(Session.get('currentUser')){
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }, [])
   data.hasRestrictions = useTracker(function(){
-    if(Session.get('currentUser')){
-      return false;
-    } else {
-      return true;
-    }
+    return true;
   }, [])
-  
+
 
 
   function setOrganizationsIndex(newIndex){

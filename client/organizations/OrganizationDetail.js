@@ -78,6 +78,7 @@ export function OrganizationDetail(props){
     children, 
     organization,
     organizationId,
+    primaryColor,
     ...otherProps 
   } = props;
 
@@ -87,12 +88,37 @@ export function OrganizationDetail(props){
     return Session.get('Organization.Current');
   }, [])
 
+  let data = {
+    isDisabled: false,
+    currentUser: false
+  }
+  data.currentUser = useTracker(function(){
+    return Session.get('currentUser');
+  }, [])
+  data.isDisabled = useTracker(function(){
+    if(Session.get('currentUser')){
+      return false;
+    } else {
+      return true;
+    }
+  }, [])
+
   function updateField(path, event){
     console.log('updateField', event.currentTarget.value);
 
     // setCurrentCodeSystem(set(currentCodeSystem, path, event.currentTarget.value))
     Session.set('Organization.Current', set(activeCodeSystem, path, event.currentTarget.value))    
   }
+
+  let restrictionStyle = {};
+
+  if(!data.currentUser){
+    restrictionStyle.backgroundColor = "#ffffff";
+    restrictionStyle.opacity = 0.8;
+    restrictionStyle.backgroundSize = "16px 16px";
+    restrictionStyle.backgroundImage = "radial-gradient(" + primaryColor + " 1.5px, rgba(0, 0, 0, 0) 1.5px)"  
+  }
+
 
   let resolvedEndpoint = "";
   resolvedEndpoint = get(lookupReference(get(activeOrganization, 'endpoint[0].reference', '')), 'address');
@@ -139,6 +165,8 @@ export function OrganizationDetail(props){
                 placeholder="123 Main St"              
                 value={get(activeOrganization, 'address[0].line[0]', '')}
                 onChange={updateField.bind(this, 'address[0].line[0]')}
+                disabled={data.isDisabled}
+                style={restrictionStyle}
                 fullWidth              
               />    
             </FormControl>
@@ -153,6 +181,8 @@ export function OrganizationDetail(props){
                 placeholder="New Orleans"              
                 value={get(activeOrganization, 'address[0].city', '')}
                 onChange={updateField.bind(this, 'address[0].city')}
+                disabled={data.isDisabled}
+                style={restrictionStyle}
                 fullWidth              
               />    
             </FormControl>
@@ -167,6 +197,8 @@ export function OrganizationDetail(props){
                 placeholder="LI"              
                 value={get(activeOrganization, 'address[0].state', '')}
                 onChange={updateField.bind(this, 'address[0].state')}
+                disabled={data.isDisabled}
+                style={restrictionStyle}
                 fullWidth              
               />    
             </FormControl>
@@ -181,6 +213,8 @@ export function OrganizationDetail(props){
                 placeholder="12345"              
                 value={get(activeOrganization, 'address[0].postalCode', '')}
                 onChange={updateField.bind(this, 'address[0].postalCode')}
+                disabled={data.isDisabled}
+                style={restrictionStyle}
                 fullWidth              
               />    
             </FormControl>
@@ -226,7 +260,10 @@ OrganizationDetail.propTypes = {
   id: PropTypes.string,
   fhirVersion: PropTypes.string,
   organizationId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-  organization: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
+  organization: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  primaryColor: PropTypes.string,
 };
-
+OrganizationDetail.defaultProps = {
+  primaryColor: "#E5537E"
+};
 export default OrganizationDetail;

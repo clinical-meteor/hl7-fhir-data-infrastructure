@@ -11,12 +11,13 @@ import {
   Typography,
   Box
 } from '@material-ui/core';
-import { StyledCard, PageCanvas } from 'fhir-starter';
+import { StyledCard, PageCanvas, ValueSetsTable } from 'fhir-starter';
 
 
 import PractitionerDetail  from './PractitionerDetail';
 import PractitionersTable  from './PractitionersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
+import { ValueSets } from '../../lib/schemas/ValueSets';
 
 import PropTypes from 'prop-types';
 
@@ -26,6 +27,7 @@ import { Package } from 'meteor/meteor';
 
 import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
+
 
 
 import { get } from 'lodash'; 
@@ -79,7 +81,8 @@ export function PractitionersPage(props){
     practitionersPageIndex: 0,
     currentUser: false,
     isDisabled: true,
-    hasRestrictions: false
+    hasRestrictions: false,
+    specialtyValueSet: {}
   };
 
   data.onePageLayout = useTracker(function(){
@@ -98,6 +101,9 @@ export function PractitionersPage(props){
     return Practitioners.find().fetch();
   }, [])
 
+  data.specialtyValueSet = useTracker(function(){
+    return ValueSets.findOne({id: '2.16.840.1.114222.4.11.1066'})
+  })
   data.practitionersPageIndex = useTracker(function(){
     return Session.get('PractitionersTable.practitionersPageIndex')
   }, [])
@@ -117,12 +123,15 @@ export function PractitionersPage(props){
       return true;
     }
   }, [])
+  // data.hasRestrictions = useTracker(function(){
+  //   if(Session.get('currentUser')){
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }, [])
   data.hasRestrictions = useTracker(function(){
-    if(Session.get('currentUser')){
-      return false;
-    } else {
-      return true;
-    }
+    return true;
   }, [])
 
   function setPractitionersIndex(newIndex){
@@ -198,6 +207,7 @@ export function PractitionersPage(props){
           }}    
           page={data.practitionersPageIndex}
           size="medium"
+          specialtyValueSet={data.specialtyValueSet}
           />
       </CardContent>
       {/* { blockchainTab } */}
