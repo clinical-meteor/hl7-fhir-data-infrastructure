@@ -100,6 +100,8 @@ export function ConditionsPage(props){
           formFactorLayout={formFactor}
           rowsPerPage={LayoutHelpers.calcTableRows()} 
           actionButtonLabel="Remove"
+          hideClinicalStatus={true}
+          hideEvidence={true}
           hideActionButton={get(Meteor, 'settings.public.modules.fhir.Conditions.hideRemoveButtonOnTable', true)}
           onActionButtonClick={function(selectedId){
             Conditions._collection.remove({_id: selectedId})

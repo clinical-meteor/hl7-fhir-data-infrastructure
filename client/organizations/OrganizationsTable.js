@@ -435,9 +435,13 @@ function OrganizationsTable(props){
   }
   function renderPostalCode(postalCode){
     if (!hidePostalCode) {
-      let postalCodeString = postalCode
-      if(postalCode.length === 9){
-        postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+      let postalCodeString = "";
+
+      if(postalCode){
+        postalCodeString = postalCode;
+        if(postalCodeString.length === 9){
+          postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+        }  
       }
 
       return (
