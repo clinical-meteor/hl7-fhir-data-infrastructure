@@ -542,15 +542,13 @@ let SidebarElements = [{
   primaryText: 'Audit Events',
   to: '/audit-events',
   href: '/audit-events',
-  collectionName: 'AuditEvents',
-  requireAuth: true
+  collectionName: 'AuditEvents'
 }, {
   primaryText: 'Bundles',
   to: '/bundles',
   href: '/bundles',
   iconName: 'suitcase',
-  collectionName: 'Bundles',
-  requireAuth: true
+  collectionName: 'Bundles'
 }, {
   primaryText: 'Care Plans',
   to: '/careplans',
@@ -562,15 +560,13 @@ let SidebarElements = [{
   to: '/careteams',
   href: '/careteams',
   iconName: 'notepad',
-  collectionName: 'CareTeams',
-  requireAuth: true
+  collectionName: 'CareTeams'
 }, {
   primaryText: 'CodeSystems',
   to: '/code-systems',
   href: '/code-systems',
   iconName: 'notepad',
-  collectionName: 'CodeSystems',
-  requireAuth: true
+  collectionName: 'CodeSystems'
 }, {
   primaryText: 'Conditions',
   to: '/conditions',
@@ -588,15 +584,13 @@ let SidebarElements = [{
   to: '/communications',
   href: '/communications',
   iconName: 'envelopeO',
-  collectionName: 'Communications',
-  requireAuth: true
+  collectionName: 'Communications'
 }, {
   primaryText: 'Communication Requests',
   to: '/communication-requests',
   href: '/communication-requests',
   iconName: 'envelopeO',
-  collectionName: 'CommunicationRequests',
-  requireAuth: true
+  collectionName: 'CommunicationRequests'
 }, {
   primaryText: 'Devices',
   to: '/devices',
@@ -710,8 +704,7 @@ let SidebarElements = [{
   to: '/networks',
   href: '/networks',
   iconName: 'notepad',
-  collectionName: 'Networks',
-  requireAuth: true
+  collectionName: 'Networks'
 }, {
   primaryText: 'Observations',
   to: '/observations',
@@ -765,8 +758,7 @@ let SidebarElements = [{
   to: '/provenances',
   href: '/provenances',
   iconName: 'fire',
-  collectionName: 'Provenances',
-  requireAuth: true
+  collectionName: 'Provenances'
 }, {
   primaryText: 'Questionnaires',
   to: '/questionnaires',
@@ -784,8 +776,7 @@ let SidebarElements = [{
   to: '/related-persons',
   href: '/related-persons',
   iconName: 'users',
-  collectionName: 'RelatedPersons',
-  requireAuth: true
+  collectionName: 'RelatedPersons'
 }, {
   primaryText: 'Risk Assessments',
   to: '/risk-assessments',
@@ -797,57 +788,49 @@ let SidebarElements = [{
   to: '/restrictions',
   href: '/restrictions',
   iconName: 'notepad',
-  collectionName: 'Restrictions',
-  requireAuth: true
+  collectionName: 'Restrictions'
 }, {
   primaryText: 'SearchParameters',
   to: '/search-parameters',
   href: '/search-parameters',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'SearchParameters',
-  requireAuth: true
+  collectionName: 'SearchParameters'
 }, {
   primaryText: 'Service Requests',
   to: '/service-requests',
   href: '/service-requests',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'ServiceRequests',
-  requireAuth: true
+  collectionName: 'ServiceRequests'
 }, {
   primaryText: 'StructureDefinitions',
   to: '/structure-definitions',
   href: '/structure-definitions',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'StructureDefinitions',
-  requireAuth: true
+  collectionName: 'StructureDefinitions'
 }, {
   primaryText: 'Subscriptions',
   to: '/subscriptions',
   href: '/subscriptions',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'Subscriptions',
-  requireAuth: true
+  collectionName: 'Subscriptions'
 }, {
   primaryText: 'Tasks',
   to: '/tasks',
   href: '/tasks',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'Tasks',
-  requireAuth: true
+  collectionName: 'Tasks'
 }, {
   primaryText: 'Value Sets',
   to: '/valuesets',
   href: '/valuesets',
   iconName: 'notepad',
-  collectionName: 'ValueSets',
-  requireAuth: true
+  collectionName: 'ValueSets'
 }, {
   primaryText: 'VerificationResults',
   to: '/verification-results',
   href: '/verification-results',
   iconName: 'notepad',
-  collectionName: 'VerificationResults',
-  requireAuth: true
+  collectionName: 'VerificationResults'
 }];
   
 let AdminSidebarElements = [{
