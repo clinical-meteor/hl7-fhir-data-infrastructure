@@ -128,7 +128,7 @@ export function ProvenancesPage(props){
   let data = {
     selectedProvenanceId: '',
     selectedProvenances: null,
-    procedures: [],
+    provenances: [],
     onePageLayout: true,
     provenancesIndex: 0
   };
@@ -142,7 +142,7 @@ export function ProvenancesPage(props){
   data.selectedProvenance = useTracker(function(){
     return Provenances.findOne(Session.get('selectedProvenanceId'));
   }, [])
-  data.procedures = useTracker(function(){
+  data.provenances = useTracker(function(){
     return Provenances.find().fetch();
   }, [])
   data.provenancesIndex = useTracker(function(){
@@ -184,18 +184,18 @@ export function ProvenancesPage(props){
 
 
   let cardWidth = window.innerWidth - paddingWidth;
-  let proceduresTitle = data.procedures.length + " Provenances";
+  let provenancesTitle = data.provenances.length + " Provenances";
 
   return (
-    <PageCanvas id="proceduresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
+    <PageCanvas id="provenancesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
           <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-            <CardHeader title={proceduresTitle} />
+            <CardHeader title={provenancesTitle} />
             <CardContent>
               <ProvenancesTable 
                 formFactorLayout={formFactor}  
-                procedures={data.procedures}
-                count={data.procedures.length}
+                provenances={data.provenances}
+                count={data.provenances.length}
                 selectedProvenanceId={ data.selectedProvenanceId }
                 rowsPerPage={LayoutHelpers.calcTableRows()}
                 onRowClick={ handleRowClick.bind(this) }

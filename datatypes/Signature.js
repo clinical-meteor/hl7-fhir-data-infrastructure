@@ -10,31 +10,29 @@ SignatureSchema = new SimpleSchema({
   "when" : {
     type: Date
     },
-  "whoUri" : {
-    optional: true,
-    type: String
-    },
-  "whoReference" : {
-    optional: true,
-    type: ReferenceSchema
-    },
-  "contentType" : {
-    optional: true,
-    type: String
-  },
-  "onBehalfOfUri" : {
-    optional: true,
-    type: String
-    },
-  "onBehalfOfReference" : {
-    optional: true,
-    type: ReferenceSchema
-    },
-  "blob" : {
+  "who" : {
     optional: true,
     blackbox: true,
     type: Object
-    }  
+    },
+  "targetFormat" : {
+    optional: true,
+    type: String
+  },
+  "sigFormat" : {
+    optional: true,
+    type: String
+  },
+  "onBehalfOf" : {
+    optional: true,
+    blackbox: true,
+    type: Object
+    },
+  "data" : {
+    optional: true,
+    blackbox: true,
+    type: Object
+  }  
 });
 
 

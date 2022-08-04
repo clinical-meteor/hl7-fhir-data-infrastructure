@@ -676,7 +676,7 @@ MeasureReportsTable.defaultProps = {
   hideActionIcons: true,
   hideNumerator: false,
   hideDenominator: false,
-  hideBarcode: false,
+  hideBarcode: true,
   measureShorthand: false,
   measureScoreLabel: 'ICU Beds',
   measureScoreType: 'numICUBeds',
