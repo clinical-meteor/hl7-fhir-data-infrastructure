@@ -58,7 +58,7 @@ import {
       children 
     } = props;
 
-    let [ selectedRowIds, setSelectedRowIds ] = useState(selectedIds);
+    // let [ selectedRowIds, setSelectedRowIds ] = useState(selectedIds);
 
     // console.log('GoalsTable.tableRowSize', tableRowSize)
       
@@ -284,7 +284,7 @@ import {
 
   let rows = [];
   // const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  // const [rowsPerPage, setRowsPerPage] = useState(rowsPerPage);
 
 
   let paginationCount = 101;
@@ -309,7 +309,7 @@ import {
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -334,7 +334,7 @@ import {
         let count = 0;  
 
         goals.forEach(function(goal){
-          if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+          if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
             let newRow = {
                 _id: get(goal, '_id', ''),
                 identifier: get(goal, 'identifier[0].value', ''),

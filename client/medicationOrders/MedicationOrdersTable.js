@@ -82,26 +82,80 @@ function MedicationOrdersTable(props){
   logger.verbose('clinical:hl7-resource-encounter.client.MedicationOrdersTable');
   logger.data('MedicationOrdersTable.props', {data: props}, {source: "MedicationOrdersTable.jsx"});
 
-  let rows = [];
-  let rowsPerPageToRender = 5;
-
   const classes = useStyles();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  if(props.rowsPerPage){
+  let { 
+    children, 
+    id,
+
+    data,
+    medicationOrders,
+    selectedMedicationOrderId,
+    query,
+    paginationLimit,
+    disablePagination,
+  
+    hideCheckbox,
+    hideActionIcons,
+    hideIdentifier,
+    hideMedication,
+    hidePatient,
+    hidePatientReference,
+    hidePrescriber,
+    hideDateWritten,
+    hideDosage,
+    
+    hidePostalCode,
+    hideFhirId,
+  
+    onCellClick,
+    onRowClick,
+    onMetaClick,
+    onRemoveRecord,
+    onActionButton,
+    hideActionButton,
+    hideBarcode,
+    actionButtonLabel,
+    hideExtensions,
+    hideNumEndpoints,
+  
+    onActionButtonClick,
+    showActionButton,
+
+    rowsPerPage,
+    tableRowSize,
+    dateFormat,
+    showMinutes,
+    size,
+    appHeight,
+    formFactorLayout,
+
+    page,
+    onSetPage,
+
+    count,
+    multiline,
+    rows,
+
+    ...otherProps 
+  } = props;
+
+
+  if(rowsPerPage){
     // if we receive an override as a prop, render that many rows
     // best to use rowsPerPage with disablePagination
-    rowsPerPageToRender = props.rowsPerPage;
+    rowsToRender = rowsPerPage;
   } else {
     // otherwise default to the user selection
-    rowsPerPageToRender = rowsPerPage;
+    rowsToRender = rowsPerPage;
   }
 
   let paginationCount = 101;
-  if(props.count){
-    paginationCount = props.count;
-  } else {
+  if(count){
+    paginationCount = count;
+  } else if(Array.isArray(rows)){
     paginationCount = rows.length;
   }
 
@@ -115,19 +169,19 @@ function MedicationOrdersTable(props){
     // Session.set('medicationOrdersUpsert', false);
     // Session.set('selectedMedicationOrder', id);
 
-    if(props && (typeof props.onRowClick === "function")){
-      props.onRowClick(id);
+    if(props && (typeof onRowClick === "function")){
+      onRowClick(id);
     }
   }
   function renderCheckboxHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   function renderCheckbox(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -138,14 +192,14 @@ function MedicationOrdersTable(props){
     }
   }
   function renderToggleHeader(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}} >Toggle</TableCell>
       );
     }
   }
   function renderToggle(){
-    if (!props.hideCheckbox) {
+    if (!hideCheckbox) {
       return (
         <TableCell className="toggle" style={{width: '60px'}}>
             {/* <Checkbox
@@ -156,14 +210,14 @@ function MedicationOrdersTable(props){
     }
   }
   function renderActionIconsHeader(){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
       return (
         <TableCell className='actionIcons'>Actions</TableCell>
       );
     }
   }
   function renderActionIcons( medicationOrder ){
-    if (!props.hideActionIcons) {
+    if (!hideActionIcons) {
 
       let iconStyle = {
         marginLeft: '4px', 
@@ -181,154 +235,154 @@ function MedicationOrdersTable(props){
     }
   } 
   function renderStatusHeader(){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='patientDisplay'>Status</TableCell>
       );
     }
   }
   function renderStatus(status ){
-    if (!props.hideStatus) {
+    if (!hideStatus) {
       return (
         <TableCell className='status' style={{minWidth: '140px'}}>{ status }</TableCell>
       );
     }
   }
   function renderPatientHeader(){
-    if (!props.hidePatient) {
+    if (!hidePatient) {
       return (
         <TableCell className='patientDisplay'>Patient</TableCell>
       );
     }
   }
   function renderPatient(patientDisplay ){
-    if (!props.hidePatient) {
+    if (!hidePatient) {
       return (
         <TableCell className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</TableCell>
       );
     }
   }
   function renderPatientReferenceHeader(){
-    if (!props.hidePatientReference) {
+    if (!hidePatientReference) {
       return (
         <TableCell className='patientReference'>Patient Reference</TableCell>
       );
     }
   }
   function renderPatientReference(patientReference ){
-    if (!props.hidePatientReference) {
+    if (!hidePatientReference) {
       return (
         <TableCell className='patientReference' style={{minWidth: '140px'}}>{ patientReference }</TableCell>
       );
     }
   }
   function renderPrescriberHeader(){
-    if (!props.hidePrescriber) {
+    if (!hidePrescriber) {
       return (
         <TableCell className='prescriberDisplay'>Prescriber</TableCell>
       );
     }
   }
   function renderPrescriber(prescriberDisplay ){
-    if (!props.hidePrescriber) {
+    if (!hidePrescriber) {
       return (
         <TableCell className='prescriberDisplay' style={{minWidth: '140px'}}>{ prescriberDisplay }</TableCell>
       );
     }
   }
   function renderIdentifierHeader(){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
   function renderIdentifier(identifier ){
-    if (!props.hideIdentifier) {
+    if (!hideIdentifier) {
       return (
         <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   } 
   function renderMedicationHeader(){
-    if (!props.hideMedication) {
+    if (!hideMedication) {
       return (
         <TableCell className='medicationName'>Medication Name</TableCell>
       );
     }
   }
   function renderMedication(medicationName ){
-    if (!props.hideMedication) {
+    if (!hideMedication) {
       return (
         <TableCell className='medicationName'>{ medicationName }</TableCell>
       );
     }
   } 
   function renderMedicationCodeHeader(){
-    if (!props.hideMedication) {
+    if (!hideMedication) {
       return (
         <TableCell className='medicationCode'>Medication Code</TableCell>
       );
     }
   }
   function renderMedicationCode(medicationCode ){
-    if (!props.hideMedication) {
+    if (!hideMedication) {
       return (
         <TableCell className='medicationCode'>{ medicationCode }</TableCell>
       );
     }
   } 
   function renderDateWrittenHeader(){
-    if (!props.hideDateWritten) {
+    if (!hideDateWritten) {
       return (
         <TableCell className='dateWritten'>Date Written</TableCell>
       );
     }
   }
   function renderDateWritten(dateWritten ){
-    if (!props.hideDateWritten) {
+    if (!hideDateWritten) {
       return (
         <TableCell className='dateWritten'>{ dateWritten }</TableCell>
       );
     }
   } 
   function renderDosageHeader(){
-    if (!props.hideDosage) {
+    if (!hideDosage) {
       return (
         <TableCell className='dosage'>Dosage</TableCell>
       );
     }
   }
   function renderDosage(dosage ){
-    if (!props.hideDosage) {
+    if (!hideDosage) {
       return (
         <TableCell className='dosage' style={{minWidth: '140px'}}>{ dosage }</TableCell>
       );
     }
   }
   function renderBarcode(id){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helvetica">{id}</span></TableCell>
       );
     }
   }
   function renderBarcodeHeader(){
-    if (!props.hideBarcode) {
+    if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
       );
     }
   }
   function renderActionButtonHeader(){
-    if (props.showActionButton === true) {
+    if (showActionButton === true) {
       return (
         <TableCell className='ActionButton' >Action</TableCell>
       );
     }
   }
   function renderActionButton(patient){
-    if (props.showActionButton === true) {
+    if (showActionButton === true) {
       return (
         <TableCell className='ActionButton' >
           <Button onClick={ onActionButtonClick.bind(this, patient[i]._id)}>{ get(props, "actionButtonLabel", "") }</Button>
@@ -354,20 +408,19 @@ function MedicationOrdersTable(props){
 
   let tableRows = [];
   let medicationOrdersToRender = [];
-  let dateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     dateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.dateFormat){
-    dateFormat = props.dateFormat;
+  if(dateFormat){
+    dateFormat = dateFormat;
   }
 
-  if(props.medicationOrders){
-    if(props.medicationOrders.length > 0){     
+  if(medicationOrders){
+    if(medicationOrders.length > 0){     
       let count = 0;    
-      props.medicationOrders.forEach(function(medicationOrder){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+      medicationOrders.forEach(function(medicationOrder){
+        if((count >= (page * rowsToRender)) && (count < (page + 1) * rowsToRender)){
           medicationOrdersToRender.push(FhirDehydrator.dehydrateMedicationOrder(medicationOrder, dateFormat));
         }
         count++;
@@ -377,7 +430,7 @@ function MedicationOrdersTable(props){
 
   if(medicationOrdersToRender.length === 0){
     logger.trace('MedicationOrdersTable:  No procedures to render.');
-    // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
+    // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < medicationOrdersToRender.length; i++) {
       tableRows.push(
@@ -402,14 +455,14 @@ function MedicationOrdersTable(props){
 
 
   let paginationFooter;
-  if(!props.disablePagination){
+  if(!disablePagination){
     paginationFooter = <TablePagination
       component="div"
       // rowsPerPageOptions={[5, 10, 25, 100]}
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsToRender}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -483,5 +536,28 @@ MedicationOrdersTable.propTypes = {
 
   formFactorLayout: PropTypes.string
 };
+
+MedicationOrdersTable.defaultProps = {
+  selectedMedicationOrderId: '',
+  medicationOrders: [],
+  hideFhirId: true,
+  hideName: false,
+  hideActionButton: true,
+  hideCheckbox: true,
+  hideBarcode: true,
+  hideExtensions: true,
+  hideNumEndpoints: true,
+  hideMedication: false,
+  multiline: false,
+  page: 0,
+  rowsPerPage: 5,
+  hasRestrictions: false,
+  tableRowSize: 'medium',
+  actionButtonLabel: 'Export',
+  dateFormat: "YYYY-MM-DD",
+  tableRowSize: 'medium',
+  primaryColor: "#E5537E",
+  rows: []
+}
 
 export default MedicationOrdersTable;

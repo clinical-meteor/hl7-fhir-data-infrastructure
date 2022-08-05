@@ -103,7 +103,21 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 
 
+
 //=============================================================================================================================================
+// SESSION VARIABLES
+
+Session.setDefault('medicationOrderPageTabIndex', 1); 
+Session.setDefault('medicationOrderSearchFilter', ''); 
+Session.setDefault('selectedMedicationOrderId', false);
+Session.setDefault('selectedMedicationOrder', false)
+Session.setDefault('MedicationOrdersPage.onePageLayout', true)
+Session.setDefault('MedicationOrdersPage.defaultQuery', {})
+Session.setDefault('MedicationOrdersTable.hideCheckbox', true)
+Session.setDefault('MedicationOrdersTable.medicationOrdersIndex', 0)
+
+
+
 //=============================================================================================================================================
 // MEDICATION ORDER PAGE
 
@@ -113,7 +127,10 @@ export function MedicationOrdersPage(props){
     selectedMedicationOrderId: '',
     selectedMedicationOrder: null,
     medicationOrders: [],
-    onePageLayout: true
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    medicationOrdersIndex: 1
   };
 
   data.onePageLayout = useTracker(function(){
@@ -128,12 +145,27 @@ export function MedicationOrdersPage(props){
   data.medicationOrders = useTracker(function(){
     return MedicationOrders.find().fetch();
   }, [])
+  data.medicationOrdersIndex = useTracker(function(){
+    return Session.get('MedicationOrdersTable.medicationOrdersIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
   if(process.env.NODE_ENV === "test") console.log('In MedicationOrdersPage render');
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-  let [medicationOrdersIndex, setMedicationOrdersIndex] = setState(0);
+  // let [medicationOrdersIndex, setMedicationOrdersIndex] = setState(0);
+
+  function setMedicationOrdersIndex(newIndex){
+    Session.set('MedicationOrdersTable.medicationOrdersIndex', newIndex)
+  }
 
   return (
     <PageCanvas id="medicationOrdersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -152,7 +184,7 @@ export function MedicationOrdersPage(props){
               onSetPage={function(index){
                 setMedicationOrdersIndex(index)
               }}      
-              page={medicationOrdersIndex}                        
+              page={data.medicationOrdersIndex}                        
             />
           </CardContent>
         </StyledCard>

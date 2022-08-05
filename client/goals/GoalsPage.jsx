@@ -125,7 +125,10 @@ export function GoalsPage(props){
     options: {
       limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
     },
-    onePageLayout: true
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    goalsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -140,7 +143,20 @@ export function GoalsPage(props){
   data.goals = useTracker(function(){
     return Goals.find().fetch();
   }, [])
+  data.goalsIndex = useTracker(function(){
+    return Session.get('OrganizationsTable.goalsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
+  
 
+  function setGoalsIndex(newIndex){
+    Session.set('GoalsTable.goalsIndex', newIndex)
+  }
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
@@ -149,7 +165,7 @@ export function GoalsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
-  let [goalsPageIndex, setGoalsPageIndex] = setState(0);
+  // let [goalsPageIndex, setGoalsPageIndex] = setState(0);
 
   let layoutContents;
   if(data.onePageLayout){
@@ -163,9 +179,9 @@ export function GoalsPage(props){
             hideIdentifier={true} 
             paginationLimit={10}   
             onSetPage={function(index){
-              setGoalsPageIndex(index)
+              setGoalsIndex(index)
             }}   
-            page={goalsPageIndex}                 
+            page={data.goalsIndex}                 
           />
         </CardContent>
       </StyledCard>
@@ -192,9 +208,9 @@ export function GoalsPage(props){
               hideActionIcons={true}
               onRowClick={this.handleRowClick.bind(this) }
               onSetPage={function(index){
-                setGoalsPageIndex(index)
+                setGoalsIndex(index)
               }}         
-              page={goalsPageIndex}                              
+              page={data.goalsIndex}                 
               count={data.goalsCount}
               />
           </CardContent>

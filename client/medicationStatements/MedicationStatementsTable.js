@@ -122,6 +122,7 @@ function MedicationStatementsTable(props){
     page,
     onSetPage,
 
+    count, 
     ...otherProps 
   } = props;
 
@@ -625,7 +626,8 @@ MedicationStatementsTable.defaultProps = {
   displayDosage: true,
   displayRxNorm: true,
   rowsPerPage: 5,
-  fhirVersion: "R4"
+  fhirVersion: "R4",
+  count: 0
 }
 
 

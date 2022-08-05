@@ -26,6 +26,19 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { get } from 'lodash';
 
 
+//=============================================================================================================================================
+// SESSION VARIABLES
+
+Session.setDefault('medicationStatementPageTabIndex', 1); 
+Session.setDefault('medicationStatementSearchFilter', ''); 
+Session.setDefault('selectedMedicationStatementId', false);
+Session.setDefault('selectedMedicationStatement', false)
+Session.setDefault('MedicationStatementsPage.onePageLayout', true)
+Session.setDefault('MedicationStatementsPage.defaultQuery', {})
+Session.setDefault('MedicationStatementsTable.hideCheckbox', true)
+Session.setDefault('MedicationStatementsTable.medicationStatementsIndex', 0)
+
+
 
 //=============================================================================================================================================
 // COMPONENT
@@ -39,7 +52,11 @@ export function MedicationStatementsPage(props){
     selectedMedicationStatementId: '',
     selectedMedicationStatement: null,
     medicationStatements: [],
-    onePageLayout: true
+    onePageLayout: true,
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    organizationsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -55,6 +72,19 @@ export function MedicationStatementsPage(props){
     return MedicationStatements.find().fetch();
   }, [])
 
+  data.medicationStatementsIndex = useTracker(function(){
+    return Session.get('MedicationStatementsTable.medicationStatementsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
+
+  function setMedicationStatementsIndex(newIndex){
+    Session.set('MedicationStatementsTable.medicationStatementsIndex', newIndex)
+  }
 
   if(process.env.NODE_ENV === "test") console.log('In MedicationStatementsPage render');
 
@@ -64,7 +94,7 @@ export function MedicationStatementsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
-  let [medicationStatementsIndex, setMedicationStatementsIndex] = setState(0);
+  // let [medicationStatementsIndex, setMedicationStatementsIndex] = setState(0);
 
   return (
     <PageCanvas id="medicationStatementsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -80,7 +110,7 @@ export function MedicationStatementsPage(props){
               onSetPage={function(index){
                 setMedicationStatementsIndex(index)
               }}       
-              page={medicationStatementsIndex}                       
+              page={data.medicationStatementsIndex}                       
             />
           </CardContent>
       </StyledCard>        
