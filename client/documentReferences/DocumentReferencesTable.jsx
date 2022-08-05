@@ -120,6 +120,8 @@ function DocumentReferencesTable(props){
     page,
     onSetPage,
 
+    count,
+
     ...otherProps 
   } = props;
 
@@ -784,6 +786,7 @@ DocumentReferencesTable.propTypes = {
   onSetPage: PropTypes.func,
 
   page: PropTypes.number,
+  count: PropTypes.number,
   hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 
@@ -821,7 +824,8 @@ DocumentReferencesTable.defaultProps = {
   disablePagination: false,
   hideActionButton: true,
   rowsPerPage: 5,
-  tableRowSize: 'medium'
+  tableRowSize: 'medium',
+  count: 0
 }
 
 export default DocumentReferencesTable;

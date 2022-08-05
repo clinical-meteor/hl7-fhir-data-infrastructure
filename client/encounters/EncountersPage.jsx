@@ -109,6 +109,23 @@ Session.setDefault('encountersArray', []);
     }
   });
 
+
+
+//=============================================================================================================================================
+// SESSION VARIABLES
+
+Session.setDefault('encounterPageTabIndex', 1); 
+Session.setDefault('encounterSearchFilter', ''); 
+Session.setDefault('selectedEncounterId', false);
+Session.setDefault('selectedEncounter', false)
+Session.setDefault('EncountersPage.onePageLayout', true)
+Session.setDefault('EncountersPage.defaultQuery', {})
+Session.setDefault('EncountersTable.hideCheckbox', true)
+Session.setDefault('EncountersTable.encountersIndex', 0)
+
+
+
+
 //=============================================================================================================================================
 // MAIN COMPONENT
 
@@ -117,7 +134,11 @@ export function EncountersPage(props){
   let data = {
     selectedEncounterId: '',
     selectedEncounter: null,
-    encounters: []
+    encounters: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    encountersIndex: 0
   };
 
   data.selectedEncounterId = useTracker(function(){
@@ -129,7 +150,20 @@ export function EncountersPage(props){
   data.encounters = useTracker(function(){
     return Encounters.find().fetch();
   }, [])
+  data.encountersIndex = useTracker(function(){
+    return Session.get('EncountersTable.encountersIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
+
+  function setEncountersIndex(newIndex){
+    Session.set('EncountersTable.encountersIndex', newIndex)
+  }
   
   const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);
 
@@ -138,8 +172,6 @@ export function EncountersPage(props){
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
   
   let cardWidth = window.innerWidth - paddingWidth;
-
-  let [encountersPageIndex, setEncountersPageIndex] = setState(0);
 
   return (
     <PageCanvas id="encountersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -165,9 +197,9 @@ export function EncountersPage(props){
                 hideBarcode={false}
                 rowsPerPage={LayoutHelpers.calcTableRows()}
                 onSetPage={function(index){
-                  setEncountersPageIndex(index)
+                  setEncountersIndex(index)
                 }}                  
-                page={encountersPageIndex}
+                page={data.encountersIndex}
               />
             </CardContent>
           </StyledCard>

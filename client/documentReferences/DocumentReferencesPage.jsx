@@ -112,6 +112,20 @@ const muiTheme = createMuiTheme({
 
 
 
+
+//=============================================================================================================================================
+// SESSION VARIABLES
+
+Session.setDefault('documentReferencePageTabIndex', 1); 
+Session.setDefault('documentReferenceSearchFilter', ''); 
+Session.setDefault('selectedDocumentReferenceId', false);
+Session.setDefault('selectedDocumentReference', false)
+Session.setDefault('DocumentReferencesPage.onePageLayout', true)
+Session.setDefault('DocumentReferencesPage.defaultQuery', {})
+Session.setDefault('DocumentReferencesTable.hideCheckbox', true)
+Session.setDefault('DocumentReferencesTable.documentReferencesIndex', 0)
+
+
 //=============================================================================================================================================
 // COMPONENTS
 
@@ -122,7 +136,12 @@ export function DocumentReferencesPage(props){
     selectedDocumentReferenceId: '',
     selectedDocumentReference: false,
     documentReferences: [],
-    onePageLayout: false
+    onePageLayout: false,
+    showSystemIds: false,
+    showFhirIds: false,
+    documentReferencesIndex: 0,
+    hasRestrictions: false
+
   };
 
   data.onePageLayout = useTracker(function(){
@@ -137,18 +156,29 @@ export function DocumentReferencesPage(props){
   data.documentReferences = useTracker(function(){
     return DocumentReferences.find().fetch()
   }, [])
+  data.documentReferencesIndex = useTracker(function(){
+    return Session.get('DocumentReferencesTable.documentReferencesIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
 
   function handleRowClick(){
 
   }
-
+  function setDocumentReferenceIndex(newIndex){
+    Session.set('DocumentReferencesTable.documentReferencesIndex', newIndex)
+  }
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
-  let [documentReferencesPageIndex, setDocumentReferencesPageIndex] = setState(0);
+  // let [documentReferencesPageIndex, setDocumentReferencesPageIndex] = setState(0);
   
   let layoutContents;
   if(data.onePageLayout){
@@ -165,9 +195,9 @@ export function DocumentReferencesPage(props){
           paginationLimit={10}     
           onRowClick={ handleRowClick.bind(this) }
           onSetPage={function(index){
-            setDocumentReferencesPageIndex(index)
+            setDocumentReferenceIndex(index)
           }}                
-          page={documentReferencesPageIndex}
+          page={data.documentReferencesIndex}
           rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
           count={data.documentReferences.length}
           formFactorLayout={formFactor}
@@ -192,9 +222,9 @@ export function DocumentReferencesPage(props){
               count={data.documentReferences.length}
               formFactorLayout={formFactor}
               onSetPage={function(index){
-                setDocumentReferencesPageIndex(index)
+                setDocumentReferenceIndex(index)
               }}           
-              page={documentReferencesPageIndex}     
+              page={data.documentReferencesIndex}
             />
           </CardContent>
         </StyledCard>

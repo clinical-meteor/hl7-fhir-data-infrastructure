@@ -35,6 +35,18 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('selectedDeviceId', false);
 
 
+Session.setDefault('devicePageTabIndex', 1); 
+Session.setDefault('deviceSearchFilter', ''); 
+Session.setDefault('selectedDeviceId', false);
+Session.setDefault('selectedDevice', false)
+Session.setDefault('DevicesPage.onePageLayout', true)
+Session.setDefault('DevicesPage.defaultQuery', {})
+Session.setDefault('DevicesTable.hideCheckbox', true)
+Session.setDefault('DevicesTable.devicesIndex', 0)
+
+
+
+
 //=============================================================================================================================================
 // GLOBAL THEMING
 
@@ -119,7 +131,11 @@ export function DevicesPage(props){
   let data = {
     selectedDeviceId: '',
     selectedDevice: false,
-    devices: []
+    devices: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    devicessIndex: 0
   };
 
 
@@ -132,6 +148,15 @@ export function DevicesPage(props){
   data.devices = useTracker(function(){
     return Devices.find().fetch()
   }, [])
+  data.devicesIndex = useTracker(function(){
+    return Session.get('DevicesTable.devicesIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
@@ -140,7 +165,7 @@ export function DevicesPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
   
-  let [devicesPageIndex, setDevicesPageIndex] = setState(0);
+  // let [devicesPageIndex, setDevicesPageIndex] = setState(0);
 
   return (
     <PageCanvas id="devicesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -156,7 +181,7 @@ export function DevicesPage(props){
               onSetPage={function(index){
                 setDevicesPageIndex(index)
               }}                
-              page={devicesPageIndex}
+              page={data.devicesIndex}
             />
           </CardContent>
       </StyledCard>

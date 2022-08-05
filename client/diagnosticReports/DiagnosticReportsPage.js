@@ -106,6 +106,20 @@ const muiTheme = createMuiTheme({
 });
 
 
+
+//=============================================================================================================================================
+// SESSION VARIABLES
+
+Session.setDefault('diagnosticReportPageTabIndex', 1); 
+Session.setDefault('diagnosticReportSearchFilter', ''); 
+Session.setDefault('selectedOrganizationId', false);
+Session.setDefault('selectedOrganization', false)
+Session.setDefault('DiagnosticReportsPage.onePageLayout', true)
+Session.setDefault('DiagnosticReportsPage.defaultQuery', {})
+Session.setDefault('DiagnosticReportsTable.hideCheckbox', true)
+Session.setDefault('DiagnosticReportsTable.diagnosticReportsIndex', 0)
+
+
 // ==============================================================================================================
 // MAIN COMPONENT
 
@@ -114,7 +128,11 @@ export function DiagnosticReportsPage(props){
   let data = {
     selectedDiagnosticReportId: '',
     selectedDiagnosticReport: false,
-    diagnosticReports: []
+    diagnosticReports: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    diagnosticReportsIndex: 0
   };
 
   data.selectedDiagnosticReportId = useTracker(function(){
@@ -126,6 +144,20 @@ export function DiagnosticReportsPage(props){
   data.diagnosticReports = useTracker(function(){
     return DiagnosticReports.find().fetch();
   }, [])
+  data.diagnosticReportsIndex = useTracker(function(){
+    return Session.get('DiagnosticReportsTable.diagnosticReportsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
+
+
+  function setDiagnosticReportsIndex(newIndex){
+    Session.set('DiagnosticReportsTable.diagnosticReportsIndex', newIndex)
+  }
 
   if(process.env.NODE_ENV === "test") console.log('In DiagnosticReportsPage render');
 
@@ -135,7 +167,7 @@ export function DiagnosticReportsPage(props){
   
   let cardWidth = window.innerWidth - paddingWidth;
 
-  let [diagnosticReportsPageIndex, setDiagnosticReportsPageIndex] = setState(0);
+  // let [diagnosticReportsPageIndex, setDiagnosticReportsPageIndex] = setState(0);
 
   return (
     <PageCanvas id="measuresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -151,9 +183,9 @@ export function DiagnosticReportsPage(props){
               hideActionIcons={true}
               rowsPerPage={LayoutHelpers.calcTableRows()}
               onSetPage={function(index){
-                setDiagnosticReportsPageIndex(index)
+                setDiagnosticReportsIndex(index)
               }}         
-              page={diagnosticReportsPageIndex}       
+              page={data.diagnosticReportsIndex}       
             />
           </CardContent>
         </StyledCard>
