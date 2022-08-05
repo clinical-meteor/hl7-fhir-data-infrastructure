@@ -44,10 +44,17 @@ let defaultConsent = {
 
 Session.setDefault('consentFormData', defaultConsent);
 Session.setDefault('consentSearchFilter', '');
+Session.setDefault('selectedConsentId', false);
+Session.setDefault('selectedConsent', false);
+
 Session.setDefault('consentSearchQuery', {});
 Session.setDefault('consentDialogOpen', false);
-Session.setDefault('selectedConsentId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
+
+Session.setDefault('ConsentsPage.onePageLayout', true)
+Session.setDefault('ConsentsPage.defaultQuery', {})
+Session.setDefault('ConsentsTable.hideCheckbox', true)
+Session.setDefault('ConsentsTable.consentsIndex', 0)
 
 
 
@@ -146,7 +153,11 @@ export function ConsentsPage(props){
     dialogOpen: Session.get('consentDialogOpen'), 
     selectedConsentId: Session.get('selectedConsentId'),
     selectedConsent: false,
-    consents: []
+    consents: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    organizationsIndex: 0
   };
 
 
@@ -175,6 +186,15 @@ export function ConsentsPage(props){
   data.consents = useTracker(function(){
     return Consents.find().fetch()
   })
+  data.consentsIndex = useTracker(function(){
+    return Session.get('ConsentsTable.consentsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
 
   // ???????
@@ -193,12 +213,12 @@ export function ConsentsPage(props){
   //---------------------------------------------------------------------------------------------------------
   // Lifecycle
 
-  useEffect(function(){
-  //   if(get(this, 'props.params.consentId')){
-  //     Session.set('selectedConsentId', get(this, 'props.params.consentId'))
-  //     Session.set('consentPageTabIndex', 2);
-  //   }
-  }, [])
+  // useEffect(function(){
+  // //   if(get(this, 'props.params.consentId')){
+  // //     Session.set('selectedConsentId', get(this, 'props.params.consentId'))
+  // //     Session.set('consentPageTabIndex', 2);
+  // //   }
+  // }, [])
 
   function handleTabChange(index){
     Session.set('consentPageTabIndex', index);
@@ -282,7 +302,9 @@ export function ConsentsPage(props){
     setState({searchQuery: searchQuery})
     setState({searchForm: searchForm})
   }
-
+  function setConsentsIndex(newIndex){
+    Session.set('ConsentsTable.consentsIndex', newIndex)
+  }
 
   //=============================================================================================================================================
   // Renders
@@ -305,7 +327,6 @@ export function ConsentsPage(props){
 
   let consentPageContent;
 
-  let [consentsPageIndex, setConsentsPageIndex] = setState(0);
 
   if(true){
     consentPageContent = <ConsentsTable 
@@ -314,9 +335,9 @@ export function ConsentsPage(props){
       consents={data.consents}
       noDataMessage={false}
       onSetPage={function(index){
-        setConsentsPageIndex(index)
+        setConsentsIndex(index)
       }}        
-      page={consentsPageIndex}
+      page={data.consentsIndex}
       // patient={ data.consentSearchFilter }
       // query={ data.consentSearchQuery }
       sort="periodStart"
