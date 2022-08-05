@@ -7,6 +7,7 @@ import {
   Checkbox,
   CardHeader,
   CardContent,
+  Container,
   Button,
   Tab, 
   Tabs,
@@ -136,7 +137,7 @@ export function LocationsPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
   let data = {
     style: {
@@ -232,75 +233,88 @@ export function LocationsPage(props){
   }
 
 
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} scrollable >
-      <CardHeader title={data.locations.length + " Locations"} />
-      
+
+  let layoutContent;
+  if(data.locations.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <StyledCard height="auto" margin={20} scrollable >
+        <CardHeader title={data.locations.length + " Locations"} />
+        
+        <CardContent>
+          <LocationsTable 
+            locations={data.locations}
+            count={data.locations.length}  
+            hideCheckbox={data.hideCheckbox}
+            hideFhirId={!data.showFhirIds}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
+            tableRowSize="medium"
+            onRowClick={ handleRowClick.bind(this) }    
+            onSetPage={function(index){
+              setLocationsPageIndex(index)
+            }}     
+            // hideLatLng={!data.showLatLng}
+            hideType={true}
+            hideLatitude={!data.showLatLng}
+            hideLongitude={!data.showLatLng}       
+            hideBarcode={!data.showSystemIds} 
+            page={data.locationsPageIndex}                   
+          />
+        </CardContent>
+      </StyledCard>
+    } else {
+      layoutContent = <Grid container spacing={3}>
+        <Grid item lg={6}>
+        <StyledCard height="auto" margin={20} >
+            <CardHeader
+              title="Locations"
+            />
+            <CardContent>
+              <LocationsTable 
+                locations={data.locations}
+                count={data.locations.length}   
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
+                hideCheckbox={data.hideCheckbox}
+                hideBarcode={!data.showSystemIds}
+                page={data.locationsPageIndex}                                     
+                onRowClick={ handleRowClick.bind(this) }    
+                onSetPage={function(index){
+                  setLocationsPageIndex(index)
+                }}          
+              />
+            </CardContent>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20}  scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureReportId }</h1>
+            <CardContent>
+              <CardContent>
+                {/* <LocationDetail 
+  
+                />                 */}
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+      </Grid>
+    }
+  
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
       <CardContent>
-        <LocationsTable 
-          locations={data.locations}
-          count={data.locations.length}  
-          hideCheckbox={data.hideCheckbox}
-          hideFhirId={!data.showFhirIds}
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
-          tableRowSize="medium"
-          onRowClick={ handleRowClick.bind(this) }    
-          onSetPage={function(index){
-            setLocationsPageIndex(index)
-          }}     
-          // hideLatLng={!data.showLatLng}
-          hideType={true}
-          hideLatitude={!data.showLatLng}
-          hideLongitude={!data.showLatLng}       
-          hideBarcode={!data.showSystemIds} 
-          page={data.locationsPageIndex}                   
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
         />
       </CardContent>
-    </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-      <StyledCard height="auto" margin={20} >
-          <CardHeader
-            title="Locations"
-          />
-          <CardContent>
-            <LocationsTable 
-              locations={data.locations}
-              count={data.locations.length}   
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium", data.style.page.height) }
-              hideCheckbox={data.hideCheckbox}
-              hideBarcode={!data.showSystemIds}
-              page={data.locationsPageIndex}                                     
-              onRowClick={ handleRowClick.bind(this) }    
-              onSetPage={function(index){
-                setLocationsPageIndex(index)
-              }}          
-            />
-          </CardContent>
-        </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20}  scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureReportId }</h1>
-          <CardContent>
-            <CardContent>
-              {/* <LocationDetail 
-
-              />                 */}
-            </CardContent>
-          </CardContent>
-        </StyledCard>
-      </Grid>
-    </Grid>
+    </Container>
   }
 
-        
   return (
     <PageCanvas id="locationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

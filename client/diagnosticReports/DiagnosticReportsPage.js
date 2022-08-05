@@ -125,6 +125,14 @@ Session.setDefault('DiagnosticReportsTable.diagnosticReportsIndex', 0)
 
 export function DiagnosticReportsPage(props){
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
+  let cardWidth = window.innerWidth - paddingWidth;
+
+
   let data = {
     selectedDiagnosticReportId: '',
     selectedDiagnosticReport: false,
@@ -161,34 +169,42 @@ export function DiagnosticReportsPage(props){
 
   if(process.env.NODE_ENV === "test") console.log('In DiagnosticReportsPage render');
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-  
-  let cardWidth = window.innerWidth - paddingWidth;
 
-  // let [diagnosticReportsPageIndex, setDiagnosticReportsPageIndex] = setState(0);
+  let layoutContent;
+  if(data.diagnosticReports.length > 0){
+    layoutContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+      <CardHeader title={data.diagnosticReports.length + ' Diagnostic Reports'} />
+      <CardContent>
+        <DiagnosticReportsTable 
+          diagnosticReports={data.diagnosticReports}
+          count={data.diagnosticReports.length}
+          fhirVersion={ data.fhirVersion }
+          hideCheckbox={true}
+          hideActionIcons={true}
+          rowsPerPage={LayoutHelpers.calcTableRows()}
+          onSetPage={function(index){
+            setDiagnosticReportsIndex(index)
+          }}         
+          page={data.diagnosticReportsIndex}       
+        />
+      </CardContent>
+    </StyledCard>
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
 
   return (
     <PageCanvas id="measuresPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme}>
-        <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.diagnosticReports.length + ' Diagnostic Reports'} />
-          <CardContent>
-            <DiagnosticReportsTable 
-              diagnosticReports={data.diagnosticReports}
-              count={data.diagnosticReports.length}
-              fhirVersion={ data.fhirVersion }
-              hideCheckbox={true}
-              hideActionIcons={true}
-              rowsPerPage={LayoutHelpers.calcTableRows()}
-              onSetPage={function(index){
-                setDiagnosticReportsIndex(index)
-              }}         
-              page={data.diagnosticReportsIndex}       
-            />
-          </CardContent>
-        </StyledCard>
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

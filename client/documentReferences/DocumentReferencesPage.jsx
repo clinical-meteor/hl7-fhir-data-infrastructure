@@ -177,79 +177,90 @@ export function DocumentReferencesPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-  // let [documentReferencesPageIndex, setDocumentReferencesPageIndex] = setState(0);
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
   
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={data.documentReferences.length + " Documents"} />
-      <CardContent>
 
-        <DocumentReferencesTable 
-          documentReferences={ data.documentReferences }
-          hideCheckbox={true} 
-          hideActionIcons={true}
-          hideIdentifier={true}           
-          hideBarcode={false}
-          paginationLimit={10}     
-          onRowClick={ handleRowClick.bind(this) }
-          onSetPage={function(index){
-            setDocumentReferenceIndex(index)
-          }}                
-          page={data.documentReferencesIndex}
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          count={data.documentReferences.length}
-          formFactorLayout={formFactor}
-          />
-        </CardContent>
-      </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.documentReferences.length + " Documents"} />
-          <CardContent>
-            <DocumentReferencesTable 
-              documentReferences={ data.documentReferences }
-              hideCheckbox={true} 
-              hideActionIcons={true}
-              hideIdentifier={true}           
-              hideBarcode={false}
-              paginationLimit={10}     
-              onRowClick={ handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              count={data.documentReferences.length}
-              formFactorLayout={formFactor}
-              onSetPage={function(index){
-                setDocumentReferenceIndex(index)
-              }}           
-              page={data.documentReferencesIndex}
+  let layoutContent;
+  if(data.documentReferences.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <StyledCard height="auto" margin={20} >
+        <CardHeader title={data.documentReferences.length + " Documents"} />
+        <CardContent>
+  
+          <DocumentReferencesTable 
+            documentReferences={ data.documentReferences }
+            hideCheckbox={true} 
+            hideActionIcons={true}
+            hideIdentifier={true}           
+            hideBarcode={false}
+            paginationLimit={10}     
+            onRowClick={ handleRowClick.bind(this) }
+            onSetPage={function(index){
+              setDocumentReferenceIndex(index)
+            }}                
+            page={data.documentReferencesIndex}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            count={data.documentReferences.length}
+            formFactorLayout={formFactor}
             />
           </CardContent>
         </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureId }</h1>
-          {/* <CardHeader title={data.selectedMeasureId } className="helveticas barcode" /> */}
-          <CardContent>
+    } else {
+      layoutContents = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} >
+            <CardHeader title={data.documentReferences.length + " Documents"} />
             <CardContent>
-              <pre>
-                { JSON.stringify(data.selectedTask, null, 2) }
-              </pre>
+              <DocumentReferencesTable 
+                documentReferences={ data.documentReferences }
+                hideCheckbox={true} 
+                hideActionIcons={true}
+                hideIdentifier={true}           
+                hideBarcode={false}
+                paginationLimit={10}     
+                onRowClick={ handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                count={data.documentReferences.length}
+                formFactorLayout={formFactor}
+                onSetPage={function(index){
+                  setDocumentReferenceIndex(index)
+                }}           
+                page={data.documentReferencesIndex}
+              />
             </CardContent>
-          </CardContent>
-        </StyledCard>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedMeasureId }</h1>
+            {/* <CardHeader title={data.selectedMeasureId } className="helveticas barcode" /> */}
+            <CardContent>
+              <CardContent>
+                <pre>
+                  { JSON.stringify(data.selectedTask, null, 2) }
+                </pre>
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
       </Grid>
-    </Grid>
+    }
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
 
-  
   return (
     <PageCanvas id="documentReferencesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

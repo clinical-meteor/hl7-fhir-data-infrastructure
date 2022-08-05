@@ -7,6 +7,7 @@ import {
   Tab, 
   Tabs,
   Typography,
+  Container,
   Box
 } from '@material-ui/core';
 import { StyledCard, PageCanvas } from 'fhir-starter';
@@ -72,27 +73,41 @@ function CarePlansPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
   let cardWidth = window.innerWidth - paddingWidth;
 
-
+  let carePlansContent;
+  if(data.carePlans.length > 0){
+    carePlansContent = <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
+      <CardHeader title={ data.carePlans.length + ' CarePlans'} />
+      <CardContent>
+        <CarePlansTable 
+          carePlans={ data.carePlans}
+          count={ data.carePlans.length}
+          formFactorLayout={formFactor}
+          rowsPerPage={LayoutHelpers.calcTableRows()}
+          onSetPage={function(index){
+            setCarePlansPageIndex(index)
+          }}  
+          page={data.carePlansIndex}
+        />
+      </CardContent>
+    </StyledCard>
+  } else {
+    carePlansContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
   return (
     <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-      <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
-        <CardHeader title={ data.carePlans.length + ' CarePlans'} />
-        <CardContent>
-          <CarePlansTable 
-            carePlans={ data.carePlans}
-            count={ data.carePlans.length}
-            formFactorLayout={formFactor}
-            rowsPerPage={LayoutHelpers.calcTableRows()}
-            onSetPage={function(index){
-              setCarePlansPageIndex(index)
-            }}  
-            page={data.carePlansIndex}
-          />
-        </CardContent>
-      </StyledCard>
+      { carePlansContent }      
     </PageCanvas>
   );
 }

@@ -218,7 +218,7 @@ export function PractitionersPage(props){
       <CardContent>
         <CardHeader 
           title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Selected")} 
-          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "Please import some vital sign data, and then select a biomarker type.")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor. To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries. If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
         />
       </CardContent>
     </Container>

@@ -124,7 +124,8 @@ export function SearchParametersPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
   let data = {
     selectedAuditEventId: '',
     selectedAuditEvent: null,
@@ -305,95 +306,108 @@ export function SearchParametersPage(props){
   }
 
 
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} scrollable >
-      <CardHeader title={data.searchParameters.length + " Search Parameters"} />
-      <CardContent>
 
-        <SearchParametersTable 
-          formFactorLayout={formFactor}  
-          searchParameters={ data.searchParameters }
-          count={data.searchParameters.length}
-          hideCheckbox={data.hideCheckbox}
-          hideStatus={false}
-          hideName={false}
-          hideTitle={false}
-          hideVersion={false}
-          hideExperimental={false}
-          paginationLimit={10}     
-          checklist={data.searchParameterChecklistMode}
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          onRowClick={ handleRowClick.bind(this) }
-          onSetPage={function(index){
-            setParametersIndex(index)
-          }}  
-          page={data.parametersIndex}
-          size="small"
-          />
-        </CardContent>
-      </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.searchParameters.length + " Search Parameters"} />
-          <CardContent>
-            <SearchParametersTable 
-              searchParameters={ data.searchParameters }
-              selectedSearchParameterId={ data.selectedSearchParameterId }
-              count={data.searchParameters.length}
-              hideCheckbox={data.hideCheckbox}
-              hideIdentifier={true} 
-              hideActionIcons={true}
-              hideStatus={false}
-              hideName={false}
-              hideTitle={true}
-              hideVersion={false}
-              hideExperimental={true}   
-              hideCode={false}
-              hideBase={false} 
-              hideExpression={false} 
-              hideBarcode={true}f
-              hidePublisher={true}
-              onRowClick={ handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              onSetPage={function(index){
-                setParametersIndex(index)
-              }}          
-              page={data.parametersIndex}
-              size="medium"
-              />
+  let layoutContent;
+  if(data.searchParameters.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <StyledCard height="auto" margin={20} scrollable >
+        <CardHeader title={data.searchParameters.length + " Search Parameters"} />
+        <CardContent>
+  
+          <SearchParametersTable 
+            formFactorLayout={formFactor}  
+            searchParameters={ data.searchParameters }
+            count={data.searchParameters.length}
+            hideCheckbox={data.hideCheckbox}
+            hideStatus={false}
+            hideName={false}
+            hideTitle={false}
+            hideVersion={false}
+            hideExperimental={false}
+            paginationLimit={10}     
+            checklist={data.searchParameterChecklistMode}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onRowClick={ handleRowClick.bind(this) }
+            onSetPage={function(index){
+              setParametersIndex(index)
+            }}  
+            page={data.parametersIndex}
+            size="small"
+            />
           </CardContent>
         </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedSearchParameterId }</h1>
-          {/* <CardHeader title={data.selectedSearchParameterId } className="helveticas barcode" /> */}
-          <CardContent>
+    } else {
+      layoutContent = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} >
+            <CardHeader title={data.searchParameters.length + " Search Parameters"} />
             <CardContent>
-              <SearchParameterDetail 
-                id='searchParameterDetails'                 
-                displayDatePicker={true} 
-                displayBarcodes={false}
-                searchParameter={ data.selectedSearchParameter }
-                searchParameterId={ data.selectedSearchParameterId } 
-                showSearchParameterInputs={true}
-                showHints={false}
-
-              />
+              <SearchParametersTable 
+                searchParameters={ data.searchParameters }
+                selectedSearchParameterId={ data.selectedSearchParameterId }
+                count={data.searchParameters.length}
+                hideCheckbox={data.hideCheckbox}
+                hideIdentifier={true} 
+                hideActionIcons={true}
+                hideStatus={false}
+                hideName={false}
+                hideTitle={true}
+                hideVersion={false}
+                hideExperimental={true}   
+                hideCode={false}
+                hideBase={false} 
+                hideExpression={false} 
+                hideBarcode={true}f
+                hidePublisher={true}
+                onRowClick={ handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                onSetPage={function(index){
+                  setParametersIndex(index)
+                }}          
+                page={data.parametersIndex}
+                size="medium"
+                />
             </CardContent>
-          </CardContent>
-        </StyledCard>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedSearchParameterId }</h1>
+            {/* <CardHeader title={data.selectedSearchParameterId } className="helveticas barcode" /> */}
+            <CardContent>
+              <CardContent>
+                <SearchParameterDetail 
+                  id='searchParameterDetails'                 
+                  displayDatePicker={true} 
+                  displayBarcodes={false}
+                  searchParameter={ data.selectedSearchParameter }
+                  searchParameterId={ data.selectedSearchParameterId } 
+                  showSearchParameterInputs={true}
+                  showHints={false}
+  
+                />
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
       </Grid>
-    </Grid>
+    }
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
 
   return (
     <PageCanvas id="searchParametersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

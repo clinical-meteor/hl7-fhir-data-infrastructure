@@ -4,7 +4,8 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { 
   Grid,
   CardHeader,
-  CardContent
+  CardContent,
+  Container
 } from '@material-ui/core';
 import { StyledCard, PageCanvas } from 'fhir-starter';
 
@@ -114,6 +115,14 @@ Session.setDefault('CareTeamsTable.hideCheckbox', true)
 
 function CareTeamsPage(props){
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
+  let cardWidth = window.innerWidth - paddingWidth;
+
+
   let data = {    
     selectedCareTeam: null,
     selectedCareTeamId: '',
@@ -164,64 +173,71 @@ function CareTeamsPage(props){
     }
   }
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-  let cardWidth = window.innerWidth - paddingWidth;
-
   let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
-      <CardHeader title={ data.careTeams.length + ' Care Teams'} />
-      <CardContent>
-        <CareTeamsTable 
-          formFactorLayout={formFactor}  
-          careTeams={ data.careTeams}
-          count={data.careTeams.length}
-          selectedCarePlanId={ data.selectedCarePlanId }
-          hideCheckbox={data.hideCheckbox}
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          onRowClick={ handleRowClick.bind(this) }
-          size="small"
-        />
-      </CardContent>
-    </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.careTeams.length + " Care Teams"} />
-          <CardContent>
-            <CareTeamsTable 
-              careTeams={ data.careTeams}
-              count={ data.careTeams.length}
-              hideCheckbox={data.hideCheckbox}
-              formFactorLayout={formFactor}
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              onRowClick={ handleRowClick.bind(this) }
-              size="medium"
-            />
-          </CardContent>
-        </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedCareTeamId }</h1>
-          {/* <CardHeader title={data.selectedCareTeamId } className="helveticas barcode" /> */}
-          <CardContent>
+  if(data.careTeams.length > 0){
+    if(data.onePageLayout){
+      layoutContents = <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
+        <CardHeader title={ data.careTeams.length + ' Care Teams'} />
+        <CardContent>
+          <CareTeamsTable 
+            formFactorLayout={formFactor}  
+            careTeams={ data.careTeams}
+            count={data.careTeams.length}
+            selectedCarePlanId={ data.selectedCarePlanId }
+            hideCheckbox={data.hideCheckbox}
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onRowClick={ handleRowClick.bind(this) }
+            size="small"
+          />
+        </CardContent>
+      </StyledCard>
+    } else {
+      layoutContents = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} >
+            <CardHeader title={data.careTeams.length + " Care Teams"} />
             <CardContent>
-              <CareTeamDetail 
-                id='careTeamDetails'                 
-                careTeam={ data.selectedCareTeam }
-                careTeamId={ data.selectedCareTeamId } 
+              <CareTeamsTable 
+                careTeams={ data.careTeams}
+                count={ data.careTeams.length}
+                hideCheckbox={data.hideCheckbox}
+                formFactorLayout={formFactor}
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                onRowClick={ handleRowClick.bind(this) }
+                size="medium"
               />
             </CardContent>
-          </CardContent>
-        </StyledCard>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedCareTeamId }</h1>
+            {/* <CardHeader title={data.selectedCareTeamId } className="helveticas barcode" /> */}
+            <CardContent>
+              <CardContent>
+                <CareTeamDetail 
+                  id='careTeamDetails'                 
+                  careTeam={ data.selectedCareTeam }
+                  careTeamId={ data.selectedCareTeamId } 
+                />
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
       </Grid>
-    </Grid>
+    }
+  } else {
+    layoutContents = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
+
   return (
     <PageCanvas id='careTeamsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >

@@ -123,6 +123,13 @@ Session.setDefault('MedicationOrdersTable.medicationOrdersIndex', 0)
 
 
 export function MedicationOrdersPage(props){
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+
+  
   let data = {
     selectedMedicationOrderId: '',
     selectedMedicationOrder: null,
@@ -157,37 +164,48 @@ export function MedicationOrdersPage(props){
 
   if(process.env.NODE_ENV === "test") console.log('In MedicationOrdersPage render');
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-  // let [medicationOrdersIndex, setMedicationOrdersIndex] = setState(0);
 
   function setMedicationOrdersIndex(newIndex){
     Session.set('MedicationOrdersTable.medicationOrdersIndex', newIndex)
   }
 
+
+  let layoutContent;
+  if(data.medicationOrders.length > 0){
+    layoutContent = <StyledCard height="auto" scrollable={true} margin={20} >
+      <CardHeader title={data.medicationOrdersCount + ' Medication Orders'} />
+      <CardContent>
+        <MedicationOrdersTable 
+          medicationOrders={data.medicationOrders}
+          rowsPerPage={20}
+          hideBarcodes={true}
+          hidePatient={true}
+          hideActionIcons={false}
+          hideCheckbox={true}
+          count={data.medicationOrdersCount}
+          onSetPage={function(index){
+            setMedicationOrdersIndex(index)
+          }}      
+          page={data.medicationOrdersIndex}                        
+        />
+      </CardContent>
+    </StyledCard>
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
+
   return (
     <PageCanvas id="medicationOrdersPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        <StyledCard height="auto" scrollable={true} margin={20} >
-          <CardHeader title={data.medicationOrdersCount + ' Medication Orders'} />
-          <CardContent>
-            <MedicationOrdersTable 
-              medicationOrders={data.medicationOrders}
-              rowsPerPage={20}
-              hideBarcodes={true}
-              hidePatient={true}
-              hideActionIcons={false}
-              hideCheckbox={true}
-              count={data.medicationOrdersCount}
-              onSetPage={function(index){
-                setMedicationOrdersIndex(index)
-              }}      
-              page={data.medicationOrdersIndex}                        
-            />
-          </CardContent>
-        </StyledCard>
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

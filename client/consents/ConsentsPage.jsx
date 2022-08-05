@@ -141,6 +141,13 @@ const muiTheme = createMuiTheme({
 export function ConsentsPage(props){
 
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
+  let cardWidth = window.innerWidth - paddingWidth;
+  
   //---------------------------------------------------------------------------------------------------------
   // State
 
@@ -325,42 +332,46 @@ export function ConsentsPage(props){
     />,
   ];
 
-  let consentPageContent;
+  let layoutContent;
 
 
-  if(true){
-    consentPageContent = <ConsentsTable 
-      showBarcodes={true} 
-      hideIdentifier={true}
-      consents={data.consents}
-      noDataMessage={false}
-      onSetPage={function(index){
-        setConsentsIndex(index)
-      }}        
-      page={data.consentsIndex}
-      // patient={ data.consentSearchFilter }
-      // query={ data.consentSearchQuery }
-      sort="periodStart"
-    />
+
+  if(data.consents.length > 0){
+    layoutContent = <StyledCard height="auto" width={cardWidth + 'px'} margin={20} >
+      <CardHeader
+        title={ data.consents.length + " Consents"}
+      />
+      <CardContent>
+        <ConsentsTable 
+          showBarcodes={true} 
+          hideIdentifier={true}
+          consents={data.consents}
+          noDataMessage={false}
+          onSetPage={function(index){
+            setConsentsIndex(index)
+          }}        
+          page={data.consentsIndex}
+          // patient={ data.consentSearchFilter }
+          // query={ data.consentSearchQuery }
+          sort="periodStart"
+        />
+      </CardContent>
+    </StyledCard>   
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-  let cardWidth = window.innerWidth - paddingWidth;
-  
   return (
       <PageCanvas id="consentsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height="auto" width={cardWidth + 'px'} margin={20} >
-          <CardHeader
-            title={ data.consents.length + " Consents"}
-          />
-          <CardContent>
-            { consentPageContent }
-          </CardContent>
-        </StyledCard>
-        
+        { layoutContent }        
       </PageCanvas>
   );
 
