@@ -26,13 +26,30 @@ import { get } from 'lodash';
 
 
 //=============================================================================================================================================
+// SESSION VARIABLES
+
+Session.setDefault('carePlanPageTabIndex', 1); 
+Session.setDefault('carePlanSearchFilter', ''); 
+Session.setDefault('selectedCarePlanId', false);
+Session.setDefault('selectedCarePlan', false)
+Session.setDefault('CarePlansPage.onePageLayout', true)
+Session.setDefault('CarePlansPage.defaultQuery', {})
+Session.setDefault('CarePlansTable.hideCheckbox', true)
+Session.setDefault('CarePlansTable.carePlansIndex', 0)
+
+
+//=============================================================================================================================================
 // COMPONENT
 
 function CarePlansPage(props){
 
   let data = {    
     selectedCarePlanId: null,
-    carePlans: []
+    carePlans: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    carePlansIndex: 0
   };
 
   data.selectedCarePlanId = useTracker(function(){
@@ -40,6 +57,15 @@ function CarePlansPage(props){
   }, [])
   data.carePlans = useTracker(function(){
     return CarePlans.find().fetch();
+  }, [])
+  data.carePlansIndex = useTracker(function(){
+    return Session.get('CarePlansTable.carePlansIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
@@ -49,7 +75,6 @@ function CarePlansPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
-  let [carePlansPageIndex, setCarePlansPageIndex] = setState(0);
 
   return (
     <PageCanvas id='carePlansPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -64,7 +89,7 @@ function CarePlansPage(props){
             onSetPage={function(index){
               setCarePlansPageIndex(index)
             }}  
-            page={carePlansPageIndex}
+            page={data.carePlansIndex}
           />
         </CardContent>
       </StyledCard>
