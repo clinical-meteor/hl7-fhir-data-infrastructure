@@ -11,6 +11,7 @@ import {Conditions} from './lib/schemas/Conditions';
 import {Consents} from './lib/schemas/Consents';
 import {Communications} from './lib/schemas/Communications';
 import {CommunicationRequests} from './lib/schemas/CommunicationRequests';
+import {Compositions} from './lib/schemas/Compositions';
 import {Devices} from './lib/schemas/Devices';
 import {DiagnosticReports} from './lib/schemas/DiagnosticReports';
 import {DocumentReferences} from './lib/schemas/DocumentReferences';
@@ -591,6 +592,12 @@ let SidebarElements = [{
   href: '/communication-requests',
   iconName: 'envelopeO',
   collectionName: 'CommunicationRequests'
+}, {
+  primaryText: 'Compositions',
+  to: '/compositions',
+  href: '/compositions',
+  iconName: 'envelopeO',
+  collectionName: 'Compositions'
 }, {
   primaryText: 'Devices',
   to: '/devices',

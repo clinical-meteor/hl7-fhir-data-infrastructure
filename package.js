@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.26.18',
+  version: '6.26.20',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -437,5 +437,5 @@ Npm.depends({
 
   // GITHUB / CIRCLE CI will generate a "Cannot find module 'react'" error 
   // during Q/A and pull requests if this is removed
-  "react": "16.13.0"  
+  "react": "16.14.0"  
 })
