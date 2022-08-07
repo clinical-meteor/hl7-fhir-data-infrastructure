@@ -151,7 +151,7 @@ export function CompositionsPage(props){
                 onSetPage={function(index){
                   setCompositionsPageIndex(index)
                 }}        
-                page={compositionsPageIndex}
+                page={data.compositionsIndex}
               />            
             </CardContent>
           </StyledCard>

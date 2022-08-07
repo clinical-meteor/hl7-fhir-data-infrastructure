@@ -585,7 +585,7 @@ export function ConsentsTable(props){
       let count = 0;    
 
       consents.forEach(function(condition){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           // consentsToRender.push(FhirDehydrator.dehydrateConsent(condition, internalDateFormat));
           consentsToRender.push(FhirDehydrator.dehydrateConsent(condition, internalDateFormat));
         }

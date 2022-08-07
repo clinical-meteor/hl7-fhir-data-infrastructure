@@ -135,7 +135,7 @@ export function DevicesPage(props){
     onePageLayout: true,
     showSystemIds: false,
     showFhirIds: false,
-    devicessIndex: 0
+    devicesIndex: 0
   };
 
 

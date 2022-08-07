@@ -58,6 +58,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/DocumentReferences.js', ['client', 'server']);
+  api.addFiles('lib/schemas/DocumentManifests.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
   api.addFiles('lib/schemas/Endpoints.js', ['client', 'server']);
   api.addFiles('lib/schemas/ExplanationOfBenefit.js', ['client', 'server']);
@@ -161,6 +162,10 @@ Package.onUse(function (api) {
   api.export('DocumentReference');
   api.export('DocumentReferences');
   api.export('DocumentReferenceSchema');
+
+  api.export('DocumentManifest');
+  api.export('DocumentManifests');
+  api.export('DocumentManifestSchema');
 
   api.export('Encounter');
   api.export('Encounters');

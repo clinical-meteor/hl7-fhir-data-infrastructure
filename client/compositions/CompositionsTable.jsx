@@ -17,7 +17,8 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableRow
+  TableRow,
+  TablePagination
 } from '@material-ui/core';
 
 import TableNoData from 'fhir-starter';
@@ -106,8 +107,13 @@ function CompositionsTable(props){
     actionButtonLabel,
     formFactorLayout,
 
+    disablePagination,
+
     page,
     onSetPage,
+
+    rowsPerPage,
+    count,
 
     tableRowSize
   } = props;
@@ -677,7 +683,10 @@ CompositionsTable.propTypes = {
   page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
   formFactorLayout: PropTypes.string,
-  tableRowSize: PropTypes.string
+  tableRowSize: PropTypes.string,
+
+  count: PropTypes.number,
+  rowsPerPage: PropTypes.number
 };
 
 CompositionsTable.defaultProps = {
@@ -689,7 +698,9 @@ CompositionsTable.defaultProps = {
   hideAuthorReference: true,
   hideRelatesToIdentifier: true,
   hideRelatesToDisplay: true,
-  tableRowSize: 'medium'
+  tableRowSize: 'medium',
+  count: 0,
+  rowsPerPage: 5
 }
 
 

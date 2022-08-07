@@ -584,7 +584,7 @@ function ProceduresTable(props){
     if(procedures.length > 0){     
       let count = 0;    
       procedures.forEach(function(procedure){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           proceduresToRender.push(FhirDehydrator.dehydrateProcedure(procedure, internalDateFormat));
         }
         count++;
@@ -728,7 +728,7 @@ ProceduresTable.propTypes = {
   hideActionButton: PropTypes.bool,
   actionButtonLabel: PropTypes.string,
 
-  rowsPerPageToRender: PropTypes.number,
+  rowsPerPage: PropTypes.number,
   tableRowSize: PropTypes.string,
   dateFormat: PropTypes.string,
   showMinutes: PropTypes.bool,

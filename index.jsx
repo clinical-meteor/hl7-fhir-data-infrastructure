@@ -117,6 +117,8 @@ import DiagnosticReportsTable from './client/diagnosticReports/DiagnosticReports
 import DocumentReferencesPage from './client/documentReferences/DocumentReferencesPage';
 import DocumentReferencesTable from './client/documentReferences/DocumentReferencesTable';
 
+import DocumentManifestsPage from './client/documentManifest/DocumentManifestsPage';
+import DocumentManifestsTable from './client/documentManifest/DocumentManifestsTable';
 
 import EncountersPage from './client/encounters/EncountersPage';
 import EncountersTable from './client/encounters/EncountersTable';
@@ -343,6 +345,11 @@ let DynamicRoutes = [{
   name: 'DocumentReferencesPage',
   path: '/document-references',
   component: DocumentReferencesPage,
+  requireAuth: true
+}, {
+  name: 'DocumentManifestsPage',
+  path: '/document-manifests',
+  component: DocumentManifestsPage,
   requireAuth: true
 }, {
   name: 'EncountersPage',
@@ -616,6 +623,12 @@ let SidebarElements = [{
   href: '/document-references',
   iconName: 'notepad',
   collectionName: 'DocumentReferences'  
+}, {
+  primaryText: 'Document Manifests',
+  to: '/document-manifests',
+  href: '/document-manifests',
+  iconName: 'notepad',
+  collectionName: 'DocumentManifests'  
 }, {
   primaryText: 'Encounters',
   to: '/encounters',
