@@ -1,5 +1,10 @@
+import React from 'react';
 import BaseModel from './lib/BaseModel';
 
+import { 
+  CardContent,
+  DialogContent
+} from '@material-ui/core';
 
 import {AllergyIntolerances} from './lib/schemas/AllergyIntolerances';
 import {AuditEvents} from './lib/schemas/AuditEvents';
@@ -84,6 +89,8 @@ import CodeSystemsPage from './client/codeSystems/CodeSystemsPage';
 import CodeSystemsTable from './client/codeSystems/CodeSystemsTable';
 import CodeSystemDetail from './client/codeSystems/CodeSystemDetail';
 import CodeSystemsConceptsTable from './client/codeSystems/CodeSystemsConceptsTable';
+import CodeSystemSelection from './client/codeSystems/CodeSystemSelection';
+import SearchCodeSystemDialog from './client/codeSystems/SearchCodeSystemDialog';
 
 import CompositionsPage from './client/compositions/CompositionsPage';
 import CompositionsTable from './client/compositions/CompositionsTable';
@@ -269,11 +276,35 @@ import VerificationResultDetail from './client/verificationResults/VerificationR
 import ValueSetsPage from './client/valuesets/ValueSetsPage';
 import ValueSetsTable from './client/valuesets/ValueSetsTable';
 import ValueSetDetail from './client/valuesets/ValueSetDetail';
+import ValueSetSelection from './client/valuesets/ValueSetSelection';
+import SearchValueSetsDialog from './client/valuesets/SearchValueSetsDialog';
 
 import DynamicSpacer from './ui/DynamicSpacer';
 
+import { 
+  CareTeamsFooterButtons,
+  CodeSystemsFooterButtons,
+  CommunicationsFooterButtons,
+  CommunicationRequestsFooterButtons,
+  EndpointsFooterButtons,
+  HealthcareServicesFooterButtons,
+  InsurancePlansFooterButtons,
+  LocationsFooterButtons,
+  NetworksFooterButtons,
+  OrganizationsFooterButtons,
+  OrganizationAffiliationsFooterButtons,
+  PractitionersFooterButtons,
+  PractitionerRolesFooterButtons,
+  ProvenancesFooterButtons,
+  RelatedPersonsFooterButtons,
+  RestrictionsFooterButtons,
+  SearchParametersFooterButtons,
+  StructureDefinitionsFooterButtons,
+  TasksFooterButtons,
+  ValueSetsFooterButtons,
 
-
+  DefaultPostDialogActions
+} from './ui/FooterButtons';
 
 
 
@@ -536,9 +567,6 @@ let DynamicRoutes = [{
   component: VerificationResultsPage,
   requireAuth: true
 } ];
-
-
-
 
 let SidebarElements = [{
   primaryText: 'Allergy Intolerances',
@@ -1011,10 +1039,83 @@ let AdminSidebarElements = [{
 }];
 
 
+let DialogComponents = [{
+  name: "SearchCodeSystemDialog",
+  component: <DialogContent><SearchCodeSystemDialog /></DialogContent>,
+  actions: <DefaultPostDialogActions resourceType="ValueSet" />
+}, {
+  name: "SearchValueSetsDialog",
+  component: <DialogContent><SearchValueSetsDialog /></DialogContent>,
+  actions: <DefaultPostDialogActions resourceType="ValueSet" />
+}]
+
+let FooterButtons = [{
+  pathname: '/careteams',
+  component: <CareTeamsFooterButtons />
+}, {
+  pathname: '/code-systems',
+  component: <CodeSystemsFooterButtons />
+}, {
+  pathname: '/communications',
+  component: <CommunicationsFooterButtons />
+}, {
+  pathname: '/communication-requests',
+  component: <CommunicationRequestsFooterButtons />
+}, {
+  pathname: '/endpoints',
+  component: <EndpointsFooterButtons />
+}, {
+  pathname: '/healthcare-services',
+  component: <HealthcareServicesFooterButtons />
+}, {
+  pathname: '/insurance-plans',
+  component: <InsurancePlansFooterButtons />
+}, {
+  pathname: '/locations',
+  component: <LocationsFooterButtons />
+}, {
+  pathname: '/networks',
+  component: <NetworksFooterButtons />
+}, {
+  pathname: '/organizations',
+  component: <OrganizationsFooterButtons />
+}, {
+  pathname: '/organization-affiliations',
+  component: <OrganizationAffiliationsFooterButtons />
+}, {
+  pathname: '/practitioners',
+  component: <PractitionersFooterButtons />
+}, {
+  pathname: '/practitioner-roles',
+  component: <PractitionerRolesFooterButtons />
+}, {
+  pathname: '/provenances',
+  component: <ProvenancesFooterButtons />
+}, {
+  pathname: '/related-persons',
+  component: <RelatedPersonsFooterButtons />
+}, {
+  pathname: '/restrictions',
+  component: <RestrictionsFooterButtons />
+}, {
+  pathname: '/search-parameters',
+  component: <SearchParametersFooterButtons />
+}, {
+  pathname: '/structure-definitions',
+  component: <StructureDefinitionsFooterButtons />
+}, {
+  pathname: '/tasks',
+  component: <TasksFooterButtons />
+}, {
+  pathname: '/valuesets',
+  component: <ValueSetsFooterButtons />
+}];
+
 export { 
   SidebarElements,
   AdminSidebarElements, 
   DynamicRoutes, 
+  DialogComponents,
 
   AllergyIntolerancesPage,
   AllergyIntolerancesTable,
@@ -1038,6 +1139,8 @@ export {
   CodeSystemsPage,
   CodeSystemsTable,
   CodeSystemsConceptsTable,
+  CodeSystemSelection,
+  SearchCodeSystemDialog,
 
   CareTeamsPage,
   CareTeamsTable,
@@ -1204,6 +1307,8 @@ export {
   ValueSetsPage,
   ValueSetsTable,
   ValueSetDetail,
+  ValueSetSelection,
+  SearchValueSetsDialog,
 
   VerificationResultsPage,
   VerificationResultsTable,

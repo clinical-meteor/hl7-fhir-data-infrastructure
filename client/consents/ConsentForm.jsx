@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import { 
@@ -14,6 +14,9 @@ import {
 
 import { makeStyles } from '@material-ui/styles';
 import { useTracker } from 'meteor/react-meteor-data';
+
+import { Meteor } from 'meteor/meteor';
+import { Session } from 'meteor/session';
 
 import moment from 'moment';
 
@@ -144,9 +147,18 @@ function ConsentForm(props){
   } = props;
 
   let classes = useStyles();
-  let [localConsent, setLocalConsent] = useState(consent);
+  // let [activeConsent, setLocalConsent] = useState(consent);
 
 
+  let activeConsent = defaultConsent;
+
+  activeConsent = useTracker(function(){
+    return Session.get('activeConsent');
+  }, [])
+
+  function setLocalConsent(newConsent){
+    Session.set('activeConsent', newConsent);
+  }
 
 
   function changeState(field, event, select){
@@ -198,9 +210,9 @@ function ConsentForm(props){
     logger.info('Open documentation website');
   }
   function handleSaveConsent(){
-    console.log('ConsentForm.handleSaveConsent()', localConsent, patientId)
+    console.log('ConsentForm.handleSaveConsent()', activeConsent, patientId)
 
-    let newConsent = cloneDeep(localConsent);
+    let newConsent = cloneDeep(activeConsent);
     console.log('ConsentForm.newConsent', newConsent)
     if(get(newConsent, 'patient.reference') === ""){
       console.log('ConsentForm.newConsent.patient.reference', get(newConsent, 'patient.reference'))
@@ -218,9 +230,9 @@ function ConsentForm(props){
   let email = '';
   let phonenumber = '';
 
-  if(localConsent){
-    if(Array.isArray(localConsent.telecom)){
-      localConsent.telecom.forEach(function(contactPoint){
+  if(activeConsent){
+    if(Array.isArray(activeConsent.telecom)){
+      activeConsent.telecom.forEach(function(contactPoint){
         if(get(contactPoint, 'system') === "email"){
           email = get(contactPoint, 'value');
         }
@@ -243,7 +255,7 @@ function ConsentForm(props){
             margin='normal'
             InputLabelProps={{ shrink: true }}
             fullWidth
-            value={ get(localConsent, 'category[0].coding[0].display', '')}
+            value={ get(activeConsent, 'category[0].coding[0].display', '')}
             onChange={ changeState.bind(this, 'category')}
             /><br/>
         </Grid>
@@ -257,7 +269,7 @@ function ConsentForm(props){
             InputLabelProps={{ shrink: true }}
             fullWidth
             select
-            value={ get(localConsent, 'status', '')}
+            value={ get(activeConsent, 'status', '')}
             onChange={ changeState.bind(this, 'status')}
             >
             {statuss.map((option) => (
@@ -283,7 +295,7 @@ function ConsentForm(props){
             margin='normal'
             InputLabelProps={{ shrink: true }}
             fullWidth
-            value={ get(localConsent, 'policy[0].uri', '')}
+            value={ get(activeConsent, 'policy[0].uri', '')}
             onChange={ changeState.bind(this, 'policyUrl')}
             /><br/>
         </Grid>
@@ -298,8 +310,8 @@ function ConsentForm(props){
             margin='normal'
             InputLabelProps={{ shrink: true }}
             fullWidth
-            value={ get(localConsent, 'patient.display', '')}
-            helperText={ get(localConsent, 'patient.reference', '')}
+            value={ get(activeConsent, 'patient.display', '')}
+            helperText={ get(activeConsent, 'patient.reference', '')}
             onChange={ changeState.bind(this, 'legalName')}
             /><br/>
         </Grid>
@@ -312,7 +324,7 @@ function ConsentForm(props){
             margin='normal'
             InputLabelProps={{ shrink: true }}
             fullWidth
-            value={ get(localConsent, 'dateTime', '')}
+            value={ get(activeConsent, 'dateTime', '')}
             onChange={ changeState.bind(this, 'dateTime')}
             /><br/>
         </Grid>

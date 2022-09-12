@@ -23,6 +23,8 @@ import {
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { Meteor } from 'meteor/meteor';
+import { Session } from 'meteor/session';
+
 
 import moment from 'moment';
 import { get, set } from 'lodash';
