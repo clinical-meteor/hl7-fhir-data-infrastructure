@@ -240,6 +240,10 @@ export function MeasureReportsPage(props){
     Session.set('currentSelectionId', 'MeasureReport/' + get(measureReport, '_id'));
     Session.set('currentSelection', measureReport);
   }
+  function setMeasureReportsPageIndex(newIndex){
+    console.log('setMeasureReportsPageIndex', newIndex)
+    Session.set('MeasureReportsTable.measureReportsIndex', newIndex)
+  }
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();

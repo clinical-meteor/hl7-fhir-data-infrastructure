@@ -722,6 +722,7 @@ OrganizationsTable.propTypes = {
 };
 
 OrganizationsTable.defaultProps = {
+  tableRowSize: 'medium',
   selectedOrganizationId: '',
   organizations: [],
   hideFhirId: true,
@@ -735,10 +736,8 @@ OrganizationsTable.defaultProps = {
   page: 0,
   rowsPerPage: 5,
   hasRestrictions: false,
-  tableRowSize: 'medium',
   actionButtonLabel: 'Export',
   dateFormat: "YYYY-MM-DD",
-  tableRowSize: 'medium',
   primaryColor: "#E5537E"
 }
 
