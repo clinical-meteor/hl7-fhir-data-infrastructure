@@ -38,6 +38,9 @@ Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('measureReportsArray', []);
 
 Session.setDefault('MeasureReportsPage.onePageLayout', true)
+Session.setDefault('MeasureReportsPage.defaultQuery', {})
+Session.setDefault('MeasureReportsTable.hideCheckbox', true)
+Session.setDefault('MeasureReportsTable.organizationsIndex', 0)
 
 
 //=============================================================================================================================================
@@ -118,7 +121,10 @@ export function MeasureReportsPage(props){
     selectedMeasureReportId: '',
     selectedMeasureReport: null,
     measureReports: [],
-    onePageLayout: true
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    measureReportsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -132,6 +138,16 @@ export function MeasureReportsPage(props){
   }, [])
   data.measureReports = useTracker(function(){
     return MeasureReports.find().fetch();
+  }, [])
+
+  data.measureReportsIndex = useTracker(function(){
+    return Session.get('MeasureReportsTable.measureReportsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
   }, [])
 
 
@@ -224,6 +240,10 @@ export function MeasureReportsPage(props){
     Session.set('currentSelectionId', 'MeasureReport/' + get(measureReport, '_id'));
     Session.set('currentSelection', measureReport);
   }
+  function setMeasureReportsPageIndex(newIndex){
+    console.log('setMeasureReportsPageIndex', newIndex)
+    Session.set('MeasureReportsTable.measureReportsIndex', newIndex)
+  }
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
@@ -258,7 +278,7 @@ export function MeasureReportsPage(props){
             onSetPage={function(index){
               setMeasureReportsPageIndex(index)
             }}           
-            page={measureReportsPageIndex}               
+            page={data.measureReportsIndex}               
             tableRowSize="medium"
           />
           </CardContent>
@@ -293,7 +313,7 @@ export function MeasureReportsPage(props){
               onSetPage={function(index){
                 setMeasureReportsPageIndex(index)
               }}          
-              page={measureReportsPageIndex}                               
+              page={data.measureReportsIndex}                               
               tableRowSize="medium"
               />
           </CardContent>

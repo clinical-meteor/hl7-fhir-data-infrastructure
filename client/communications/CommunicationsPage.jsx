@@ -4,7 +4,8 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { 
   Grid,
   CardHeader,
-  CardContent
+  CardContent,
+  Container
 } from '@material-ui/core';
 
 import { Meteor } from 'meteor/meteor';
@@ -133,7 +134,8 @@ export function CommunicationsPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
 
   let data = {   
     onePageLayout: true,
@@ -197,80 +199,93 @@ export function CommunicationsPage(props){
   // let [communicationsPageIndex, setCommunicationsPageIndex] = setState(0);
 
   let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} >
-      <CardHeader title={data.communications.length + " Communication Log Entries"} />
-      <CardContent>
-        <CommunicationsTable 
-          formFactorLayout={formFactor}  
-          communications={data.communications}
-          count={data.communications.length}
-          hideCheckbox={data.hideCheckbox}
-          selectedCommunicationId={ data.selectedCommunicationId }
-          hideIdentifier={true}
-          hideActionIcons={true}
-          hideBarcode={false} 
-          onRemoveRecord={function(recordId){
-            Communications.remove({_id: recordId})
-          }}
-          onSetPage={function(index){
-            setCommunicationsPageIndex(index)
-          }}    
-          onRowClick={ handleRowClick.bind(this) }
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          page = {data.communicationsPageIndex}
-          actionButtonLabel="Enroll"
-          size="small"
-        />
-      </CardContent>
-    </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.communications.length + " Communication Log Entries"} />
-          <CardContent>
-            <CommunicationsTable 
-              formFactorLayout={formFactor}  
-              communications={data.communications}
-              count={data.communications.length}
-              selectedCommunicationId={ data.selectedCommunicationId }
-              hideCheckbox={data.hideCheckbox}
-              hideIdentifier={true}
-              hideActionIcons={true}
-              hideBarcode={false} 
-              onRemoveRecord={function(recordId){
-                Communications.remove({_id: recordId})
-              }}
-              onSetPage={function(index){
-                setCommunicationsPageIndex(index)
-              }}    
-              onRowClick={ handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              page = {data.communicationsPageIndex}
-              actionButtonLabel="Enroll"
-              size="medium"
-            />
-          </CardContent>
-        </StyledCard>
-      </Grid>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedCareTeamId }</h1>
-          {/* <CardHeader title={data.selectedCareTeamId } className="helveticas barcode" /> */}
-          <CardContent>
+  if(data.communications.length > 0){
+    if(data.onePageLayout){
+      layoutContents = <StyledCard height="auto" margin={20} >
+        <CardHeader title={data.communications.length + " Communication Log Entries"} />
+        <CardContent>
+          <CommunicationsTable 
+            formFactorLayout={formFactor}  
+            communications={data.communications}
+            count={data.communications.length}
+            hideCheckbox={data.hideCheckbox}
+            selectedCommunicationId={ data.selectedCommunicationId }
+            hideIdentifier={true}
+            hideActionIcons={true}
+            hideBarcode={false} 
+            onRemoveRecord={function(recordId){
+              Communications.remove({_id: recordId})
+            }}
+            onSetPage={function(index){
+              setCommunicationsPageIndex(index)
+            }}    
+            onRowClick={ handleRowClick.bind(this) }
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            page = {data.communicationsPageIndex}
+            actionButtonLabel="Enroll"
+            size="small"
+          />
+        </CardContent>
+      </StyledCard>
+    } else {
+      layoutContents = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} >
+            <CardHeader title={data.communications.length + " Communication Log Entries"} />
             <CardContent>
-              <CommunicationDetail 
-                id='communicationDetails'                 
-                communication={ data.selectedCommunication }
-                communicationId={ data.selectedCommunicationId } 
+              <CommunicationsTable 
+                formFactorLayout={formFactor}  
+                communications={data.communications}
+                count={data.communications.length}
+                selectedCommunicationId={ data.selectedCommunicationId }
+                hideCheckbox={data.hideCheckbox}
+                hideIdentifier={true}
+                hideActionIcons={true}
+                hideBarcode={false} 
+                onRemoveRecord={function(recordId){
+                  Communications.remove({_id: recordId})
+                }}
+                onSetPage={function(index){
+                  setCommunicationsPageIndex(index)
+                }}    
+                onRowClick={ handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                page = {data.communicationsPageIndex}
+                actionButtonLabel="Enroll"
+                size="medium"
               />
             </CardContent>
-          </CardContent>
-        </StyledCard>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedCareTeamId }</h1>
+            {/* <CardHeader title={data.selectedCareTeamId } className="helveticas barcode" /> */}
+            <CardContent>
+              <CardContent>
+                <CommunicationDetail 
+                  id='communicationDetails'                 
+                  communication={ data.selectedCommunication }
+                  communicationId={ data.selectedCommunicationId } 
+                />
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
       </Grid>
-    </Grid>
+    }
+  } else {
+    layoutContents = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
+
   return (
     <PageCanvas id="communicationsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >

@@ -163,6 +163,7 @@ export function OrganizationsPage(props){
   data.showFhirIds = useTracker(function(){
     return Session.get('showFhirIds');
   }, [])
+  
   // data.hasRestrictions = useTracker(function(){
   //   if(Session.get('currentUser')){
   //     return false;

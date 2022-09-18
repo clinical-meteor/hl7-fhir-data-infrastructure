@@ -125,8 +125,12 @@ Session.setDefault('DevicesTable.allergyIntolerancesIndex', 0)
 
 export function AllergyIntolerancesPage(props){
 
-  // let [allergyIntolerancePageIndex, setAllergyIntolerancePageIndex] = useState(0); 
-
+  
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
   let data = {
     allergyIntoleranceId: '',
     selectedAllergy: null,
@@ -164,17 +168,12 @@ export function AllergyIntolerancesPage(props){
 
 
   if(process.env.NODE_ENV === "test") console.log('In AllergyIntolerancesPage render');
-    
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
   
   let cardWidth = window.innerWidth - paddingWidth;
   
-  let allergiesContent;
+  let layoutContent;
   if(data.allergyIntolerances.length > 0){
-    allergiesContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
+    layoutContent = <StyledCard height="auto" scrollable={true} margin={20} width={cardWidth + 'px'}>
         <CardHeader title='Allergy Intolerances' />
         <CardContent>
           <AllergyIntolerancesTable 
@@ -193,7 +192,7 @@ export function AllergyIntolerancesPage(props){
         </CardContent>
     </StyledCard>
   } else {
-    allergiesContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
       <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
       <CardContent>
         <CardHeader 
@@ -206,8 +205,7 @@ export function AllergyIntolerancesPage(props){
 
   return (
     <PageCanvas id="allergyIntolerancesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-      { allergiesContent }
-      
+      { layoutContent }      
     </PageCanvas>
   );
 }

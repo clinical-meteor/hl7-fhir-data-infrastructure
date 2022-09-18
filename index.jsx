@@ -1,5 +1,10 @@
+import React from 'react';
 import BaseModel from './lib/BaseModel';
 
+import { 
+  CardContent,
+  DialogContent
+} from '@material-ui/core';
 
 import {AllergyIntolerances} from './lib/schemas/AllergyIntolerances';
 import {AuditEvents} from './lib/schemas/AuditEvents';
@@ -11,6 +16,7 @@ import {Conditions} from './lib/schemas/Conditions';
 import {Consents} from './lib/schemas/Consents';
 import {Communications} from './lib/schemas/Communications';
 import {CommunicationRequests} from './lib/schemas/CommunicationRequests';
+import {Compositions} from './lib/schemas/Compositions';
 import {Devices} from './lib/schemas/Devices';
 import {DiagnosticReports} from './lib/schemas/DiagnosticReports';
 import {DocumentReferences} from './lib/schemas/DocumentReferences';
@@ -83,6 +89,8 @@ import CodeSystemsPage from './client/codeSystems/CodeSystemsPage';
 import CodeSystemsTable from './client/codeSystems/CodeSystemsTable';
 import CodeSystemDetail from './client/codeSystems/CodeSystemDetail';
 import CodeSystemsConceptsTable from './client/codeSystems/CodeSystemsConceptsTable';
+import CodeSystemSelection from './client/codeSystems/CodeSystemSelection';
+import SearchCodeSystemDialog from './client/codeSystems/SearchCodeSystemDialog';
 
 import CompositionsPage from './client/compositions/CompositionsPage';
 import CompositionsTable from './client/compositions/CompositionsTable';
@@ -116,6 +124,8 @@ import DiagnosticReportsTable from './client/diagnosticReports/DiagnosticReports
 import DocumentReferencesPage from './client/documentReferences/DocumentReferencesPage';
 import DocumentReferencesTable from './client/documentReferences/DocumentReferencesTable';
 
+import DocumentManifestsPage from './client/documentManifest/DocumentManifestsPage';
+import DocumentManifestsTable from './client/documentManifest/DocumentManifestsTable';
 
 import EncountersPage from './client/encounters/EncountersPage';
 import EncountersTable from './client/encounters/EncountersTable';
@@ -266,11 +276,35 @@ import VerificationResultDetail from './client/verificationResults/VerificationR
 import ValueSetsPage from './client/valuesets/ValueSetsPage';
 import ValueSetsTable from './client/valuesets/ValueSetsTable';
 import ValueSetDetail from './client/valuesets/ValueSetDetail';
+import ValueSetSelection from './client/valuesets/ValueSetSelection';
+import SearchValueSetsDialog from './client/valuesets/SearchValueSetsDialog';
 
 import DynamicSpacer from './ui/DynamicSpacer';
 
+import { 
+  CareTeamsFooterButtons,
+  CodeSystemsFooterButtons,
+  CommunicationsFooterButtons,
+  CommunicationRequestsFooterButtons,
+  EndpointsFooterButtons,
+  HealthcareServicesFooterButtons,
+  InsurancePlansFooterButtons,
+  LocationsFooterButtons,
+  NetworksFooterButtons,
+  OrganizationsFooterButtons,
+  OrganizationAffiliationsFooterButtons,
+  PractitionersFooterButtons,
+  PractitionerRolesFooterButtons,
+  ProvenancesFooterButtons,
+  RelatedPersonsFooterButtons,
+  RestrictionsFooterButtons,
+  SearchParametersFooterButtons,
+  StructureDefinitionsFooterButtons,
+  TasksFooterButtons,
+  ValueSetsFooterButtons,
 
-
+  DefaultPostDialogActions
+} from './ui/FooterButtons';
 
 
 
@@ -342,6 +376,11 @@ let DynamicRoutes = [{
   name: 'DocumentReferencesPage',
   path: '/document-references',
   component: DocumentReferencesPage,
+  requireAuth: true
+}, {
+  name: 'DocumentManifestsPage',
+  path: '/document-manifests',
+  component: DocumentManifestsPage,
   requireAuth: true
 }, {
   name: 'EncountersPage',
@@ -529,9 +568,6 @@ let DynamicRoutes = [{
   requireAuth: true
 } ];
 
-
-
-
 let SidebarElements = [{
   primaryText: 'Allergy Intolerances',
   to: '/allergy-intolerances',
@@ -542,15 +578,13 @@ let SidebarElements = [{
   primaryText: 'Audit Events',
   to: '/audit-events',
   href: '/audit-events',
-  collectionName: 'AuditEvents',
-  requireAuth: true
+  collectionName: 'AuditEvents'
 }, {
   primaryText: 'Bundles',
   to: '/bundles',
   href: '/bundles',
   iconName: 'suitcase',
-  collectionName: 'Bundles',
-  requireAuth: true
+  collectionName: 'Bundles'
 }, {
   primaryText: 'Care Plans',
   to: '/careplans',
@@ -562,15 +596,13 @@ let SidebarElements = [{
   to: '/careteams',
   href: '/careteams',
   iconName: 'notepad',
-  collectionName: 'CareTeams',
-  requireAuth: true
+  collectionName: 'CareTeams'
 }, {
   primaryText: 'CodeSystems',
   to: '/code-systems',
   href: '/code-systems',
   iconName: 'notepad',
-  collectionName: 'CodeSystems',
-  requireAuth: true
+  collectionName: 'CodeSystems'
 }, {
   primaryText: 'Conditions',
   to: '/conditions',
@@ -588,15 +620,19 @@ let SidebarElements = [{
   to: '/communications',
   href: '/communications',
   iconName: 'envelopeO',
-  collectionName: 'Communications',
-  requireAuth: true
+  collectionName: 'Communications'
 }, {
   primaryText: 'Communication Requests',
   to: '/communication-requests',
   href: '/communication-requests',
   iconName: 'envelopeO',
-  collectionName: 'CommunicationRequests',
-  requireAuth: true
+  collectionName: 'CommunicationRequests'
+}, {
+  primaryText: 'Compositions',
+  to: '/compositions',
+  href: '/compositions',
+  iconName: 'envelopeO',
+  collectionName: 'Compositions'
 }, {
   primaryText: 'Devices',
   to: '/devices',
@@ -615,6 +651,12 @@ let SidebarElements = [{
   href: '/document-references',
   iconName: 'notepad',
   collectionName: 'DocumentReferences'  
+}, {
+  primaryText: 'Document Manifests',
+  to: '/document-manifests',
+  href: '/document-manifests',
+  iconName: 'notepad',
+  collectionName: 'DocumentManifests'  
 }, {
   primaryText: 'Encounters',
   to: '/encounters',
@@ -710,8 +752,7 @@ let SidebarElements = [{
   to: '/networks',
   href: '/networks',
   iconName: 'notepad',
-  collectionName: 'Networks',
-  requireAuth: true
+  collectionName: 'Networks'
 }, {
   primaryText: 'Observations',
   to: '/observations',
@@ -765,8 +806,7 @@ let SidebarElements = [{
   to: '/provenances',
   href: '/provenances',
   iconName: 'fire',
-  collectionName: 'Provenances',
-  requireAuth: true
+  collectionName: 'Provenances'
 }, {
   primaryText: 'Questionnaires',
   to: '/questionnaires',
@@ -784,8 +824,7 @@ let SidebarElements = [{
   to: '/related-persons',
   href: '/related-persons',
   iconName: 'users',
-  collectionName: 'RelatedPersons',
-  requireAuth: true
+  collectionName: 'RelatedPersons'
 }, {
   primaryText: 'Risk Assessments',
   to: '/risk-assessments',
@@ -797,57 +836,49 @@ let SidebarElements = [{
   to: '/restrictions',
   href: '/restrictions',
   iconName: 'notepad',
-  collectionName: 'Restrictions',
-  requireAuth: true
+  collectionName: 'Restrictions'
 }, {
   primaryText: 'SearchParameters',
   to: '/search-parameters',
   href: '/search-parameters',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'SearchParameters',
-  requireAuth: true
+  collectionName: 'SearchParameters'
 }, {
   primaryText: 'Service Requests',
   to: '/service-requests',
   href: '/service-requests',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'ServiceRequests',
-  requireAuth: true
+  collectionName: 'ServiceRequests'
 }, {
   primaryText: 'StructureDefinitions',
   to: '/structure-definitions',
   href: '/structure-definitions',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'StructureDefinitions',
-  requireAuth: true
+  collectionName: 'StructureDefinitions'
 }, {
   primaryText: 'Subscriptions',
   to: '/subscriptions',
   href: '/subscriptions',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'Subscriptions',
-  requireAuth: true
+  collectionName: 'Subscriptions'
 }, {
   primaryText: 'Tasks',
   to: '/tasks',
   href: '/tasks',
   iconName: 'ic_format_list_bulleted',
-  collectionName: 'Tasks',
-  requireAuth: true
+  collectionName: 'Tasks'
 }, {
   primaryText: 'Value Sets',
   to: '/valuesets',
   href: '/valuesets',
   iconName: 'notepad',
-  collectionName: 'ValueSets',
-  requireAuth: true
+  collectionName: 'ValueSets'
 }, {
   primaryText: 'VerificationResults',
   to: '/verification-results',
   href: '/verification-results',
   iconName: 'notepad',
-  collectionName: 'VerificationResults',
-  requireAuth: true
+  collectionName: 'VerificationResults'
 }];
   
 let AdminSidebarElements = [{
@@ -1008,10 +1039,83 @@ let AdminSidebarElements = [{
 }];
 
 
+let DialogComponents = [{
+  name: "SearchCodeSystemDialog",
+  component: <DialogContent><SearchCodeSystemDialog /></DialogContent>,
+  actions: <DefaultPostDialogActions resourceType="ValueSet" />
+}, {
+  name: "SearchValueSetsDialog",
+  component: <DialogContent><SearchValueSetsDialog /></DialogContent>,
+  actions: <DefaultPostDialogActions resourceType="ValueSet" />
+}]
+
+let FooterButtons = [{
+  pathname: '/careteams',
+  component: <CareTeamsFooterButtons />
+}, {
+  pathname: '/code-systems',
+  component: <CodeSystemsFooterButtons />
+}, {
+  pathname: '/communications',
+  component: <CommunicationsFooterButtons />
+}, {
+  pathname: '/communication-requests',
+  component: <CommunicationRequestsFooterButtons />
+}, {
+  pathname: '/endpoints',
+  component: <EndpointsFooterButtons />
+}, {
+  pathname: '/healthcare-services',
+  component: <HealthcareServicesFooterButtons />
+}, {
+  pathname: '/insurance-plans',
+  component: <InsurancePlansFooterButtons />
+}, {
+  pathname: '/locations',
+  component: <LocationsFooterButtons />
+}, {
+  pathname: '/networks',
+  component: <NetworksFooterButtons />
+}, {
+  pathname: '/organizations',
+  component: <OrganizationsFooterButtons />
+}, {
+  pathname: '/organization-affiliations',
+  component: <OrganizationAffiliationsFooterButtons />
+}, {
+  pathname: '/practitioners',
+  component: <PractitionersFooterButtons />
+}, {
+  pathname: '/practitioner-roles',
+  component: <PractitionerRolesFooterButtons />
+}, {
+  pathname: '/provenances',
+  component: <ProvenancesFooterButtons />
+}, {
+  pathname: '/related-persons',
+  component: <RelatedPersonsFooterButtons />
+}, {
+  pathname: '/restrictions',
+  component: <RestrictionsFooterButtons />
+}, {
+  pathname: '/search-parameters',
+  component: <SearchParametersFooterButtons />
+}, {
+  pathname: '/structure-definitions',
+  component: <StructureDefinitionsFooterButtons />
+}, {
+  pathname: '/tasks',
+  component: <TasksFooterButtons />
+}, {
+  pathname: '/valuesets',
+  component: <ValueSetsFooterButtons />
+}];
+
 export { 
   SidebarElements,
   AdminSidebarElements, 
   DynamicRoutes, 
+  DialogComponents,
 
   AllergyIntolerancesPage,
   AllergyIntolerancesTable,
@@ -1035,6 +1139,8 @@ export {
   CodeSystemsPage,
   CodeSystemsTable,
   CodeSystemsConceptsTable,
+  CodeSystemSelection,
+  SearchCodeSystemDialog,
 
   CareTeamsPage,
   CareTeamsTable,
@@ -1201,6 +1307,8 @@ export {
   ValueSetsPage,
   ValueSetsTable,
   ValueSetDetail,
+  ValueSetSelection,
+  SearchValueSetsDialog,
 
   VerificationResultsPage,
   VerificationResultsTable,

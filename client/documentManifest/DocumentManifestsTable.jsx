@@ -63,10 +63,10 @@ let styles = {
 //===========================================================================
 // MAIN COMPONENT
 
-function DocumentReferencesTable(props){
-  logger.info('Rendering the DocumentReferencesTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.DocumentReferencesTable');
-  logger.data('DocumentReferencesTable.props', {data: props}, {source: "DocumentReferencesTable.jsx"});
+function DocumentManifestsTable(props){
+  logger.info('Rendering the DocumentManifestsTable');
+  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.DocumentManifestsTable');
+  logger.data('DocumentManifestsTable.props', {data: props}, {source: "DocumentManifestsTable.jsx"});
 
   const classes = useStyles();
 
@@ -652,7 +652,7 @@ function DocumentReferencesTable(props){
       let count = 0;    
 
       props.documentReferences.forEach(function(device){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           documentReferencesToRender.push(FhirDehydrator.dehydrateDocumentReference(device, internalDateFormat));
         }
         count++;
@@ -749,7 +749,7 @@ function DocumentReferencesTable(props){
 
 
 
-DocumentReferencesTable.propTypes = {
+DocumentManifestsTable.propTypes = {
   id: PropTypes.string,
 
   data: PropTypes.array,
@@ -798,7 +798,7 @@ DocumentReferencesTable.propTypes = {
   formFactorLayout: PropTypes.string
 };
 
-DocumentReferencesTable.defaultProps = {
+DocumentManifestsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,  
   hideMasterIdentifier: false,
@@ -828,4 +828,4 @@ DocumentReferencesTable.defaultProps = {
   count: 0
 }
 
-export default DocumentReferencesTable;
+export default DocumentManifestsTable;

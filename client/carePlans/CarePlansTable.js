@@ -64,6 +64,14 @@ let styles = {
 }
 
 
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedCarePlans', []);
+
+
+//===========================================================================
+// MAIN COMPONENT
 
 
 function CarePlansTable(props){
@@ -453,7 +461,7 @@ function CarePlansTable(props){
 
   let rows = [];
   // const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  // const [rowsPerPage, setRowsPerPage] = useState(rowsPerPage);
 
 
   let paginationCount = 101;
@@ -478,7 +486,7 @@ function CarePlansTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -507,7 +515,7 @@ function CarePlansTable(props){
       let count = 0;  
 
       carePlans.forEach(function(carePlan){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           carePlansToRender.push(FhirDehydrator.dehydrateCarePlan(carePlan));
         }
         count++;

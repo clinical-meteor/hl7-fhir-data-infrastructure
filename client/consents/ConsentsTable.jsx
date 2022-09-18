@@ -103,9 +103,13 @@ export function ConsentsTable(props){
     hideScope,
     hideClass,
     hideType,
+    hideActorRole,
+    hideActorReference,
     hideSource,
+
     revokeButtonType,
     revokeColor,
+    
 
     onRevoke,
 
@@ -534,6 +538,37 @@ export function ConsentsTable(props){
     }
   }
 
+  function renderActorRoleHeader(){
+    if (!hideActorRole) {
+      return (
+        <TableCell className='actorRole'>Actor Role</TableCell>
+      );
+    }
+  }
+  function renderActorRole(actorRole){
+    if (!hideActorRole) {
+      return (
+        <TableCell className='actorRole' style={{minWidth: '140px'}}>{ actorRole }</TableCell>
+      );
+    }
+  }
+
+
+  function renderActorReferenceHeader(){
+    if (!hideActorReference) {
+      return (
+        <TableCell className='actorReference'>Actor Reference</TableCell>
+      );
+    }
+  }
+  function renderActorReference(actorReference){
+    if (!hideActorReference) {
+      return (
+        <TableCell className='actorReference' style={{minWidth: '140px'}}>{ actorReference }</TableCell>
+      );
+    }
+  }
+
   // Pagination
 
   let rows = [];
@@ -585,7 +620,7 @@ export function ConsentsTable(props){
       let count = 0;    
 
       consents.forEach(function(condition){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           // consentsToRender.push(FhirDehydrator.dehydrateConsent(condition, internalDateFormat));
           consentsToRender.push(FhirDehydrator.dehydrateConsent(condition, internalDateFormat));
         }
@@ -644,6 +679,9 @@ export function ConsentsTable(props){
           {renderCategory( get(consentsToRender[i], 'category')) }
           {renderScope( get(consentsToRender[i], 'scope')) }
 
+          {renderActorRole( get(consentsToRender[i], 'actorRole')) }
+          {renderActorReference( get(consentsToRender[i], 'actorReference')) }
+
           {renderSource(get(consentsToRender[i], 'sourceReference')) }
           {renderRevoke(get(consentsToRender[i], '_id'))}
 
@@ -670,6 +708,8 @@ export function ConsentsTable(props){
             {renderClassHeader() }
             {renderCategoryHeader() }
             {renderScopeHeader() }
+            {renderActorRoleHeader() }
+            {renderActorReferenceHeader() }
  
             {renderSourceHeader() }
             {renderRevokeHeader() }
@@ -718,6 +758,8 @@ ConsentsTable.propTypes = {
   hideRevoke: PropTypes.bool,
   hideBarcode: PropTypes.bool,
   hideSource: PropTypes.bool,
+  hideActorRole: PropTypes.bool,
+  hideActorReference: PropTypes.bool,
 
   revokeButtonType: PropTypes.string,
   revokeColor: PropTypes.string,
@@ -767,10 +809,14 @@ ConsentsTable.defaultProps = {
   hidePatientReference: false,
   hideBarcode: true,
   hideScope: false,
-  hideClass: true,
+  hideClass: false,
+  hideActorRole: false,
+  hideActorReference: true,
   hideType: true,
   hideSource: true,
   hideRevoke: true,
+  hidePeriodStart: true,
+  hidePeriodEnd: true,
 
   disablePagination: false,
   selectedListId: '',

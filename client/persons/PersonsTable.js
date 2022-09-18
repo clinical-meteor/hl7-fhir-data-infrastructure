@@ -339,6 +339,8 @@ function PersonsTable(props){
     page,
     onSetPage,
 
+    rows,
+
     ...otherProps 
   } = props;
 
@@ -447,13 +449,13 @@ function PersonsTable(props){
 
   let tableRows = [];
 
-  const [rowsPerPageToRender, setRowsPerPageToRender] = useState(rowsPerPage);
+  // const [rowsPerPage, setrowsPerPage] = useState(rowsPerPage);
 
-  const emptyRows = rowsPerPageToRender - Math.min(rowsPerPageToRender, rows.length - page * rowsPerPageToRender);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
 
   const handleChangeRowsPerPage = event => {
-    setRowsPerPageToRender(parseInt(event.target.value, 10));
+    setrowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
@@ -888,7 +890,7 @@ function PersonsTable(props){
     }
     
     if(Array.isArray(cursors)){
-      let paginatedIndex = (page * rowsPerPageToRender) + index + 1;
+      let paginatedIndex = (page * rowsPerPage) + index + 1;
 
       serializedCounts = serializeCounts(cursors[paginatedIndex])
       // console.log('PersonsTable.serializedCounts.array', serializedCounts, index, cursors[index])
@@ -915,7 +917,7 @@ function PersonsTable(props){
     if(persons.length > 0){            
       let count = 0;  
       persons.forEach(function(person){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           personsToRender.push(dehydratePerson(person, dateFormat));
         }
         count++;
@@ -978,7 +980,6 @@ function PersonsTable(props){
   //---------------------------------------------------------------------
   // Pagination
 
-  let rows = [];
 
   if(paginationCount){
     paginationCount = paginationCount;
@@ -1101,7 +1102,9 @@ PersonsTable.propTypes = {
 
   count: PropTypes.number,
   tableRowSize: PropTypes.string,
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+
+  rows: PropTypes.array
 };
 PersonsTable.defaultProps = {
   tableRowSize: 'medium',
@@ -1126,7 +1129,9 @@ PersonsTable.defaultProps = {
 
   font3of9: true,
   hideFhirBarcode: false,
-  multiline: false
+  multiline: false,
+
+  rows: []
 }
 
 export default PersonsTable;

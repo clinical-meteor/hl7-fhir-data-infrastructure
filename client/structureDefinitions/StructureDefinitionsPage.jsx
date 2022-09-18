@@ -127,7 +127,7 @@ export function StructureDefinitionsPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
   let data = {
     selectedAuditEventId: '',
@@ -306,92 +306,106 @@ export function StructureDefinitionsPage(props){
     Session.set('structureDefinitionPageTabIndex', newValue)
   }
 
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} scrollable >
-      <CardHeader title={data.structureDefinitions.length + " Structure Definitions"} />
-      <CardContent>
 
-        <StructureDefinitionsTable 
-          formFactorLayout={formFactor}  
-          structureDefinitions={ data.structureDefinitions }
-          count={data.structureDefinitions.length}
-          selectedStructureDefinitionId={ data.selectedStructureDefinitionId }
-          hideCheckbox={data.hideCheckbox}
-          hideStatus={false}
-          hideName={false}
-          hideTitle={false}
-          hideVersion={false}
-          hideExperimental={false}
-          paginationLimit={10}     
-          checklist={data.structureDefinitionChecklistMode}
-          onRowClick={ handleRowClick.bind(this) }
-          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-          onSetPage={function(index){
-            setDefinitionsIndex(index)
-          }}  
-          page={data.definitionsIndex}
-          size="small"
-          />
-        </CardContent>
-      </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.structureDefinitions.length + " StructureDefinitions"} />
-          <CardContent>
-            <StructureDefinitionsTable 
-              formFactorLayout={formFactor}  
-              structureDefinitions={ data.structureDefinitions }
-              count={data.structureDefinitions.length}
-              selectedStructureDefinitionId={ data.selectedStructureDefinitionId }
-              hideCheckbox={data.hideCheckbox}
-              hideIdentifier={true} 
-              hideActionIcons={true}
-              hideStatus={false}
-              hideName={false}
-              hideTitle={true}
-              hideVersion={false}
-              hideExperimental={true}    
-              hideBarcode={true}
-              onRowClick={ handleRowClick.bind(this) }
-              rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-              onSetPage={function(index){
-                setDefinitionsIndex(index)
-              }}  
-              page={data.definitionsIndex}    
-              size="medium"
-              />
+
+  let layoutContent;
+  if(data.structureDefinitions.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <StyledCard height="auto" margin={20} scrollable >
+        <CardHeader title={data.structureDefinitions.length + " Structure Definitions"} />
+        <CardContent>
+  
+          <StructureDefinitionsTable 
+            formFactorLayout={formFactor}  
+            structureDefinitions={ data.structureDefinitions }
+            count={data.structureDefinitions.length}
+            selectedStructureDefinitionId={ data.selectedStructureDefinitionId }
+            hideCheckbox={data.hideCheckbox}
+            hideStatus={false}
+            hideName={false}
+            hideTitle={false}
+            hideVersion={false}
+            hideExperimental={false}
+            paginationLimit={10}     
+            checklist={data.structureDefinitionChecklistMode}
+            onRowClick={ handleRowClick.bind(this) }
+            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+            onSetPage={function(index){
+              setDefinitionsIndex(index)
+            }}  
+            page={data.definitionsIndex}
+            size="small"
+            />
           </CardContent>
         </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedStructureDefinitionId }</h1>
-          {/* <CardHeader title={data.selectedStructureDefinitionId } className="helveticas barcode" /> */}
-          <CardContent>
+    } else {
+      layoutContent = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} >
+            <CardHeader title={data.structureDefinitions.length + " StructureDefinitions"} />
             <CardContent>
-              <StructureDefinitionDetail 
-                id='structureDefinitionDetails'                 
-                displayDatePicker={true} 
-                displayBarcodes={false}
-                structureDefinition={ data.selectedStructureDefinition }
-                structureDefinitionId={ data.selectedStructureDefinitionId } 
-                showStructureDefinitionInputs={true}
-                showHints={false}
-              />
+              <StructureDefinitionsTable 
+                formFactorLayout={formFactor}  
+                structureDefinitions={ data.structureDefinitions }
+                count={data.structureDefinitions.length}
+                selectedStructureDefinitionId={ data.selectedStructureDefinitionId }
+                hideCheckbox={data.hideCheckbox}
+                hideIdentifier={true} 
+                hideActionIcons={true}
+                hideStatus={false}
+                hideName={false}
+                hideTitle={true}
+                hideVersion={false}
+                hideExperimental={true}    
+                hideBarcode={true}
+                onRowClick={ handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                onSetPage={function(index){
+                  setDefinitionsIndex(index)
+                }}  
+                page={data.definitionsIndex}    
+                size="medium"
+                />
             </CardContent>
-          </CardContent>
-        </StyledCard>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedStructureDefinitionId }</h1>
+            {/* <CardHeader title={data.selectedStructureDefinitionId } className="helveticas barcode" /> */}
+            <CardContent>
+              <CardContent>
+                <StructureDefinitionDetail 
+                  id='structureDefinitionDetails'                 
+                  displayDatePicker={true} 
+                  displayBarcodes={false}
+                  structureDefinition={ data.selectedStructureDefinition }
+                  structureDefinitionId={ data.selectedStructureDefinitionId } 
+                  showStructureDefinitionInputs={true}
+                  showHints={false}
+                />
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
       </Grid>
-    </Grid>
+    }
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
 
   return (
     <PageCanvas id="structureDefinitionsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

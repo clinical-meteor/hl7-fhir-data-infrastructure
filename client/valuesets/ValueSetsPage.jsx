@@ -119,7 +119,7 @@ export function ValueSetsPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
   let data = {
     selectedValueSetId: '',

@@ -129,7 +129,8 @@ export function CodeSystemsPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
 
   let data = {
     selectedAuditEventId: '',
@@ -302,88 +303,97 @@ export function CodeSystemsPage(props){
   }
 
 
-  // let [codeSystemsPageIndex, setCodeSystemsPageIndex] = setState(0); 
-
   let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} scrollable >
-      <CardHeader title={data.codeSystems.length + " Code Systems"} />
-        <CardContent>
-          <CodeSystemsTable 
-            formFactorLayout={formFactor}  
-            codeSystems={ data.codeSystems }
-            count={data.codeSystems.length}
-            hideCheckbox={data.hideCheckbox}
-            hideStatus={false}
-            hideName={false}
-            hideTitle={false}
-            hideVersion={false}
-            hideExperimental={false}
-            paginationLimit={10}    
-            onRowClick={ handleRowClick.bind(this) } 
-            checklist={data.codeSystemChecklistMode}
-            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-            onSetPage={function(index){
-              setCodeSystemsPageIndex(index)
-            }}    
-            page={data.codeSystemsPageIndex}
-            size="small"
-          />
-        </CardContent>
-      </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} >
-          <CardHeader title={data.codeSystems.length + " Code Systems"} />
+  if(data.codeSystems.length > 0){
+    if(data.onePageLayout){
+      layoutContents = <StyledCard height="auto" margin={20} scrollable >
+        <CardHeader title={data.codeSystems.length + " Code Systems"} />
           <CardContent>
             <CodeSystemsTable 
               formFactorLayout={formFactor}  
               codeSystems={ data.codeSystems }
               count={data.codeSystems.length}
-              selectedCodeSystemId={ data.selectedCodeSystemId }
-              hideIdentifier={true} 
               hideCheckbox={data.hideCheckbox}
-              hideActionIcons={true}
               hideStatus={false}
               hideName={false}
               hideTitle={false}
               hideVersion={false}
-              hideExperimental={false}    
-              hideBarcode={true}
-              onRowClick={ handleRowClick.bind(this) }
+              hideExperimental={false}
+              paginationLimit={10}    
+              onRowClick={ handleRowClick.bind(this) } 
+              checklist={data.codeSystemChecklistMode}
               rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
               onSetPage={function(index){
                 setCodeSystemsPageIndex(index)
-              }}  
+              }}    
               page={data.codeSystemsPageIndex}
-              size="medium"
-              />
+              size="small"
+            />
           </CardContent>
         </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20} scrollable>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedCodeSystemId }</h1>
-          {/* <CardHeader title={data.selectedCodeSystemId } className="helveticas barcode" /> */}
-          <CardContent>
+    } else {
+      layoutContents = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} >
+            <CardHeader title={data.codeSystems.length + " Code Systems"} />
             <CardContent>
-              <CodeSystemDetail 
-                id='codeSystemDetails'                 
-                displayDatePicker={true} 
-                displayBarcodes={false}
-                codeSystem={ data.selectedCodeSystem }
-                codeSystemId={ data.selectedCodeSystemId } 
-                showCodeSystemInputs={true}
-                showHints={false}
-              />
+              <CodeSystemsTable 
+                formFactorLayout={formFactor}  
+                codeSystems={ data.codeSystems }
+                count={data.codeSystems.length}
+                selectedCodeSystemId={ data.selectedCodeSystemId }
+                hideIdentifier={true} 
+                hideCheckbox={data.hideCheckbox}
+                hideActionIcons={true}
+                hideStatus={false}
+                hideName={false}
+                hideTitle={false}
+                hideVersion={false}
+                hideExperimental={false}    
+                hideBarcode={true}
+                onRowClick={ handleRowClick.bind(this) }
+                rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+                onSetPage={function(index){
+                  setCodeSystemsPageIndex(index)
+                }}  
+                page={data.codeSystemsPageIndex}
+                size="medium"
+                />
             </CardContent>
-          </CardContent>
-        </StyledCard>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedCodeSystemId }</h1>
+            {/* <CardHeader title={data.selectedCodeSystemId } className="helveticas barcode" /> */}
+            <CardContent>
+              <CardContent>
+                <CodeSystemDetail 
+                  id='codeSystemDetails'                 
+                  displayDatePicker={true} 
+                  displayBarcodes={false}
+                  codeSystem={ data.selectedCodeSystem }
+                  codeSystemId={ data.selectedCodeSystemId } 
+                  showCodeSystemInputs={true}
+                  showHints={false}
+                />
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
       </Grid>
-    </Grid>
+    }
+  } else {
+    layoutContents = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
-
 
   return (
     <PageCanvas id="codeSystemsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>

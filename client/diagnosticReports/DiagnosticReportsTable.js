@@ -119,6 +119,8 @@ function DiagnosticReportsTable(props){
     page,
     onSetPage,
 
+    count,
+
     ...otherProps 
   } = props;
 
@@ -487,7 +489,8 @@ DiagnosticReportsTable.defaultProps = {
   rowsPerPage: 5,
   dateFormat: "YYYY-MM-DD hh:mm:ss",
   hideActionButton: true,
-  hideSubject: true
+  hideSubject: true,
+  count: 0
 }
 
 export default DiagnosticReportsTable;

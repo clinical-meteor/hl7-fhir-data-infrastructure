@@ -5,6 +5,7 @@ import {
   Card,
   CardHeader,
   CardContent, 
+  Container,
   Tab, 
   Tabs,
   Typography,
@@ -114,7 +115,7 @@ function RelatedPersonsPage(props){
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
 
   let data = {    
     selectedCarePlanId: null,
@@ -164,27 +165,42 @@ function RelatedPersonsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  let layoutContent;
+  if(data.relatedPersons.length > 0){
+    layoutContent = <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
+      <CardHeader title={ data.relatedPersons.length + ' Related Persons'} />
+      <CardContent>
+        <RelatedPersonsTable 
+          formFactorLayout={formFactor}  
+          relatedPersons={ data.relatedPersons}
+          count={ data.relatedPersons.length}
+          hideCheckbox={data.hideCheckbox}
+          onRowClick={ handleRowClick.bind(this) }
+          selectedRelatedPersonId={ data.selectedRelatedPersonId }
+          rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
+          onSetPage={function(index){
+            setRelatedPersonsIndex(index)
+          }}  
+          page={data.relatedPersonsIndex}
+          size="medium"
+        />
+      </CardContent>
+    </StyledCard>
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
+  }
+
   return (
     <PageCanvas id='relatedPersonsPage' headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-      <StyledCard height='auto' width={cardWidth + 'px'} margin={20} >
-        <CardHeader title={ data.relatedPersons.length + ' Related Persons'} />
-        <CardContent>
-          <RelatedPersonsTable 
-            formFactorLayout={formFactor}  
-            relatedPersons={ data.relatedPersons}
-            count={ data.relatedPersons.length}
-            hideCheckbox={data.hideCheckbox}
-            onRowClick={ handleRowClick.bind(this) }
-            selectedRelatedPersonId={ data.selectedRelatedPersonId }
-            rowsPerPage={ LayoutHelpers.calcTableRows("medium",  props.appHeight) }
-            onSetPage={function(index){
-              setRelatedPersonsIndex(index)
-            }}  
-            page={data.relatedPersonsIndex}
-            size="medium"
-          />
-        </CardContent>
-      </StyledCard>
+      { layoutContent }
     </PageCanvas>
   );
 }
