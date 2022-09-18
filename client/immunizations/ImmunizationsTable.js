@@ -399,7 +399,7 @@ function ImmunizationsTable(props){
       let count = 0;    
 
       immunizations.forEach(function(immunization){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           immunizationsToRender.push(FhirDehydrator.dehydrateImmunization(immunization, internalDateFormat));
         }
         count++;

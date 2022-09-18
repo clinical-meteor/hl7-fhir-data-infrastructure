@@ -419,8 +419,8 @@ function MedicationOrdersTable(props){
   if(medicationOrders){
     if(medicationOrders.length > 0){     
       let count = 0;    
-      medicationOrders.forEach(function(medicationOrder){
-        if((count >= (page * rowsToRender)) && (count < (page + 1) * rowsToRender)){
+      props.medicationOrders.forEach(function(medicationOrder){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           medicationOrdersToRender.push(FhirDehydrator.dehydrateMedicationOrder(medicationOrder, dateFormat));
         }
         count++;
@@ -462,7 +462,7 @@ function MedicationOrdersTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}

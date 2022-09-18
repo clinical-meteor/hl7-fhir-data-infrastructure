@@ -46,7 +46,6 @@ Session.setDefault('DevicesTable.devicesIndex', 0)
 
 
 
-
 //=============================================================================================================================================
 // GLOBAL THEMING
 
@@ -158,6 +157,7 @@ export function DevicesPage(props){
     return Session.get('showFhirIds');
   }, [])
 
+  
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
   let formFactor = LayoutHelpers.determineFormFactor();

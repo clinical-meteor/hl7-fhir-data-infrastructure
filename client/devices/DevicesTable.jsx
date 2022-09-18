@@ -430,7 +430,7 @@ function DevicesTable(props){
       let count = 0;    
 
       props.devices.forEach(function(device){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           devicesToRender.push(FhirDehydrator.dehydrateDevice(device, internalDateFormat));
         }
         count++;

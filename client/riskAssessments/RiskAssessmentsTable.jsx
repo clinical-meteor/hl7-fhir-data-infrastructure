@@ -594,7 +594,7 @@ export function RiskAssessmentsTable(props){
       let count = 0;    
 
       riskAssessments.forEach(function(condition){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           riskAssessmentsToRender.push(FhirDehydrator.dehydrateRiskAssessment(condition, internalDateFormat));
           // riskAssessmentsToRender.push(dehydrateRiskAssessment(condition, internalDateFormat));
         }
