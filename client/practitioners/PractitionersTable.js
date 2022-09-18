@@ -18,6 +18,7 @@ import _ from 'lodash';
 let get = _.get;
 let set = _.set;
 let has = _.has;
+let find = _.find;
 
 import moment from 'moment';
 
@@ -104,6 +105,7 @@ function PractitionersTable(props){
     hideQualificationCode,
     hideQualificationStart,
     hideQualificationEnd,
+    hideSpecialty,
   
     onCellClick,
     onRowClick,
@@ -115,6 +117,7 @@ function PractitionersTable(props){
     hideBarcode,
     actionButtonLabel,
     hideExtensions,
+    hasRestrictions,
   
     rowsPerPage,
     tableRowSize,
@@ -129,6 +132,10 @@ function PractitionersTable(props){
 
     count,
     multiline,
+
+    primaryColor,
+    
+    specialtyValueSet,
 
     ...otherProps 
   } = props;
@@ -262,6 +269,18 @@ function PractitionersTable(props){
       style={{float: 'right', border: 'none', userSelect: 'none'}}
     />
   }
+
+
+  //---------------------------------------------------------------------
+  // Dynamic Styling
+
+  let restrictionStyle = {};
+
+  restrictionStyle.backgroundColor = "#ffffff";
+  restrictionStyle.opacity = 0.8;
+  restrictionStyle.backgroundSize = "18px 18px";
+  restrictionStyle.backgroundImage = "radial-gradient(" + primaryColor + " 1.5px, rgba(0, 0, 0, 0) 1.5px)"
+
 
 
   //---------------------------------------------------------------------
@@ -407,14 +426,14 @@ function PractitionersTable(props){
   function renderEmail(email){
     if (!hideEmail) {
       return (
-        <TableCell className="email hidden-on-phone">{ email }</TableCell>
+        <TableCell className="email hidden-on-phone" style={{maxWidth: '300px', overflowY: 'auto'}}>{ email }</TableCell>
       );
     }
   }
   function renderEmailHeader(){
     if (!hideEmail) {
       return (
-        <TableCell className="email hidden-on-phone">Email</TableCell>
+        <TableCell className="email hidden-on-phone" style={{maxWidth: '300px', overflowY: 'auto'}}>Email</TableCell>
       );
     }
   }
@@ -434,8 +453,12 @@ function PractitionersTable(props){
   }
   function renderCity(city){
     if (!hideCity) {
+      let cityStyle = {};
+      if(hasRestrictions){
+        cityStyle = restrictionStyle;
+      }
       return (
-        <TableCell className="city ">{ city }</TableCell>
+        <TableCell className="city" style={cityStyle}>{ city }</TableCell>
       );
     }
   }
@@ -448,8 +471,13 @@ function PractitionersTable(props){
   }
   function renderState(state){
     if (!hideState) {
+      let stateStyle = {};
+      if(hasRestrictions){
+        stateStyle = restrictionStyle;
+      }
+
       return (
-        <TableCell className="state">{ state }</TableCell>
+        <TableCell className="state" style={stateStyle}>{ state }</TableCell>
       );
     }
   }
@@ -462,12 +490,21 @@ function PractitionersTable(props){
   }
   function renderPostalCode(postalCode){
     if (!hidePostalCode) {
-      let postalCodeString = postalCode
-      if(postalCode.length === 9){
-        postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+      let postalCodeString = "";
+      let postalCodeStyle = {};
+
+      if(postalCode){
+        postalCodeString = postalCode
+        if(postalCode.length === 9){
+          postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
+        }  
+      }
+
+      if(hasRestrictions){
+        postalCodeStyle = restrictionStyle;
       }
       return (
-        <TableCell className="postalCode">{ postalCodeString }</TableCell>
+        <TableCell className="postalCode" style={postalCodeStyle}>{ postalCodeString }</TableCell>
       );
     }
   }
@@ -567,7 +604,34 @@ function PractitionersTable(props){
   }
 
 
-  function renderBarcode(id){
+  function renderSpecialty(specialtyCode){
+    if (!hideSpecialty) {
+      let specialtyCodeRenderString = specialtyCode;
+      if(specialtyValueSet){
+        console.log('specialtyValueSet', specialtyValueSet)
+        if(get(specialtyValueSet, 'expansion.contains')){
+          if(Array.isArray){
+            let valueCode = find(specialtyValueSet.expansion.contains, {code: specialtyCode})
+            if(get(valueCode, 'display')){
+              let valueParts = (get(valueCode, 'display')).split(";");
+              specialtyCodeRenderString = valueParts[valueParts.length - 1];  
+            }
+          }
+        }
+      }
+      return (
+        <TableCell><span className="specialty">{specialtyCodeRenderString}</span></TableCell>
+      );
+    }
+  }
+  function renderSpecialtyHeader(){
+    if (!hideSpecialty) {
+      return (
+        <TableCell>Specialty</TableCell>
+      );
+    }
+  }
+    function renderBarcode(id){
     if (!hideBarcode) {
       return (
         <TableCell><span className="barcode helveticas">{id}</span></TableCell>
@@ -620,7 +684,7 @@ function PractitionersTable(props){
       }
       logger.trace('practitionersToRender[i]', practitionersToRender[i])
       tableRows.push(
-        <TableRow className="practitionerRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, practitionersToRender[i].id)} style={{cursor: 'pointer'}} hover={true} selected={selected} >            
+        <TableRow className="practitionerRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, practitionersToRender[i].id)} hover={true} selected={selected} >            
           { renderCheckbox() }
           { renderActionIcons(practitionersToRender[i]) }
           { renderIdentifier(practitionersToRender[i].identifier ) }
@@ -641,6 +705,7 @@ function PractitionersTable(props){
           { renderQualificationStart(practitionersToRender[i].qualificationStart) }
           { renderQualificationEnd(practitionersToRender[i].qualificationEnd) }
 
+          { renderSpecialty(practitionersToRender[i].specialtyCode)}
           { renderBarcode(practitionersToRender[i]._id)}
         </TableRow>
       );    
@@ -675,7 +740,8 @@ function PractitionersTable(props){
             { renderQualificationCodeHeader() }
             { renderQualificationStartHeader() }
             { renderQualificationEndHeader() }
-
+            
+            { renderSpecialtyHeader() }
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -717,6 +783,7 @@ PractitionersTable.propTypes = {
   hideQualificationCode:  PropTypes.bool,
   hideQualificationStart:  PropTypes.bool,
   hideQualificationEnd:  PropTypes.bool,
+  hideSpecialty:  PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -739,7 +806,9 @@ PractitionersTable.propTypes = {
   count: PropTypes.number,
   multiline: PropTypes.bool,
 
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+  primaryColor: PropTypes.string,
+  specialtyValueSet: PropTypes.object
 };
 
 PractitionersTable.defaultProps = {
@@ -758,9 +827,13 @@ PractitionersTable.defaultProps = {
   hideQualificationStart: true,
   hideQualificationEnd: true,
   hideFullAddress: true,
+  hideSpecialty: true,
+  hasRestrictions: false,
   page: 0,
   rowsPerPage: 5,
-  tableRowSize: 'medium'
+  tableRowSize: 'medium',
+  primaryColor: "#E5537E",
+  specialtyValueSet: {}
 }
 
 // ReactMixin(PractitionersTable.prototype, ReactMeteorData);

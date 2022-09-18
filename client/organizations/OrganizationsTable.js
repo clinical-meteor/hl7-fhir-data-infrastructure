@@ -123,6 +123,9 @@ function OrganizationsTable(props){
     count,
     multiline,
 
+    hasRestrictions,
+    primaryColor,
+
     ...otherProps 
   } = props;
 
@@ -248,6 +251,20 @@ function OrganizationsTable(props){
     console.log('handleActionButtonClick')
   }
 
+
+
+  //---------------------------------------------------------------------
+  // Dynamic Styling
+
+  let restrictionStyle = {};
+
+  restrictionStyle.backgroundColor = "#ffffff";
+  restrictionStyle.opacity = 0.8;
+  restrictionStyle.backgroundSize = "18px 18px";
+  restrictionStyle.backgroundImage = "radial-gradient(" + primaryColor + " 1.5px, rgba(0, 0, 0, 0) 1.5px)"
+
+
+
   //---------------------------------------------------------------------
   // Column Rendering
 
@@ -366,7 +383,7 @@ function OrganizationsTable(props){
       }
 
       return (
-        <TableCell className="phone" style={{minWidth: '100px'}}>{ phoneString }</TableCell>
+        <TableCell className="phone" style={{minWidth: '160px'}}>{ phoneString }</TableCell>
       );
     }
   }
@@ -380,7 +397,7 @@ function OrganizationsTable(props){
   function renderEmail(email){
     if (!hideEmail) {
       return (
-        <TableCell className="email hidden-on-phone">{ email }</TableCell>
+        <TableCell className="email hidden-on-phone" style={{maxWidth: '300px', overflowY: 'auto'}}>{ email }</TableCell>
       );
     }
   }
@@ -393,8 +410,14 @@ function OrganizationsTable(props){
   }
   function renderAddressLine(addressLine){
     if (!hideAddressLine) {
+
+      let addressLineStyle = {};
+      if(hasRestrictions){
+        addressLineStyle = restrictionStyle;
+      }
+
       return (
-        <TableCell className="addressLine ">{ addressLine }</TableCell>
+        <TableCell className="addressLine" style={addressLineStyle}>{ addressLine }</TableCell>
       );
     }
   }
@@ -407,8 +430,14 @@ function OrganizationsTable(props){
   }
   function renderCity(city){
     if (!hideCity) {
+
+      let cityStyle = {};
+      if(hasRestrictions){
+        cityStyle = restrictionStyle;
+      }
+
       return (
-        <TableCell className="city ">{ city }</TableCell>
+        <TableCell className="city" style={cityStyle}>{ city }</TableCell>
       );
     }
   }
@@ -421,8 +450,14 @@ function OrganizationsTable(props){
   }
   function renderState(state){
     if (!hideState) {
+      
+      let stateStyle = {};
+      if(hasRestrictions){
+        stateStyle = restrictionStyle;
+      }
+
       return (
-        <TableCell className="state">{ state }</TableCell>
+        <TableCell className="state" style={stateStyle}>{ state }</TableCell>
       );
     }
   }
@@ -435,17 +470,24 @@ function OrganizationsTable(props){
   }
   function renderPostalCode(postalCode){
     if (!hidePostalCode) {
-      let postalCodeString = "";
+      let postalCodeString = ""
 
       if(postalCode){
-        postalCodeString = postalCode;
-        if(postalCodeString.length === 9){
+        postalCodeString = postalCode
+        if(postalCode.length === 9){
           postalCodeString = postalCode.substring(0,5) + "-" + postalCode.substring(5,9)
         }  
       }
 
+      let postalCodeStyle = {
+        minWidth: '140px'
+      };
+      if(hasRestrictions){
+        postalCodeStyle = restrictionStyle;
+      }
+
       return (
-        <TableCell className="postalCode hidden-on-phone">{ postalCodeString }</TableCell>
+        <TableCell className="postalCode hidden-on-phone" style={postalCodeStyle}>{ postalCodeString }</TableCell>
       );
     }
   }
@@ -673,8 +715,10 @@ OrganizationsTable.propTypes = {
   page: PropTypes.number,
   count: PropTypes.number,
   multiline: PropTypes.bool,
+  hasRestrictions: PropTypes.bool,
 
-  formFactorLayout: PropTypes.string
+  formFactorLayout: PropTypes.string,
+  primaryColor: PropTypes.string
 };
 
 OrganizationsTable.defaultProps = {
@@ -690,10 +734,12 @@ OrganizationsTable.defaultProps = {
   multiline: false,
   page: 0,
   rowsPerPage: 5,
+  hasRestrictions: false,
   tableRowSize: 'medium',
   actionButtonLabel: 'Export',
   dateFormat: "YYYY-MM-DD",
-  tableRowSize: 'medium'
+  tableRowSize: 'medium',
+  primaryColor: "#E5537E"
 }
 
 export default OrganizationsTable;

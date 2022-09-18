@@ -135,7 +135,8 @@ export function OrganizationsPage(props){
     onePageLayout: true,
     showSystemIds: false,
     showFhirIds: false,
-    organizationsIndex: 0
+    organizationsIndex: 0,
+    hasRestrictions: false
   };
 
   data.onePageLayout = useTracker(function(){
@@ -162,12 +163,28 @@ export function OrganizationsPage(props){
   data.showFhirIds = useTracker(function(){
     return Session.get('showFhirIds');
   }, [])
+  // data.hasRestrictions = useTracker(function(){
+  //   if(Session.get('currentUser')){
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }, [])
+  data.hasRestrictions = useTracker(function(){
+    return true;
+  }, [])
 
-  
 
 
   function setOrganizationsIndex(newIndex){
     Session.set('OrganizationsTable.organizationsIndex', newIndex)
+  }
+  function enableRestrictionGui(hasRestrictions){
+    let result = false;
+    if(get(Meteor, 'settings.public.defaults.enableAccessRestrictions')){
+      result = hasRestrictions;
+    }
+    return result;
   }
 
   function handleRowClick(organizationId){
@@ -221,6 +238,7 @@ export function OrganizationsPage(props){
             hideActionIcons={true}
             hideNumEndpoints={false}
             hideIdentifier={true}
+            hasRestrictions={enableRestrictionGui(data.hasRestrictions)}
             hideBarcode={!data.showSystemIds}
             hideFhirId={!data.showFhirIds}
             onRowClick={ handleRowClick.bind(this) }
@@ -251,6 +269,7 @@ export function OrganizationsPage(props){
                 hideActionIcons={true}
                 hideNumEndpoints={false}
                 hideIdentifier={true}
+                hasRestrictions={data.hasRestrictions}
                 selectedOrganizationId={ data.selectedOrganizationId }
                 onRowClick={ handleRowClick.bind(this) }
                 onSetPage={function(index){

@@ -318,7 +318,9 @@ export function RiskAssessmentsPage(props){
       showBarcodes={true} 
       hideIdentifier={true}
       hidePerformerReference={true}
+      hidePerformerName={true}
       hideSubjectReference={true}
+      hideText={true}
       riskAssessments={data.riskAssessments}
       noDataMessage={false}
       rowsPerPage={LayoutHelpers.calcTableRows()}

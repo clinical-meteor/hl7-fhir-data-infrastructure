@@ -83,6 +83,11 @@ function RestrictionsTable(props){
     hideCheckbox,
     hideActionIcons,
 
+    hideStatus,
+    hideProvision,
+    hideScope,
+    hideActor,
+
     onCellClick,
     onRowClick,
     onMetaClick,
@@ -116,28 +121,20 @@ function RestrictionsTable(props){
     switch (formFactorLayout) {
       case "phone":
         hideCheckbox = true;
-        hideActionIcons = false;
         hideBarcode = true;
         break;
       case "tablet":
         hideCheckbox = true;
-        hideActionIcons = false;
         hideBarcode = true;
         break;
       case "web":
         hideCheckbox = true;
-        hideActionIcons = false;
-        hideBarcode = true;
         break;
       case "desktop":
         hideCheckbox = true;
-        hideActionIcons = false;
-        hideBarcode = true;
         break;
       case "videowall":
         hideCheckbox = false;
-        hideActionIcons = false;
-        hideBarcode = true;
         break;            
     }
   }
@@ -270,6 +267,36 @@ function RestrictionsTable(props){
     }
   }
 
+  function renderProvision(provision){
+    if (!hideProvision) {
+      return (
+        <TableCell className='provision'>{ provision }</TableCell>
+      );
+    }
+  }
+  function renderProvisionHeader(){
+    if (!hideProvision) {
+      return (
+        <TableCell className='provision'>Provision</TableCell>
+      );
+    }
+  }
+
+  function renderScope(scope){
+    if (!hideScope) {
+      return (
+        <TableCell className='scope'>{ scope }</TableCell>
+      );
+    }
+  }
+  function renderScopeHeader(){
+    if (!hideScope) {
+      return (
+        <TableCell className='scope'>Scope</TableCell>
+      );
+    }
+  }
+
 
   function renderBarcode(id){
     if (!hideBarcode) {
@@ -282,6 +309,20 @@ function RestrictionsTable(props){
     if (!hideBarcode) {
       return (
         <TableCell>System ID</TableCell>
+      );
+    }
+  }
+  function renderActor(name){
+    if (!hideActor) {
+      return (
+        <TableCell><span className="actor">{name}</span></TableCell>
+      );
+    }
+  }
+  function renderActorHeader(){
+    if (!hideActor) {
+      return (
+        <TableCell>Actor</TableCell>
       );
     }
   }
@@ -309,7 +350,7 @@ function RestrictionsTable(props){
       let count = 0;            
       restrictions.forEach(function(restriction){
         if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
-          restrictionsToRender.push(FhirDehydrator.dehydrateRestriction(restriction, internalDateFormat));
+          restrictionsToRender.push(FhirDehydrator.dehydrateConsent(restriction, internalDateFormat));
         }
         count++;
       });  
@@ -350,8 +391,12 @@ function RestrictionsTable(props){
           { renderCheckbox() }
           { renderActionIcons(restrictionsToRender[i]) }
           { renderStatus(restrictionsToRender[i].status) }
+          { renderScope(restrictionsToRender[i].scope) }
 
-          { renderBarcode(restrictionsToRender[i].id)}
+          { renderProvision(restrictionsToRender[i].provisionType) }
+          { renderActor(restrictionsToRender[i].provisionActor) }
+
+          { renderBarcode(restrictionsToRender[i]._id)}
         </TableRow>
       );       
     }
@@ -365,7 +410,11 @@ function RestrictionsTable(props){
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
             { renderStatusHeader() }
-            
+            { renderScopeHeader() }
+
+            { renderProvisionHeader() }
+            { renderActorHeader() }
+
             { renderBarcodeHeader() }
           </TableRow>
         </TableHead>
@@ -390,6 +439,11 @@ RestrictionsTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+  
+  hideStatus: PropTypes.bool,
+  hideProvision: PropTypes.bool,
+  hideScope: PropTypes.bool,
+  hideActor: PropTypes.bool,
 
   onCellClick: PropTypes.func,
   onRowClick: PropTypes.func,
@@ -408,7 +462,12 @@ RestrictionsTable.propTypes = {
 RestrictionsTable.defaultProps = {
   hideCheckbox: true,
   hideActionIcons: true,
-  hideBarcode: true,
+  hideBarcode: false,
+
+  hideStatus: false,
+  hideProvision: false,
+  hideScope: false,
+  hideActor: false,
 
   checklist: true,
   selectedRestrictionId: '',
