@@ -622,7 +622,7 @@ function ConditionsTable(props){
       let count = 0;    
 
       conditions.forEach(function(condition){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           conditionsToRender.push(FhirDehydrator.dehydrateCondition(condition, internalDateFormat));
         }
         count++;
