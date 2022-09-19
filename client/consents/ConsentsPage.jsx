@@ -44,10 +44,17 @@ let defaultConsent = {
 
 Session.setDefault('consentFormData', defaultConsent);
 Session.setDefault('consentSearchFilter', '');
+Session.setDefault('selectedConsentId', false);
+Session.setDefault('selectedConsent', false);
+
 Session.setDefault('consentSearchQuery', {});
 Session.setDefault('consentDialogOpen', false);
-Session.setDefault('selectedConsentId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
+
+Session.setDefault('ConsentsPage.onePageLayout', true)
+Session.setDefault('ConsentsPage.defaultQuery', {})
+Session.setDefault('ConsentsTable.hideCheckbox', true)
+Session.setDefault('ConsentsTable.consentsIndex', 0)
 
 
 
@@ -134,6 +141,13 @@ const muiTheme = createMuiTheme({
 export function ConsentsPage(props){
 
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+  
+  let cardWidth = window.innerWidth - paddingWidth;
+  
   //---------------------------------------------------------------------------------------------------------
   // State
 
@@ -146,7 +160,11 @@ export function ConsentsPage(props){
     dialogOpen: Session.get('consentDialogOpen'), 
     selectedConsentId: Session.get('selectedConsentId'),
     selectedConsent: false,
-    consents: []
+    consents: [],
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    organizationsIndex: 0
   };
 
 
@@ -175,6 +193,15 @@ export function ConsentsPage(props){
   data.consents = useTracker(function(){
     return Consents.find().fetch()
   })
+  data.consentsIndex = useTracker(function(){
+    return Session.get('ConsentsTable.consentsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
 
 
   // ???????
@@ -193,12 +220,12 @@ export function ConsentsPage(props){
   //---------------------------------------------------------------------------------------------------------
   // Lifecycle
 
-  useEffect(function(){
-  //   if(get(this, 'props.params.consentId')){
-  //     Session.set('selectedConsentId', get(this, 'props.params.consentId'))
-  //     Session.set('consentPageTabIndex', 2);
-  //   }
-  }, [])
+  // useEffect(function(){
+  // //   if(get(this, 'props.params.consentId')){
+  // //     Session.set('selectedConsentId', get(this, 'props.params.consentId'))
+  // //     Session.set('consentPageTabIndex', 2);
+  // //   }
+  // }, [])
 
   function handleTabChange(index){
     Session.set('consentPageTabIndex', index);
@@ -282,7 +309,9 @@ export function ConsentsPage(props){
     setState({searchQuery: searchQuery})
     setState({searchForm: searchForm})
   }
-
+  function setConsentsIndex(newIndex){
+    Session.set('ConsentsTable.consentsIndex', newIndex)
+  }
 
   //=============================================================================================================================================
   // Renders
@@ -303,43 +332,46 @@ export function ConsentsPage(props){
     />,
   ];
 
-  let consentPageContent;
+  let layoutContent;
 
-  let [consentsPageIndex, setConsentsPageIndex] = setState(0);
 
-  if(true){
-    consentPageContent = <ConsentsTable 
-      showBarcodes={true} 
-      hideIdentifier={true}
-      consents={data.consents}
-      noDataMessage={false}
-      onSetPage={function(index){
-        setConsentsPageIndex(index)
-      }}        
-      page={consentsPageIndex}
-      // patient={ data.consentSearchFilter }
-      // query={ data.consentSearchQuery }
-      sort="periodStart"
-    />
+
+  if(data.consents.length > 0){
+    layoutContent = <StyledCard height="auto" width={cardWidth + 'px'} margin={20} >
+      <CardHeader
+        title={ data.consents.length + " Consents"}
+      />
+      <CardContent>
+        <ConsentsTable 
+          showBarcodes={true} 
+          hideIdentifier={true}
+          consents={data.consents}
+          noDataMessage={false}
+          onSetPage={function(index){
+            setConsentsIndex(index)
+          }}        
+          page={data.consentsIndex}
+          // patient={ data.consentSearchFilter }
+          // query={ data.consentSearchQuery }
+          sort="periodStart"
+        />
+      </CardContent>
+    </StyledCard>   
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
-
-  let cardWidth = window.innerWidth - paddingWidth;
-  
   return (
       <PageCanvas id="consentsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
-        <StyledCard height="auto" width={cardWidth + 'px'} margin={20} >
-          <CardHeader
-            title={ data.consents.length + " Consents"}
-          />
-          <CardContent>
-            { consentPageContent }
-          </CardContent>
-        </StyledCard>
-        
+        { layoutContent }        
       </PageCanvas>
   );
 

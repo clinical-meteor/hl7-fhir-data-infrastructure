@@ -72,11 +72,12 @@ function ProvenancesTable(props){
     hideIdentifier,
     hideActionIcons,
     hideTargetReference,
+    hideTargetType,
     hideTargetDisplay,
     hideSubject,
     hideSubjectReference,
-    hideOccurredDateTime,
-    hideOccurredDateTimeEnd,
+    hideRecorded,
+    hideRecordedEnd,
     hideEntity,
     hideSignature,
     hideLocation,
@@ -120,55 +121,55 @@ function ProvenancesTable(props){
       case "phone":
         hideSubject = true;
         hideSubjectReference = true;
-        hideActivity = true;
+        // hideActivity = true;
         hideTargetDisplay = true;
-        hideOccurredDateTime = true;
-        hideOccurredDateTimeEnd = true;
-        hideEntity = true;
+        hideRecorded = true;
+        hideRecordedEnd = true;
+        // hideEntity = true;
         hideSignature = true;
         hideLocation = true;
         multiline = true;
         hideBarcode = true;
         break;
       case "tablet":
-        hideActivity = false;
+        // hideActivity = false;
         hideTargetDisplay = false;
-        hideOccurredDateTime = false;
-        hideOccurredDateTimeEnd = true;
-        hideEntity = true;
+        hideRecorded = false;
+        hideRecordedEnd = true;
+        // hideEntity = true;
         hideSignature = true;
         hideLocation = true;
         multiline = false;
         hideBarcode = true;
         break;
       case "web":
-        hideActivity = false;
+        // hideActivity = false;
         hideTargetDisplay = false;
-        hideOccurredDateTime = false;
-        hideOccurredDateTimeEnd = true;
-        hideEntity = false;
+        hideRecorded = false;
+        hideRecordedEnd = true;
+        // hideEntity = false;
         hideSignature = false;
         hideLocation = true;
         multiline = false;
         hideBarcode = true;
         break;
       case "desktop":
-        hideActivity = false;
+        // hideActivity = false;
         hideTargetDisplay = false;
-        hideOccurredDateTime = false;
-        hideOccurredDateTimeEnd = false;
-        hideEntity = false;
+        hideRecorded = false;
+        hideRecordedEnd = false;
+        // hideEntity = false;
         hideSignature = false;
         hideLocation = false;
         multiline = false;
         hideBarcode = true;
         break;
       case "hdmi":
-        hideActivity = false;
+        // hideActivity = false;
         hideTargetDisplay = false;
-        hideOccurredDateTime = false;
-        hideOccurredDateTimeEnd = false;
-        hideEntity = false;
+        hideRecorded = false;
+        hideRecordedEnd = false;
+        // hideEntity = false;
         hideSignature = false;
         hideLocation = false;
         multiline = false;
@@ -327,6 +328,20 @@ function ProvenancesTable(props){
       );
     }
   }
+  function renderTargetType(targetType){
+    if (!hideTargetType) {
+      return (
+        <TableCell className='targetType'>{ targetType }</TableCell>
+      );
+    }
+  }
+  function renderTargetTypeHeader(){
+    if (!hideTargetType) {
+      return (
+        <TableCell className='targetType'>Type</TableCell>
+      );
+    }
+  }
   function renderTargetReferenceHeader(){
     if (!hideTargetReference) {
       return (
@@ -359,15 +374,15 @@ function ProvenancesTable(props){
       );
     }
   }
-  function renderOcurredDateTimeHeader(){
-    if (!hideOccurredDateTime) {
+  function renderRecordedHeader(){
+    if (!hideRecorded) {
       return (
-        <TableCell className='occurredDateTime' style={{minWidth: '140px'}}>Occurred</TableCell>
+        <TableCell className='occurredDateTime' style={{minWidth: '140px'}}>Recorded</TableCell>
       );
     }
   }
-  function renderOcurredDateTime(occurredDateTime){
-    if (!hideOccurredDateTime) {
+  function renderRecorded(occurredDateTime){
+    if (!hideRecorded) {
       if(typeof occurredDateTime === "object"){
         occurredDateTime = moment(occurredDateTime).format(internalDateFormat);
       }
@@ -465,7 +480,7 @@ function ProvenancesTable(props){
   function renderSignature(signature){
     if (!hideSignature) {
       return (
-        <TableCell className='signature'>{ signature }</TableCell>
+        <TableCell className='signature' style={{maxWidth: '200px', whiteSpace: 'nowrap'}}>{ signature }</TableCell>
       );
     }
   }
@@ -498,7 +513,7 @@ function ProvenancesTable(props){
     if(provenances.length > 0){     
       let count = 0;    
       provenances.forEach(function(procedure){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           provenancesToRender.push(FhirDehydrator.dehydrateProvenance(procedure, internalDateFormat));
         }
         count++;
@@ -531,16 +546,17 @@ function ProvenancesTable(props){
           { renderToggle() }
           { renderActionIcons(provenancesToRender[i]) }
           { renderIdentifier(provenancesToRender.identifier ) }
-          { renderTargetDisplay(provenancesToRender[i].status)}
-          { renderTargetReference(provenancesToRender[i].targetReferenceDisplay)}
+          { renderTargetDisplay(provenancesToRender[i].targetDisplay)}
+          { renderTargetType(provenancesToRender[i].targetType)}
+          { renderTargetReference(provenancesToRender[i].targetReference)}
           { renderActivity(provenancesToRender[i].code)}
           { renderActivityDisplay(provenancesToRender[i].codeDisplay, provenancesToRender[i].code, provenancesToRender[i].occurredDateTime)}          
-          { renderAgent(provenancesToRender[i].subject)}
-          { renderAgentReference(provenancesToRender[i].subjectReference)}
+          {/* { renderAgent(provenancesToRender[i].subject)}
+          { renderAgentReference(provenancesToRender[i].subjectReference)} */}
           { renderEntity(provenancesToRender[i].performerDisplay)}
-          { renderSignature()}
-          { renderOcurredDateTime(provenancesToRender[i].occurredDateTime)}
-          { renderLocation(provenancesToRender[i].notesCount)}
+          { renderRecorded(provenancesToRender[i].recorded)}
+          { renderSignature(provenancesToRender[i].signature)}
+          {/* { renderLocation(provenancesToRender[i].notesCount)} */}
           { renderBarcode(provenancesToRender[i]._id)}
           { renderActionButton(provenancesToRender[i]) }
         </TableRow>
@@ -557,15 +573,16 @@ function ProvenancesTable(props){
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
             { renderTargetDisplayHeader() }
+            { renderTargetTypeHeader() }
             { renderTargetReferenceHeader() }
             { renderActivityHeader() }
             { renderActivityDisplayHeader() }
-            { renderAgentHeader() }
-            { renderAgentReferenceHeader() }
+            {/* { renderAgentHeader() }
+            { renderAgentReferenceHeader() } */}
             { renderEntityHeader() }
+            { renderRecordedHeader() }
             { renderSignatureHeader() }
-            { renderOcurredDateTimeHeader() }
-            { renderLocationHeader() }
+            {/* { renderLocationHeader() } */}
             { renderBarcodeHeader() }
             { renderActionButtonHeader() }
           </TableRow>
@@ -592,11 +609,12 @@ ProvenancesTable.propTypes = {
   hideIdentifier: PropTypes.bool,
   hideActionIcons: PropTypes.bool,
   hideTargetReference: PropTypes.bool,
+  hideTargetType: PropTypes.bool,
   hideTargetDisplay: PropTypes.bool,
   hideSubject: PropTypes.bool,
   hideSubjectReference: PropTypes.bool,
-  hideOccurredDateTime: PropTypes.bool,
-  hideOccurredDateTimeEnd: PropTypes.bool,
+  hideRecorded: PropTypes.bool,
+  hideRecordedEnd: PropTypes.bool,
   hideEntity: PropTypes.bool,
   hideSignature: PropTypes.bool,
   hideLocation: PropTypes.bool,
@@ -633,8 +651,14 @@ ProvenancesTable.defaultProps = {
   hideActionIcons: true,
   hideActionButton: true,
   hideIdentifier: true,
-  hideTargetReference: true,
-  hideSignature: true,
+  hideTargetReference: false,
+  hideTargetType: false,
+  hideRecorded: false,
+  hideRecordedEnd: true,
+  hideSignature: false,
+  hideActivity: true,
+  hideActivityDisplay: true,
+  hideEntity: true,
   multiline: false,
   page: 0,
   rowsPerPage: 5,

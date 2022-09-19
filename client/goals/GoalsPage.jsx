@@ -117,6 +117,14 @@ const muiTheme = createMuiTheme({
 
 export function GoalsPage(props){
 
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+  let formFactor = LayoutHelpers.determineFormFactor();
+  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let noDataImage = get(Meteor, 'settings.public.defaults.noData.noDataImagePath', "packages/clinical_hl7-fhir-data-infrastructure/assets/NoData.png");  
+
+  let cardWidth = window.innerWidth - paddingWidth;
+
+  
   let data = {
     selectedGoalId: '',
     selectedGoal: null,
@@ -125,7 +133,10 @@ export function GoalsPage(props){
     options: {
       limit: get(Meteor, 'settings.public.defaults.paginationLimit', 5)
     },
-    onePageLayout: true
+    onePageLayout: true,
+    showSystemIds: false,
+    showFhirIds: false,
+    goalsIndex: 0
   };
 
   data.onePageLayout = useTracker(function(){
@@ -140,91 +151,111 @@ export function GoalsPage(props){
   data.goals = useTracker(function(){
     return Goals.find().fetch();
   }, [])
+  data.goalsIndex = useTracker(function(){
+    return Session.get('OrganizationsTable.goalsIndex')
+  }, [])
+  data.showSystemIds = useTracker(function(){
+    return Session.get('showSystemIds');
+  }, [])
+  data.showFhirIds = useTracker(function(){
+    return Session.get('showFhirIds');
+  }, [])
+  
+
+  function setGoalsIndex(newIndex){
+    Session.set('GoalsTable.goalsIndex', newIndex)
+  }
 
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
 
-  let cardWidth = window.innerWidth - paddingWidth;
-
-  let [goalsPageIndex, setGoalsPageIndex] = setState(0);
-
-  let layoutContents;
-  if(data.onePageLayout){
-    layoutContents = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-      <CardHeader title={data.goals.length + " Goals"} />
-        <CardContent>
-          <GoalsTable 
-            goals={ data.goals }
-            hideCheckbox={true} 
-            hideActionIcons={true}
-            hideIdentifier={true} 
-            paginationLimit={10}   
-            onSetPage={function(index){
-              setGoalsPageIndex(index)
-            }}   
-            page={goalsPageIndex}                 
-          />
-        </CardContent>
-      </StyledCard>
-  } else {
-    layoutContents = <Grid container spacing={3}>
-      <Grid item lg={6}>
-        <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
-          <CardHeader title={data.goals.length + " Goals"} />
+  let layoutContent;
+  if(data.goals.length > 0){
+    if(data.onePageLayout){
+      layoutContent = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+        <CardHeader title={data.goals.length + " Goals"} />
           <CardContent>
             <GoalsTable 
               goals={ data.goals }
-              selectedGoalId={ data.selectedGoalId }
-              hideIdentifier={true} 
               hideCheckbox={true} 
-              hideApprovalDate={false}
-              hideLastReviewed={false}
-              hideVersion={false}
-              hideStatus={false}
-              hidePublisher={true}
-              hideReviewer={true}
-              hideScoring={true}
-              hideEndorser={true}
-              paginationLimit={10}            
               hideActionIcons={true}
-              onRowClick={this.handleRowClick.bind(this) }
+              hideIdentifier={true} 
+              paginationLimit={10}   
               onSetPage={function(index){
-                setGoalsPageIndex(index)
-              }}         
-              page={goalsPageIndex}                              
-              count={data.goalsCount}
-              />
+                setGoalsIndex(index)
+              }}   
+              page={data.goalsIndex}                 
+            />
           </CardContent>
         </StyledCard>
-      </Grid>
-      <Grid item lg={4}>
-        <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
-          <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedGoalId }</h1>
-          <CardContent>
+    } else {
+      layoutContent = <Grid container spacing={3}>
+        <Grid item lg={6}>
+          <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+            <CardHeader title={data.goals.length + " Goals"} />
             <CardContent>
-              {/* <ListDetail 
-                id='goalDetails' 
-                displayDatePicker={true} 
-                displayBarcodes={false}
-                goal={ data.selectedGoal }
-                goalId={ data.selectedGoalId } 
-                showListInputs={true}
-                showHints={false}
-              /> */}
+              <GoalsTable 
+                goals={ data.goals }
+                selectedGoalId={ data.selectedGoalId }
+                hideIdentifier={true} 
+                hideCheckbox={true} 
+                hideApprovalDate={false}
+                hideLastReviewed={false}
+                hideVersion={false}
+                hideStatus={false}
+                hidePublisher={true}
+                hideReviewer={true}
+                hideScoring={true}
+                hideEndorser={true}
+                paginationLimit={10}            
+                hideActionIcons={true}
+                onRowClick={this.handleRowClick.bind(this) }
+                onSetPage={function(index){
+                  setGoalsIndex(index)
+                }}         
+                page={data.goalsIndex}                 
+                count={data.goalsCount}
+                />
             </CardContent>
-          </CardContent>
-        </StyledCard>
+          </StyledCard>
+        </Grid>
+        <Grid item lg={4}>
+          <StyledCard height="auto" margin={20} scrollable width={cardWidth + 'px'}>
+            <h1 className="barcode" style={{fontWeight: 100}}>{data.selectedGoalId }</h1>
+            <CardContent>
+              <CardContent>
+                {/* <ListDetail 
+                  id='goalDetails' 
+                  displayDatePicker={true} 
+                  displayBarcodes={false}
+                  goal={ data.selectedGoal }
+                  goalId={ data.selectedGoalId } 
+                  showListInputs={true}
+                  showHints={false}
+                /> */}
+              </CardContent>
+            </CardContent>
+          </StyledCard>
+        </Grid>
       </Grid>
-    </Grid>
+    }
+  } else {
+    layoutContent = <Container maxWidth="sm" style={{display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', height: '100%', justifyContent: 'center'}}>
+      <img src={Meteor.absoluteUrl() + noDataImage} style={{width: '100%', marginTop: get(Meteor, 'settings.public.defaults.noData.marginTop', '-200px')}} />    
+      <CardContent>
+        <CardHeader 
+          title={get(Meteor, 'settings.public.defaults.noData.defaultTitle', "No Data Available")} 
+          subheader={get(Meteor, 'settings.public.defaults.noData.defaultMessage', "No records were found in the client data cursor.  To debug, check the data cursor in the client console, then check subscriptions and publications, and relevant search queries.  If the data is not loaded in, use a tool like Mongo Compass to load the records directly into the Mongo database, or use the FHIR API interfaces.")} 
+        />
+      </CardContent>
+    </Container>
   }
+
 
   return (
     <PageCanvas id="goalsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
       <MuiThemeProvider theme={muiTheme} >
-        { layoutContents }
+        { layoutContent }
       </MuiThemeProvider>
     </PageCanvas>
   );

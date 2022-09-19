@@ -10,11 +10,11 @@ import {
   TableHead,
   TableRow,
   TableFooter,
-  TablePagination,
+  TablePagination
 } from '@material-ui/core';
 
 
-import moment from 'moment'
+import moment from 'moment';
 import { get } from 'lodash';
 
 // import { Icon } from 'react-icons-kit'
@@ -149,16 +149,16 @@ function ConditionsTable(props){
       case "tablet":
         hideCheckbox = true;
         hideActionIcons = true;
-        hidePatientName = true;
+        hidePatientName = false;
         hidePatientReference = true;
         hideClinicalStatus = true;
-        hideSnomedCode = true;
+        hideSnomedCode = false;
         hideSnomedDisplay = false;
-        hideVerification = false;
+        hideVerification = true;
         hideSeverity = true;
-        hideEvidence = false;
-        hideDates = true;
-        hideEndDate = false;
+        hideEvidence = true;
+        hideDates = false;
+        hideEndDate = true;
         hideBarcode = false;   
         multiline = false;
         break;
@@ -169,20 +169,20 @@ function ConditionsTable(props){
         hidePatientName = false;
         hideVerification = true;
         hideSeverity = true;
-        hideEvidence = false;
+        hideEvidence = true;
         hideDates = true;
         hideEndDate = false;
         hideBarcode = false;
         multiline = false;
         break;
       case "desktop":
-        hideClinicalStatus = false;
+        hideClinicalStatus = true;
         hidePatientName = false;
         hideSnomedCode = false;
         hideSnomedDisplay = false;
         hideVerification = true;
         hideSeverity = true;
-        hideEvidence = false;
+        hideEvidence = true;
         hideDates = false;
         hideEndDate = true;
         hideBarcode = false;

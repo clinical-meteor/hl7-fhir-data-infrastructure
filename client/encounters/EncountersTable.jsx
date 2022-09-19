@@ -111,6 +111,8 @@ function EncountersTable(props){
 
     page,
     onSetPage,
+    
+    count,
 
     ...otherProps 
   } = props;
@@ -120,8 +122,6 @@ function EncountersTable(props){
   const classes = useStyles();
 
 
-
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
   let paginationCount = 101;
   if(props.count){
@@ -443,7 +443,7 @@ function EncountersTable(props){
     if(props.encounters.length > 0){     
       let count = 0;    
       props.encounters.forEach(function(encounter){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           encountersToRender.push(FhirDehydrator.dehydrateEncounter(encounter, internalDateFormat));
         }
         count++;
@@ -517,6 +517,12 @@ function EncountersTable(props){
     }
   }
   
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
   
   let paginationFooter;
   if(!disablePagination){
@@ -615,7 +621,8 @@ EncountersTable.defaultProps = {
   hideBarcode: true,
   hideSubjects: false,
   encounters: [],
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  count: 0
 }
 
 

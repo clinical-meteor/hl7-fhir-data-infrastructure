@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
+  Button,
+  Checkbox,
   Table,
   TableBody,
   TableCell,
@@ -11,13 +13,12 @@ import {
 } from '@material-ui/core';
 
 import moment from 'moment'
-import _ from 'lodash';
-let get = _.get;
-let set = _.set;
+import { get, set } from 'lodash';
 
 import { FhirUtilities } from '../../lib/FhirUtilities';
 import { StyledCard, PageCanvas, TableNoData } from 'fhir-starter';
 import { FhirDehydrator } from '../../lib/FhirDehydrator';
+
 
 //===========================================================================
 // THEMING
@@ -51,6 +52,15 @@ let styles = {
   }
 }
 
+
+
+//===========================================================================
+// SESSION VARIABLES
+
+Session.setDefault('selectedMeasureReports', []);
+
+
+
 //===========================================================================
 // MAIN COMPONENT
 
@@ -64,6 +74,8 @@ export function MeasureReportsTable(props){
 
   let { 
     children, 
+    id,
+
     measureReports,
     selectedMeasureReportId,
     showMinutes,
@@ -104,6 +116,7 @@ export function MeasureReportsTable(props){
     disablePagination,
     rowsPerPage,
     tableRowSize,
+    dateFormat,
 
     page,
     onSetPage,
@@ -454,7 +467,9 @@ export function MeasureReportsTable(props){
 
   
 
-  // Pagination
+    //---------------------------------------------------------------------
+    // Pagination
+
 
   let rows = [];
 
@@ -495,37 +510,43 @@ export function MeasureReportsTable(props){
   let measureReportsToRender = [];
   let internalDateFormat = "YYYY-MM-DD";
 
-  if(props.showMinutes){
+  if(showMinutes){
     internalDateFormat = "YYYY-MM-DD hh:mm";
   }
-  if(props.internalDateFormat){
-    internalDateFormat = props.dateFormat;
+  if(internalDateFormat){
+    internalDateFormat = dateFormat;
   }
 
-  if(props.measureReports){
-    if(props.measureReports.length > 0){              
-      let count = 0;  
-
-      props.measureReports.forEach(function(measureReport){
-        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
-          measureReportsToRender.push(FhirDehydrator.dehydrateMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand, measureScoreType));
-        }
-        count++;
-      }); 
+  if(Array.isArray(measureReports)){
+    if(measureReports){
+      if(measureReports.length > 0){              
+        let count = 0;  
+  
+        measureReports.forEach(function(measureReport){
+          if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
+            measureReportsToRender.push(FhirDehydrator.dehydrateMeasureReport(measureReport, props.measuresCursor, internalDateFormat, measureShorthand, measureScoreType));
+          }
+          count++;
+        }); 
+      }
     }
+  } else {
+    console.log('MeasureReportsTable: Did not receive an array of reports.');
   }
+
 
   let rowStyle = {
     cursor: 'pointer', 
-    height: '52px'
+    height: '55px'
   }
   if(measureReportsToRender.length === 0){
-    logger.trace('MeasureReportsTable:  No measureReports to render.');
+    // logger.trace('MeasureReportsTable:  No measureReports to render.');
+    console.log('MeasureReportsTable:  No measureReports to render.');
     // footer = <TableNoData noDataPadding={ props.noDataMessagePadding } />
   } else {
     for (var i = 0; i < measureReportsToRender.length; i++) {
       let selected = false;
-      if(measureReportsToRender[i].id === selectedMeasureReportId){
+      if(get(measureReportsToRender[i], 'id') === selectedMeasureReportId){
         selected = true;
       }
       if(get(measureReportsToRender[i], 'modifierExtension[0]')){
@@ -653,6 +674,7 @@ MeasureReportsTable.propTypes = {
 };
 MeasureReportsTable.defaultProps = {
   tableRowSize: 'medium',
+  dateFormat: "YYYY-MM-DD",
   page: 0,
   rowsPerPage: 5,
   showMinutes: false,
@@ -671,15 +693,15 @@ MeasureReportsTable.defaultProps = {
   hideGroupCode: true,
   hidePopulationCode: true,
   hidePopulationCount: true,
-  hideMeasureScore: false,
+  hideMeasureScore: true,
   hideStratificationCount: true,
   hideActionIcons: true,
-  hideNumerator: false,
-  hideDenominator: false,
-  hideBarcode: false,
+  hideNumerator: true,
+  hideDenominator: true,
+  hideBarcode: true,
   measureShorthand: false,
-  measureScoreLabel: 'ICU Beds',
-  measureScoreType: 'numICUBeds',
+  // measureScoreLabel: 'ICU Beds',
+  // measureScoreType: 'numICUBeds',
   selectedMeasureReportId: ''
 }
 

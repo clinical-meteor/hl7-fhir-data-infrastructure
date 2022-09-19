@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core';
 
 // import DocumentReferenceDetail from './DocumentReferenceDetail';
-import DocumentReferencesTable from './DocumentReferencesTable';
+import DocumentManifestsTable from './DocumentManifestsTable';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -33,7 +33,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('selectedDocumentReferenceId', false);
-Session.setDefault('DocumentReferencesPage.onePageLayout', true)
+Session.setDefault('DocumentManifestsPage.onePageLayout', true)
 Session.setDefault('selectedDocumentReferenceId', '');
 Session.setDefault('selectedDocumentReference', false);
 
@@ -120,17 +120,17 @@ Session.setDefault('documentReferencePageTabIndex', 1);
 Session.setDefault('documentReferenceSearchFilter', ''); 
 Session.setDefault('selectedDocumentReferenceId', false);
 Session.setDefault('selectedDocumentReference', false)
-Session.setDefault('DocumentReferencesPage.onePageLayout', true)
-Session.setDefault('DocumentReferencesPage.defaultQuery', {})
-Session.setDefault('DocumentReferencesTable.hideCheckbox', true)
-Session.setDefault('DocumentReferencesTable.documentReferencesIndex', 0)
+Session.setDefault('DocumentManifestsPage.onePageLayout', true)
+Session.setDefault('DocumentManifestsPage.defaultQuery', {})
+Session.setDefault('DocumentManifestsTable.hideCheckbox', true)
+Session.setDefault('DocumentManifestsTable.documentReferencesIndex', 0)
 
 
 //=============================================================================================================================================
 // COMPONENTS
 
-export function DocumentReferencesPage(props){
-  if(process.env.NODE_ENV === "test") console.log('In DocumentReferencesPage render');
+export function DocumentManifestsPage(props){
+  if(process.env.NODE_ENV === "test") console.log('In DocumentManifestsPage render');
 
   let data = {
     selectedDocumentReferenceId: '',
@@ -145,19 +145,19 @@ export function DocumentReferencesPage(props){
   };
 
   data.onePageLayout = useTracker(function(){
-    return Session.get('DocumentReferencesPage.onePageLayout');
+    return Session.get('DocumentManifestsPage.onePageLayout');
   }, [])
   data.selectedDocumentReferenceId = useTracker(function(){
     return Session.get('selectedDocumentReferenceId');
   }, [])
   data.selectedDocumentReference = useTracker(function(){
-    return DocumentReferences.findOne({id: Session.get('selectedDocumentReferenceId')});
+    return DocumentManifests.findOne({id: Session.get('selectedDocumentReferenceId')});
   }, [])
   data.documentReferences = useTracker(function(){
-    return DocumentReferences.find().fetch()
+    return DocumentManifests.find().fetch()
   }, [])
   data.documentReferencesIndex = useTracker(function(){
-    return Session.get('DocumentReferencesTable.documentReferencesIndex')
+    return Session.get('DocumentManifestsTable.documentReferencesIndex')
   }, [])
   data.showSystemIds = useTracker(function(){
     return Session.get('showSystemIds');
@@ -171,7 +171,7 @@ export function DocumentReferencesPage(props){
 
   }
   function setDocumentReferenceIndex(newIndex){
-    Session.set('DocumentReferencesTable.documentReferencesIndex', newIndex)
+    Session.set('DocumentManifestsTable.documentReferencesIndex', newIndex)
   }
 
   let headerHeight = LayoutHelpers.calcHeaderHeight();
@@ -187,7 +187,7 @@ export function DocumentReferencesPage(props){
         <CardHeader title={data.documentReferences.length + " Documents"} />
         <CardContent>
   
-          <DocumentReferencesTable 
+          <DocumentManifestsTable 
             documentReferences={ data.documentReferences }
             hideCheckbox={true} 
             hideActionIcons={true}
@@ -211,7 +211,7 @@ export function DocumentReferencesPage(props){
           <StyledCard height="auto" margin={20} >
             <CardHeader title={data.documentReferences.length + " Documents"} />
             <CardContent>
-              <DocumentReferencesTable 
+              <DocumentManifestsTable 
                 documentReferences={ data.documentReferences }
                 hideCheckbox={true} 
                 hideActionIcons={true}
@@ -267,4 +267,4 @@ export function DocumentReferencesPage(props){
 }
 
 
-export default DocumentReferencesPage;
+export default DocumentManifestsPage;

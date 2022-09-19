@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.26.11',
+  version: '6.27.3',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -58,6 +58,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
   api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
   api.addFiles('lib/schemas/DocumentReferences.js', ['client', 'server']);
+  api.addFiles('lib/schemas/DocumentManifests.js', ['client', 'server']);
   api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
   api.addFiles('lib/schemas/Endpoints.js', ['client', 'server']);
   api.addFiles('lib/schemas/ExplanationOfBenefit.js', ['client', 'server']);
@@ -161,6 +162,10 @@ Package.onUse(function (api) {
   api.export('DocumentReference');
   api.export('DocumentReferences');
   api.export('DocumentReferenceSchema');
+
+  api.export('DocumentManifest');
+  api.export('DocumentManifests');
+  api.export('DocumentManifestSchema');
 
   api.export('Encounter');
   api.export('Encounters');
@@ -437,5 +442,5 @@ Npm.depends({
 
   // GITHUB / CIRCLE CI will generate a "Cannot find module 'react'" error 
   // during Q/A and pull requests if this is removed
-  "react": "16.13.0"  
+  "react": "16.14.0"  
 })
