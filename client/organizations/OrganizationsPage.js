@@ -171,9 +171,9 @@ export function OrganizationsPage(props){
   //     return true;
   //   }
   // }, [])
-  data.hasRestrictions = useTracker(function(){
-    return true;
-  }, [])
+  // data.hasRestrictions = useTracker(function(){
+  //   return true;
+  // }, [])
 
 
 
