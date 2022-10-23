@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
 import { 
@@ -122,14 +122,18 @@ Session.setDefault('bundleFormData', defaultBundle);
 Session.setDefault('bundleSearchFilter', '');
 Session.setDefault('selectedBundleId', false);
 Session.setDefault('fhirVersion', 'v1.0.2');
-
+Session.setDefault('bundlesIndex', 0);
 
 
 function BundlesPage(props){
 
+  // let [bundlesPageIndex, setBundlesPageIndex] = useState(0);
+
+
   let bundles = [];
   let bundlesCount = 0;
   let selectedBundle = null;
+  let bundlesIndex = 0;
 
   bundles = useTracker(function(){
     return Bundles.find().fetch();
@@ -141,6 +145,10 @@ function BundlesPage(props){
 
   selectedBundle = useTracker(function(){
     return Session.get('selectedBundle');
+  }, [])
+
+  bundlesIndex = useTracker(function(){
+    return Session.get('bundlesIndex');
   }, [])
 
 
@@ -177,7 +185,6 @@ function BundlesPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
-  let [bundlesPageIndex, setBundlesPageIndex] = setState(0);
 
   return(
     <PageCanvas id="bundlesPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -204,9 +211,9 @@ function BundlesPage(props){
                     Session.set('selectedBundle', Bundles.findOne({_id: bundelId}))
                   }}
                   formFactorLayout={formFactor}
-                  page={bundlesPageIndex}
+                  page={bundlesIndex}
                   onSetPage={function(index){
-                    setBundlesPageIndex(index)
+                    Session.set('bundlesIndex', index);
                   }}  
                 />
               </CardContent>

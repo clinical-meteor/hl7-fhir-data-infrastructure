@@ -374,7 +374,7 @@ function BundlesTable(props){
 
   let rows = [];
   // const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
+  // const [rowsPerPage, setRowsPerPage] = useState(rowsPerPage);
 
 
   let paginationCount = 101;
@@ -399,7 +399,7 @@ function BundlesTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
