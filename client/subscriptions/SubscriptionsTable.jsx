@@ -166,17 +166,28 @@ function SubscriptionsTable(props){
         hideActionIcons = true;
         hideStatus = false;
         hideContact = true
-        hideEnd = true
+        hideEnd = false
+        hideReason = true
+        hideCriteria = true
+        hideError = true
+        hideChannelType = false
+        hideChannelEndpoint = false
+        hideBarcode = false
+        break;
+      case "hdmi":
+        hideActionIcons = true;
+        hideStatus = false
+        hideContact = true
+        hideEnd = false
         hideReason = true
         hideCriteria = false
         hideError = true
         hideChannelType = false
         hideChannelEndpoint = false
         hideBarcode = false
-        break;
+        break;        
       case "videowall":
-        hideActionIcons = false;
-        hideStatus = false;
+        hideActionIcons = true;
         hideStatus = false
         hideContact = false
         hideEnd = false
@@ -343,7 +354,7 @@ function SubscriptionsTable(props){
     }
   }
   function renderEndHeader(){
-    if (!hideContact) {
+    if (!hideEnd) {
       return (
         <TableCell className='endDate'>End</TableCell>
       );

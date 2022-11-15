@@ -56,7 +56,9 @@ import {Tasks} from './lib/schemas/Tasks';
 import {VerificationResults} from './lib/schemas/VerificationResults';
 import {ValueSets} from './lib/schemas/ValueSets';
 
-
+import {InboundRequests} from './lib/schemas-extra/InboundRequests';
+import {OAuthClients} from './lib/schemas-extra/OAuthClients';
+import {UdapCertificates} from './lib/schemas-extra/UdapCertificates';
 
 import FhirUtilities from './lib/FhirUtilities';
 import FhirDehydrator from './lib/FhirDehydrator';

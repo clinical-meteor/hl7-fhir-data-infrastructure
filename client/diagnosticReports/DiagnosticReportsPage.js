@@ -112,8 +112,8 @@ const muiTheme = createMuiTheme({
 
 Session.setDefault('diagnosticReportPageTabIndex', 1); 
 Session.setDefault('diagnosticReportSearchFilter', ''); 
-Session.setDefault('selectedOrganizationId', false);
-Session.setDefault('selectedOrganization', false)
+Session.setDefault('selectedDiagnosticReportId', '');
+Session.setDefault('selectedDiagnosticReport', false)
 Session.setDefault('DiagnosticReportsPage.onePageLayout', true)
 Session.setDefault('DiagnosticReportsPage.defaultQuery', {})
 Session.setDefault('DiagnosticReportsTable.hideCheckbox', true)

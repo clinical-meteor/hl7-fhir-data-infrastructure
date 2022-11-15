@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.27.7',
+  version: '6.27.8',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -98,6 +98,11 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
   api.addFiles('lib/schemas/ValueSets.js', ['client', 'server']);
   api.addFiles('lib/schemas/VerificationResults.js', ['client', 'server']);
+
+  api.addFiles('lib/schemas-extra/InboundRequests.js', ['client', 'server']);
+  api.addFiles('lib/schemas-extra/OAuthClients.js', ['client', 'server']);
+  api.addFiles('lib/schemas-extra/UdapCertificates.js', ['client', 'server']);
+
 
   api.export('ActivityDefinition');
   api.export('ActivityDefinitions');
@@ -322,6 +327,10 @@ Package.onUse(function (api) {
   api.export('VerificationResult');
   api.export('VerificationResults');
   api.export('VerificationResultSchema');
+
+  api.export('InboundRequests');
+  api.export('OAuthClients');
+  api.export('UdapCertificates');
 
   api.export('BaseModel');
 
