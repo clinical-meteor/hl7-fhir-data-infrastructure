@@ -146,7 +146,8 @@ export function ServiceRequestsPage(props){
     dialogOpen: Session.get('serviceRequestDialogOpen'), 
     selectedServiceRequestId: Session.get('selectedServiceRequestId'),
     selectedServiceRequest: false,
-    serviceRequests: []
+    serviceRequests: [],
+    serviceRequestsIndex: 0
   };
 
 
@@ -193,12 +194,12 @@ export function ServiceRequestsPage(props){
   //---------------------------------------------------------------------------------------------------------
   // Lifecycle
 
-  useEffect(function(){
-  //   if(get(this, 'props.params.serviceRequestId')){
-  //     Session.set('selectedServiceRequestId', get(this, 'props.params.serviceRequestId'))
-  //     Session.set('serviceRequestPageTabIndex', 2);
-  //   }
-  }, [])
+  // useEffect(function(){
+  // //   if(get(this, 'props.params.serviceRequestId')){
+  // //     Session.set('selectedServiceRequestId', get(this, 'props.params.serviceRequestId'))
+  // //     Session.set('serviceRequestPageTabIndex', 2);
+  // //   }
+  // }, [])
 
   function handleTabChange(index){
     Session.set('serviceRequestPageTabIndex', index);
@@ -229,7 +230,7 @@ export function ServiceRequestsPage(props){
     let searchForm = state.searchForm;
     searchForm.category = value;
 
-    setState({searchForm: searchForm})
+    // setState({searchForm: searchForm})
   }
   function updateFormData(formData, field, textValue){
     if(process.env.NODE_ENV === "test") console.log("ServiceRequestDetail.updateFormData", formData, field, textValue);
@@ -279,8 +280,8 @@ export function ServiceRequestsPage(props){
     if(process.env.NODE_ENV === "test") console.log("searchQuery", searchQuery);
     if(process.env.NODE_ENV === "test") console.log("searchForm", searchForm);
 
-    setState({searchQuery: searchQuery})
-    setState({searchForm: searchForm})
+    // setState({searchQuery: searchQuery})
+    // setState({searchForm: searchForm})
   }
 
 
@@ -303,7 +304,7 @@ export function ServiceRequestsPage(props){
     />
   ];
 
-  let [serviceRequestsIndex, setServiceRequestsIndex] = setState(0);
+  // let [serviceRequestsIndex, setServiceRequestsIndex] = setState(0);
 
   let serviceRequestPageContent;
   if(true){
@@ -315,9 +316,9 @@ export function ServiceRequestsPage(props){
       noDataMessage={false}
       rowsPerPage={LayoutHelpers.calcTableRows()}
       onSetPage={function(index){
-        setServiceRequestsIndex(index)
+        // setServiceRequestsIndex(index)
       }}  
-      page={serviceRequestsIndex}
+      page={data.serviceRequestsIndex}
       sort="occurrenceDateTime"
     />
   }

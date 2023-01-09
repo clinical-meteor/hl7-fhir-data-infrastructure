@@ -730,5 +730,4 @@ AllergyIntolerancesTable.defaultProps = {
 }
 
 
-//ReactMixin(AllergyIntolerancesTable.prototype, ReactMeteorData);
 export default AllergyIntolerancesTable;

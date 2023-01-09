@@ -15,7 +15,7 @@ import {
 
 import React from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
+
 import PropTypes from 'prop-types';
 
 import { Meteor } from 'meteor/meteor';

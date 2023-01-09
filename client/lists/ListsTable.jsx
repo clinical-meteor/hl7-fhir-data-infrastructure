@@ -96,6 +96,8 @@ function ListsItemsTable(props){
 
     page,
     onSetPage,
+
+    count,
     
     ...otherProps 
   } = props;
@@ -381,7 +383,10 @@ ListsItemsTable.propTypes = {
   page: PropTypes.number,
   actionButtonLabel: PropTypes.string,
 
+  count: PropTypes.number,
+  tableRowSize: PropTypes.string,
   formFactorLayout: PropTypes.string
+
 };
 ListsItemsTable.defaultProps = {
   hideCheckbox: true,
@@ -391,7 +396,8 @@ ListsItemsTable.defaultProps = {
   hideItemCount: false,
   hideBarcode: true,
   selectedListId: '',
-  rowsPerPage: 5
+  rowsPerPage: 5,
+  count: 0
 }
 
 export default ListsItemsTable; 

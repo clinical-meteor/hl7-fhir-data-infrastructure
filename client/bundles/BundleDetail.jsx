@@ -10,7 +10,6 @@ import moment from 'moment';
 
 import React from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
 import PropTypes from 'prop-types';
 
 import { Meteor } from 'meteor/meteor';
@@ -276,7 +275,6 @@ BundleDetailOld.propTypes = {
   bundleId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   bundle: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
-ReactMixin(BundleDetailOld.prototype, ReactMeteorData);
 
 
 function BundleDetail(props){
