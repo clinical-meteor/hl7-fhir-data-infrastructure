@@ -70,9 +70,13 @@ Session.setDefault('selectedPractitioners', []);
 // MAIN COMPONENT
 
 function PractitionersTable(props){
-  logger.info('Rendering the PractitionersTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.PractitionersTable');
-  logger.data('PractitionersTable.props', {data: props}, {source: "PractitionersTable.jsx"});
+  // logger.info('Rendering the PractitionersTable');
+  // logger.verbose('clinical:hl7-fhir-data-infrastructure.client.PractitionersTable');
+  // logger.data('PractitionersTable.props', {data: props}, {source: "PractitionersTable.jsx"});
+
+  console.info('Rendering the PractitionersTable');
+  console.debug('clinical:hl7-fhir-data-infrastructure.client.PractitionersTable');
+  // console.data('PractitionersTable.props', {data: props}, {source: "PractitionersTable.jsx"});
 
   const classes = useStyles();
 
@@ -608,7 +612,7 @@ function PractitionersTable(props){
     if (!hideSpecialty) {
       let specialtyCodeRenderString = specialtyCode;
       if(specialtyValueSet){
-        console.log('specialtyValueSet', specialtyValueSet)
+        // console.log('specialtyValueSet', specialtyValueSet)
         if(get(specialtyValueSet, 'expansion.contains')){
           if(Array.isArray){
             let valueCode = find(specialtyValueSet.expansion.contains, {code: specialtyCode})

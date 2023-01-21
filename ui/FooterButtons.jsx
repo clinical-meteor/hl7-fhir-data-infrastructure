@@ -105,7 +105,6 @@ export function VhDirFooterButtons(props){
     ...otherProps 
   } = props;
 
-  console.log('VhDirFooterButtons')
 
   function togglePreferences(){
     Session.toggle('mainAppDialogOpen');
@@ -961,9 +960,7 @@ export function VerificationResultsFooterButtons(props){
 
 export function CertificatesButtons(props){
     // const buttonClasses = buttonStyles();
-  
-    console.log('VhDirFooterButtons')
-  
+    
     function toggleNewCertificateDialog(){
       Session.set('mainAppDialogOpen', true);
   

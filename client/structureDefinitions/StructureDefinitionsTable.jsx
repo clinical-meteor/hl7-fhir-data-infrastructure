@@ -58,7 +58,7 @@ let styles = {
 //===========================================================================
 // SESSION VARIABLES
 
-Session.setDefault('selecteDefinitions', []);
+Session.setDefault('selectedDefinitions', []);
 
 
 //===========================================================================

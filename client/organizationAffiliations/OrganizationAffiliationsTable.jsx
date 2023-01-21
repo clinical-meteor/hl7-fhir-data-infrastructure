@@ -59,7 +59,7 @@ let styles = {
 //===========================================================================
 // SESSION VARIABLES
 
-Session.setDefault('selectedAffiliationss', []);
+Session.setDefault('selectedAffiliations', []);
 
 
 

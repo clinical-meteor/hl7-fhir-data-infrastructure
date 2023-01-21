@@ -434,7 +434,6 @@ export function ConsentsTable(props){
     }
   }
   function renderSource(sourceReference ){
-    console.log('renderSource', sourceReference)
     if (!hideSource) {
       return (
         <TableCell className='sourceReference' onClick={ getDocumentReference.bind(this, sourceReference) } style={{minWidth: '100px', paddingTop: '16px'}}>{ sourceReference }</TableCell>
