@@ -840,7 +840,6 @@ PractitionersTable.defaultProps = {
   specialtyValueSet: {}
 }
 
-// ReactMixin(PractitionersTable.prototype, ReactMeteorData);
 export default PractitionersTable;
 
 

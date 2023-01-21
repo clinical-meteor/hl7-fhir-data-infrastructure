@@ -172,5 +172,6 @@
 //   onRemove: PropTypes.func,
 //   onCancel: PropTypes.func
 // };
-// ReactMixin(BasicDetail.prototype, ReactMeteorData);
+
+
 // export default BasicDetail;

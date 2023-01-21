@@ -1,6 +1,10 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
+<<<<<<< HEAD
   version: '6.28.2',
+=======
+  version: '6.27.10',
+>>>>>>> 4c12b18df396cf2c7f6b390a4df8ce8bddcaad89
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'

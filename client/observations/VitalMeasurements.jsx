@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactMixin from 'react-mixin';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { 
@@ -374,5 +373,4 @@ export class VitalMeasurements extends React.Component {
 
 
 
-ReactMixin(VitalMeasurements.prototype, ReactMeteorData);
 export default VitalMeasurements;

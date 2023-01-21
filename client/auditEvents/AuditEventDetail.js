@@ -5,7 +5,6 @@
 // import RaisedButton from 'material-ui/RaisedButton';
 // import React from 'react';
 // import { useTracker } from 'meteor/react-meteor-data';
-// import ReactMixin from 'react-mixin';
 // import TextField from 'material-ui/TextField';
 // import { browserHistory } from 'react-router';
 // import { get } from 'lodash';
@@ -262,5 +261,6 @@
 //   auditEventId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 //   auditEvent: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 // };
-// ReactMixin(AuditEventDetail.prototype, ReactMeteorData);
+
+
 // export default AuditEventDetail;

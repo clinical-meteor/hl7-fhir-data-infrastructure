@@ -1,5 +1,4 @@
 // import React from 'react';
-// import ReactMixin from 'react-mixin';
 
 // import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
@@ -140,4 +139,3 @@
 // }
 
 
-// ReactMixin(ObservationsDeck.prototype, ReactMeteorData);

@@ -19,7 +19,6 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import PatientsTable from './PatientsTable';
 import React from 'react';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-import ReactMixin from 'react-mixin';
 
 import { Patients } from '../../lib/Patients';
 import { Session } from 'meteor/session';
@@ -107,4 +106,3 @@ export class PatientPickList extends React.Component {
     );
   }
 }
-ReactMixin(PatientPickList.prototype, ReactMeteorData);

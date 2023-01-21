@@ -3,7 +3,6 @@
 
 // import React from 'react';
 // import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
-// import ReactMixin from 'react-mixin';
 // import PropTypes from 'prop-types';
 
 // import { Consents } from '../lib/Consents';
@@ -542,5 +541,4 @@
 //   consent: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 // };
 
-// ReactMixin(ConsentDetail.prototype, ReactMeteorData);
 // export default ConsentDetail;
