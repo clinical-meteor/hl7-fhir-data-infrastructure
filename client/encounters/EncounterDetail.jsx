@@ -428,7 +428,7 @@
 // //     //   Encounters._collection.update({_id: this.data.encounterId}, {$set: fhirEncounterData },function(error, result){
 // //     //     if (error) {
 // //     //       if(process.env.NODE_ENV === "test") console.log("Encounters.insert[error]", error);
-// //     //       console.log('error', error)
+// //     //       console.error('error', error)
 // //     //       Bert.alert(error.reason, 'danger');
 // //     //     }
 // //     //     if (result) {
@@ -445,7 +445,7 @@
 // //     //   Encounters._collection.insert(fhirEncounterData, function(error, result){
 // //     //     if (error) {
 // //     //       if(process.env.NODE_ENV === "test") console.log("Encounters.insert[error]", error);
-// //     //       console.log('error', error)
+// //     //       console.error('error', error)
 // //     //       Bert.alert(error.reason, 'danger');
 // //     //     }
 // //     //     if (result) {
@@ -475,7 +475,7 @@
 // //     // let self = this;
 // //     // Encounters._collection.remove({_id: this.data.encounterId}, function(error, result){
 // //     //   if (error) {
-// //     //     console.log('error', error)
+// //     //     console.error('error', error)
 // //     //     Bert.alert(error.reason, 'danger');
 // //     //   }
 // //     //   if (result) {

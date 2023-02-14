@@ -1237,6 +1237,8 @@ export {
   NetworksTable,
   NetworkDetail,
 
+  OAuthClients,
+
   ObservationsPage,
   ObservationsTable,
   ObservationDetail,

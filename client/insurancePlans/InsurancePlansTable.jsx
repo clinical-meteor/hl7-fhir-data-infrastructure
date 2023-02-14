@@ -63,9 +63,13 @@ Session.setDefault('selectedInsurancePlans', []);
 
 
 function InsurancePlansTable(props){
-  logger.info('Rendering the InsurancePlansTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.InsurancePlansTable');
-  logger.data('InsurancePlansTable.props', {data: props}, {source: "InsurancePlansTable.jsx"});
+  // logger.info('Rendering the InsurancePlansTable');
+  // logger.verbose('clinical:hl7-fhir-data-infrastructure.client.InsurancePlansTable');
+  // logger.data('InsurancePlansTable.props', {data: props}, {source: "InsurancePlansTable.jsx"});
+
+  console.info('Rendering the InsurancePlansTable');
+  console.debug('clinical:hl7-fhir-data-infrastructure.client.InsurancePlansTable');
+  // console.data('InsurancePlansTable.props', {data: props}, {source: "InsurancePlansTable.jsx"});
 
   const classes = useStyles();
 

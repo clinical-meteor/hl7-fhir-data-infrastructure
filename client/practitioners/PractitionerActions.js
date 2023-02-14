@@ -5,7 +5,7 @@
 //         console.log("queryBigchain", text);
 
 //         Meteor.call('searchBigchainForPractitioners', text, function(error, data){
-//             if(error) console.log('error', error);
+//             if(error) console.error('error', error);
 //             // console.log(data)
 
 //             var parsedResults = [];

@@ -139,7 +139,7 @@ export function PractitionersPage(props){
   }
   function enableRestrictionGui(hasRestrictions){
     let result = false;
-    if(get(Meteor, 'settings.public.defaults.enableAccessRestrictions')){
+    if(get(Meteor, 'settings.public.defaults.enableHttpAccessRestrictions')){
       result = hasRestrictions;
     }
     return result;

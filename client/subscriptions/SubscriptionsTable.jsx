@@ -64,9 +64,13 @@ Session.setDefault('selectedSubscriptions', []);
 
 
 function SubscriptionsTable(props){
-  logger.info('Rendering the SubscriptionsTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.SubscriptionsTable');
-  logger.data('SubscriptionsTable.props', {data: props}, {source: "SubscriptionsTable.jsx"});
+  // logger.info('Rendering the SubscriptionsTable');
+  // logger.verbose('clinical:hl7-fhir-data-infrastructure.client.SubscriptionsTable');
+  // logger.data('SubscriptionsTable.props', {data: props}, {source: "SubscriptionsTable.jsx"});
+
+  console.info('Rendering the SubscriptionsTable');
+  console.debug('clinical:hl7-fhir-data-infrastructure.client.SubscriptionsTable');
+  // console.data('SubscriptionsTable.props', {data: props}, {source: "SubscriptionsTable.jsx"});
 
   const classes = useStyles();
 

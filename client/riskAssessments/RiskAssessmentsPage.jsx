@@ -293,8 +293,8 @@ export function RiskAssessmentsPage(props){
 
   //=============================================================================================================================================
   // Renders
-  console.log('React.version: ' + React.version);
-  console.log('RiskAssessmentsPage.props', props);
+  console.debug('React.version: ' + React.version);
+  console.debug('RiskAssessmentsPage.props', props);
 
   const actions = [
     <Button

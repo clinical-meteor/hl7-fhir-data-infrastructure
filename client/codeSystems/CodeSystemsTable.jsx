@@ -66,9 +66,14 @@ Session.setDefault('selectedCodeSystems', []);
 
 
 function CodeSystemsTable(props){
-  logger.info('Rendering the CodeSystemsTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.CodeSystemsTable');
-  logger.data('CodeSystemsTable.props', {data: props}, {source: "CodeSystemsTable.jsx"});
+  // logger.info('Rendering the CodeSystemsTable');
+  // logger.verbose('clinical:hl7-fhir-data-infrastructure.client.CodeSystemsTable');
+  // logger.data('CodeSystemsTable.props', {data: props}, {source: "CodeSystemsTable.jsx"});
+
+  console.info('Rendering the CodeSystemsTable');
+  console.debug('clinical:hl7-fhir-data-infrastructure.client.CodeSystemsTable');
+  // console.data('CodeSystemsTable.props', {data: props}, {source: "CodeSystemsTable.jsx"});
+
 
   const classes = useStyles();
 

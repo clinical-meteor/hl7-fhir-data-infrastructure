@@ -64,9 +64,13 @@ Session.setDefault('selectedValueSets', []);
 
 
 function ValueSetsTable(props){
-  logger.info('Rendering the ValueSetsTable');
-  logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ValueSetsTable');
-  logger.data('ValueSetsTable.props', {data: props}, {source: "ValueSetsTable.jsx"});
+  // logger.info('Rendering the ValueSetsTable');
+  // logger.verbose('clinical:hl7-fhir-data-infrastructure.client.ValueSetsTable');
+  // logger.data('ValueSetsTable.props', {data: props}, {source: "ValueSetsTable.jsx"});
+
+  console.info('Rendering the ValueSetsTable');
+  console.debug('clinical:hl7-fhir-data-infrastructure.client.ValueSetsTable');
+  // console.data('ValueSetsTable.props', {data: props}, {source: "ValueSetsTable.jsx"});
 
   const classes = useStyles();
 
@@ -367,7 +371,7 @@ function ValueSetsTable(props){
   }
 
   if(valueSetsToRender.length === 0){
-    console.log('No valueSets to render');
+    console.log('No valueSets currently available');
     // footer = <TableNoData noDataPadding={ noDataMessagePadding } />
   } else {
     for (var i = 0; i < valueSetsToRender.length; i++) {

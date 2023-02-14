@@ -315,8 +315,8 @@ export function ConsentsPage(props){
 
   //=============================================================================================================================================
   // Renders
-  console.log('React.version: ' + React.version);
-  console.log('ConsentsPage.props', props);
+  console.trace('React.version: ' + React.version);
+  console.debug('ConsentsPage.props', props);
 
   const actions = [
     <Button
