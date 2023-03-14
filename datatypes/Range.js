@@ -1,4 +1,5 @@
 import SimpleSchema from 'simpl-schema';
+import QuantitySchema from './Quantity';
 
 RangeSchema = new SimpleSchema({
   "low" : {

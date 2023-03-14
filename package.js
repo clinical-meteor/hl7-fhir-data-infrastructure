@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.28.4',
+  version: '6.30.1',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -359,7 +359,7 @@ Package.onUse(function (api) {
   api.addFiles('datatypes/Attachment.js');
   api.addFiles('datatypes/Code.js');
   api.addFiles('datatypes/Coding.js');
-  api.addFiles('datatypes/CodableConcept.js');
+  api.addFiles('datatypes/CodeableConcept.js');
   api.addFiles('datatypes/ContactPoint.js');
   api.addFiles('datatypes/Conformance.js');
   api.addFiles('datatypes/Group.js');

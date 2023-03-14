@@ -34,7 +34,7 @@ HumanNameSchema = new SimpleSchema({
     optional: true,
     type: Array
     },
-  "suffix" : {
+  "suffix.$" : {
     optional: true,
     type: String
     },    

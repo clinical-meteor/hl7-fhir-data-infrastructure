@@ -2,7 +2,7 @@ import SimpleSchema from 'simpl-schema';
 import QuantitySchema from './Quantity';
 import RangeSchema from './Range';
 import PeriodSchema from './Period';
-import CodeableConceptSchema from './CodableConcept';
+import CodeableConceptSchema from './CodeableConcept';
 import Code from './Code';
 
 TimingSchema = new SimpleSchema({

@@ -1,4 +1,5 @@
 import SimpleSchema from 'simpl-schema';
+import CodingSchema from './Coding';
 
 CodeableConceptSchema = new SimpleSchema({
   "coding" : {

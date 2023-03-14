@@ -1,6 +1,6 @@
 import SimpleSchema from 'simpl-schema';
 import PeriodSchema from './Period';
-import CodeableConceptSchema from './CodableConcept';
+import CodeableConceptSchema from './CodeableConcept';
 
 IdentifierSchema = new SimpleSchema({
   "use" : {
