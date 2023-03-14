@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.28.3',
+  version: '6.28.4',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -25,7 +25,7 @@ Package.onUse(function (api) {
   
   api.use('aldeed:collection2@3.5.0');
   api.use('matb33:collection-hooks@1.0.1');
-  api.use('clinical:hl7-resource-datatypes@4.0.6');
+  api.use('clinical:hl7-resource-datatypes@4.0.8');
 
   api.addFiles('lib/FhirUtilities.js', ['client', 'server']);
   api.addFiles('lib/LayoutHelpers.js', ['client', 'server']);
