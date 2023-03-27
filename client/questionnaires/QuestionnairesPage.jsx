@@ -14,9 +14,12 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 import { DynamicSpacer } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 import QuestionnaireExpansionPanels from './QuestionnaireExpansionPanels';
+import QuestionnaireExpansion from './QuestionnaireExpansion';
 import QuestionnairesTable from './QuestionnairesTable';
 import SortableQuestionnaire from './SortableQuestionnaire';
 import LayoutHelpers from '../../lib/LayoutHelpers';
+
+
 
 import { 
   FormControl,
@@ -665,6 +668,10 @@ export function QuestionnairesPage(props){
             </Grid>
           </CardContent>
         </StyledCard>
+        <DynamicSpacer />
+        <QuestionnaireExpansion 
+          selectedQuestionnaire={get(data, 'selectedQuestionnaire')}
+        />
         <DynamicSpacer />
         { constructionZoneButton }
       </Grid>
