@@ -14,6 +14,22 @@ meteor add clinical:hl7-fhir-data-infrastructure
 meteor run --extra-packages clinical:hl7-fhir-data-infrastructure  
 ```
 
+
+#### Rule of Hooks Error
+
+IMPORTANT:  The React components in this package are not pure functional components.  They strive to be.  Some of them look like they are.  But they are not.  
+
+This is because this is an ATMOSPHERE package, not an NPM package.  Unlike NPM packages, the Meteor build tool transpiles React functional components found in Atmosphere packages into a React object component, as part of the Atmosphere package architecture.  It's technical debt from years ago.  
+
+What this means in practical terms, is that you:  
+
+  - cannot use `useEffect` or `useState` hooks in React components in this library
+  - have to use `Session` variables and `useTracker` to manage state instead
+
+**Refactor Path**
+It's recommended that pure React components in this library be refactored into an NPM library, such as the [fhir-starter](https://github.com/clinical-meteor/fhir-starter) package
+
+
 #### Dependencies
 
 This Atmosphere package requires the following dependencies added to your `packages.json` file in the parent application project.  

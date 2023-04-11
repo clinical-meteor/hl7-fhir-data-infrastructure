@@ -6,6 +6,7 @@ import {
   DialogContent
 } from '@material-ui/core';
 
+
 import {AllergyIntolerances} from './lib/schemas/AllergyIntolerances';
 import {AuditEvents} from './lib/schemas/AuditEvents';
 import {Bundles} from './lib/schemas/Bundles';
@@ -234,6 +235,10 @@ import QuestionnairesPage from './client/questionnaires/QuestionnairesPage';
 import QuestionnairesTable from './client/questionnaires/QuestionnairesTable';
 import QuestionnaireDetailSortable from './client/questionnaires/QuestionnaireDetailSortable';
 import QuestionnaireDetailExpansionPanels from './client/questionnaires/QuestionnaireDetailExpansionPanels';
+import QuestionnaireExpansion from './client/questionnaires/QuestionnaireExpansion';
+import QuestionnaireExpansionResponse from './client/questionnaires/QuestionnaireExpansionResponse';
+
+
 
 import QuestionnaireResponsesPage from './client/questionnaireResponses/QuestionnaireResponsesPage';
 import QuestionnaireResponsesTable from './client/questionnaireResponses/QuestionnaireResponsesTable';
@@ -1275,6 +1280,8 @@ export {
 
   QuestionnaireResponsesPage,
   QuestionnaireResponsesTable,
+  QuestionnaireExpansion,
+  QuestionnaireExpansionResponse,
 
   RelatedPersonsPage,
   RelatedPersonsTable,
