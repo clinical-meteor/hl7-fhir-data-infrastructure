@@ -567,20 +567,21 @@ export function QuestionnairesPage(props){
     marginBottom: '84px',
     width: '100%'
   }
-  if(window.innerWidth < 768){
-    let secondaryGridSize = 5;
-  }
+
+  // if(window.innerWidth < 768){
+  //   let secondaryGridSize = 5;
+  // }
 
   let constructionZoneButton;
-  if(get(Meteor, 'settings.public.defaults.sidebar.menuItems.ConstructionZone') === true){
+  if(get(Meteor, 'settings.public.options.QuestionnairesPage.displaySubmitResponseButton') === true){
     constructionZoneButton = <Button id='saveAnswersButton' onClick={handleSaveQuestionnaireResponse.bind(this)} color="primary" variant="contained" fullWidth>Submit Questionnaire Response (Hardcoded)</Button>;
   }
 
 
   let layoutContent;
   if(data.questionnaires.length > 0){
-    layoutContent = <Grid container spacing={3} >
-      <Grid item lg={6} style={{width: '100%'}} >
+    layoutContent = <Grid container spacing={3} style={{marginLeft: '20px', marginRight: '20px', width: '100%'}}>
+      <Grid item lg={6} style={{width: '100%', marginLeft: '0px', marginRight: '0px'}} >
         <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
           <CardHeader
             title={data.questionnaires.length + " Questionnaires"}
