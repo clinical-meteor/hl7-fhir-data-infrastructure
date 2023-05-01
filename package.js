@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.31.3',
+  version: '6.32.2',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -20,6 +20,9 @@ Package.onUse(function (api) {
   api.use('ddp@1.4.0');
   api.use('livedata@1.0.18');
   api.use('es5-shim@4.8.0');
+
+  // api.use('bshamblen:json-simple-schema@0.1.3');
+  
 
   api.use('session');
   api.use('mongo');
@@ -44,62 +47,62 @@ Package.onUse(function (api) {
   // schemas and cursors
   api.addFiles('lib/BaseModel.js', ['client', 'server']);
 
-  api.addFiles('lib/schemas/ActivityDefinitions.js', ['client', 'server']);
-  api.addFiles('lib/schemas/AllergyIntolerances.js', ['client', 'server']);
-  api.addFiles('lib/schemas/AuditEvents.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Bundles.js', ['client', 'server']);
-  api.addFiles('lib/schemas/CarePlans.js', ['client', 'server']);
-  api.addFiles('lib/schemas/CareTeams.js', ['client', 'server']);
-  api.addFiles('lib/schemas/CodeSystems.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Compositions.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Conditions.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Consents.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Communications.js', ['client', 'server']);
-  api.addFiles('lib/schemas/CommunicationRequests.js', ['client', 'server']);
-  api.addFiles('lib/schemas/CommunicationResponses.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Devices.js', ['client', 'server']);
-  api.addFiles('lib/schemas/DiagnosticReports.js', ['client', 'server']);
-  api.addFiles('lib/schemas/DocumentReferences.js', ['client', 'server']);
-  api.addFiles('lib/schemas/DocumentManifests.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Encounters.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Endpoints.js', ['client', 'server']);
-  api.addFiles('lib/schemas/ExplanationOfBenefit.js', ['client', 'server']);
-  api.addFiles('lib/schemas/HealthcareServices.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Immunizations.js', ['client', 'server']);
-  api.addFiles('lib/schemas/InsurancePlans.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Goals.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Lists.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Locations.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Measures.js', ['client', 'server']);
-  api.addFiles('lib/schemas/MeasureReports.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Medications.js', ['client', 'server']);
-  api.addFiles('lib/schemas/MedicationOrders.js', ['client', 'server']);
-  api.addFiles('lib/schemas/MedicationRequests.js', ['client', 'server']);
-  api.addFiles('lib/schemas/MedicationStatements.js', ['client', 'server']);
-  api.addFiles('lib/schemas/MessageHeaders.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Networks.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Observations.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Organizations.js', ['client', 'server']);
-  api.addFiles('lib/schemas/OrganizationAffiliations.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Patients.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Practitioners.js', ['client', 'server']);
-  api.addFiles('lib/schemas/PractitionerRoles.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Persons.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Provenances.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Procedures.js', ['client', 'server']);
-  api.addFiles('lib/schemas/RelatedPersons.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Questionnaires.js', ['client', 'server']);
-  api.addFiles('lib/schemas/QuestionnaireResponses.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Restrictions.js', ['client', 'server']);
-  api.addFiles('lib/schemas/RiskAssessments.js', ['client', 'server']);
-  api.addFiles('lib/schemas/SearchParameters.js', ['client', 'server']);
-  api.addFiles('lib/schemas/ServiceRequests.js', ['client', 'server']);
-  api.addFiles('lib/schemas/StructureDefinitions.js', ['client', 'server']);
-  api.addFiles('lib/schemas/ServerStats.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Subscriptions.js', ['client', 'server']);
-  api.addFiles('lib/schemas/Tasks.js', ['client', 'server']);
-  api.addFiles('lib/schemas/ValueSets.js', ['client', 'server']);
-  api.addFiles('lib/schemas/VerificationResults.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/ActivityDefinitions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/AllergyIntolerances.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/AuditEvents.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Bundles.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/CarePlans.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/CareTeams.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/CodeSystems.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Compositions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Conditions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Consents.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Communications.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/CommunicationRequests.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/CommunicationResponses.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Devices.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/DiagnosticReports.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/DocumentReferences.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/DocumentManifests.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Encounters.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Endpoints.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/ExplanationOfBenefit.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/HealthcareServices.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Immunizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/InsurancePlans.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Goals.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Lists.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Locations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Measures.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/MeasureReports.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Medications.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/MedicationOrders.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/MedicationRequests.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/MedicationStatements.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/MessageHeaders.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Networks.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Observations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Organizations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/OrganizationAffiliations.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Patients.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Practitioners.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/PractitionerRoles.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Persons.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Provenances.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Procedures.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/RelatedPersons.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Questionnaires.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/QuestionnaireResponses.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Restrictions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/RiskAssessments.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/SearchParameters.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/ServiceRequests.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/StructureDefinitions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/ServerStats.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Subscriptions.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Tasks.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/ValueSets.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/VerificationResults.js', ['client', 'server']);
 
   api.addFiles('lib/schemas-extra/InboundRequests.js', ['client', 'server']);
   api.addFiles('lib/schemas-extra/OAuthClients.js', ['client', 'server']);
@@ -243,6 +246,10 @@ Package.onUse(function (api) {
   api.export('Networks');
   api.export('NetworkSchema');
 
+  api.export('NutritionIntake');
+  api.export('NutritionIntakes');
+  api.export('NutritionIntakeSchema');
+  
   api.export('OAuthClients');
 
   api.export('Observation');
@@ -434,6 +441,10 @@ Package.onUse(function (api) {
   // Image Assets
 
   api.addAssets('assets/NoData.png', 'client');  
+  api.addAssets('lib/schemas/fhir.schema.r5.json', ['server', 'client']);  
+
+
+  
 
   // ---------------------------------------------------------------------------
   // Web Components

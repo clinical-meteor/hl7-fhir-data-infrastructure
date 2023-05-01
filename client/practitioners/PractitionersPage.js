@@ -17,7 +17,7 @@ import { StyledCard, PageCanvas, ValueSetsTable } from 'fhir-starter';
 import PractitionerDetail  from './PractitionerDetail';
 import PractitionersTable  from './PractitionersTable';
 import LayoutHelpers from '../../lib/LayoutHelpers';
-import { ValueSets } from '../../lib/schemas/ValueSets';
+import { ValueSets } from '../../lib/schemas/SimpleSchemas/ValueSets';
 
 import PropTypes from 'prop-types';
 

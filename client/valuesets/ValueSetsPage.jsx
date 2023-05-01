@@ -21,7 +21,7 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get } from 'lodash';
 
-// import { ValueSets } from '../../lib/schemas/ValueSets';
+// import { ValueSets } from '../../lib/schemas/SimpleSchemas/ValueSets';
 
 
 //=============================================================================================================================================

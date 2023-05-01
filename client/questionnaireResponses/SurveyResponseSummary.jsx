@@ -38,7 +38,7 @@ import {
 
 import { useTracker } from 'meteor/react-meteor-data';
 import FhirUtilities from '../../lib/FhirUtilities';
-import { Questionnaires } from '../../lib/schemas/Questionnaires';
+// import { Questionnaires } from '../../lib/schemas/SimpleSchemas/Questionnaires';
 
 
 
@@ -116,11 +116,11 @@ function SurveyResponseSummary(props){
   // ================================================================================
   // Startup
 
-  useEffect(function(){
-    if(selectedResponse){
+  // useEffect(function(){
+  //   if(selectedResponse){
 
-    }
-  }, [props.lastUpdated])
+  //   }
+  // }, [props.lastUpdated])
 
   // ================================================================================
   // Trackers

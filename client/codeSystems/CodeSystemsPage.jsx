@@ -24,7 +24,7 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { get, cloneDeep } from 'lodash';
 
-import { CodeSystems } from '../../lib/schemas/CodeSystems';
+import { CodeSystems } from '../../lib/schemas/SimpleSchemas/CodeSystems';
 
 
 
