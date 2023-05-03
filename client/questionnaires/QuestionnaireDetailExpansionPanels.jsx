@@ -26,7 +26,7 @@
 // // import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 // import PropTypes from 'prop-types';
 
-// import { Questionnaires } from '../../lib/schemas/Questionnaires';
+// import { Questionnaires } from '../../lib/schemas/SimpleSchemas/Questionnaires';
 
 // import { Session } from 'meteor/session';
 // import {

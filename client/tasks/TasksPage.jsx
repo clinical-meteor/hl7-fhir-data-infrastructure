@@ -24,7 +24,7 @@ import LayoutHelpers from '../../lib/LayoutHelpers';
 
 import { get, cloneDeep } from 'lodash';
 
-import { Tasks } from '../../lib/schemas/Tasks';
+import { Tasks } from '../../lib/schemas/SimpleSchemas/Tasks';
 
 
 //=============================================================================================================================================

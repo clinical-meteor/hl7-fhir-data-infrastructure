@@ -403,7 +403,7 @@ export function CommunicationRequestsTable(props){
       let count = 0;    
 
       communicationRequests.forEach(function(communicationRequest){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           communicationRequestsToRender.push(FhirDehydrator.dehydrateCommunicationRequest(communicationRequest, internalDateFormat));
         }
         count++;
@@ -424,7 +424,7 @@ export function CommunicationRequestsTable(props){
     for (var i = 0; i < communicationRequestsToRender.length; i++) {
 
       let selected = false;
-      if(communicationRequestsToRender[i].id === selectedConditionId){
+      if(communicationRequestsToRender[i].id === selectedCommunicationRequestId){
         selected = true;
       }
       if(get(communicationRequestsToRender[i], 'modifierExtension[0]')){
@@ -464,7 +464,7 @@ export function CommunicationRequestsTable(props){
           {/* { renderActionIcons(communicationRequestsToRender[i]) } */}
           { renderAuthoredOn(get(communicationRequestsToRender[i], 'authoredOn', '')) }
           { renderStatus(get(communicationRequestsToRender[i], 'status', '')) }
-          {/* { renderCategory(communicationRequestsToRender[i].category) } */}
+          { renderCategory(communicationRequestsToRender[i].category) }
           { renderRequestor(get(communicationRequestsToRender[i], 'requestor.display', '')) }
           
           {/* <TableCell className='subject' onClick={ rowClick.bind('this', communicationRequestsToRender[i]._id)} style={style.cell}>{communicationRequestsToRender[i].subject }</TableCell>
@@ -496,7 +496,7 @@ export function CommunicationRequestsTable(props){
           {/* { renderActionIconsHeader() } */}
           { renderAuthoredOnHeader() }
           { renderStatusHeader() }
-          {/* { renderCategoryHeader() } */}
+          { renderCategoryHeader() }
           { renderRequestorHeader() }
           {/* <TableCell className='subject'>Subject</TableCell>
           <TableCell className='recipient'>Recipient</TableCell>

@@ -210,7 +210,7 @@ export function QuestionnaireResponsesPage(props){
   let layoutContainer;
   if(data.questionnaireResponses.length > 0){
     if(data.onePageLayout){
-      layoutContent = <StyledCard height="auto" margin={20} width={cardWidth + 'px'}>
+      layoutContent = <StyledCard height="auto" margin={20} width={cardWidth + 'px'} style={{marginLeft: '20px', marginRight: '20px'}}>
         <CardHeader title={data.questionnaireResponses.length + " Questionnaire Responses"} />
         <CardContent>
           <QuestionnaireResponsesTable 

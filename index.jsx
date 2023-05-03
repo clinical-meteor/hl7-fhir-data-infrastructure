@@ -6,55 +6,57 @@ import {
   DialogContent
 } from '@material-ui/core';
 
-import {AllergyIntolerances} from './lib/schemas/AllergyIntolerances';
-import {AuditEvents} from './lib/schemas/AuditEvents';
-import {Bundles} from './lib/schemas/Bundles';
-import {CarePlans} from './lib/schemas/CarePlans';
-import {CareTeams} from './lib/schemas/CareTeams';
-import {CodeSystems} from './lib/schemas/CodeSystems';
-import {Conditions} from './lib/schemas/Conditions';
-import {Consents} from './lib/schemas/Consents';
-import {Communications} from './lib/schemas/Communications';
-import {CommunicationRequests} from './lib/schemas/CommunicationRequests';
-import {Compositions} from './lib/schemas/Compositions';
-import {Devices} from './lib/schemas/Devices';
-import {DiagnosticReports} from './lib/schemas/DiagnosticReports';
-import {DocumentReferences} from './lib/schemas/DocumentReferences';
-import {Encounters} from './lib/schemas/Encounters';
-import {Endpoints} from './lib/schemas/Endpoints';
-import {HealthcareServices} from './lib/schemas/HealthcareServices';
-import {Immunizations} from './lib/schemas/Immunizations';
-import {InsurancePlans} from './lib/schemas/InsurancePlans';
-import {Goals} from './lib/schemas/Goals';
-import {Locations} from './lib/schemas/Locations';
-import {Lists} from './lib/schemas/Lists';
-import {Measures} from './lib/schemas/Measures';
-import {MeasureReports} from './lib/schemas/MeasureReports';
-import {Medications} from './lib/schemas/Medications';
-import {MedicationOrders} from './lib/schemas/MedicationOrders';
-import {MedicationStatements} from './lib/schemas/MedicationStatements';
-import {MessageHeaders} from './lib/schemas/MessageHeaders';
-import {Networks} from './lib/schemas/Networks';
-import {Observations} from './lib/schemas/Observations';
-import {Organizations} from './lib/schemas/Organizations';
-import {OrganizationAffiliations} from './lib/schemas/OrganizationAffiliations';
-import {Patients} from './lib/schemas/Patients';
-import {Practitioners} from './lib/schemas/Practitioners';
-import {PractitionerRoles} from './lib/schemas/PractitionerRoles';
-import {Procedures} from './lib/schemas/Procedures';
-import {Provenances} from './lib/schemas/Provenances';
-import {Questionnaires} from './lib/schemas/Questionnaires';
-import {QuestionnaireResponses} from './lib/schemas/QuestionnaireResponses';
-import {Restrictions} from './lib/schemas/Restrictions';
-import {RiskAssessments} from './lib/schemas/RiskAssessments';
-import {SearchParameters} from './lib/schemas/SearchParameters';
-import {ServiceRequests} from './lib/schemas/ServiceRequests';
-import {StructureDefinitions} from './lib/schemas/StructureDefinitions';
-import {ServerStats} from './lib/schemas/ServerStats';
-import {Subscriptions} from './lib/schemas/Subscriptions';
-import {Tasks} from './lib/schemas/Tasks';
-import {VerificationResults} from './lib/schemas/VerificationResults';
-import {ValueSets} from './lib/schemas/ValueSets';
+
+import {AllergyIntolerances} from './lib/schemas/SimpleSchemas/AllergyIntolerances';
+import {AuditEvents} from './lib/schemas/SimpleSchemas/AuditEvents';
+import {Bundles} from './lib/schemas/SimpleSchemas/Bundles';
+import {CarePlans} from './lib/schemas/SimpleSchemas/CarePlans';
+import {CareTeams} from './lib/schemas/SimpleSchemas/CareTeams';
+import {CodeSystems} from './lib/schemas/SimpleSchemas/CodeSystems';
+import {Conditions} from './lib/schemas/SimpleSchemas/Conditions';
+import {Consents} from './lib/schemas/SimpleSchemas/Consents';
+import {Communications} from './lib/schemas/SimpleSchemas/Communications';
+import {CommunicationRequests} from './lib/schemas/SimpleSchemas/CommunicationRequests';
+import {Compositions} from './lib/schemas/SimpleSchemas/Compositions';
+import {Devices} from './lib/schemas/SimpleSchemas/Devices';
+import {DiagnosticReports} from './lib/schemas/SimpleSchemas/DiagnosticReports';
+import {DocumentReferences} from './lib/schemas/SimpleSchemas/DocumentReferences';
+import {Encounters} from './lib/schemas/SimpleSchemas/Encounters';
+import {Endpoints} from './lib/schemas/SimpleSchemas/Endpoints';
+import {HealthcareServices} from './lib/schemas/SimpleSchemas/HealthcareServices';
+import {Immunizations} from './lib/schemas/SimpleSchemas/Immunizations';
+import {InsurancePlans} from './lib/schemas/SimpleSchemas/InsurancePlans';
+import {Goals} from './lib/schemas/SimpleSchemas/Goals';
+import {Locations} from './lib/schemas/SimpleSchemas/Locations';
+import {Lists} from './lib/schemas/SimpleSchemas/Lists';
+import {Measures} from './lib/schemas/SimpleSchemas/Measures';
+import {MeasureReports} from './lib/schemas/SimpleSchemas/MeasureReports';
+import {Medications} from './lib/schemas/SimpleSchemas/Medications';
+import {MedicationOrders} from './lib/schemas/SimpleSchemas/MedicationOrders';
+import {MedicationStatements} from './lib/schemas/SimpleSchemas/MedicationStatements';
+import {MessageHeaders} from './lib/schemas/SimpleSchemas/MessageHeaders';
+import {Networks} from './lib/schemas/SimpleSchemas/Networks';
+import {NutritionIntakes} from './lib/schemas/SimpleSchemas/NutritionIntakes';
+import {Observations} from './lib/schemas/SimpleSchemas/Observations';
+import {Organizations} from './lib/schemas/SimpleSchemas/Organizations';
+import {OrganizationAffiliations} from './lib/schemas/SimpleSchemas/OrganizationAffiliations';
+import {Patients} from './lib/schemas/SimpleSchemas/Patients';
+import {Practitioners} from './lib/schemas/SimpleSchemas/Practitioners';
+import {PractitionerRoles} from './lib/schemas/SimpleSchemas/PractitionerRoles';
+import {Procedures} from './lib/schemas/SimpleSchemas/Procedures';
+import {Provenances} from './lib/schemas/SimpleSchemas/Provenances';
+import {Questionnaires} from './lib/schemas/SimpleSchemas/Questionnaires';
+import {QuestionnaireResponses} from './lib/schemas/SimpleSchemas/QuestionnaireResponses';
+import {Restrictions} from './lib/schemas/SimpleSchemas/Restrictions';
+import {RiskAssessments} from './lib/schemas/SimpleSchemas/RiskAssessments';
+import {SearchParameters} from './lib/schemas/SimpleSchemas/SearchParameters';
+import {ServiceRequests} from './lib/schemas/SimpleSchemas/ServiceRequests';
+import {StructureDefinitions} from './lib/schemas/SimpleSchemas/StructureDefinitions';
+import {ServerStats} from './lib/schemas/SimpleSchemas/ServerStats';
+import {Subscriptions} from './lib/schemas/SimpleSchemas/Subscriptions';
+import {Tasks} from './lib/schemas/SimpleSchemas/Tasks';
+import {VerificationResults} from './lib/schemas/SimpleSchemas/VerificationResults';
+import {ValueSets} from './lib/schemas/SimpleSchemas/ValueSets';
 
 import {InboundRequests} from './lib/schemas-extra/InboundRequests';
 import {OAuthClients} from './lib/schemas-extra/OAuthClients';
@@ -197,6 +199,10 @@ import NetworksPage from './client/networks/NetworksPage';
 import NetworksTable from './client/networks/NetworksTable';
 import NetworkDetail from './client/networks/NetworkDetail';
 
+import NutritionIntakesPage from './client/nutritionIntake/NutritionIntakesPage';
+import NutritionIntakesTable from './client/nutritionIntake/NutritionIntakesTable';
+import NutritionIntakeDetail from './client/nutritionIntake/NutritionIntakeDetail';
+
 import ObservationsPage from './client/observations/ObservationsPage';
 import ObservationsTable from './client/observations/ObservationsTable';
 import ObservationDetail from './client/observations/ObservationDetail';
@@ -234,6 +240,10 @@ import QuestionnairesPage from './client/questionnaires/QuestionnairesPage';
 import QuestionnairesTable from './client/questionnaires/QuestionnairesTable';
 import QuestionnaireDetailSortable from './client/questionnaires/QuestionnaireDetailSortable';
 import QuestionnaireDetailExpansionPanels from './client/questionnaires/QuestionnaireDetailExpansionPanels';
+import QuestionnaireExpansion from './client/questionnaires/QuestionnaireExpansion';
+import QuestionnaireExpansionResponse from './client/questionnaires/QuestionnaireExpansionResponse';
+
+
 
 import QuestionnaireResponsesPage from './client/questionnaireResponses/QuestionnaireResponsesPage';
 import QuestionnaireResponsesTable from './client/questionnaireResponses/QuestionnaireResponsesTable';
@@ -463,6 +473,11 @@ let DynamicRoutes = [{
   name: 'NetworksPage',
   path: '/networks',
   component: NetworksPage,
+  requireAuth: true
+}, {
+  name: 'NutritionIntakesPage',
+  path: '/nutrition-intakes',
+  component: NutritionIntakesPage,
   requireAuth: true
 }, {
   name: 'ObservationsPage',
@@ -756,6 +771,12 @@ let SidebarElements = [{
   iconName: 'notepad',
   collectionName: 'Networks'
 }, {
+  primaryText: 'Nutrition Intakes',
+  to: '/nutrition-intakes',
+  href: '/nutrition-intakes',
+  iconName: 'notepad',
+  collectionName: 'NutritionIntakes'
+}, {
   primaryText: 'Observations',
   to: '/observations',
   href: '/observations',
@@ -969,6 +990,12 @@ let AdminSidebarElements = [{
   href: '/networks',
   iconName: 'notepad',
   collectionName: 'Networks' 
+}, {
+  primaryText: 'Nutrition Intakes',
+  to: '/nutrition-intakes',
+  href: '/nutrition-intakes',
+  iconName: 'notepad',
+  collectionName: 'NutritionIntakes' 
 }, {
   primaryText: 'Observations',
   to: '/observations',
@@ -1275,6 +1302,8 @@ export {
 
   QuestionnaireResponsesPage,
   QuestionnaireResponsesTable,
+  QuestionnaireExpansion,
+  QuestionnaireExpansionResponse,
 
   RelatedPersonsPage,
   RelatedPersonsTable,

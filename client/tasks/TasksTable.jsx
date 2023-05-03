@@ -88,10 +88,11 @@ function TasksTable(props){
     hideDescription,
     hideFocus,
     hideFor,
-    hideIntent,
     hideRequestor,
     hideStatus,
     hideBusinessStatus,
+    hideIntent,
+    hidePriority,
     hideCode,
     hideBarcode,
 
@@ -139,6 +140,7 @@ function TasksTable(props){
         hideIntent = true;
         hideRequestor = false;
         hideStatus = false;
+        hidePriority = false;
         hideBusinessStatus = false;
         hideCode = false;
         hideBarcode = true;
@@ -154,6 +156,7 @@ function TasksTable(props){
         hideIntent = true;
         hideRequestor = false;
         hideStatus = false;
+        hidePriority = false;
         hideBusinessStatus = false;
         hideCode = false;
         hideBarcode = true;
@@ -169,6 +172,7 @@ function TasksTable(props){
         hideIntent = true;
         hideRequestor = true;
         hideStatus = false;
+        hidePriority = false;
         hideBusinessStatus = false;
         hideCode = false;
         hideBarcode = true;
@@ -184,6 +188,7 @@ function TasksTable(props){
         hideIntent = true;
         hideRequestor = true;
         hideStatus = false;
+        hidePriority = false;
         hideBusinessStatus = false;
         hideCode = false;
         hideBarcode = true;
@@ -199,6 +204,7 @@ function TasksTable(props){
         hideIntent = false;
         hideRequestor = false;
         hideStatus = false;
+        hidePriority = false;
         hideBusinessStatus = false;
         hideCode = false;
         hideBarcode = true;
@@ -326,6 +332,14 @@ function TasksTable(props){
       );
     }
   }
+  function renderStatusHeader(){
+    if (!hideStatus) {
+      return (
+        <TableCell className='status'>Status</TableCell>
+      );
+    }
+  }
+
   function renderBusinessStatusHeader(){
     if (!hideBusinessStatus) {
       return (
@@ -340,13 +354,37 @@ function TasksTable(props){
       );
     }
   }
-  function renderStatusHeader(){
-    if (!hideStatus) {
+
+
+  function renderPriority(priority){
+    if (!hidePriority) {
       return (
-        <TableCell className='status'>Status</TableCell>
+        <TableCell className='priority'>{ priority }</TableCell>
       );
     }
   }
+  function renderPriorityHeader(){
+    if (!hidePriority) {
+      return (
+        <TableCell className='priority'>Priority</TableCell>
+      );
+    }
+  }
+  function renderIntent(intent){
+    if (!hideIntent) {
+      return (
+        <TableCell className='intent'>{ intent }</TableCell>
+      );
+    }
+  }
+  function renderIntentHeader(){
+    if (!hideIntent) {
+      return (
+        <TableCell className='intent'>Intent</TableCell>
+      );
+    }
+  }
+
   function renderDescription(description){
     if (!hideDescription) {
       return (
@@ -434,20 +472,6 @@ function TasksTable(props){
     }
   }
 
-  function renderIntent(intent){
-    if (!hideIntent) {
-      return (
-        <TableCell className='intent'>{ intent }</TableCell>
-      );
-    }
-  }
-  function renderIntentHeader(){
-    if (!hideIntent) {
-      return (
-        <TableCell className='intent'>Intent</TableCell>
-      );
-    }
-  }
   function renderCode(code){
     if (!hideCode) {
       return (
@@ -545,6 +569,8 @@ function TasksTable(props){
           { renderActionIcons(tasksToRender[i]) }
           { renderStatus(tasksToRender[i].status) }
           { renderBusinessStatus(tasksToRender[i].businessStatus) }
+          { renderPriority(tasksToRender[i].priority) }
+          { renderIntent(tasksToRender[i].intent) }
           { renderDescription(tasksToRender[i].description) }          
           { renderAuthoredOn(tasksToRender[i].authoredOn) }
           { renderLastModified(tasksToRender[i].lastModified) }
@@ -569,6 +595,8 @@ function TasksTable(props){
             { renderActionIconsHeader() }
             { renderStatusHeader() }
             { renderBusinessStatusHeader() }
+            { renderPriorityHeader() }
+            { renderIntentHeader() }
             { renderDescriptionHeader() }
             { renderAuthoredOnHeader() }
             { renderLastModifiedHeader() }
@@ -638,6 +666,7 @@ TasksTable.defaultProps = {
   hideRequestor: true,
   hideStatus: false,
   hideBusinessStatus: false,
+  hidePriority: false,
   hideCode: true,
   hideBarcode: true,
 

@@ -203,7 +203,7 @@ function QuestionnaireResponsesTable(props){
         hideSubjectReference = false;
         hideStatus = false;
         hideAuthored = false;
-        hideBarcode = true;
+        hideBarcode = false;
         break;
       case "hdmi":
         hideCheckbox = true;
@@ -215,7 +215,7 @@ function QuestionnaireResponsesTable(props){
         hideSubjectReference = false;
         hideStatus = false;
         hideAuthored = false;
-        hideBarcode = true;
+        hideBarcode = false;
         break;   
       case "hdmi":
         hideCheckbox = true;
