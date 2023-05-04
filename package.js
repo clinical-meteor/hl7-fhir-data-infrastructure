@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.32.2',
+  version: '6.32.5',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -81,6 +81,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/SimpleSchemas/MedicationStatements.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/MessageHeaders.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/Networks.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/NutritionIntakes.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/Observations.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/Organizations.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/OrganizationAffiliations.js', ['client', 'server']);
