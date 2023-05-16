@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.32.5',
+  version: '6.32.7',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -44,6 +44,9 @@ Package.onUse(function (api) {
   api.export('MedicalRecordImporter');
   api.export('Theming');
 
+  api.export('lookupReference');
+  
+
   // schemas and cursors
   api.addFiles('lib/BaseModel.js', ['client', 'server']);
 
@@ -71,6 +74,7 @@ Package.onUse(function (api) {
   api.addFiles('lib/schemas/SimpleSchemas/Immunizations.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/InsurancePlans.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/Goals.js', ['client', 'server']);
+  api.addFiles('lib/schemas/SimpleSchemas/Groups.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/Lists.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/Locations.js', ['client', 'server']);
   api.addFiles('lib/schemas/SimpleSchemas/Measures.js', ['client', 'server']);
@@ -197,6 +201,10 @@ Package.onUse(function (api) {
   api.export('Goal');
   api.export('Goals');
   api.export('GoalSchema');
+
+  api.export('Group');
+  api.export('Groups');
+  api.export('GroupSchema');
 
   api.export('HealthcareService');
   api.export('HealthcareServices');
