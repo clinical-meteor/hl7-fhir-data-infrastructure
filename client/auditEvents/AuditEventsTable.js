@@ -89,6 +89,7 @@ function AuditEventsTable(props){
     hideEntityName,
     hideRecorded,
     hideBarcode,
+    hideSeverity,
 
     onRowClick,
     onRemoveRecord,
@@ -120,7 +121,7 @@ function AuditEventsTable(props){
 
     switch (formFactorLayout) {
       case "phone":
-        hideTypeCode = true;
+        // hideTypeCode = true;
         hideTypeDisplay = true;
         hideSubtypeCode = true;
         hideSubtypeDisplay = true;
@@ -131,7 +132,7 @@ function AuditEventsTable(props){
         hideOutcome = true;
         break;
       case "tablet":
-        hideTypeCode = true;
+        // hideTypeCode = true;
         hideTypeDisplay = true;
         hideSubtypeCode = true;
         hideSubtypeDisplay = true;
@@ -142,7 +143,7 @@ function AuditEventsTable(props){
         hideBarcode = true;
         break;
       case "web":
-        hideTypeCode = false;
+        // hideTypeCode = false;
         hideTypeDisplay = false;
         hideSubtypeCode = false;
         hideSubtypeDisplay = false;
@@ -150,7 +151,7 @@ function AuditEventsTable(props){
         hideOutcomeDesc = false;
         break;
       case "desktop":
-        hideTypeCode = false;
+        // hideTypeCode = false;
         hideTypeDisplay = false;
         hideSubtypeCode = false;
         hideSubtypeDisplay = false;
@@ -158,7 +159,7 @@ function AuditEventsTable(props){
         hideOutcomeDesc = false;
         break;
       case "videowall":
-        hideTypeCode = false;
+        // hideTypeCode = false;
         hideTypeDisplay = false;
         hideSubtypeCode = false;
         hideSubtypeDisplay = false;
@@ -264,49 +265,49 @@ function AuditEventsTable(props){
       );
     }
   }
-  function renderTypeDisplay(typeDisplay){
+  function renderCategoryDisplay(typeDisplay){
     if (!hideTypeDisplay) {
       return (
         <TableCell className='typeDisplay'>{ typeDisplay }</TableCell>
       );
     }
   }
-  function renderTypeDisplayHeader(){
+  function renderCategoryDisplayHeader(){
     if (!hideTypeDisplay) {
       return (
-        <TableCell className='typeDisplay'>Type</TableCell>
+        <TableCell className='typeDisplay'>Category</TableCell>
       );
     }
   }
-  function renderTypeCode(typeCode){
+  function renderCategoryCode(typeCode){
     if (!hideTypeCode) {
       return (
         <TableCell className='typeCode'>{ typeCode }</TableCell>
       );
     }
   }
-  function renderTypeCodeHeader(){
+  function renderCategoryCodeHeader(){
     if (!hideTypeCode) {
       return (
-        <TableCell className='typeCode'>Type Code</TableCell>
+        <TableCell className='typeCode'>Category Code</TableCell>
       );
     }
   }
-  function renderSubtypeDisplay(subtypeDisplay){
+  function renderCodeDisplay(subtypeDisplay){
     if (!hideSubtypeDisplay) {
       return (
         <TableCell className='subtypeDisplay'>{ subtypeDisplay }</TableCell>
       );
     }
   }
-  function renderSubtypeDisplayHeader(){
+  function renderCodeDisplayHeader(){
     if (!hideSubtypeDisplay) {
       return (
-        <TableCell className='subtypeDisplay'>Subtype</TableCell>
+        <TableCell className='subtypeDisplay'>Code Display</TableCell>
       );
     }
   }
-  function renderSubtypeCode(subtypeCode){
+  function renderCodeCode(subtypeCode){
     if (!hideSubtypeCode) {
       return (
         <TableCell className='subtypeCode'>{ subtypeCode }</TableCell>
@@ -314,10 +315,10 @@ function AuditEventsTable(props){
     }
   }
 
-  function renderSubtypeCodeHeader(){
+  function renderCodeCodeHeader(){
     if (!hideSubtypeCode) {
       return (
-        <TableCell className='subtypeCode'>Subtype Code</TableCell>
+        <TableCell className='subtypeCode'>Code</TableCell>
       );
     }
   }
@@ -333,6 +334,21 @@ function AuditEventsTable(props){
     if (!hideAction) {
       return (
         <TableCell className='action'>Action</TableCell>
+      );
+    }
+  }
+
+  function renderSeverity(severity){
+    if (!hideSeverity) {
+      return (
+        <TableCell className='severity'>{ severity }</TableCell>
+      );
+    }
+  }
+  function renderSeverityHeader(){
+    if (!hideSeverity) {
+      return (
+        <TableCell className='severity'>Severity</TableCell>
       );
     }
   }
@@ -449,9 +465,8 @@ function AuditEventsTable(props){
   // Pagination
 
   let rows = [];
-  // const [page, setPage] = useState(0);
-  const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
+  
 
   let paginationCount = 101;
   if(count){
@@ -475,7 +490,7 @@ function AuditEventsTable(props){
       rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
-      rowsPerPage={rowsPerPageToRender}
+      rowsPerPage={rowsPerPage}
       page={page}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
@@ -503,7 +518,7 @@ function AuditEventsTable(props){
       let count = 0;  
 
       auditEvents.forEach(function(auditEvent){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           auditEventsToRender.push(FhirDehydrator.dehydrateAuditEvent(auditEvent));
         }
         count++;
@@ -535,20 +550,21 @@ function AuditEventsTable(props){
         <TableRow className="auditEventRow" key={i} onClick={ handleRowClick.bind(this, auditEventsToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
           { renderToggle() }
           { renderActionIcons(auditEventsToRender[i]) }
-          { renderIdentifier(auditEventsToRender[i].identifier)}
+          {/* { renderIdentifier(auditEventsToRender[i].identifier)} */}
           
-          { renderTypeDisplay(auditEventsToRender[i].typeDisplay) }
-          { renderTypeCode(auditEventsToRender[i].typeCode) }
-          { renderSubtypeDisplay(auditEventsToRender[i].subtype) }
-          { renderSubtypeCode(auditEventsToRender[i].subtype) }
+          { renderCategoryDisplay(auditEventsToRender[i].categoryDisplay) }
+          { renderCategoryCode(auditEventsToRender[i].categoryCode) }
 
+          { renderCodeDisplay(auditEventsToRender[i].codeDisplay) }
+          { renderCodeCode(auditEventsToRender[i].codeCode) }
+
+          { renderSeverity(auditEventsToRender[i].severity) }
           { renderAction(auditEventsToRender[i].action) }
-          { renderOutcome(auditEventsToRender[i].outcome) }
-          { renderOutcomeDesc(auditEventsToRender[i].outcomeDesc) }
+          { renderOutcome(auditEventsToRender[i].outcomeCode) }
 
-          { renderAgentName(auditEventsToRender[i].agentName) }
-          { renderSourceSite(auditEventsToRender[i].sourceSite) }
-          { renderEntityName(auditEventsToRender[i].entityName) }
+          { renderAgentName(auditEventsToRender[i].agentWhoDisplay) }
+          { renderSourceSite(auditEventsToRender[i].sourceSiteDisplay) }
+          { renderEntityName(auditEventsToRender[i].entityWhatDisplay) }
 
           { renderRecorded(auditEventsToRender[i].recorded) }
           
@@ -565,16 +581,17 @@ function AuditEventsTable(props){
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
-            { renderIdentifierHeader() }
+            {/* { renderIdentifierHeader() } */}
 
-            { renderTypeDisplayHeader() }
-            { renderTypeCodeHeader() }
-            { renderSubtypeDisplayHeader() }
-            { renderSubtypeCodeHeader() }
+            { renderCategoryDisplayHeader() }
+            { renderCategoryCodeHeader() }
+            { renderCodeDisplayHeader() }
+            { renderCodeCodeHeader() }
 
+            { renderSeverityHeader() }
             { renderActionHeader() }
             { renderOutcomeHeader() }
-            { renderOutcomeDescHeader() }
+            {/* { renderOutcomeDescHeader() } */}
 
             { renderAgentNameHeader() }
             { renderSourceSiteHeader() }
@@ -661,6 +678,7 @@ AuditEventsTable.defaultProps = {
   hideEntityName: false,
   hideRecorded: false,
   hideBarcode: false,
+  hideSeverity: false,
   auditEvents: []
 }
 

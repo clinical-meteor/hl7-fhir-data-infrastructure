@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 
 
@@ -30,19 +30,24 @@ import { get } from 'lodash';
 
 Session.setDefault('selectedAuditEventId', '');
 Session.setDefault('AuditEventsPage.onePageLayout', true)
+Session.setDefault('AuditEventsPage.auditEventsPageIndex', 0);
 
 export function AuditEventsPage(props){
 
-  let [auditEventsPageIndex, setAuditEventsPageIndex] = setState(0);
+  // let [auditEventsPageIndex, setAuditEventsPageIndex] = useState(0);
 
   let data = {
     selectedAuditEventId: '',
     selectedAuditEvent: null,
     auditEvents: [],
     onePageLayout: true,
-    auditEventSearchFilter: ''
+    auditEventSearchFilter: '',
+    auditEventsPageIndex: 0
   };
 
+  data.auditEventsPageIndex = useTracker(function(){
+    return Session.get('AuditEventsPage.auditEventsPageIndex');
+  }, [])
   data.onePageLayout = useTracker(function(){
     return Session.get('AuditEventsPage.onePageLayout');
   }, [])
@@ -67,6 +72,10 @@ export function AuditEventsPage(props){
 
   let cardWidth = window.innerWidth - paddingWidth;
 
+  function setAuditEventsPageIndex(index){
+    Session.set('AuditEventsPage.auditEventsPageIndex', index);
+  }
+
   
   return (
     <PageCanvas id="auditEventsPage" headerHeight={headerHeight} paddingLeft={paddingWidth} paddingRight={paddingWidth}>
@@ -78,7 +87,7 @@ export function AuditEventsPage(props){
             count={data.auditEvents.length}
             formFactorLayout={formFactor}
             rowsPerPage={LayoutHelpers.calcTableRows()}
-            page={auditEventsPageIndex}
+            page={data.auditEventsPageIndex}
             onSetPage={function(index){
               setAuditEventsPageIndex(index)
             }}
