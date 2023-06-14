@@ -286,14 +286,14 @@ function MeasuresTable(props){
     }
   }
   function renderLastReviewDate(lastReview){
-    if (!props.hideLastReviewDate) {
+    if (!props.hideLastReviewedDate) {
       return (
         <TableCell className='lastReview'>{ lastReview }</TableCell>
       );
     }
   }
   function renderLastReviewDateHeader(){
-    if (!props.hideLastReviewDate) {
+    if (!props.hideLastReviewedDate) {
       return (
         <TableCell className='lastReview' style={{minWidth: '140px'}}>Last Review</TableCell>
       );
