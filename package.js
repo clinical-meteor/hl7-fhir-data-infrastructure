@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-fhir-data-infrastructure',
-  version: '6.33.6',
+  version: '6.33.7',
   summary: 'HL7 FHIR Data Infrastructure (SimpleSchemas, Cursors, Hooks)',
   git: 'https://github.com/clinical-meteor/hl7-fhir-data-infrastructure',
   documentation: 'README.md'
@@ -448,7 +448,7 @@ Package.onUse(function (api) {
   // Image Assets
 
   api.addAssets('assets/NoData.png', 'client');  
-  api.addAssets('lib/schemas/fhir.schema.r5.json', ['server', 'client']);  
+  // api.addAssets('lib/schemas/fhir.schema.r5.json', ['server', 'client']);  
 
 
   
