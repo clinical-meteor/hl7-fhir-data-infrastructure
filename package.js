@@ -378,6 +378,7 @@ Package.onUse(function (api) {
   api.addFiles('datatypes/Code.js');
   api.addFiles('datatypes/Coding.js');
   api.addFiles('datatypes/CodeableConcept.js');
+  api.addFiles('datatypes/CodeableReference.js');
   api.addFiles('datatypes/ContactPoint.js');
   api.addFiles('datatypes/Conformance.js');
   api.addFiles('datatypes/Group.js');
@@ -410,6 +411,7 @@ Package.onUse(function (api) {
   api.export('CodingSchema');
   api.export('MoneySchema');
   api.export('CodeableConceptSchema');
+  api.export('CodeableReferenceSchema');
   api.export('IdentifierSchema');
   api.export('ContactPointSchema');
   api.export('GroupSchema');
@@ -436,6 +438,7 @@ Package.onUse(function (api) {
   api.export('Period');
   api.export('Coding');
   api.export('CodeableConcept');
+  api.export('CodeableReference');
   api.export('Identifier');
   api.export('ContactPoint');
   api.export('Group');
