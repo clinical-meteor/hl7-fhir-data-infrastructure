@@ -26,7 +26,7 @@ import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-import { ClinicalImpressions } from '../../lib/schemas/ClinicalImpressions';
+import { ClinicalImpressions } from '../../lib/schemas/SimpleSchemas/ClinicalImpressions';
 
 
 //---------------------------------------------------------------

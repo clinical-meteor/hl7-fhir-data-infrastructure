@@ -26,7 +26,7 @@ import { get, cloneDeep } from 'lodash';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-import { BodyStructures } from '../../lib/schemas/BodyStructures';
+import { BodyStructures } from '../../lib/schemas/SimpleSchemas/BodyStructures';
 
 
 //---------------------------------------------------------------

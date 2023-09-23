@@ -249,7 +249,7 @@ function ClinicalImpressionsTable(props){
   // Pagination
 
   let rows = [];
-  const [page, setPage] = useState(0);
+  const [currentPage, setPage] = useState(page);
   const [rowsPerPageToRender, setRowsPerPage] = useState(rowsPerPage);
 
 
@@ -273,7 +273,7 @@ function ClinicalImpressionsTable(props){
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}
-      page={page}
+      page={currentPage}
       onChangePage={handleChangePage}
       style={{float: 'right', border: 'none'}}
     />
@@ -403,7 +403,9 @@ ClinicalImpressionsTable.defaultProps = {
   selectedClinicalImpressionId: '',
   rowsPerPage: 5,
   tableRowSize: 'medium',
-  actionButtonLabel: 'Export'
+  actionButtonLabel: 'Export',
+
+  page: 0
 }
 
 export default ClinicalImpressionsTable; 
