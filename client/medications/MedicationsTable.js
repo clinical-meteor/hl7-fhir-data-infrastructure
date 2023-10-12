@@ -87,7 +87,7 @@ function MedicationsTable(props){
     hideActionIcons,
     hideActiveIngredient,
     hideForm,
-    hideName,
+    hideStatus,
     hideCode,
     hideManufacturer,
     hideBarcode,
@@ -105,6 +105,7 @@ function MedicationsTable(props){
     count,
     page,
     onSetPage,
+    
 
     ...otherProps 
   } = props;
@@ -237,15 +238,15 @@ function MedicationsTable(props){
     }
   }
 
-  function renderName(name){
-    if (!props.hideName) {
+  function renderStatus(name){
+    if (!props.hideStatus) {
       return (
         <TableCell className='name'>{name}</TableCell>
       );
     }
   }
-  function renderNameHeader(){
-    if (!props.hideName) {
+  function renderStatusHeader(){
+    if (!props.hideStatus) {
       return (
         <TableCell className='name'>Name</TableCell>
       );
@@ -346,7 +347,7 @@ function MedicationsTable(props){
       let count = 0;    
 
       props.medications.forEach(function(medication){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           medicationsToRender.push(FhirDehydrator.dehydrateMedication(medication, internalDateFormat, "R4"));
         }
         count++;
@@ -372,11 +373,10 @@ function MedicationsTable(props){
           { renderActionIcons(medicationsToRender[i]) }
           { renderIdentifier(medicationsToRender[i].identifier ) }
           { renderCode(medicationsToRender[i].code ) }
-          { renderName(medicationsToRender[i].name ) }
-          { renderManufacturer(medicationsToRender[i].manufacturer) }
-          { renderForm(medicationsToRender[i].form) }
+          { renderStatus(medicationsToRender[i].status ) }
+          { renderManufacturer(medicationsToRender[i].marketingAuthorizationHolderDisplay) }
+          { renderForm(medicationsToRender[i].doseForm) }
           { renderActiveIngredient(medicationsToRender[i].activeIngredient) }
-          { renderBarcode(medicationsToRender[i]._id)}
           { renderActionButton(medicationsToRender[i]) }
         </TableRow>
       );    
@@ -392,11 +392,10 @@ function MedicationsTable(props){
             { renderActionIconsHeader() }
             { renderIdentifierHeader() }
             { renderCodeHeader() }
-            { renderNameHeader() }
+            { renderStatusHeader() }
             { renderManufacturerHeader() }
             { renderFormHeader() }
             { renderActiveIngredientHeader() }
-            { renderBarcodeHeader() }
             { renderActionButtonHeader() }
           </TableRow>
         </TableHead>
@@ -456,7 +455,8 @@ MedicationsTable.defaultProps = {
   hideActionIcons: true,
   hideIdentifier: true,  
   medications: [],
-  count: 0
+  count: 0,
+  status: ''
 }
 
 
