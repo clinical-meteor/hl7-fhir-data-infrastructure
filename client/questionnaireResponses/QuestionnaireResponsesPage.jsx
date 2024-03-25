@@ -262,7 +262,7 @@ export function QuestionnaireResponsesPage(props){
                 onRowClick={function(responseId){
                   console.log('onRowClick()', responseId)
                   Session.set('selectedQuestionnaireResponseId', responseId);                  
-                  Session.set('selectedQuestionnaireResponse', QuestionnaireResponses.findOne({id: responseId}));                  
+                  Session.set('selectedQuestionnaireResponse', QuestionnaireResponses._collection.findOne({_id: responseId}));                  
                 }}
                 onSetPage={function(index){
                   setQuestionaireResponsesIndex(index)
@@ -287,7 +287,7 @@ export function QuestionnaireResponsesPage(props){
                 <SurveyResponseSummary 
                   id='surveyResponseSummary' 
                   selectedResponse={get(data, 'selectedQuestionnaireResponse', null)} 
-                  selectedResponseId={get(data, 'selectedQuestionnaireResponse.id', '')}
+                  selectedResponseId={get(data, 'selectedQuestionnaireResponse._id', '')}
                   />
   
               </CardContent>

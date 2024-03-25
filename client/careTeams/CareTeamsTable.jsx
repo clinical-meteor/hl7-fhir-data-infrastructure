@@ -689,8 +689,6 @@ CareTeamsTable.propTypes = {
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
   onSetPage: PropTypes.func,
-
-  onSetPage: PropTypes.func,
   
   page: PropTypes.number,
   showActionButton: PropTypes.bool,
