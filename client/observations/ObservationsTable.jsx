@@ -105,6 +105,7 @@ function ObservationsTable(props){
     hideCode,
     hideDevices,
     hideComparator,
+    hideTextIcon,
   
     hideNumerator,
     hideDenominator,
@@ -168,6 +169,7 @@ function ObservationsTable(props){
         hideCode = false;
         hideDevices = true;
         hideComparator = true;
+        hideTextIcon = true;
         multiline = true;
         break;
       case "tablet":
@@ -187,6 +189,7 @@ function ObservationsTable(props){
         hideCode = false;
         hideDevices = true;
         hideComparator = true;
+        hideTextIcon = true;
         multiline = false;
         break;
       case "web":
@@ -206,6 +209,7 @@ function ObservationsTable(props){
         hideCode = false;
         hideDevices = true;
         hideComparator = true;
+        hideTextIcon = true;
         multiline = false;
         break;
       case "desktop":
@@ -225,6 +229,7 @@ function ObservationsTable(props){
         hideCode = false;
         hideDevices = false;
         hideComparator = true;
+        hideTextIcon = false;
         multiline = false;
         break;
       case "hdmi":
@@ -352,6 +357,26 @@ function ObservationsTable(props){
     if (!hideSubjectReference) {
       return (
       <TableCell className='subjectReference'>Subject Reference</TableCell>
+      );
+    }
+  }
+  function renderTextIconHeader(){
+    if (!hideTextIcon) {
+      return (
+        <TableCell className='textIcon'>Text</TableCell>
+      );
+    }
+  }
+  function renderTextIcon(textDiv ){
+
+    let textIcon = "None";
+    if((typeof textDiv === "string" && (textDiv.length > 0))){
+      textIcon = "Text"
+    }
+
+    if (!hideTextIcon) {
+      return (
+        <TableCell className='textIcon' style={{minWidth: '140px'}}>{ textIcon }</TableCell>
       );
     }
   }
@@ -672,25 +697,26 @@ function ObservationsTable(props){
           <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i]._id)} hover={true} style={rowStyle}>
             { renderToggle() }
             { renderActionIcons(observationsToRender[i]) }
-            { renderCategory(observationsToRender[i].category) }
-            { renderCodeValue(observationsToRender[i].codeValue) }
-            { renderCode(observationsToRender[i].codeDisplay, observationsToRender[i].effectiveDateTime) }
-            { renderValue(observationsToRender[i].valueString)}
-            { renderSubject(observationsToRender[i].subject)}
-            { renderSubjectReference(observationsToRender[i].subjectReference)}
-            { renderStatus(observationsToRender[i].status) }
-            { renderDevice(observationsToRender[i].device)}
-            { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
-            { renderIssued(observationsToRender[i].effectiveDateTime) }
-            { renderComponentNumerator(observationsToRender[i].numerator)}
-            { renderComponentDenominator(observationsToRender[i].denominator)}
+            { renderTextIcon(get(conditionsToRender[i], "text.div", "")) }
+            { renderCategory(get(observationsToRender[i], "category")) }
+            { renderCodeValue(get(observationsToRender[i], "codeValue")) }
+            { renderCode(get(observationsToRender[i], "codeDisplay"), get(observationsToRender[i], "effectiveDateTime")) }
+            { renderValue(get(observationsToRender[i], "valueString"))}
+            { renderSubject(get(observationsToRender[i], "subject"))}
+            { renderSubjectReference(get(observationsToRender[i], "subjectReference"))}
+            { renderStatus(get(observationsToRender[i], "status")) }
+            { renderDevice(get(observationsToRender[i], "device"))}
+            { renderEffectiveDateTime(get(observationsToRender[i], "effectiveDateTime")) }
+            { renderIssued(get(observationsToRender[i], "effectiveDateTime")) }
+            { renderComponentNumerator(get(observationsToRender[i], "numerator"))}
+            { renderComponentDenominator(get(observationsToRender[i], "denominator"))}
 
-            { renderSampledPeriod(observationsToRender[i].sampledPeriod)}
-            { renderSampledMin(observationsToRender[i].sampledMin)}
-            { renderSampledMax(observationsToRender[i].sampledMax)}
-            { renderSampledChecksum(observationsToRender[i].sampledChecksum)}
+            { renderSampledPeriod(get(observationsToRender[i], "sampledPeriod"))}
+            { renderSampledMin(get(observationsToRender[i], "sampledMin"))}
+            { renderSampledMax(get(observationsToRender[i], "sampledMax"))}
+            { renderSampledChecksum(get(observationsToRender[i], "sampledChecksum"))}
 
-            { renderBarcode(observationsToRender[i].id)}
+            { renderBarcode(get(observationsToRender[i], "id"))}
           </TableRow>
         );    
 
@@ -699,25 +725,26 @@ function ObservationsTable(props){
           <TableRow className="observationRow" key={i} onClick={ rowClick.bind(this, observationsToRender[i].id)} hover={true} style={rowStyle}>            
             { renderToggle() }
             { renderActionIcons(observationsToRender[i]) }
-            { renderCategory(observationsToRender[i].category) }
-            { renderCodeValue(observationsToRender[i].codeValue) }
-            { renderCode(observationsToRender[i].codeDisplay) }
-            { renderValue(observationsToRender[i].valueString)}
-            { renderSubject(observationsToRender[i].subject)}
-            { renderSubjectReference(observationsToRender[i].subjectReference)}
-            { renderStatus(observationsToRender[i].status) }
-            { renderDevice(observationsToRender[i].device)}
-            { renderEffectiveDateTime(observationsToRender[i].effectiveDateTime) }
-            { renderIssued(observationsToRender[i].effectiveDateTime) }
-            { renderComponentNumerator(observationsToRender[i].numerator)}
-            { renderComponentDenominator(observationsToRender[i].denominator)}
+            { renderTextIcon(get(conditionsToRender[i], "text.div", "")) }
+            { renderCategory(get(observationsToRender[i], "category")) }
+            { renderCodeValue(get(observationsToRender[i], "codeValue")) }
+            { renderCode(get(observationsToRender[i], "codeDisplay")) }
+            { renderValue(get(observationsToRender[i], "valueString"))}
+            { renderSubject(get(observationsToRender[i], "subject"))}
+            { renderSubjectReference(get(observationsToRender[i], "subjectReference"))}
+            { renderStatus(get(observationsToRender[i], "status")) }
+            { renderDevice(get(observationsToRender[i], "device"))}
+            { renderEffectiveDateTime(get(observationsToRender[i], "effectiveDateTime")) }
+            { renderIssued(get(observationsToRender[i], "effectiveDateTime")) }
+            { renderComponentNumerator(get(observationsToRender[i], "numerator"))}
+            { renderComponentDenominator(get(observationsToRender[i], "denominator"))}
 
-            { renderSampledPeriod(observationsToRender[i].sampledPeriod)}
-            { renderSampledMin(observationsToRender[i].sampledMin)}
-            { renderSampledMax(observationsToRender[i].sampledMax)}
-            { renderSampledChecksum(observationsToRender[i].sampledChecksum)}
+            { renderSampledPeriod(get(observationsToRender[i], "sampledPeriod"))}
+            { renderSampledMin(get(observationsToRender[i], "sampledMin"))}
+            { renderSampledMax(get(observationsToRender[i], "sampledMax"))}
+            { renderSampledChecksum(get(observationsToRender[i], "sampledChecksum"))}
 
-            { renderBarcode(observationsToRender[i].id)}
+            { renderBarcode(get(observationsToRender[i], "id"))}
           </TableRow>
         );    
       }
@@ -746,6 +773,7 @@ function ObservationsTable(props){
           <TableRow key='tableHeader'>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
+            { renderTextIconHeader() }
             { renderCategoryHeader() }
             { renderCodeValueHeader() }
             { renderCodeHeader() }
@@ -802,6 +830,7 @@ ObservationsTable.propTypes = {
   hideDevices: PropTypes.bool,
   hideComparator: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+  hideTextIcon: PropTypes.bool,
 
   hideNumerator: PropTypes.bool,
   hideDenominator: PropTypes.bool,
@@ -853,6 +882,7 @@ ObservationsTable.defaultProps = {
   hideEffectiveDateTime: true,
   hideIssued: true,
   hideIssued: false,
+  hideTextIcon: true,
   sampledData: false,
   hideUnits: false,
   multiline: true,
