@@ -133,23 +133,23 @@ function EndpointsTable(props){
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
-        hideOrganization = false;
-        hideAddress = false;
+        hideOrganization = true;
+        hideAddress = true;
         break;
       case "tablet":
         hideActionIcons = false;
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
-        hideOrganization = false;
-        hideAddress = false;
+        hideOrganization = true;
+        hideAddress = true;
         break;
       case "web":
         hideActionIcons = false;
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
-        hideOrganization = false;
+        hideOrganization = true;
         hideAddress = false;
         break;
       case "desktop":
@@ -157,7 +157,7 @@ function EndpointsTable(props){
         hideStatus = false;
         hideConnectionType = false;
         hideName = false;
-        hideOrganization = false;
+        hideOrganization = true;
         hideAddress = false;
         break;
       case "videowall":
