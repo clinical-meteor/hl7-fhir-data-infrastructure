@@ -98,6 +98,7 @@ function ImmunizationsTable(props){
     hidePerformer,
     hideVaccineCode,
     hideVaccineCodeText,
+    hideTextIcon,
 
     onCellClick,
     onRowClick,
@@ -202,6 +203,26 @@ function ImmunizationsTable(props){
   //---------------------------------------------------------------------
   // Column Rendering
 
+  function renderTextIconHeader(){
+    if (!hideTextIcon) {
+      return (
+        <TableCell className='textIcon'>Text</TableCell>
+      );
+    }
+  }
+  function renderTextIcon(textDiv ){
+
+    let textIcon = "None";
+    if((typeof textDiv === "string" && (textDiv.length > 0))){
+      textIcon = "Text"
+    }
+
+    if (!hideTextIcon) {
+      return (
+        <TableCell className='textIcon' style={{minWidth: '140px'}}>{ textIcon }</TableCell>
+      );
+    }
+  }
   function renderCheckboxHeader(){
     if (!hideCheckbox) {
       return (
@@ -453,13 +474,14 @@ function ImmunizationsTable(props){
           <TableRow className="immunizationRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, immunizationsToRender[i].id)} hover={true} >            
             { renderCheckbox() }
             { renderActionIcons(immunizationsToRender[i]) }
-            { renderIdentifier( immunizationsToRender[i].identifier ) }
-            { renderVaccineCode( immunizationsToRender[i].vaccineCode ) }
-            { renderVaccineCodeText( immunizationsToRender[i].vaccineDisplay ) }
-            { renderStatus( immunizationsToRender[i].status ) }
-            { renderPatient(immunizationsToRender[i].patientDisplay) }
-            { renderPerformer(immunizationsToRender[i].performerDisplay) }
-            { renderDate(immunizationsToRender[i].date) }
+            { renderTextIcon(get(immunizationsToRender[i], "text.div", "")) }
+            { renderIdentifier( get(immunizationsToRender[i], "identifier")) }
+            { renderVaccineCode( get(immunizationsToRender[i], "vaccineCode")) }
+            { renderVaccineCodeText( get(immunizationsToRender[i], "vaccineDisplay")) }
+            { renderStatus( get(immunizationsToRender[i], "status")) }
+            { renderPatient( get(immunizationsToRender[i], "patientDisplay")) }
+            { renderPerformer( get(immunizationsToRender[i], "performerDisplay")) }
+            { renderDate( get(immunizationsToRender[i], "date")) }
           </TableRow>
         ); 
       }      
@@ -476,6 +498,7 @@ function ImmunizationsTable(props){
           <TableRow>
             { renderCheckboxHeader() }
             { renderActionIconsHeader() }
+            { renderTextIconHeader() }
             { renderIdentifierHeader() }
             { renderVaccineCodeHeader() }
             { renderVaccineCodeTextHeader() }
@@ -509,6 +532,7 @@ ImmunizationsTable.propTypes = {
   hidePerformer: PropTypes.bool,
   hideVaccineCode: PropTypes.bool,
   hideVaccineCodeText: PropTypes.bool,
+  hideTextIcon: PropTypes.bool,
   
   rowsPerPage: PropTypes.number,
   limit: PropTypes.number,
@@ -544,7 +568,8 @@ ImmunizationsTable.defaultProps = {
   hideIdentifier: false,
   hidePatient: false,
   hidePerformer: false,
-  hideStatus: false
+  hideStatus: false,
+  hideTextIcon: true
 };
 
 export default ImmunizationsTable;

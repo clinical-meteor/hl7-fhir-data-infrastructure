@@ -102,6 +102,7 @@ Session.setDefault('selectedResponse', null);
 
 
 function SurveyResponseSummary(props){
+  console.log('SurveyResponseSummary.props', props)
 
   let { 
     id,
@@ -150,54 +151,61 @@ function SurveyResponseSummary(props){
   let questionAnswers = [];
 
 
-  console.log('---------------------------------------------------------------')
-  console.log('SurveyResponseSummary.selectedResponse', selectedResponse)
-
-
   // we're going to get a question, along with the indices for where it exists in the hierarcy, up to two levels deep
-  function parseAnswers(answer, answerIndex){
-    console.log('Parsing answers', answer, answerIndex)
+  function parseAnswers(answerArray, answerIndex){
+    console.log('Parsing answers', answerArray, answerIndex)
     let stringToRender = ""    
 
-    if(Array.isArray(answer)){
-      stringToRender = get(answer[0], 'valueCoding.display');
+    if(Array.isArray(answerArray)){
+      if(get(answerArray[0], 'valueString')){
+        stringToRender = get(answerArray[0], 'valueString');
+      } else if(get(answerArray[0], 'valueCoding.display')){
+        stringToRender = get(answerArray[0], 'valueCoding.display');
+      }
     }
                     
     return stringToRender;
   }
 
 
+
   // do we have question items to display in expansion panels
   // console.log('selectedResponse (pre main render)', selectedResponse)
   if(selectedResponse){
+    console.log('---------------------------------------------------------------')
+    console.log('SurveyResponseSummary.selectedResponse', selectedResponse)
+
     // should be our sections
     if(Array.isArray(selectedResponse.item)){
       selectedResponse.item.forEach(function(renderItem, renderItemIndex){
+        console.log('renderItem', renderItem)
 
-
-
-        // should be the questions
-        if(Array.isArray(renderItem.item)){
-          // questionAnswers.push(<h3 key={'section-' + renderItemIndex} style={{width: '100%', borderTop: '1px solid lightgray', marginTop: '10px'}}>{get(renderItem, 'text')}</h3>)
-          
-          renderItem.item.forEach(function(questionItem, questionItemIndex){
-            questionAnswers.push(<h4 key={'question-' + renderItemIndex + '-' + questionItemIndex} >Q: {get(questionItem, 'text')}</h4>)
+        if(renderItem){
+          // should be the questions
+          if(Array.isArray(renderItem.item)){
+            // questionAnswers.push(<h3 key={'section-' + renderItemIndex} style={{width: '100%', borderTop: '1px solid lightgray', marginTop: '10px'}}>{get(renderItem, 'text')}</h3>)
             
-            if(Array.isArray(questionItem.answer)){
-              questionAnswers.push(<p key={'answer-' + renderItemIndex + '-' + questionItemIndex}>{parseAnswers(questionItem.answer)}</p>)
-            }     
-          });
-        } else {
-          questionAnswers.push(<h4 key={'section-' + renderItemIndex} >Q: {get(renderItem, 'text')}</h4>)
+            renderItem.item.forEach(function(questionItem, questionItemIndex){
+              questionAnswers.push(<h4 key={'question-' + renderItemIndex + '-' + questionItemIndex} >Q: {get(questionItem, 'text')}</h4>)
+              
+              if(Array.isArray(questionItem.answer)){
+                questionAnswers.push(<p key={'answer-' + renderItemIndex + '-' + questionItemIndex}>{parseAnswers(get(renderItem, 'answer', []))}</p>)
+              }     
+            });
+          } else {
+            questionAnswers.push(<h4 key={'section-' + renderItemIndex} >Q: {get(renderItem, 'text')}</h4>)
+          }
+
+          if(Array.isArray(renderItem.answer)){
+            questionAnswers.push(<p key={'answer-' + renderItemIndex}>{parseAnswers(renderItem.answer)}</p>)
+          } 
+
         }
-
-        if(Array.isArray(renderItem.answer)){
-          questionAnswers.push(<p key={'answer-' + renderItemIndex}>{parseAnswers(renderItem.answer)}</p>)
-        } 
-
       });  
     }  
-  }  
+  } else {
+    console.log('SurveyResponseSummary.selectedResponse is null.  No data to display.')
+  }
 
   console.log('questionAnswers', questionAnswers)
 

@@ -10,8 +10,10 @@ import {
 import {AllergyIntolerances} from './lib/schemas/SimpleSchemas/AllergyIntolerances';
 import {AuditEvents} from './lib/schemas/SimpleSchemas/AuditEvents';
 import {Bundles} from './lib/schemas/SimpleSchemas/Bundles';
+import {BodyStructures} from './lib/schemas/SimpleSchemas/BodyStructures';
 import {CarePlans} from './lib/schemas/SimpleSchemas/CarePlans';
 import {CareTeams} from './lib/schemas/SimpleSchemas/CareTeams';
+import {ClinicalImpressions} from './lib/schemas/SimpleSchemas/ClinicalImpressions';
 import {CodeSystems} from './lib/schemas/SimpleSchemas/CodeSystems';
 import {Conditions} from './lib/schemas/SimpleSchemas/Conditions';
 import {Consents} from './lib/schemas/SimpleSchemas/Consents';
@@ -79,6 +81,10 @@ import BundlesPage from './client/bundles/BundlesPage';
 import BundlesTable from './client/bundles/BundlesTable';
 // import BundleDetail from './client/bundles/BundleDetail';
 
+import BodyStructuresPage from './client/bodyStructures/BodyStructuresPage';
+import BodyStructuresTable from './client/bodyStructures/BodyStructuresTable';
+import BodyStructureDetail from './client/bodyStructures/BodyStructureDetail';
+
 import CarePlansPage from './client/carePlans/CarePlansPage';
 import CarePlansTable from './client/carePlans/CarePlansTable';
 // import CarePlanDetail from './client/carePlans/CarePlanDetail';
@@ -88,6 +94,11 @@ import ActivitiesTable from './client/carePlans/ActivitiesTable';
 import CareTeamsPage from './client/careTeams/CareTeamsPage';
 import CareTeamsTable from './client/careTeams/CareTeamsTable';
 import CareTeamDetail from './client/careTeams/CareTeamDetail';
+
+import ClinicalImpressionsPage from './client/clinicalImpressions/ClinicalImpressionsPage';
+import ClinicalImpressionsTable from './client/clinicalImpressions/ClinicalImpressionsTable';
+import ClinicalImpressionDetail from './client/clinicalImpressions/ClinicalImpressionDetail';
+
 
 import CodeSystemsPage from './client/codeSystems/CodeSystemsPage';
 import CodeSystemsTable from './client/codeSystems/CodeSystemsTable';
@@ -1160,6 +1171,10 @@ export {
   BundlesTable,
   // BundleDetail,
 
+  BodyStructuresPage,
+  BodyStructuresTable,
+  BodyStructureDetail,
+
   CarePlansPage,
   CarePlansTable,
   GoalsTable,
@@ -1176,6 +1191,10 @@ export {
   CareTeamsPage,
   CareTeamsTable,
   CareTeamDetail,
+
+  ClinicalImpressionsPage,
+  ClinicalImpressionsTable,
+  ClinicalImpressionDetail,
 
   CompositionsPage,
   CompositionsTable,

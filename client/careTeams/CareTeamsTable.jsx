@@ -560,7 +560,7 @@ function CareTeamsTable(props){
       let count = 0;  
 
       careTeams.forEach(function(careTeam){
-        if((count >= (page * rowsPerPageToRender)) && (count < (page + 1) * rowsPerPageToRender)){
+        if((count >= (page * rowsPerPage)) && (count < (page + 1) * rowsPerPage)){
           careTeamsToRender.push(FhirDehydrator.dehydrateCareTeam(careTeam));
         }
         count++;
@@ -688,8 +688,6 @@ CareTeamsTable.propTypes = {
   onRemoveRecord: PropTypes.func,
   onActionButtonClick: PropTypes.func,
   actionButtonLabel: PropTypes.string,
-  onSetPage: PropTypes.func,
-
   onSetPage: PropTypes.func,
   
   page: PropTypes.number,

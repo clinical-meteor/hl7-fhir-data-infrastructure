@@ -96,6 +96,7 @@ function ConditionsTable(props){
     hideDates,
     hideEndDate,
     hideBarcode,
+    hideTextIcon,
   
     onCellClick,
     onRowClick,
@@ -145,6 +146,7 @@ function ConditionsTable(props){
         hideEndDate = true;
         hideBarcode = true;  
         multiline = true;
+        hideTextIcon = false
         break;
       case "tablet":
         hideCheckbox = true;
@@ -161,6 +163,8 @@ function ConditionsTable(props){
         hideEndDate = true;
         hideBarcode = false;   
         multiline = false;
+        hideTextIcon = false
+        hideTextIcon = false
         break;
       case "web":
         hideClinicalStatus = true;
@@ -174,6 +178,7 @@ function ConditionsTable(props){
         hideEndDate = false;
         hideBarcode = false;
         multiline = false;
+        hideTextIcon = false
         break;
       case "desktop":
         hideClinicalStatus = true;
@@ -187,6 +192,7 @@ function ConditionsTable(props){
         hideEndDate = true;
         hideBarcode = false;
         multiline = false;
+        hideTextIcon = true;
         break;
       case "hdmi":
         hideClinicalStatus = false;
@@ -199,6 +205,7 @@ function ConditionsTable(props){
         hideEndDate = false;
         hideBarcode = false;
         multiline = false;
+        hideTextIcon = true;
         break;            
     }
   }
@@ -355,6 +362,27 @@ function ConditionsTable(props){
     if ((!hideDates && !hideEndDate)) {
       return (
         <TableCell className='date' style={{minWidth: '140px'}}>{ moment(endDate).format('YYYY-MM-DD') }</TableCell>
+      );
+    }
+  }
+
+  function renderTextIconHeader(){
+    if (!hideTextIcon) {
+      return (
+        <TableCell className='textIcon'>Text</TableCell>
+      );
+    }
+  }
+  function renderTextIcon(textDiv ){
+
+    let textIcon = "None";
+    if((typeof textDiv === "string" && (textDiv.length > 0))){
+      textIcon = "Text"
+    }
+
+    if (!hideTextIcon) {
+      return (
+        <TableCell className='textIcon' style={{minWidth: '140px'}}>{ textIcon }</TableCell>
       );
     }
   }
@@ -672,20 +700,21 @@ function ConditionsTable(props){
           <TableRow className="conditionRow" key={i} style={rowStyle} onClick={ handleRowClick.bind(this, conditionsToRender[i]._id)} style={rowStyle} hover={true} selected={selected} >            
             { renderCheckbox(i) }
             { renderActionIcons(conditionsToRender[i]) }
-            { renderIdentifier(conditionsToRender.identifier ) }
-            { renderPatientName(conditionsToRender[i].patientDisplay ) } 
-            { renderPatientReference(conditionsToRender[i].patientReference ) }           
-            { renderAsserterName(conditionsToRender[i].asserterDisplay ) } 
-            { renderClinicalStatus(conditionsToRender[i].clinicalStatus)}
-            { renderSnomedCode(conditionsToRender[i].snomedCode)}
-            { renderSnomedDisplay(conditionsToRender[i].snomedDisplay, conditionsToRender[i].snomedCode)}
-            { renderVerification(conditionsToRender[i].verificationStatus ) } 
-            { renderSeverity(conditionsToRender[i].severity) }
-            { renderEvidence(conditionsToRender[i].evidenceDisplay) }
-            { renderStartDate(conditionsToRender[i].onsetDateTime) }
-            { renderEndDate(conditionsToRender[i].abatementDateTime) }
-            { renderBarcode(conditionsToRender[i]._id)}
-            { renderActionButton(conditionsToRender[i]._id) }
+            { renderTextIcon(get(conditionsToRender[i], "text.div", "")) }
+            { renderIdentifier(get(conditionsToRender[i], "identifier", "")) }
+            { renderPatientName(get(conditionsToRender[i], "patientDisplay", "")) } 
+            { renderPatientReference(get(conditionsToRender[i], "patientReference", "")) }           
+            { renderAsserterName(get(conditionsToRender[i], "asserterDisplay", "")) } 
+            { renderClinicalStatus(get(conditionsToRender[i], "clinicalStatus", ""))}
+            { renderSnomedCode(get(conditionsToRender[i], "snomedCode", ""))}
+            { renderSnomedDisplay(get(conditionsToRender[i], "snomedDisplay", ""), get(conditionsToRender[i], "snomedCode", ""))}
+            { renderVerification(get(conditionsToRender[i], "verificationStatus", "")) } 
+            { renderSeverity(get(conditionsToRender[i], "severity", "")) }
+            { renderEvidence(get(conditionsToRender[i], "evidenceDisplay", "")) }
+            { renderStartDate(get(conditionsToRender[i], "onsetDateTime", "")) }
+            { renderEndDate(get(conditionsToRender[i], "abatementDateTime", "")) }
+            { renderBarcode(get(conditionsToRender[i], "_id", ""))}
+            { renderActionButton(get(conditionsToRender[i], "_id", "")) }
           </TableRow>
         );   
       }
@@ -707,6 +736,7 @@ function ConditionsTable(props){
           <TableRow>
             { renderCheckboxHeader() } 
             { renderActionIconsHeader() }
+            { renderTextIconHeader() }
             { renderIdentifierHeader() }
             { renderPatientNameHeader() }
             { renderPatientReferenceHeader() }
@@ -757,6 +787,7 @@ ConditionsTable.propTypes = {
   hideDates: PropTypes.bool,
   hideEndDate: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+  hideTextIcon: PropTypes.bool,
 
   defaultCheckboxValue: PropTypes.bool,
 
@@ -800,9 +831,10 @@ ConditionsTable.defaultProps = {
   hideEvidence: false,
   hideDates: true,
   hideEndDate: true,
+  hideTextIcon: true,
   hideBarcode: false,
   hideActionButton: true,
-  disablePagination: false,
+  disablePagination: false,  
   conditions: [],
   labels: {
     checkbox: "Checkbox",

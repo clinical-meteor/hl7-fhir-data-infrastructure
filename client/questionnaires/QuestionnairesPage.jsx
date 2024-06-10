@@ -13,12 +13,14 @@ import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { DynamicSpacer } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
-import QuestionnaireExpansionPanels from './QuestionnaireExpansionPanels';
+// import QuestionnaireExpansionPanels from './QuestionnaireExpansionPanels';
+// import SortableQuestionnaire from './SortableQuestionnaire';
+
 import QuestionnaireExpansion from './QuestionnaireExpansion';
 import QuestionnairesTable from './QuestionnairesTable';
-import SortableQuestionnaire from './SortableQuestionnaire';
 import LayoutHelpers from '../../lib/LayoutHelpers';
 
+// import questionnaireStyles from "./QuestionnaireStyles.css";
 
 
 import { 

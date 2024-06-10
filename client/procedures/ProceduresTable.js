@@ -148,6 +148,7 @@ function ProceduresTable(props){
     hideCode,
     hideCodeDisplay,
     hideBarcode,
+    hideTextIcon,
     filterEnteredInError,
   
     onCellClick,
@@ -340,6 +341,27 @@ function ProceduresTable(props){
   function handleActionButtonClick(id){
     if(typeof onActionButtonClick === "function"){
       onActionButtonClick(id);
+    }
+  }
+
+  function renderTextIconHeader(){
+    if (!hideTextIcon) {
+      return (
+        <TableCell className='textIcon'>Text</TableCell>
+      );
+    }
+  }
+  function renderTextIcon(textDiv ){
+
+    let textIcon = "None";
+    if((typeof textDiv === "string" && (textDiv.length > 0))){
+      textIcon = "Text"
+    }
+
+    if (!hideTextIcon) {
+      return (
+        <TableCell className='textIcon' style={{minWidth: '140px'}}>{ textIcon }</TableCell>
+      );
     }
   }
 
@@ -638,19 +660,20 @@ function ProceduresTable(props){
           <TableRow className="procedureRow" key={i} onClick={ handleRowClick.bind(this, proceduresToRender[i]._id)} hover={true} style={rowStyle} selected={selected} >            
             { renderToggle() }
             { renderActionIcons(proceduresToRender[i]) }
-            { renderIdentifier(proceduresToRender.identifier ) }
-            { renderStatus(proceduresToRender[i].status)}
-            { renderCategory(proceduresToRender[i].categoryDisplay)}
-            { renderCode(proceduresToRender[i].code)}
-            { renderCodeDisplay(proceduresToRender[i].codeDisplay, proceduresToRender[i].code, proceduresToRender[i].performedStart)}          
-            { renderSubject(proceduresToRender[i].subject)}
-            { renderSubjectReference(proceduresToRender[i].subjectReference)}
-            { renderPerformer(proceduresToRender[i].performerDisplay)}
-            { renderBodySite()}
-            { renderPerformedStart(proceduresToRender[i].performedStart)}
-            { renderPerformedEnd(proceduresToRender[i].performedEnd)}
-            { renderNotes(proceduresToRender[i].notesCount)}
-            { renderBarcode(proceduresToRender[i]._id)}
+            { renderTextIcon(get(proceduresToRender[i], "text")) }
+            { renderIdentifier(get(proceduresToRender[i], "identifier") ) }
+            { renderStatus(get(proceduresToRender[i], "status"))}
+            { renderCategory(get(proceduresToRender[i], "categoryDisplay"))}
+            { renderCode(get(proceduresToRender[i], "code"))}
+            { renderCodeDisplay(get(proceduresToRender[i], "codeDisplay"), get(proceduresToRender[i], "code"), get(proceduresToRender[i], "performedStart"))}          
+            { renderSubject(get(proceduresToRender[i], "subject"))}
+            { renderSubjectReference(get(proceduresToRender[i], "subjectReference"))}
+            { renderPerformer(get(proceduresToRender[i], "performerDisplay"))}
+            {/* { renderBodySite()} */}
+            { renderPerformedStart(get(proceduresToRender[i], "performedStart"))}
+            { renderPerformedEnd(get(proceduresToRender[i], "performedEnd"))}
+            { renderNotes(get(proceduresToRender[i], "notesCount"))}
+            { renderBarcode(get(proceduresToRender[i], "_id"))}
             { renderActionButton(proceduresToRender[i]) }
           </TableRow>
         );    
@@ -667,6 +690,7 @@ function ProceduresTable(props){
           <TableRow>
             { renderToggleHeader() }
             { renderActionIconsHeader() }
+            { renderTextIconHeader() }
             { renderIdentifierHeader() }
             { renderStatusHeader() }
             { renderCategoryHeader() }
@@ -675,7 +699,7 @@ function ProceduresTable(props){
             { renderSubjectHeader() }
             { renderSubjectReferenceHeader() }
             { renderPerformerHeader() }
-            { renderBodySiteHeader() }
+            {/* { renderBodySiteHeader() } */}
             { renderPerformedStartHeader() }
             { renderPerformedEndHeader() }
             { renderNotesHeader() }
@@ -715,6 +739,7 @@ ProceduresTable.propTypes = {
   hideCode: PropTypes.bool,
   hideCodeDisplay: PropTypes.bool,
   hideBarcode: PropTypes.bool,
+  hideTextIcon: PropTypes.bool,
   filterEnteredInError: PropTypes.bool,
 
   onCellClick: PropTypes.func,
@@ -745,6 +770,7 @@ ProceduresTable.defaultProps = {
   hideIdentifier: true,
   hideCategory: true,
   hideBodySite: true,
+  hideTextIcon: true,
   multiline: false,
   tableRowSize: 'medium'
 }
