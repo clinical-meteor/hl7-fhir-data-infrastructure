@@ -113,12 +113,12 @@ function EndpointsTable(props){
     displayEnteredInError, 
 
     checklist,
+    multiline,
 
     page,
     onSetPage,
     
     count,
-    multiline,
 
     ...otherProps 
   } = props;
@@ -323,7 +323,7 @@ function EndpointsTable(props){
   function renderNameHeader(){
     if (!hideName) {
       return (
-        <TableCell className='name'>Name</TableCell>
+        <TableCell style={{minWidth: '160px'}} className='name'>Name</TableCell>
       );
     }
   }
@@ -342,10 +342,17 @@ function EndpointsTable(props){
       );
     }
   }
-  function renderOrganization(organization){
+  function renderOrganization(organization, address){
     if (!hideOrganization) {
+
+      let renderedContent;
+      if(multiline){
+        renderedContent = <div><b>{organization}</b><br /><a style={{color: 'grey', textDecoration: 'none'}}>{address}</a></div>
+      } else {
+        renderedContent = <div>{organization}</div>
+      }
       return (
-        <TableCell className='organization'>{ organization }</TableCell>
+        <TableCell className='organization'>{ renderedContent }</TableCell>
       );
     }
   }
@@ -501,15 +508,15 @@ function EndpointsTable(props){
         >
           { renderCheckbox(endpointsToRender[i]) }
           { renderActionIcons(endpointsToRender[i]) }
-          { renderFhirId(endpointsToRender[i].id) }
-          { renderStatus(endpointsToRender[i].status) }
-          { renderConnectionType(endpointsToRender[i].connectionType) }
-          { renderVersion(endpointsToRender[i].version) }
-          { renderName(endpointsToRender[i].name) }
-          { renderOrganization(endpointsToRender[i].managingOrganization) }
-          { renderAddress(endpointsToRender[i].address) }
+          { renderFhirId(get(endpointsToRender[i], "id")) }
+          { renderStatus(get(endpointsToRender[i], "status")) }
+          { renderConnectionType(get(endpointsToRender[i], "connectionType")) }
+          { renderVersion(get(endpointsToRender[i], "version")) }
+          { renderName(get(endpointsToRender[i], "name")) }
+          { renderOrganization(get(endpointsToRender[i], "managingOrganization"), get(endpointsToRender[i], "address")) }
+          { renderAddress(get(endpointsToRender[i], "address")) }
 
-          { renderBarcode(endpointsToRender[i].id)}
+          { renderBarcode(get(endpointsToRender[i], "id"))}
         </TableRow>
       );       
     }
@@ -574,6 +581,8 @@ EndpointsTable.propTypes = {
   actionButtonLabel: PropTypes.string,
   tableRowSize: PropTypes.string,
 
+  multiline: PropTypes.bool,
+
   formFactorLayout: PropTypes.string,
   rowsPerPage: PropTypes.number,
   tableRowSize: PropTypes.string,
@@ -582,8 +591,7 @@ EndpointsTable.propTypes = {
   size: PropTypes.string,
 
   page: PropTypes.number,
-  count: PropTypes.number,
-  multiline: PropTypes.bool
+  count: PropTypes.number
 };
 EndpointsTable.defaultProps = {
   hideCheckbox: true,
@@ -603,7 +611,9 @@ EndpointsTable.defaultProps = {
   page: 0,
   rowsPerPage: 5,
   tableRowSize: 'medium',
-  actionButtonLabel: 'Export'
+  actionButtonLabel: 'Export',
+  
+  multiline: false
 }
 
 export default EndpointsTable; 
