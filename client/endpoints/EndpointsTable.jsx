@@ -338,7 +338,7 @@ function EndpointsTable(props){
   function renderConnectionTypeHeader(){
     if (!hideConnectionType) {
       return (
-        <TableCell className='connectionType'>Connection Type</TableCell>
+        <TableCell style={{minWidth: '140px'}} className='connectionType'>Connection Type</TableCell>
       );
     }
   }
